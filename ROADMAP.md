@@ -9,6 +9,14 @@
 - Provide contributor submission guides.
 - Add simple validation and leaderboard generation scripts.
 
+## Benchmark Framework v1
+
+- Define canonical benchmark framework documentation.
+- Define task specification, metadata, task IDs, versioning, and suite-specific task requirements.
+- Define result JSON specification and suite-specific result requirements.
+- Define validation rules for tasks, results, and future leaderboard generation.
+- Keep all benchmark suites independent unless a formal aggregate scoring method is defined.
+
 ## Next
 
 - Add reviewed benchmark tasks for each suite.

@@ -10,7 +10,8 @@ Use this guide when submitting a local model or runtime result from iPhone, iPad
 4. Copy `templates/device-result-template.json`.
 5. Fill in all fields you can verify.
 6. Add notes for unavailable metrics instead of inventing values.
-7. Open a pull request with the completed JSON and reproduction notes.
+7. Confirm the JSON parses and follows `methodology/benchmark-result-specification.md`.
+8. Open a pull request with the completed JSON and reproduction notes.
 
 ## Measurement Notes
 

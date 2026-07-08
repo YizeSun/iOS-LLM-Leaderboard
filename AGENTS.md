@@ -84,6 +84,29 @@ Do not mix Swift code generation tasks, app feature intelligence tasks, Xcode wo
 
 ---
 
+# Benchmark Framework Compatibility
+
+Agents must preserve Benchmark Framework v1 compatibility.
+
+When editing benchmark tasks:
+
+- Follow `methodology/benchmark-specification.md`.
+- Preserve stable `task_id` values.
+- Update task versions instead of changing task IDs when prompts, expected outputs, scoring rubrics, or pass/fail criteria change materially.
+- Keep suite-specific task requirements intact.
+
+When editing benchmark results or templates:
+
+- Follow `methodology/benchmark-result-specification.md`.
+- Preserve required result fields.
+- Preserve task and result schema compatibility.
+- Keep demo-placeholder results clearly marked.
+- Never include demo-placeholder results in official leaderboard logic or documentation.
+
+Agents must not invent benchmark results, rankings, or performance numbers.
+
+---
+
 # Benchmark Philosophy
 
 Every benchmark should be:

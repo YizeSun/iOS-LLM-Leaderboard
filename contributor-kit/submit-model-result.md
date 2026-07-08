@@ -10,17 +10,23 @@ Use this guide when submitting a result for a benchmark task.
 4. Copy `templates/model-result-template.json`.
 5. Fill in all required fields.
 6. Place the completed JSON file in `results/raw/`.
-7. Run `python3 scripts/validate_result.py results/raw/<file>.json`.
+7. Confirm the JSON parses and follows `methodology/benchmark-result-specification.md`.
 8. Open a pull request with the raw result and any relevant notes.
 
 ## Required Fields
 
-- `model_name`
-- `provider`
-- `task_id`
-- `score`
-- `evaluator`
-- `date`
-- `notes`
+- `schema_version`
+- `result_id`
+- `task.task_id`
+- `task.task_version`
+- `task.suite`
+- `model.model_name`
+- `model.provider`
+- `execution.date`
+- `execution.evaluator`
+- `evaluation.score`
+- `evaluation.max_score`
+- `evaluation.passed`
+- `license_confirmation.contributor_agrees_to_repo_license`
 
 Do not submit placeholder or fabricated results.

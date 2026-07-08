@@ -1,23 +1,76 @@
 {
-  "schema_version": "0.1",
-  "placeholder": true,
-  "model_name": "Demo Local Model",
-  "provider": "Demo Provider",
-  "runtime": "Demo Runtime",
+  "schema_version": "1.0",
+  "result_id": "2026-07-09-suite-b-on-device-performance-001-demo-local-model-placeholder",
+  "task": {
+    "task_id": "suite-b-on-device-performance-001",
+    "task_version": "1.0",
+    "suite": "Suite B: On-device Performance",
+    "category": "Local Inference",
+    "subcategory": "Device Run"
+  },
+  "model": {
+    "model_name": "Demo Local Model",
+    "provider": "Demo Provider",
+    "model_version": "unknown",
+    "access_type": "local",
+    "parameter_size": null,
+    "quantization": null
+  },
+  "runtime": {
+    "runtime_name": "Demo Runtime",
+    "runtime_version": null,
+    "backend": null,
+    "model_format": null
+  },
   "device": {
-    "name": "Demo iPhone",
+    "device_name": "Demo Device",
     "chip": "Demo Chip",
     "memory_gb": null,
-    "os_version": "demo"
+    "os_name": null,
+    "os_version": null
+  },
+  "execution": {
+    "date": "2026-07-09",
+    "evaluator": "Demo Evaluator",
+    "run_type": "unknown",
+    "temperature": null,
+    "seed": null,
+    "prompt_tokens": null,
+    "output_tokens": null,
+    "notes": "Placeholder device result format. Not a real benchmark result."
+  },
+  "output": {
+    "raw_output_path": null,
+    "summary": "Placeholder only.",
+    "structured_output": null
+  },
+  "evaluation": {
+    "score": null,
+    "max_score": 10,
+    "passed": null,
+    "automatic_checks": [],
+    "manual_review": [],
+    "failure_reasons": [],
+    "reviewer_notes": "Placeholder only. Not a real benchmark result."
   },
   "metrics": {
-    "tokens_per_second": null,
-    "first_token_latency_ms": null,
+    "ttft_ms": null,
+    "prefill_tokens_per_second": null,
+    "decode_tokens_per_second": null,
     "peak_memory_mb": null,
-    "thermal_observation": "Placeholder only",
-    "battery_observation": "Placeholder only"
+    "energy_joules": null,
+    "thermal_state": null,
+    "p50_token_interval_ms": null,
+    "p95_token_interval_ms": null,
+    "p99_token_interval_ms": null
   },
-  "evaluator": "Demo Evaluator",
-  "date": "2026-07-08",
-  "notes": "Placeholder device result format. Not a real benchmark result."
+  "provenance": {
+    "source": "demo-placeholder",
+    "commit_sha": null,
+    "raw_artifact_paths": [],
+    "reproduction_notes": "Demo placeholder data must be excluded from official leaderboards."
+  },
+  "license_confirmation": {
+    "contributor_agrees_to_repo_license": true
+  }
 }
