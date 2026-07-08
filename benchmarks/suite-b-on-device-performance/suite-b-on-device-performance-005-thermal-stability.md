@@ -30,6 +30,13 @@ Local inference can affect device temperature, sustained throughput, and user ex
 
 Use a fixed prompt and generation setup repeated under a documented procedure. Record prompt length, output length, tokenizer used, repeat count, rest intervals, device thermal state observations, and performance metrics for each run.
 
+Canonical input constraints:
+
+- Target prompt length: 128-512 tokens.
+- Target generated output length per run: 256-768 tokens.
+- Use the same prompt, output settings, and stop conditions for every repeated run.
+- The prompt should be stable and should not contain private data.
+
 Measurement setup must record:
 
 - device
@@ -44,11 +51,45 @@ Measurement setup must record:
 - repeated-run schedule
 - thermal observation method
 
+Default warm-up procedure:
+
+- Load the model once before the repeated-run sequence if the runtime has a distinct model-load step.
+- Run one unrecorded warm-up generation using the same prompt and output settings.
+- Record initial thermal state before measured runs begin.
+- Document whether the repeated-run sequence starts from cold device conditions, warm device conditions, or an uncontrolled state.
+
+Default measurement procedure:
+
+- Run at least 3 measured generations where practical.
+- Use a documented repeated-run schedule, including rest intervals.
+- Report per-run TTFT, decode throughput, peak memory, and thermal state when available.
+- Report median values for primary performance metrics and describe degradation from first measured run to final measured run.
+- Record whether failed, interrupted, throttled, or out-of-memory runs were excluded and why.
+
+Timing and degradation boundaries:
+
+- Each measured run starts when the prompt is submitted to the runtime and stops when generation completes or reaches the stop condition.
+- Thermal state should be recorded before the sequence, before each run when available, after each run when available, and after the final run.
+- Performance degradation should be reported as the change between early-run and late-run metrics using the same metric definition.
+- Clearly label thermal observations as system-reported, externally measured, or qualitative.
+
 ## Expected Output
 
 Submit a Framework v1 result JSON under `results/raw/` that records thermal state in `metrics.thermal_state` and includes per-run notes or raw artifact paths showing performance behavior across repeated runs.
 
 When available, include TTFT, decode tokens per second, peak memory, and token interval metrics for each run as raw artifacts or structured notes.
+
+Primary metric:
+
+- `metrics.thermal_state`
+
+Optional secondary metrics:
+
+- per-run `metrics.ttft_ms`
+- per-run `metrics.decode_tokens_per_second`
+- per-run `metrics.peak_memory_mb`
+- p50 / p95 / p99 token interval metrics when available
+- degradation notes from first measured run to final measured run
 
 ## Evaluation
 
@@ -73,7 +114,7 @@ When available, include TTFT, decode tokens per second, peak memory, and token i
 - A valid result JSON is provided.
 - Thermal behavior is recorded without inventing measurements.
 - Repeated-run procedure and run conditions are documented.
-- Required model, runtime, device, quantization, OS, prompt length, output length, warm-up, and measurement metadata are present.
+- Required model, runtime, device, quantization, OS, prompt length, output length, warm-up, repeated-run schedule, thermal observation method, and measurement metadata are present.
 
 ### Failure Conditions
 
@@ -110,8 +151,11 @@ Record:
 - repeated-run schedule, rest intervals, and number of runs
 - thermal observation method
 - per-run TTFT, decode throughput, peak memory, or token interval metrics when available
+- median aggregation method for primary performance metrics when available
+- degradation calculation or qualitative degradation notes
+- failed, interrupted, throttled, or out-of-memory run handling
 - raw logs or artifact paths when available
 
 ## Reviewer Notes
 
-Thermal stability is sensitive to environment and device state. Reviewers should treat qualitative thermal observations as useful context, not controlled laboratory measurements, unless the submission documents an instrumented method.
+Thermal stability is sensitive to environment and device state. Reviewers should treat qualitative thermal observations as useful context, not controlled laboratory measurements, unless the submission documents an instrumented method. Do not compare results unless model, runtime, quantization, device, OS version, prompt band, output band, warm-up procedure, repeated-run schedule, thermal observation method, and measurement method are comparable.

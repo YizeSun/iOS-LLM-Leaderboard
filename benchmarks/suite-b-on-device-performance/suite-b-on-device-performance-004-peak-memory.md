@@ -30,6 +30,13 @@ Memory pressure is a practical limit for local models in iOS apps. Peak memory d
 
 Use a fixed prompt and generation setup selected by the evaluator. Record prompt length, output length, tokenizer used, and whether peak memory covers model load, generation, or both.
 
+Canonical input constraints:
+
+- Target prompt length: 128-512 tokens.
+- Target generated output length: 256-768 tokens.
+- The prompt should be stable across measured runs and should not contain private data.
+- The same prompt and generation settings must be used for all measured runs in a submission.
+
 Measurement setup must record:
 
 - device
@@ -43,11 +50,43 @@ Measurement setup must record:
 - measurement procedure
 - memory measurement tool or API
 
+Default warm-up procedure:
+
+- For load peak measurements, document whether the measured run is a cold model load or a warm reload.
+- For generation peak measurements, load the model once and run one unrecorded warm-up generation before measured runs where practical.
+- Document whether cold start, warm start, or both are measured.
+
+Default measurement procedure:
+
+- Run at least 3 measured runs where practical.
+- Report per-run peak memory when available.
+- Report median peak memory as the primary value for repeated generation measurements.
+- For model-load peak measurements, report whether repeated load/unload runs were used.
+- Record whether failed, interrupted, or out-of-memory runs were excluded and why.
+
+Measurement boundaries:
+
+- Define whether the reported peak covers model load, generation, or total process peak across both.
+- Load peak starts before model load begins and stops after the model is ready for inference.
+- Generation peak starts after model load is complete and before prompt submission; it stops after generation completes.
+- Total peak covers the full load-through-generation window when measured.
+
 ## Expected Output
 
 Submit a Framework v1 result JSON under `results/raw/` that records peak memory in `metrics.peak_memory_mb`.
 
 The result should distinguish load-time memory, generation-time memory, and total observed peak when the measurement method supports that detail.
+
+Primary metric:
+
+- `metrics.peak_memory_mb`
+
+Optional secondary metrics:
+
+- load-time peak memory in raw artifacts or reproduction notes
+- generation-time peak memory in raw artifacts or reproduction notes
+- total process peak memory in raw artifacts or reproduction notes
+- `metrics.ttft_ms` and decode throughput when available
 
 ## Evaluation
 
@@ -72,7 +111,7 @@ The result should distinguish load-time memory, generation-time memory, and tota
 - A valid result JSON is provided.
 - Peak memory is measured and recorded.
 - The measurement method is documented.
-- Required model, runtime, device, quantization, OS, prompt length, output length, warm-up, and measurement metadata are present.
+- Required model, runtime, device, quantization, OS, prompt length, output length, warm-up, measurement boundary, and measurement metadata are present.
 
 ### Failure Conditions
 
@@ -108,8 +147,10 @@ Record:
 - power state and relevant system settings when known
 - warm-up procedure
 - measurement procedure and number of runs
+- per-run values and median aggregation method when repeated runs are available
+- failed, interrupted, or out-of-memory run handling
 - raw logs, screenshots, profiler exports, or artifact paths when available
 
 ## Reviewer Notes
 
-Peak memory results can vary by runtime allocation behavior and measurement tool. Reviewers should avoid cross-run comparisons unless measurement scope and tooling are comparable.
+Peak memory results can vary by runtime allocation behavior and measurement tool. Reviewers should avoid cross-run comparisons unless model, runtime, quantization, device, OS version, prompt band, output band, memory scope, warm-up procedure, and measurement method are comparable.

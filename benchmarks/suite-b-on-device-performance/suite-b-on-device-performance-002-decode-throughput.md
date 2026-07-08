@@ -30,6 +30,13 @@ Decode throughput determines how quickly users see the body of a generated answe
 
 Use a deterministic prompt intended to produce a medium-length generated response. Record the exact prompt text, prompt length, requested output length, tokenizer used, and token count.
 
+Canonical input constraints:
+
+- Target prompt length: 128-512 tokens.
+- Target generated output length: 256-768 tokens.
+- The prompt should request continuous prose or structured text that is unlikely to stop early.
+- The same prompt and generation limits must be used for all measured runs in a submission.
+
 Measurement setup must record:
 
 - device
@@ -44,11 +51,42 @@ Measurement setup must record:
 
 The output length target should be documented in tokens or with the closest runtime-supported equivalent.
 
+Default warm-up procedure:
+
+- Load the model once before measured runs if the runtime has a distinct model-load step.
+- Run one unrecorded warm-up generation using the same prompt and output settings.
+- Document whether the measured runs use a cold or warm model state.
+
+Default measurement procedure:
+
+- Run at least 3 measured runs where practical.
+- Report per-run decode throughput when available.
+- Report median decode tokens/sec as the primary value.
+- Record whether failed, interrupted, or early-stopped runs were excluded and why.
+
+Timing boundaries:
+
+- Decode timing should exclude prompt prefill time where the runtime exposes separate prefill and decode timing.
+- Decode timing starts when the first generated token has been produced or when the runtime enters decode mode.
+- Decode timing stops when the target output length, stop condition, or runtime generation limit is reached.
+- If prefill and decode cannot be separated, document the limitation and calculation method.
+
 ## Expected Output
 
 Submit a Framework v1 result JSON under `results/raw/` that records sustained decode throughput in `metrics.decode_tokens_per_second`.
 
 The result should also record TTFT, generated output token count, and raw artifact paths when available.
+
+Primary metric:
+
+- `metrics.decode_tokens_per_second`
+
+Optional secondary metrics:
+
+- `metrics.ttft_ms`
+- actual generated output token count
+- per-run decode throughput values in raw artifacts or reproduction notes
+- token interval distribution when available
 
 ## Evaluation
 
@@ -73,7 +111,7 @@ The result should also record TTFT, generated output token count, and raw artifa
 - A valid result JSON is provided.
 - Decode tokens per second is measured and recorded.
 - The measurement procedure explains how decode throughput was calculated.
-- Required model, runtime, device, quantization, OS, prompt length, output length, warm-up, and measurement metadata are present.
+- Required model, runtime, device, quantization, OS, prompt length, output length, warm-up, timing boundary, and measurement metadata are present.
 
 ### Failure Conditions
 
@@ -109,8 +147,10 @@ Record:
 - warm-up procedure
 - decode timing start and stop definitions
 - measurement procedure and number of runs
+- per-run values and median aggregation method
+- failed, interrupted, or early-stopped run handling
 - raw logs or artifact paths when available
 
 ## Reviewer Notes
 
-Decode throughput should be compared only between runs with compatible output length, runtime settings, tokenizer behavior, model, quantization, device, and OS version.
+Decode throughput should be compared only between runs with compatible model, runtime, quantization, device, OS version, prompt band, output band, tokenizer behavior, warm-up procedure, and measurement method.
