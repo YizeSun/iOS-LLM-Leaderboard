@@ -30,6 +30,13 @@ Time to first token affects how responsive an iOS app feels when a local model s
 
 Use a short deterministic prompt selected by the evaluator and record the exact prompt text, prompt length, tokenizer used, and token count.
 
+Canonical input constraints:
+
+- Target prompt length: 16-64 tokens.
+- Target output length: 32-128 tokens.
+- The prompt should be a simple app-style request that does not require tools, network access, private data, or long context.
+- The same prompt must be used for all measured runs in a submission.
+
 Measurement setup must record:
 
 - device
@@ -44,11 +51,41 @@ Measurement setup must record:
 
 The selected prompt should be short enough to represent a lightweight app interaction and should not include private user data.
 
+Default warm-up procedure:
+
+- Load the model once before measured runs if the runtime has a distinct model-load step.
+- Run one unrecorded warm-up generation using the same prompt and output settings.
+- Document whether the submitted TTFT measures cold start, warm start, or both.
+
+Default measurement procedure:
+
+- Run at least 3 measured runs where practical.
+- Report per-run TTFT values when available.
+- Report the median TTFT as the primary value.
+- Record whether failed or interrupted runs were excluded and why.
+
+Timing boundaries:
+
+- TTFT timing starts when the app or runtime submits the fully prepared prompt to the inference runtime.
+- The first token is counted when the first generated token is emitted by the runtime and is available to the app layer.
+- Do not include UI rendering, network access, manual copy/paste, or post-processing time unless explicitly documented.
+
 ## Expected Output
 
 Submit a Framework v1 result JSON under `results/raw/` that records TTFT in `metrics.ttft_ms` and includes all required task, model, runtime, device, execution, evaluation, metrics, provenance, and license fields.
 
 The result should include raw artifact paths or reproduction notes for timing logs when available.
+
+Primary metric:
+
+- `metrics.ttft_ms`
+
+Optional secondary metrics:
+
+- per-run TTFT values in raw artifacts or reproduction notes
+- `metrics.decode_tokens_per_second`
+- `metrics.peak_memory_mb`
+- `metrics.thermal_state`
 
 ## Evaluation
 
@@ -72,7 +109,8 @@ The result should include raw artifact paths or reproduction notes for timing lo
 
 - A valid result JSON is provided.
 - TTFT is measured and recorded.
-- The prompt, model, runtime, device, quantization, OS version, warm-up procedure, and measurement procedure are documented.
+- The prompt, prompt length, requested output length, model, runtime, device, quantization, OS version, warm-up procedure, and measurement procedure are documented.
+- Timing start and first-token boundaries are documented.
 - The submission does not include fabricated or simulated measurements.
 
 ### Failure Conditions
@@ -108,8 +146,10 @@ Record:
 - warm-up procedure
 - timing start and stop definitions
 - measurement procedure and number of runs
+- per-run values and median aggregation method
+- failed or interrupted run handling
 - raw logs or artifact paths when available
 
 ## Reviewer Notes
 
-This task measures responsiveness, not overall throughput. Reviewers should not compare results unless prompt, model, runtime, quantization, device class, OS version, and measurement procedure are comparable.
+This task measures responsiveness, not overall throughput. Reviewers should not compare results unless model, runtime, quantization, device class, OS version, prompt band, output band, warm-up procedure, and measurement method are comparable.

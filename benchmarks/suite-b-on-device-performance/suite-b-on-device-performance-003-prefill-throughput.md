@@ -30,6 +30,13 @@ Many iOS features ask a model to process existing user content, such as notes, t
 
 Use a fixed long input selected by the evaluator and record the exact source, text, prompt length, tokenizer used, and token count. The input must be redistributable or included as a raw artifact when permitted.
 
+Canonical input constraints:
+
+- Target prompt length: 2,000-8,000 tokens.
+- Target generated output length: 16-128 tokens, only enough to trigger completion after prefill.
+- The long input should be redistributable, synthetic, or included as a raw artifact when permitted.
+- The same long input and generation settings must be used for all measured runs in a submission.
+
 Measurement setup must record:
 
 - device
@@ -44,11 +51,42 @@ Measurement setup must record:
 
 If the runtime cannot directly report prefill timing, document the method used to estimate or derive it.
 
+Default warm-up procedure:
+
+- Load the model once before measured runs if the runtime has a distinct model-load step.
+- Run one unrecorded warm-up prefill/generation pass using the same long input and output settings.
+- Document whether the measured prefill runs use a cold or warm model state.
+
+Default measurement procedure:
+
+- Run at least 3 measured runs where practical.
+- Report per-run prefill throughput when available.
+- Report median prefill tokens/sec as the primary value.
+- Record whether failed, interrupted, or out-of-memory runs were excluded and why.
+
+Timing boundaries:
+
+- Prefill timing starts when the fully tokenized or prepared prompt is submitted to the runtime for context processing.
+- Prefill timing stops when context processing is complete and before decode begins, where the runtime exposes that boundary.
+- Separate prefill from decode where possible.
+- If prefill and decode cannot be separated, document the limitation and derivation method.
+
 ## Expected Output
 
 Submit a Framework v1 result JSON under `results/raw/` that records prefill throughput in `metrics.prefill_tokens_per_second`.
 
 The result should also include prompt token count, raw artifact references, and notes explaining how prefill timing was measured.
+
+Primary metric:
+
+- `metrics.prefill_tokens_per_second`
+
+Optional secondary metrics:
+
+- `metrics.ttft_ms`
+- `metrics.decode_tokens_per_second`
+- prompt token count
+- per-run prefill throughput values in raw artifacts or reproduction notes
 
 ## Evaluation
 
@@ -72,7 +110,7 @@ The result should also include prompt token count, raw artifact references, and 
 
 - A valid result JSON is provided.
 - Prefill tokens per second is measured or transparently derived and recorded.
-- The long input, model, runtime, device, quantization, OS version, prompt length, output length, warm-up, and measurement procedure are documented.
+- The long input, model, runtime, device, quantization, OS version, prompt length, output length, warm-up, timing boundary, and measurement procedure are documented.
 - Raw input artifacts or stable references are provided when allowed.
 
 ### Failure Conditions
@@ -108,8 +146,10 @@ Record:
 - warm-up procedure
 - prefill timing start and stop definitions
 - measurement procedure and number of runs
+- per-run values and median aggregation method
+- failed, interrupted, or out-of-memory run handling
 - raw logs or artifact paths when available
 
 ## Reviewer Notes
 
-This protocol depends heavily on a reproducible long input and clear runtime timing. Do not compare prefill results when prompt content, token count, tokenizer, runtime, model, quantization, or device differs materially.
+This protocol depends heavily on a reproducible long input and clear runtime timing. Do not compare prefill results unless model, runtime, quantization, device, OS version, prompt band, output band, tokenizer, warm-up procedure, and measurement method are comparable.
