@@ -19,14 +19,19 @@ By submitting a pull request, you agree that your contribution will be licensed 
 
 ## Benchmark Task Contributions
 
+New benchmark tasks must follow [Benchmark Task Specification](methodology/benchmark-specification.md).
+
 Every benchmark task should include:
 
-- Task title
-- Scenario
-- Prompt
-- Expected behavior
-- Scoring rubric
-- Notes for reviewers
+- required task metadata
+- objective and background
+- exact input, prompt, IDE context, or measurement setup
+- expected output
+- automatic and manual evaluation criteria
+- pass and failure conditions
+- scoring rubric
+- reproducibility requirements
+- reviewer notes
 
 Place every task in the correct suite directory:
 
@@ -42,17 +47,21 @@ Do not add tasks that depend on private data, undisclosed model access, or unver
 
 ## Result Contributions
 
-Every result should include:
+New benchmark results must follow [Benchmark Result Specification](methodology/benchmark-result-specification.md).
 
-- model name
-- provider
-- task ID
-- score
-- evaluator
-- date
-- notes
+Every result must include:
 
-Additional metadata is encouraged when it improves reproducibility.
+- required result fields
+- task ID and task version
+- model and provider metadata
+- execution date and evaluator
+- score, max score, and pass/fail state
+- contributor license confirmation
+- suite-specific runtime, device, metric, or output metadata where applicable
+
+Submitted results must include enough reproducibility metadata for independent review. If a field is not applicable, use `null` instead of omitting required fields.
+
+Demo or placeholder data must be clearly marked and must not be used for official leaderboard results.
 
 ## Data Integrity
 
@@ -62,7 +71,10 @@ Do not invent benchmark results, rankings, device measurements, or performance n
 
 - Documentation is updated.
 - New or moved benchmark content is in the correct suite.
+- New benchmark tasks follow `methodology/benchmark-specification.md`.
+- New benchmark results follow `methodology/benchmark-result-specification.md`.
+- Submitted results include reproducibility metadata.
 - Placeholder data is clearly labeled.
-- JSON files validate with `python3 scripts/validate_result.py <file>`.
+- JSON files parse successfully and follow `methodology/benchmark-result-specification.md`.
 - Generated leaderboard changes are intentional.
 - License boundaries remain consistent.

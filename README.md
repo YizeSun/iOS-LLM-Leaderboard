@@ -8,7 +8,7 @@ The project focuses on three practical questions:
 2. Which local models run best on iPhone, iPad, and Apple Silicon?
 3. Which models are most useful for real iOS app features, privacy, and App Store compliance?
 
-This repository is currently an MVP documentation and structure release. It does not contain a benchmark engine, official rankings, or verified performance numbers yet.
+This repository is currently a documentation-first benchmark framework. It does not contain a benchmark engine, official rankings, or verified performance numbers yet.
 
 ## Why This Project Exists
 
@@ -40,6 +40,20 @@ iOS-LLM-Leaderboard is organized into five independent suites. Each suite may pr
 
 Suite boundaries are intentional. Swift code generation tasks, app feature intelligence tasks, Xcode workflow tasks, runtime measurements, and on-device performance results should remain separate unless a future methodology explicitly defines an aggregate view.
 
+## Benchmark Framework
+
+Benchmark Framework v1 defines how tasks, results, validation rules, and suite-level documentation should be written.
+
+Canonical framework documents:
+
+- [Benchmark Framework](methodology/benchmark-framework.md)
+- [Benchmark Suites](methodology/benchmark-suites.md)
+- [Benchmark Task Specification](methodology/benchmark-specification.md)
+- [Benchmark Result Specification](methodology/benchmark-result-specification.md)
+- [Benchmark Validation](methodology/benchmark-validation.md)
+
+Official leaderboard generation should exclude demo-placeholder results, group results by suite, record task versions, and avoid averaging incompatible suites unless a formal weighting method exists.
+
 ## Placeholder Leaderboard
 
 The table below is demo data only. It is included to show the intended format and must not be interpreted as a ranking.
@@ -56,14 +70,15 @@ See [results/LEADERBOARD.md](results/LEADERBOARD.md) for the generated leaderboa
 This initial version provides:
 
 - Repository structure for benchmark definitions and results
+- Benchmark Framework v1 documentation
 - Scoring methodology documentation
 - Markdown benchmark task templates and starter tasks
 - JSON result templates
 - Contributor submission guides
 - Placeholder example integration directories
-- Simple JSON validation and leaderboard generation scripts
+- Placeholder utility scripts for future validation and leaderboard generation
 
-This MVP intentionally does not implement real benchmark logic, model execution, device measurement, or automated judging.
+This repository intentionally does not implement benchmark runners, model execution, device measurement, or automated judging yet.
 
 ## Repository Structure
 

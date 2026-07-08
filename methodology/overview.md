@@ -2,6 +2,14 @@
 
 iOS-LLM-Leaderboard is organized around five independent benchmark suites. Each suite evaluates a different part of the iOS developer experience and may produce separate scores, reports, and leaderboards.
 
+Benchmark Framework v1 is defined in:
+
+- [Benchmark Framework](benchmark-framework.md)
+- [Benchmark Suites](benchmark-suites.md)
+- [Benchmark Task Specification](benchmark-specification.md)
+- [Benchmark Result Specification](benchmark-result-specification.md)
+- [Benchmark Validation](benchmark-validation.md)
+
 The suites are:
 
 - Suite A: Swift Code Generation

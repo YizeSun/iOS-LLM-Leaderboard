@@ -1,16 +1,76 @@
 {
-  "schema_version": "0.1",
-  "placeholder": true,
-  "model_name": "DemoModel-A",
-  "provider": "Demo Provider",
-  "task_id": "benchmarks/suite-a-swift-codegen/001-swiftui-list-delete.md",
-  "score": 0,
-  "evaluator": "Demo Evaluator",
-  "date": "2026-07-08",
-  "notes": "Placeholder result showing the expected format. Not a real benchmark result.",
-  "metadata": {
-    "model_version": "demo",
-    "prompt_version": "demo",
-    "review_environment": "demo"
+  "schema_version": "1.0",
+  "result_id": "2026-07-09-suite-a-swift-codegen-001-demo-model-placeholder",
+  "task": {
+    "task_id": "suite-a-swift-codegen-001",
+    "task_version": "1.0",
+    "suite": "Suite A: Swift Code Generation",
+    "category": "SwiftUI",
+    "subcategory": "List Deletion"
+  },
+  "model": {
+    "model_name": "DemoModel-A",
+    "provider": "Demo Provider",
+    "model_version": "unknown",
+    "access_type": "unknown",
+    "parameter_size": null,
+    "quantization": null
+  },
+  "runtime": {
+    "runtime_name": null,
+    "runtime_version": null,
+    "backend": null,
+    "model_format": null
+  },
+  "device": {
+    "device_name": null,
+    "chip": null,
+    "memory_gb": null,
+    "os_name": null,
+    "os_version": null
+  },
+  "execution": {
+    "date": "2026-07-09",
+    "evaluator": "Demo Evaluator",
+    "run_type": "unknown",
+    "temperature": null,
+    "seed": null,
+    "prompt_tokens": null,
+    "output_tokens": null,
+    "notes": "Placeholder result showing the expected Framework v1 format. Not a real benchmark result."
+  },
+  "output": {
+    "raw_output_path": null,
+    "summary": "Placeholder only.",
+    "structured_output": null
+  },
+  "evaluation": {
+    "score": null,
+    "max_score": 10,
+    "passed": null,
+    "automatic_checks": [],
+    "manual_review": [],
+    "failure_reasons": [],
+    "reviewer_notes": "Placeholder only. Not a real benchmark result."
+  },
+  "metrics": {
+    "ttft_ms": null,
+    "prefill_tokens_per_second": null,
+    "decode_tokens_per_second": null,
+    "peak_memory_mb": null,
+    "energy_joules": null,
+    "thermal_state": null,
+    "p50_token_interval_ms": null,
+    "p95_token_interval_ms": null,
+    "p99_token_interval_ms": null
+  },
+  "provenance": {
+    "source": "demo-placeholder",
+    "commit_sha": null,
+    "raw_artifact_paths": [],
+    "reproduction_notes": "Demo placeholder data must be excluded from official leaderboards."
+  },
+  "license_confirmation": {
+    "contributor_agrees_to_repo_license": true
   }
 }

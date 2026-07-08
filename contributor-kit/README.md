@@ -12,6 +12,10 @@ You can contribute:
 
 Before submitting results, make sure placeholder data is removed and all metadata needed for reproduction is included.
 
+Benchmark tasks must follow [Benchmark Task Specification](../methodology/benchmark-specification.md).
+
+Benchmark results must follow [Benchmark Result Specification](../methodology/benchmark-result-specification.md).
+
 Useful files:
 
 - [Submit a model result](submit-model-result.md)
