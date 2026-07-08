@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.1",
+  "placeholder": true,
+  "model_name": "DemoModel-A",
+  "provider": "Demo Provider",
+  "task_id": "benchmarks/swift-codegen/001-swiftui-list-delete.md",
+  "score": 0,
+  "evaluator": "Demo Evaluator",
+  "date": "2026-07-08",
+  "notes": "Placeholder result showing the expected format. Not a real benchmark result.",
+  "metadata": {
+    "model_version": "demo",
+    "prompt_version": "demo",
+    "review_environment": "demo"
+  }
+}

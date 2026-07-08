@@ -1,0 +1,27 @@
+{
+  "schema_version": "0.1",
+  "model_name": "",
+  "provider": "",
+  "runtime": "",
+  "device": {
+    "name": "",
+    "chip": "",
+    "memory_gb": null,
+    "os_version": ""
+  },
+  "model": {
+    "parameters": "",
+    "quantization": "",
+    "file_format": ""
+  },
+  "metrics": {
+    "tokens_per_second": null,
+    "first_token_latency_ms": null,
+    "peak_memory_mb": null,
+    "thermal_observation": "",
+    "battery_observation": ""
+  },
+  "evaluator": "",
+  "date": "YYYY-MM-DD",
+  "notes": ""
+}

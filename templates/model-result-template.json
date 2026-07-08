@@ -1,0 +1,17 @@
+{
+  "schema_version": "0.1",
+  "model_name": "",
+  "provider": "",
+  "task_id": "",
+  "score": 0,
+  "evaluator": "",
+  "date": "YYYY-MM-DD",
+  "notes": "",
+  "metadata": {
+    "model_version": "",
+    "prompt_version": "",
+    "temperature": null,
+    "max_tokens": null,
+    "review_environment": ""
+  }
+}

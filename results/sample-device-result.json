@@ -1,0 +1,23 @@
+{
+  "schema_version": "0.1",
+  "placeholder": true,
+  "model_name": "Demo Local Model",
+  "provider": "Demo Provider",
+  "runtime": "Demo Runtime",
+  "device": {
+    "name": "Demo iPhone",
+    "chip": "Demo Chip",
+    "memory_gb": null,
+    "os_version": "demo"
+  },
+  "metrics": {
+    "tokens_per_second": null,
+    "first_token_latency_ms": null,
+    "peak_memory_mb": null,
+    "thermal_observation": "Placeholder only",
+    "battery_observation": "Placeholder only"
+  },
+  "evaluator": "Demo Evaluator",
+  "date": "2026-07-08",
+  "notes": "Placeholder device result format. Not a real benchmark result."
+}
