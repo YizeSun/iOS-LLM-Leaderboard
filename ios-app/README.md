@@ -67,4 +67,73 @@ Later adapters may support:
 - Apple Foundation Models where equivalent measurements are possible;
 - future Apple-platform runtimes.
 
-No app implementation is included yet.
+## Current Implementation
+
+The repository now includes a minimal SwiftUI Xcode project targeting iPhone
+on iOS 26 or later. It provides:
+
+- a Run Benchmark screen that displays the locked pilot configuration;
+- public device, OS, and thermal-state inspection;
+- a runtime-neutral `LanguageModelRuntime` boundary;
+- a runner that executes one warm-up followed by five measured attempts; and
+- unit tests proving that warm-up and failed attempts remain distinguishable.
+
+The pinned MLX Swift LM adapter is connected to the Run button. The first run
+downloads and caches the fixed Qwen3 artifact; generation starts only after the
+snapshot has been materialized. The app does not generate simulated
+measurements and does not upload results.
+
+The current runner calculates TTFT, MLX-reported prefill throughput, decode
+throughput, token-interval percentiles, sampled process physical footprint, and
+thermal state. It preserves warm-up and measured token events in a local pilot
+bundle, shows median measured-run values, and exports the raw JSON through the
+system share sheet.
+
+The result view also shows first-to-last performance degradation and expandable
+details for every measured attempt. Warm-up evidence is displayed separately
+and remains excluded from summary aggregation. The on-screen thermal state is
+refreshed after a run and on pull-to-refresh instead of remaining at its
+launch-time value. A run can start only from the system-reported `nominal`
+state. If the state reaches `critical`, the current generation is retained and
+remaining generations are recorded as `notRun` instead of being started.
+
+Raw bundle schema `suite-b-pilot-bundle-0.3` records separate decisions for
+session validity, cold performance, sustained performance, thermal stability,
+and official leaderboard eligibility. A transition from `nominal` through
+`fair` to `serious` is valid thermal evidence; it is not filtered out for
+being slower. Official eligibility remains false while the protocol is a
+non-official pilot.
+
+The bundle is written after the complete session, not after each individual
+attempt. Per-attempt checkpoint recovery and Framework v1 repository export
+remain follow-up MVP steps, so this build must not yet be used to publish
+official results.
+
+Open `BenchmarkApp.xcodeproj` in Xcode, select an Apple Development team, and
+choose a physical iPhone. The first pilot environment is an iPhone 14 Pro Max
+running iOS 26.5 with Xcode 26.5 (17F42).
+
+### Measurement preflight
+
+Run the benchmark without LLDB attached: open **Product → Scheme → Edit
+Scheme → Run → Info**, turn off **Debug executable**, and then run the app on
+the physical iPhone. The app detects an attached debugger, disables the Run
+button, and explains how to detach it. This avoids an Xcode 26.5 debugger
+detach failure observed after MLX/Metal inference; launching and stopping the
+same app without inference does not reproduce that failure.
+
+Exported pilot bundles record whether a debugger was attached, the Debug or
+Release build configuration, and the app version and build. A Debug build is
+acceptable for this pilot when **Debug executable** is off; the build
+configuration remains evidence and should not be mixed silently in later
+comparisons.
+
+## Current MVP Design
+
+The first physical-iPhone harness pilot is specified in
+[MVP-BENCHMARK-SPEC.md](MVP-BENCHMARK-SPEC.md). Its machine-readable plan,
+fixed workload, and placeholder export fixture live under `benchmark-plans/`,
+`workloads/`, and `fixtures/` respectively.
+
+These files freeze an implementation target; they do not contain benchmark
+results and do not make the draft pilot eligible for a leaderboard.

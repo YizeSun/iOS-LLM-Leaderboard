@@ -1,0 +1,82 @@
+{
+  "plan_schema_version": "0.1",
+  "plan_id": "suite-b-pilot-001",
+  "plan_version": "0.1.0",
+  "status": "draft-pilot",
+  "suite": "Suite B: On-device Performance",
+  "framework_version": "1.0",
+  "official_result_eligible": false,
+  "purpose": "Validate the physical-iPhone benchmark harness and evidence export path.",
+  "model_profile": {
+    "display_name": "Qwen3 0.6B",
+    "base_model_id": "Qwen/Qwen3-0.6B",
+    "artifact_id": "mlx-community/Qwen3-0.6B-4bit",
+    "artifact_revision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+    "quantization": "4-bit",
+    "model_format": "MLX Safetensors",
+    "license": "Apache-2.0",
+    "artifact_content_hash": null
+  },
+  "runtime_profile": {
+    "runtime_name": "MLX Swift LM",
+    "package_url": "https://github.com/ml-explore/mlx-swift-lm",
+    "package_version": "3.31.4",
+    "package_revision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+    "mlx_swift_version": "0.31.6",
+    "mlx_swift_revision": "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+    "backend": "MLX/Metal",
+    "products": ["MLXLLM", "MLXLMCommon"],
+    "downloader_package": "swift-huggingface 0.9.0",
+    "tokenizer_package": "swift-transformers 1.3.0"
+  },
+  "workload": {
+    "workload_id": "suite-b-pilot-001-fixed-generation",
+    "workload_version": "1.0",
+    "prompt_path": "ios-app/workloads/suite-b-pilot-001-prompt.txt",
+    "prompt_sha256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
+    "prompt_token_band": "128-512",
+    "output_token_limit": 512,
+    "output_token_band": "256-512",
+    "actual_prompt_tokens_source": "runtime-tokenizer",
+    "actual_output_tokens_source": "runtime-tokenizer"
+  },
+  "generation": {
+    "sampling_enabled": false,
+    "temperature": 0.0,
+    "seed": null,
+    "stop_conditions": ["model-eos", "output-token-limit", "cancellation", "error"],
+    "context_policy": "new-context-for-each-generation",
+    "model_load_policy": "load-once-before-warmup",
+    "network_policy_during_measurement": "offline"
+  },
+  "procedure": {
+    "warmup_runs": 1,
+    "measured_runs": 5,
+    "aggregation": "median-of-successful-measured-runs",
+    "minimum_successful_runs_for_summary": 3,
+    "rest_interval_seconds": 0,
+    "retain_all_attempts": true,
+    "exclude_warmup_from_summary": true
+  },
+  "measurements": {
+    "primary_metric": "decode_tokens_per_second",
+    "secondary_metrics": [
+      "ttft_ms",
+      "prefill_tokens_per_second",
+      "peak_memory_mb",
+      "thermal_state",
+      "p50_token_interval_ms",
+      "p95_token_interval_ms",
+      "p99_token_interval_ms"
+    ],
+    "clock": "monotonic",
+    "memory_scope": "sampled-current-process-physical-footprint",
+    "thermal_source": "ProcessInfo.thermalState"
+  },
+  "limitations": [
+    "This pilot is not an official benchmark release or leaderboard result.",
+    "Its prefill measurement is not the long-context Suite B prefill task.",
+    "Thermal observations from five runs are not a thermal-stability claim.",
+    "Sampled process footprint is not an exact system-wide memory peak."
+  ]
+}

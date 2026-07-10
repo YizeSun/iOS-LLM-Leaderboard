@@ -1,0 +1,200 @@
+import SwiftUI
+
+struct RunBenchmarkView: View {
+    private let environment = DeviceEnvironment.current
+    @State private var viewModel = BenchmarkViewModel()
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Benchmark") {
+                    LabeledContent("Plan", value: "Suite B Pilot 001")
+                    LabeledContent("Model", value: "Qwen3 0.6B · MLX 4-bit")
+                    LabeledContent("Procedure", value: "1 warm-up + 5 measured")
+                }
+
+                Section("This iPhone") {
+                    LabeledContent("Device", value: environment.deviceDescription)
+                    LabeledContent("System", value: environment.systemDescription)
+                    LabeledContent("Thermal state", value: viewModel.currentThermalState)
+                }
+
+                if viewModel.debuggerAttached {
+                    Section("Preflight") {
+                        Label(
+                            "LLDB is attached. Benchmark measurements are disabled.",
+                            systemImage: "exclamationmark.triangle.fill"
+                        )
+                        .foregroundStyle(.orange)
+                        Text("Open Product → Scheme → Edit Scheme → Run → Info and turn off Debug executable, then run the app again.")
+                    }
+                }
+
+                if !viewModel.debuggerAttached
+                    && viewModel.currentThermalState != "nominal" {
+                    Section("Preflight") {
+                        Label(
+                            "Wait for the iPhone to cool to nominal before starting.",
+                            systemImage: "thermometer.high"
+                        )
+                        .foregroundStyle(.orange)
+                        Text("Pull down to refresh the system-reported thermal state.")
+                    }
+                }
+
+                Section {
+                    Button("Run Benchmark") {
+                        Task {
+                            await viewModel.run()
+                        }
+                    }
+                    .disabled(!viewModel.canRun)
+                } footer: {
+                    Text(viewModel.statusText)
+                }
+
+                if let summary = viewModel.result?.summary {
+                    Section("Latest Result · Median") {
+                        LabeledContent(
+                            "TTFT",
+                            value: viewModel.metricText(
+                                summary.medianTTFTMilliseconds,
+                                unit: "ms"
+                            )
+                        )
+                        LabeledContent(
+                            "Prefill",
+                            value: viewModel.metricText(
+                                summary.medianPrefillTokensPerSecond,
+                                unit: "tok/s"
+                            )
+                        )
+                        LabeledContent(
+                            "Decode",
+                            value: viewModel.metricText(
+                                summary.medianDecodeTokensPerSecond,
+                                unit: "tok/s"
+                            )
+                        )
+                        LabeledContent(
+                            "Process memory peak",
+                            value: viewModel.metricText(
+                                summary.medianPeakMemoryMegabytes,
+                                unit: "MiB"
+                            )
+                        )
+                        LabeledContent("Final thermal", value: summary.finalThermalState)
+                    }
+
+                    Section("Performance Degradation · First → Last") {
+                        LabeledContent(
+                            "Decode",
+                            value: viewModel.percentText(
+                                summary.degradation.decodePercentChange
+                            )
+                        )
+                        LabeledContent(
+                            "TTFT",
+                            value: viewModel.percentText(
+                                summary.degradation.ttftPercentChange
+                            )
+                        )
+                        LabeledContent(
+                            "Prefill",
+                            value: viewModel.percentText(
+                                summary.degradation.prefillPercentChange
+                            )
+                        )
+                    }
+                }
+
+                if !viewModel.measuredAttemptRecords.isEmpty {
+                    Section("Measured Runs") {
+                        ForEach(
+                            Array(viewModel.measuredAttemptRecords.enumerated()),
+                            id: \.offset
+                        ) { offset, attempt in
+                            DisclosureGroup("Run \(offset + 1) · \(attempt.outcome)") {
+                                attemptDetails(attempt)
+                            }
+                        }
+                    }
+                }
+
+                if let warmup = viewModel.warmupAttemptRecord {
+                    Section("Evidence") {
+                        DisclosureGroup("Warm-up · excluded from summary") {
+                            attemptDetails(warmup)
+                        }
+                    }
+                }
+
+                if let resultFileURL = viewModel.resultFileURL {
+                    Section {
+                        ShareLink(item: resultFileURL) {
+                            Label("Export Raw JSON", systemImage: "square.and.arrow.up")
+                        }
+                    } footer: {
+                        Text("Non-official pilot evidence. Review before sharing.")
+                    }
+                }
+            }
+            .navigationTitle("Run Benchmark")
+            .refreshable {
+                viewModel.refreshThermalState()
+            }
+            .task {
+                viewModel.refreshThermalState()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func attemptDetails(_ attempt: PilotResultBundle.Attempt) -> some View {
+        LabeledContent("TTFT", value: viewModel.metricText(
+            attempt.metrics.ttftMilliseconds,
+            unit: "ms"
+        ))
+        LabeledContent("Prefill", value: viewModel.metricText(
+            attempt.metrics.prefillTokensPerSecond,
+            unit: "tok/s"
+        ))
+        LabeledContent("Decode", value: viewModel.metricText(
+            attempt.metrics.decodeTokensPerSecond,
+            unit: "tok/s"
+        ))
+        LabeledContent("Memory peak", value: viewModel.metricText(
+            attempt.metrics.peakMemoryMegabytes,
+            unit: "MiB"
+        ))
+        LabeledContent("Token interval p50", value: viewModel.metricText(
+            attempt.metrics.p50TokenIntervalMilliseconds,
+            unit: "ms"
+        ))
+        LabeledContent("Token interval p95", value: viewModel.metricText(
+            attempt.metrics.p95TokenIntervalMilliseconds,
+            unit: "ms"
+        ))
+        LabeledContent("Token interval p99", value: viewModel.metricText(
+            attempt.metrics.p99TokenIntervalMilliseconds,
+            unit: "ms"
+        ))
+        LabeledContent(
+            "Tokens",
+            value: "\(attempt.promptTokenCount ?? 0) → \(attempt.outputTokenCount ?? 0)"
+        )
+        LabeledContent(
+            "Thermal",
+            value: "\(attempt.thermalStateBefore) → \(attempt.thermalStateAfter)"
+        )
+        LabeledContent("Stop reason", value: attempt.stopReason ?? "Unavailable")
+        if let error = attempt.errorMessage {
+            Text(error)
+                .foregroundStyle(.red)
+        }
+    }
+}
+
+#Preview {
+    RunBenchmarkView()
+}
