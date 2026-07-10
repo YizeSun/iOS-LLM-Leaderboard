@@ -14,6 +14,17 @@ final class BenchmarkViewModel {
         let stopReason: String?
         let measuredMetrics: [AttemptMetrics]
     }
+
+    struct InputSweepPointSummary: Equatable {
+        let targetTokenCount: Int
+        let actualTokenCount: Int
+        let promptSHA256: String
+        let successfulMeasuredRuns: Int
+        let medianPipelineTTFTMilliseconds: Double?
+        let medianPrefillTokensPerSecond: Double?
+        let medianPeakMemoryMegabytes: Double?
+        let finalThermalState: String
+    }
     enum PreparationPhase: Equatable {
         case notPrepared
         case preparing
@@ -44,6 +55,9 @@ final class BenchmarkViewModel {
     private(set) var inputLengthCalibrations: [InputLengthFixtureCalibration] = []
     private(set) var inputLengthCalibrationError: String?
     private(set) var isCalibratingInputLengths = false
+    private(set) var inputSweepResults: [InputSweepPointSummary] = []
+    private(set) var inputSweepError: String?
+    private(set) var isRunningInputSweep = false
 
     let loadedPlan: LoadedPilotPlan?
 
@@ -80,6 +94,11 @@ final class BenchmarkViewModel {
 
     var canCalibrateInputLengths: Bool {
         preparationPhase == .ready && phase != .running && !isCalibratingInputLengths
+    }
+
+    var canRunInputSweep: Bool {
+        canRun && inputLengthCalibrations.map(\.targetTokenCount) == [32, 128, 512, 2048]
+            && !isRunningInputSweep
     }
 
     var admissionReasonCodes: [String] {
@@ -271,6 +290,68 @@ final class BenchmarkViewModel {
             inputLengthCalibrationError = String(describing: error)
         }
         isCalibratingInputLengths = false
+    }
+
+    func runInputSweep() async {
+        guard canRunInputSweep else { return }
+        isRunningInputSweep = true
+        inputSweepError = nil
+        inputSweepResults = []
+
+        for calibration in inputLengthCalibrations {
+            guard SystemMeasurements.thermalState == "nominal" else {
+                inputSweepError = "Target \(calibration.targetTokenCount) was not started because thermal state was not nominal. Cool the iPhone, then start a new sweep."
+                isRunningInputSweep = false
+                return
+            }
+            let prompt = InputLengthFixtureGenerator.prompt(
+                paddingRepetitions: calibration.paddingRepetitions
+            )
+            let session = await BenchmarkRunner(
+                runtime: runtime,
+                procedure: BenchmarkProcedure(
+                    warmupRuns: 1,
+                    measuredRuns: 5,
+                    outputTokenLimit: 32
+                )
+            ).run(prompt: prompt)
+            let completed = session.measuredAttempts.compactMap { attempt -> (RuntimeGenerationResult, AttemptMetrics)? in
+                guard case .completed(let generation) = attempt.outcome else { return nil }
+                return (generation, AttemptMetrics.calculate(for: attempt))
+            }
+            guard completed.count >= 3,
+                  completed.allSatisfy({ $0.0.promptTokenCount == calibration.targetTokenCount }) else {
+                inputSweepError = "Target \(calibration.targetTokenCount) failed exact-token or successful-run admission."
+                isRunningInputSweep = false
+                return
+            }
+            inputSweepResults.append(
+                InputSweepPointSummary(
+                    targetTokenCount: calibration.targetTokenCount,
+                    actualTokenCount: completed[0].0.promptTokenCount,
+                    promptSHA256: calibration.promptSHA256,
+                    successfulMeasuredRuns: completed.count,
+                    medianPipelineTTFTMilliseconds: AttemptMetrics.median(
+                        completed.map { $0.1.ttftMilliseconds }
+                    ),
+                    medianPrefillTokensPerSecond: AttemptMetrics.median(
+                        completed.map { $0.1.prefillTokensPerSecond }
+                    ),
+                    medianPeakMemoryMegabytes: AttemptMetrics.median(
+                        completed.map { $0.1.peakMemoryMegabytes }
+                    ),
+                    finalThermalState: session.attempts.last?.thermalStateAfter
+                        ?? SystemMeasurements.thermalState
+                )
+            )
+            if SystemMeasurements.thermalState == "critical" {
+                inputSweepError = "Thermal state became critical; remaining points were not run."
+                isRunningInputSweep = false
+                return
+            }
+        }
+        currentThermalState = SystemMeasurements.thermalState
+        isRunningInputSweep = false
     }
 
     func metricText(_ value: Double?, unit: String) -> String {

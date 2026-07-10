@@ -28,7 +28,19 @@
     "chat_template_context": { "enable_thinking": false },
     "search": "monotonic-binary-search-over-padding-repetitions",
     "acceptance": "prepared LMInput.text.tokens.size must exactly equal every target",
-    "failure_behavior": "block measurement; do not use nearest length"
+    "failure_behavior": "block measurement; do not use nearest length",
+    "reference_profile": {
+      "artifact_id": "mlx-community/Qwen3-0.6B-4bit",
+      "artifact_revision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+      "validated_device": "iPhone15,3",
+      "validated_on": "2026-07-11",
+      "points": [
+        { "target_tokens": 32, "padding_repetitions": 8, "prompt_sha256": "28959bfb753447f7094cca07ad6d09dd4dabee48748d9394830dd10afc12740f" },
+        { "target_tokens": 128, "padding_repetitions": 104, "prompt_sha256": "3d31c669aeab75ff7f93bd81ad5efa78a834dd72d70ffecb3fd9eb6653e07316" },
+        { "target_tokens": 512, "padding_repetitions": 488, "prompt_sha256": "a04dfc559c2b7e1eccc223a6771c3d75ba8718c500cf060bf2a0298689b17d1e" },
+        { "target_tokens": 2048, "padding_repetitions": 2024, "prompt_sha256": "9d93eb5d11a110ea9f5c71b9f866fe2fb87b726a6e92d9552dfc87f091f7e6a1" }
+      ]
+    }
   },
   "ordering_policy": {
     "point_order": [32, 128, 512, 2048],
@@ -41,8 +53,7 @@
     "process_physical_footprint_mib@1"
   ],
   "blocking_decisions": [
-    "verify exact calibration on the pinned physical-iPhone reference profile",
-    "freeze the four resulting fixture hashes",
-    "freeze cooling and measured-run ordering after calibration evidence"
+    "validate the first complete sweep on the pinned physical-iPhone reference profile",
+    "freeze the result bundle and recalculation validator after pilot evidence"
   ]
 }

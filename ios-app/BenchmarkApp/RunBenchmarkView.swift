@@ -133,10 +133,38 @@ struct RunBenchmarkView: View {
                     if let error = viewModel.inputLengthCalibrationError {
                         Text(error).foregroundStyle(.red)
                     }
+                    Button("Run Input Length Sweep") {
+                        Task { await viewModel.runInputSweep() }
+                    }
+                    .disabled(!viewModel.canRunInputSweep)
+                    if viewModel.isRunningInputSweep {
+                        ProgressView("Running 1 warm-up + 5 measured attempts per length…")
+                    }
+                    if let error = viewModel.inputSweepError {
+                        Text(error).foregroundStyle(.red)
+                    }
                 } header: {
                     Text("B-PIPE-002 Fixture Calibration")
                 } footer: {
                     Text("Preparation only. Uses the pinned tokenizer and chat template; no generation or performance result is recorded.")
+                }
+
+                if !viewModel.inputSweepResults.isEmpty {
+                    Section("B-PIPE-002 Sweep Results") {
+                        ForEach(viewModel.inputSweepResults, id: \.targetTokenCount) { point in
+                            DisclosureGroup("\(point.targetTokenCount) input tokens") {
+                                LabeledContent("Actual input", value: "\(point.actualTokenCount) tokens")
+                                LabeledContent("Successful runs", value: "\(point.successfulMeasuredRuns) / 5")
+                                LabeledContent("Pipeline TTFT", value: viewModel.metricText(point.medianPipelineTTFTMilliseconds, unit: "ms"))
+                                LabeledContent("Prefill", value: viewModel.metricText(point.medianPrefillTokensPerSecond, unit: "tok/s"))
+                                LabeledContent("Memory peak", value: viewModel.metricText(point.medianPeakMemoryMegabytes, unit: "MiB"))
+                                LabeledContent("Final thermal", value: point.finalThermalState)
+                                Text("Fixture SHA-256: \(point.promptSHA256)")
+                                    .font(.caption.monospaced())
+                                    .textSelection(.enabled)
+                            }
+                        }
+                    }
                 }
 
                 if let summary = viewModel.result?.summary {
