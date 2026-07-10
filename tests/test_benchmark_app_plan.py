@@ -107,7 +107,7 @@ class ShortInteractionPlanTests(unittest.TestCase):
 
     def test_candidate_identity_and_prompt_hash_are_frozen(self) -> None:
         self.assertEqual(self.plan["plan_id"], "b-ux-001-validation")
-        self.assertEqual(self.plan["status"], "validation-candidate")
+        self.assertEqual(self.plan["status"], "pilot-validated")
         workload = self.plan["workload"]
         prompt = ROOT / workload["prompt_path"]
         self.assertEqual(

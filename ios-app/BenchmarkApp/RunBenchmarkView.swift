@@ -251,7 +251,7 @@ struct RunBenchmarkView: View {
                             Label("Export Raw JSON", systemImage: "square.and.arrow.up")
                         }
                     } footer: {
-                        Text("Non-official pilot evidence. Review before sharing.")
+                        Text("Non-official workload evidence. Review before sharing.")
                     }
                 }
             }

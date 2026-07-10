@@ -11,6 +11,9 @@ transition.
   dependency identity, and power evidence.
 - `suite-b-pilot-bundle-0.5.schema.json` adds revision-specific model cache,
   download, load, restart, and measurement-eligibility evidence.
+- `suite-b-ux-bundle-0.1.schema.json` defines the non-official B-UX-001 pilot
+  export with Pipeline TTFT, User-visible TTFT, request completion, visible
+  output, and raw token-event evidence.
 
 The pilot schema is transitional. An official Suite B v2 result schema will be
 frozen only after timing boundaries, generation configuration, environment

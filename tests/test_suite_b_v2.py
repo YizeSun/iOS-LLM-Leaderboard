@@ -221,7 +221,7 @@ class WorkloadManifestTests(unittest.TestCase):
         workload = json.loads(workload_path.read_text())
         fixture_path = ROOT / workload["input"]["fixture_path"]
 
-        self.assertEqual(workload["status"], "validation-candidate")
+        self.assertEqual(workload["status"], "pilot-validated")
         self.assertEqual(workload["output"]["maximum_tokens"], 128)
         self.assertFalse(workload["generation"]["sampling"])
         self.assertEqual(workload["generation"]["temperature"], 0)

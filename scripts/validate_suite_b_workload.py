@@ -16,6 +16,7 @@ ID_PATTERN = re.compile(r"^b-(ux|pipe)-[0-9]{3}-[a-z0-9-]+$")
 STATUSES = {
     "design-draft",
     "validation-candidate",
+    "pilot-validated",
     "pilot-mapped",
     "active",
     "deprecated",
