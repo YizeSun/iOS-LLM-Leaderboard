@@ -29,6 +29,8 @@ The product architecture is defined in:
 - docs/product-architecture.md
 - docs/community-contribution-model.md
 - docs/framework-v2-transition.md
+- methodology/benchmark-framework-v2.md
+- benchmarks/suite-b-on-device-performance/protocol-v2.md
 
 ---
 
@@ -118,6 +120,16 @@ Agents must not invent benchmark results, rankings, or performance numbers.
 Framework v2 is currently a design target. Do not present Framework v2 fields,
 tasks, trust levels, or releases as active until their schemas, migration
 rules, and validators are implemented.
+
+For new Suite B design:
+
+- use versioned workloads and measurement modes;
+- collect TTFT, prefill, decode, memory, and thermal as metrics from compatible
+  attempts rather than creating one task per metric;
+- label user-experience workloads and pipeline profiles explicitly;
+- never relabel Pipeline TTFT as user-visible TTFT;
+- preserve every failed, cancelled, OOM, and not-run attempt; and
+- keep pilot results ineligible for official ranking.
 
 ---
 

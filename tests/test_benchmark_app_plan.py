@@ -59,6 +59,34 @@ class BenchmarkAppPlanTests(unittest.TestCase):
         )
         self.assertIn("thermal_state", measurements["secondary_metrics"])
 
+    def test_pilot_is_explicitly_mapped_to_pipeline_profile(self) -> None:
+        workload = self.plan["workload"]
+        self.assertEqual(workload["category"], "pipeline")
+        self.assertEqual(
+            workload["v2_profile_mapping"],
+            "b-pipe-001-sustained-generation@0.1.0-draft",
+        )
+
+    def test_timing_boundary_is_pipeline_not_user_visible(self) -> None:
+        mode = self.plan["measurement_mode"]
+        self.assertEqual(
+            mode["pipeline_ttft_start"],
+            "after-chat-template-and-tokenization-immediately-before-generateTokensTask",
+        )
+        self.assertFalse(mode["user_visible_ttft_available"])
+        self.assertEqual(
+            mode["decode_formula"],
+            "(raw_token_count-1)/(last_raw_token_time-first_raw_token_time)",
+        )
+
+    def test_generation_and_environment_requirements_are_explicit(self) -> None:
+        generation = self.plan["generation"]
+        environment = self.plan["environment_requirements"]
+        self.assertEqual(generation["temperature"], 0.0)
+        self.assertEqual(generation["kv_cache_policy"], "new-cache-for-each-generation")
+        self.assertEqual(environment["initial_thermal_state"], "nominal")
+        self.assertEqual(environment["low_power_mode"], "off")
+
     def test_framework_v1_fixture_is_a_valid_empty_placeholder(self) -> None:
         fixture = load_json(FIXTURE_PATH)
         self.assertEqual(validate(fixture), [])

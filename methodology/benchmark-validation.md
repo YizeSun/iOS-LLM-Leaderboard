@@ -1,11 +1,19 @@
 # Benchmark Validation
 
+Framework v1 and Suite B pilot validation are intentionally separate during
+the v2 transition.
+
 Benchmark validation defines the checks that should be applied to benchmark tasks and result submissions.
 
 The repository includes an initial Framework v1 result validator in
 scripts/validate_result.py. This document remains the source of validation
 requirements; the script does not yet implement the future Framework v2 trust
 and result-bundle model.
+
+Non-official Benchmark App bundles can be checked and their supported metrics
+recalculated with `scripts/validate_suite_b_bundle.py`.
+Draft Suite B workload manifests can be checked, including local fixture
+hashes, with `scripts/validate_suite_b_workload.py`.
 
 ## Task Validation
 
@@ -54,6 +62,11 @@ The initial validator checks:
 - contributor license confirmation.
 
 ## Future Validation
+
+Draft machine-readable schemas now live in `schemas/`. Schema acceptance alone
+is not sufficient for performance evidence: the Suite B pilot validator also
+checks raw token ordering, TTFT and decode recalculation, attempt retention,
+summary medians, degradation calculations, and pilot ineligibility.
 
 Future validation may check:
 

@@ -1,10 +1,10 @@
 {
-  "plan_schema_version": "0.1",
+  "plan_schema_version": "0.2",
   "plan_id": "suite-b-pilot-001",
-  "plan_version": "0.1.0",
+  "plan_version": "0.2.0",
   "status": "draft-pilot",
   "suite": "Suite B: On-device Performance",
-  "framework_version": "1.0",
+  "framework_version": "v2-design-draft",
   "official_result_eligible": false,
   "purpose": "Validate the physical-iPhone benchmark harness and evidence export path.",
   "model_profile": {
@@ -32,6 +32,8 @@
   "workload": {
     "workload_id": "suite-b-pilot-001-fixed-generation",
     "workload_version": "1.0",
+    "v2_profile_mapping": "b-pipe-001-sustained-generation@0.1.0-draft",
+    "category": "pipeline",
     "prompt_path": "ios-app/workloads/suite-b-pilot-001-prompt.txt",
     "prompt_sha256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
     "prompt_token_band": "128-512",
@@ -43,11 +45,30 @@
   "generation": {
     "sampling_enabled": false,
     "temperature": 0.0,
+    "top_p": null,
+    "top_k": null,
     "seed": null,
+    "repetition_penalty": null,
+    "thinking_mode": "model-default",
+    "chat_template_identity": "artifact-tokenizer-config",
+    "include_stop_token_in_raw_events": false,
     "stop_conditions": ["model-eos", "output-token-limit", "cancellation", "error"],
     "context_policy": "new-context-for-each-generation",
     "model_load_policy": "load-once-before-warmup",
+    "kv_cache_policy": "new-cache-for-each-generation",
     "network_policy_during_measurement": "offline"
+  },
+  "measurement_mode": {
+    "measurement_mode_id": "b-mode-sustained-no-rest-v1",
+    "timing_boundary_version": "mlx-pilot-pipeline-boundaries-1",
+    "pipeline_ttft_start": "after-chat-template-and-tokenization-immediately-before-generateTokensTask",
+    "pipeline_ttft_end": "first-raw-token-received-by-adapter",
+    "user_visible_ttft_available": false,
+    "prefill_source": "mlx-generate-completion-info-prompt-time",
+    "decode_formula": "(raw_token_count-1)/(last_raw_token_time-first_raw_token_time)",
+    "memory_metric": "TASK_VM_INFO.phys_footprint",
+    "memory_sampling_interval_milliseconds": 50,
+    "thermal_source": "ProcessInfo.thermalState"
   },
   "procedure": {
     "warmup_runs": 1,
@@ -73,10 +94,21 @@
     "memory_scope": "sampled-current-process-physical-footprint",
     "thermal_source": "ProcessInfo.thermalState"
   },
+  "environment_requirements": {
+    "physical_device_required": true,
+    "release_build_required": true,
+    "debugger_detached_required": true,
+    "initial_thermal_state": "nominal",
+    "low_power_mode": "off",
+    "record_battery_level": true,
+    "record_charging_state": true
+  },
   "limitations": [
     "This pilot is not an official benchmark release or leaderboard result.",
     "Its prefill measurement is not the long-context Suite B prefill task.",
     "Thermal observations from five runs are not a thermal-stability claim.",
-    "Sampled process footprint is not an exact system-wide memory peak."
+    "Sampled process footprint is not an exact system-wide memory peak.",
+    "The current result bundle does not yet report user-visible TTFT.",
+    "Battery and Low Power Mode evidence is specified but not yet emitted by the pilot app."
   ]
 }

@@ -40,4 +40,8 @@ enum BuildMetadata {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion")
             as? String ?? "unknown"
     }
+
+    static var sourceCommit: String? {
+        Bundle.main.object(forInfoDictionaryKey: "GIT_COMMIT_SHA") as? String
+    }
 }

@@ -18,12 +18,16 @@ The pilot validates one physical-iPhone path:
 3. run five measured generations;
 4. retain every attempt, including failures and cancellation;
 5. save raw event and environment evidence locally; and
-6. export a reviewable Framework v1 JSON result.
+6. export a reviewable non-official pilot result bundle.
 
 The pilot is decode-oriented. Decode throughput is its primary metric. TTFT,
 prefill throughput, sampled process memory, thermal state, and token intervals
 are secondary observations from the same run. It does not combine Suite B
 tasks into a score.
+
+Under the Suite B v2 design, this pilot maps to the draft
+`b-pipe-001-sustained-generation` pipeline profile. It is not a
+short-interaction user-experience workload.
 
 ## Reproducibility Identity
 
@@ -68,8 +72,11 @@ repository-owned fixed prompt.
 
 ## Metric Boundaries
 
-- TTFT starts at `prompt_submitted` and ends at the first
-  `token_generated` event.
+- Pipeline TTFT starts after MLX has applied its processor, chat template, and
+  tokenizer and immediately before `generateTokensTask`; it ends when the
+  adapter receives the first raw token. Tokenization is therefore excluded.
+- User-visible TTFT is unavailable in this pilot and must remain `null` rather
+  than being inferred from the first raw token.
 - Prefill duration uses explicit runtime prefill boundaries when available.
   If MLX Swift LM does not expose a reliable boundary, the value is `null` and
   the limitation is recorded. TTFT must not be relabeled as prefill time.
@@ -111,27 +118,37 @@ validity, cold performance, sustained performance, and thermal stability.
 These decisions do not override the pilot's fixed ineligibility for the
 official leaderboard.
 
+The current app also requires a Release build, no attached debugger, and Low
+Power Mode off. It records battery level and charging state as environment
+evidence; charging is recorded rather than automatically treated as a pass or
+failure during this pilot.
+
 ## Raw Run Record
 
 Each raw attempt record contains:
 
 - run index and `warmup` or `measured` role;
-- start/end timestamps and monotonic duration;
 - actual prompt and output token counts;
-- ordered timing events;
+- ordered raw token IDs, indices, and attempt-relative monotonic timestamps;
 - derived metrics, with unavailable values represented by `null`;
-- memory samples and sampling method;
+- peak sampled process physical footprint and the 50 ms sampling interval;
 - thermal state before and after the attempt;
 - stop reason;
 - success, failure, or cancellation status; and
-- structured error stage, domain, code, and non-sensitive message.
+- a non-sensitive error message when an attempt fails.
+
+Full attempt start/end events, raw memory samples, timestamped thermal-change
+events, structured error stages, and checkpoint recovery remain future work.
+The exported `appSourceCommit` also remains `null` until the Xcode build injects
+`GIT_COMMIT_SHA`; the pilot must not guess it.
 
 Errors are data. The app must not convert a failed attempt into a zero-valued
 performance metric.
 
-## Framework v1 Export
+## Framework v1 Repository Export
 
-The exported repository result uses
+The App currently exports its pilot bundle, not a repository-ready Framework v1
+result. A future repository export may use
 `methodology/benchmark-result-specification.md`. Until an official pilot task
 is activated, placeholder fixtures use `provenance.source` set to
 `demo-placeholder` and contain no numeric measurements.

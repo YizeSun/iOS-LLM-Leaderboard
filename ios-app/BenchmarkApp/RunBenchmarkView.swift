@@ -9,6 +9,7 @@ struct RunBenchmarkView: View {
             Form {
                 Section("Benchmark") {
                     LabeledContent("Plan", value: "Suite B Pilot 001")
+                    LabeledContent("Profile", value: "Pipeline · Sustained generation")
                     LabeledContent("Model", value: "Qwen3 0.6B · MLX 4-bit")
                     LabeledContent("Procedure", value: "1 warm-up + 5 measured")
                 }
@@ -17,6 +18,12 @@ struct RunBenchmarkView: View {
                     LabeledContent("Device", value: environment.deviceDescription)
                     LabeledContent("System", value: environment.systemDescription)
                     LabeledContent("Thermal state", value: viewModel.currentThermalState)
+                    LabeledContent("Build", value: viewModel.buildConfiguration)
+                    LabeledContent(
+                        "Low Power Mode",
+                        value: viewModel.lowPowerModeEnabled ? "On" : "Off"
+                    )
+                    LabeledContent("Battery", value: batteryDescription)
                 }
 
                 if viewModel.debuggerAttached {
@@ -31,6 +38,31 @@ struct RunBenchmarkView: View {
                 }
 
                 if !viewModel.debuggerAttached
+                    && viewModel.buildConfiguration != "Release" {
+                    Section("Preflight") {
+                        Label(
+                            "Use a Release build before measuring.",
+                            systemImage: "hammer.fill"
+                        )
+                        .foregroundStyle(.orange)
+                    }
+                }
+
+                if !viewModel.debuggerAttached
+                    && viewModel.buildConfiguration == "Release"
+                    && viewModel.lowPowerModeEnabled {
+                    Section("Preflight") {
+                        Label(
+                            "Turn off Low Power Mode before measuring.",
+                            systemImage: "battery.25percent"
+                        )
+                        .foregroundStyle(.orange)
+                    }
+                }
+
+                if !viewModel.debuggerAttached
+                    && viewModel.buildConfiguration == "Release"
+                    && !viewModel.lowPowerModeEnabled
                     && viewModel.currentThermalState != "nominal" {
                     Section("Preflight") {
                         Label(
@@ -56,7 +88,7 @@ struct RunBenchmarkView: View {
                 if let summary = viewModel.result?.summary {
                     Section("Latest Result · Median") {
                         LabeledContent(
-                            "TTFT",
+                            "Pipeline TTFT",
                             value: viewModel.metricText(
                                 summary.medianTTFTMilliseconds,
                                 unit: "ms"
@@ -94,7 +126,7 @@ struct RunBenchmarkView: View {
                             )
                         )
                         LabeledContent(
-                            "TTFT",
+                            "Pipeline TTFT",
                             value: viewModel.percentText(
                                 summary.degradation.ttftPercentChange
                             )
@@ -149,9 +181,15 @@ struct RunBenchmarkView: View {
         }
     }
 
+    private var batteryDescription: String {
+        let state = environment.batteryState
+        guard let level = environment.batteryLevelPercent else { return state }
+        return "\(level.formatted(.number.precision(.fractionLength(0))))% · \(state)"
+    }
+
     @ViewBuilder
     private func attemptDetails(_ attempt: PilotResultBundle.Attempt) -> some View {
-        LabeledContent("TTFT", value: viewModel.metricText(
+        LabeledContent("Pipeline TTFT", value: viewModel.metricText(
             attempt.metrics.ttftMilliseconds,
             unit: "ms"
         ))

@@ -97,7 +97,10 @@ launch-time value. A run can start only from the system-reported `nominal`
 state. If the state reaches `critical`, the current generation is retained and
 remaining generations are recorded as `notRun` instead of being started.
 
-Raw bundle schema `suite-b-pilot-bundle-0.3` records separate decisions for
+Raw bundle schema `suite-b-pilot-bundle-0.4` records the draft v2 workload
+mapping, Pipeline TTFT boundary, generation and cache configuration, underlying
+MLX dependency identity, battery state, and Low Power Mode. It also records
+separate decisions for
 session validity, cold performance, sustained performance, thermal stability,
 and official leaderboard eligibility. A transition from `nominal` through
 `fair` to `serious` is valid thermal evidence; it is not filtered out for
@@ -123,10 +126,14 @@ detach failure observed after MLX/Metal inference; launching and stopping the
 same app without inference does not reproduce that failure.
 
 Exported pilot bundles record whether a debugger was attached, the Debug or
-Release build configuration, and the app version and build. A Debug build is
-acceptable for this pilot when **Debug executable** is off; the build
-configuration remains evidence and should not be mixed silently in later
-comparisons.
+Release build configuration, Low Power Mode, battery level and charging state,
+and the app version and build. The current runner requires a Release build,
+detached debugger, Low Power Mode off, and a `nominal` thermal state before it
+enables measurement.
+
+The current TTFT is explicitly Pipeline TTFT. MLX chat-template application and
+tokenization complete before the monotonic generation clock starts. The app
+does not yet report user-visible TTFT.
 
 ## Current MVP Design
 
@@ -137,3 +144,8 @@ fixed workload, and placeholder export fixture live under `benchmark-plans/`,
 
 These files freeze an implementation target; they do not contain benchmark
 results and do not make the draft pilot eligible for a leaderboard.
+
+The pilot maps to the draft
+`b-pipe-001-sustained-generation` profile in the
+[Suite B Protocol v2](../benchmarks/suite-b-on-device-performance/protocol-v2.md).
+It must not be presented as the short-interaction user-experience workload.
