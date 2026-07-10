@@ -33,4 +33,28 @@ actor ResultStore {
         try encoder.encode(result).write(to: url, options: .atomic)
         return url
     }
+
+    func save(_ result: UXResultBundle) throws -> URL {
+        let fileManager = FileManager.default
+        let directory = try fileManager.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        ).appending(path: "BenchmarkResults", directoryHint: .isDirectory)
+        try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        let timestamp = formatter.string(from: result.createdAt)
+            .replacingOccurrences(of: ":", with: "-")
+        let deviceID = result.device.machineIdentifier.lowercased()
+            .replacingOccurrences(of: ",", with: "-")
+        let name = "\(timestamp)_b-ux-001_qwen3-0.6b-4bit_\(deviceID)_\(result.resultID.prefix(8)).json"
+        let url = directory.appending(path: name, directoryHint: .notDirectory)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        try encoder.encode(result).write(to: url, options: .atomic)
+        return url
+    }
 }

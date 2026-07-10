@@ -113,7 +113,7 @@ final class ModelPreparationTests: XCTestCase {
 
     func testBundledPlanAndPromptLoadTogether() throws {
         let loaded = try PilotPlanLoader.load()
-        XCTAssertEqual(loaded.plan.planVersion, "0.2.0-candidate")
+        XCTAssertEqual(loaded.plan.planVersion, "0.2.0-pilot")
         XCTAssertEqual(loaded.plan.workload.workloadId, "b-ux-001-short-interaction")
         XCTAssertFalse(loaded.prompt.isEmpty)
 

@@ -1,8 +1,8 @@
 {
   "plan_schema_version": "0.3",
   "plan_id": "b-ux-001-validation",
-  "plan_version": "0.2.0-candidate",
-  "status": "validation-candidate",
+  "plan_version": "0.2.0-pilot",
+  "status": "pilot-validated",
   "model_profile": {
     "display_name": "Qwen3 0.6B",
     "base_model_id": "Qwen/Qwen3-0.6B",
@@ -24,8 +24,8 @@
   },
   "workload": {
     "workload_id": "b-ux-001-short-interaction",
-    "workload_version": "0.2.0-candidate",
-    "v2_profile_mapping": "b-ux-001-short-interaction@0.2.0-candidate",
+    "workload_version": "0.2.0-pilot",
+    "v2_profile_mapping": "b-ux-001-short-interaction@0.2.0-pilot",
     "category": "user-experience",
     "prompt_path": "ios-app/workloads/b-ux-001-short-interaction-prompt.txt",
     "prompt_sha256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",

@@ -1,8 +1,8 @@
 {
   "schema_version": "suite-b-workload-0.1",
   "workload_id": "b-ux-001-short-interaction",
-  "workload_version": "0.2.0-candidate",
-  "status": "validation-candidate",
+  "workload_version": "0.2.0-pilot",
+  "status": "pilot-validated",
   "category": "user-experience",
   "title": "Short Interaction",
   "scenario": "A user makes a short in-app request and expects a concise visible response.",
@@ -47,11 +47,17 @@
     "pipeline_ttft_ms@1",
     "request_completion_ms@1"
   ],
+  "pilot_validation": {
+    "validated_on": "2026-07-11",
+    "reference_device": "iPhone15,3",
+    "reference_model_input_tokens": 70,
+    "thinking_disabled_verified": true,
+    "special_token_leakage_observed": false,
+    "natural_stop_verified": true,
+    "result_location": "private-local-evidence-not-committed"
+  },
   "activation_checks": [
-    "verify fixture SHA-256",
-    "verify post-chat-template model-input token count on the pinned reference model profile",
-    "verify enable_thinking=false is applied by the pinned chat template",
-    "verify cumulative decoding identifies the first renderable content without exposing special tokens",
-    "record the natural-stop behavior across the reference validation runs"
+    "freeze the UX result bundle schema and validator",
+    "collect an independently reviewable local pilot bundle"
   ]
 }

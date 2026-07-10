@@ -167,7 +167,7 @@ enum PilotPlanLoader {
         }
         let supported = [
             ("suite-b-pilot-001", "0.3.0", "suite-b-pilot-001-fixed-generation"),
-            ("b-ux-001-validation", "0.2.0-candidate", "b-ux-001-short-interaction"),
+            ("b-ux-001-validation", "0.2.0-pilot", "b-ux-001-short-interaction"),
         ]
         guard supported.contains(where: {
             $0.0 == plan.planId && $0.1 == plan.planVersion

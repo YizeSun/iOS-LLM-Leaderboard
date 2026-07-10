@@ -210,7 +210,13 @@ final class BenchmarkViewModel {
                     measuredMetrics: completed.map(\.1)
                 )
                 result = nil
-                resultFileURL = nil
+                let uxBundle = UXResultBundle.make(
+                    session: session,
+                    environment: sessionEnvironment,
+                    plan: loadedPlan.plan,
+                    modelPreparation: modelPreparation
+                )
+                resultFileURL = try await resultStore.save(uxBundle)
                 currentThermalState = session.measuredAttempts.last?.thermalStateAfter
                     ?? SystemMeasurements.thermalState
                 phase = .completed(
