@@ -114,7 +114,7 @@ enum PilotPlanLoader {
     }
 
     static func load(
-        resource: String = "b-ux-001-short-interaction",
+        resource: String = "suite-b-pilot-001",
         bundle: Bundle = .main
     ) throws -> LoadedPilotPlan {
         guard let planURL = bundle.url(
@@ -166,7 +166,7 @@ enum PilotPlanLoader {
             )
         }
         let supported = [
-            ("suite-b-pilot-001", "0.3.0", "suite-b-pilot-001-fixed-generation"),
+            ("b-pipe-001-validation", "0.2.0-pilot", "b-pipe-001-sustained-generation"),
             ("b-ux-001-validation", "0.2.0-pilot", "b-ux-001-short-interaction"),
         ]
         guard supported.contains(where: {

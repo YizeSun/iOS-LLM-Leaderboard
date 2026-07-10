@@ -1,12 +1,12 @@
 {
   "plan_schema_version": "0.3",
-  "plan_id": "suite-b-pilot-001",
-  "plan_version": "0.3.0",
-  "status": "draft-pilot",
+  "plan_id": "b-pipe-001-validation",
+  "plan_version": "0.2.0-pilot",
+  "status": "pilot-validated",
   "suite": "Suite B: On-device Performance",
   "framework_version": "v2-design-draft",
   "official_result_eligible": false,
-  "purpose": "Validate the physical-iPhone benchmark harness and evidence export path.",
+  "purpose": "Measure sustained generation, decode stability, and first-to-last degradation on a physical iPhone.",
   "model_profile": {
     "display_name": "Qwen3 0.6B",
     "base_model_id": "Qwen/Qwen3-0.6B",
@@ -30,9 +30,9 @@
     "tokenizer_package": "swift-transformers 1.3.0"
   },
   "workload": {
-    "workload_id": "suite-b-pilot-001-fixed-generation",
-    "workload_version": "1.0",
-    "v2_profile_mapping": "b-pipe-001-sustained-generation@0.1.0-draft",
+    "workload_id": "b-pipe-001-sustained-generation",
+    "workload_version": "0.2.0-pilot",
+    "v2_profile_mapping": "b-pipe-001-sustained-generation@0.2.0-pilot",
     "category": "pipeline",
     "prompt_path": "ios-app/workloads/suite-b-pilot-001-prompt.txt",
     "prompt_sha256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
@@ -104,7 +104,7 @@
     "record_charging_state": true
   },
   "limitations": [
-    "This pilot is not an official benchmark release or leaderboard result.",
+    "This pilot workload is not an official benchmark release or leaderboard result.",
     "Its prefill measurement is not the long-context Suite B prefill task.",
     "Thermal observations from five runs are not a thermal-stability claim.",
     "Sampled process footprint is not an exact system-wide memory peak.",

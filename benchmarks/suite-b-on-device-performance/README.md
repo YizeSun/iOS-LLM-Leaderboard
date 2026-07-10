@@ -8,7 +8,8 @@ metric.
 
 - Framework v1 remains the repository-wide accepted format.
 - Suite B Protocol v2 is a design draft.
-- `suite-b-pilot-001` is real-device pilot evidence, not an official benchmark.
+- `b-pipe-001-sustained-generation@0.2.0-pilot` is the frozen successor to
+  the legacy `suite-b-pilot-001` runner; it remains non-official evidence.
 - No Suite B result is currently eligible for the default leaderboard.
 
 ## v2 Structure
@@ -28,7 +29,7 @@ Read:
 - [Suite B Metric Definitions](metrics.md)
 - [Framework v2 Architecture](../../methodology/benchmark-framework-v2.md)
 
-Machine-readable draft manifests live in `workloads/`.
+Machine-readable workload manifests live in `workloads/`.
 
 Validate them with:
 

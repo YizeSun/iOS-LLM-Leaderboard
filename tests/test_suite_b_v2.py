@@ -197,6 +197,21 @@ def valid_0_5_bundle() -> dict:
     return bundle
 
 
+def valid_0_6_bundle() -> dict:
+    bundle = valid_0_5_bundle()
+    bundle["schemaVersion"] = "suite-b-pilot-bundle-0.6"
+    bundle["plan"].update({
+        "id": "b-pipe-001-validation",
+        "version": "0.2.0-pilot",
+        "v2ProfileMapping": "b-pipe-001-sustained-generation@0.2.0-pilot",
+    })
+    bundle["workload"].update({
+        "id": "b-pipe-001-sustained-generation",
+        "version": "0.2.0-pilot",
+    })
+    return bundle
+
+
 class WorkloadManifestTests(unittest.TestCase):
     def test_four_draft_workloads_have_distinct_ids(self) -> None:
         manifests = [json.loads(path.read_text()) for path in sorted(WORKLOADS.glob("*.json"))]
@@ -209,12 +224,17 @@ class WorkloadManifestTests(unittest.TestCase):
         self.assertTrue(all(not item["official_result_eligible"] for item in manifests))
         self.assertTrue(all(validate_workload(item) == [] for item in manifests))
 
-    def test_pilot_mapping_is_pipeline_not_user_experience(self) -> None:
+    def test_sustained_generation_is_frozen_pipeline_workload(self) -> None:
         manifest = json.loads(
             (WORKLOADS / "b-pipe-001-sustained-generation.json").read_text()
         )
-        self.assertEqual(manifest["pilot_mapping"], "suite-b-pilot-001")
+        self.assertEqual(manifest["legacy_pilot_mapping"], "suite-b-pilot-001")
+        self.assertEqual(manifest["workload_version"], "0.2.0-pilot")
+        self.assertEqual(manifest["status"], "pilot-validated")
         self.assertEqual(manifest["category"], "pipeline")
+        self.assertEqual(manifest["procedure"]["warmup_runs"], 1)
+        self.assertEqual(manifest["procedure"]["measured_runs"], 5)
+        self.assertEqual(manifest["generation"]["kv_cache_policy"], "new-cache-for-each-generation")
 
     def test_short_interaction_candidate_has_frozen_fixture_and_policy(self) -> None:
         workload_path = WORKLOADS / "b-ux-001-short-interaction.json"
@@ -397,6 +417,19 @@ class PilotBundleValidatorTests(unittest.TestCase):
             "unknown model cache state cannot be eligible",
             validate(bundle),
         )
+
+    def test_0_6_uses_frozen_b_pipe_001_identity(self) -> None:
+        self.assertEqual(validate(valid_0_6_bundle()), [])
+
+    def test_0_6_rejects_legacy_workload_identity(self) -> None:
+        bundle = valid_0_6_bundle()
+        bundle["workload"]["id"] = "suite-b-pilot-001-fixed-generation"
+        self.assertTrue(
+            any("workload.id is unsupported" in error for error in validate(bundle))
+        )
+
+    def test_0_5_legacy_bundle_remains_supported(self) -> None:
+        self.assertEqual(validate(valid_0_5_bundle()), [])
 
     def test_official_flag_is_rejected(self) -> None:
         bundle = valid_bundle()

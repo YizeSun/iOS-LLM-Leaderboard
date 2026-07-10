@@ -23,7 +23,7 @@ actor ResultStore {
             .lowercased()
             .replacingOccurrences(of: ",", with: "-")
         let url = directory.appending(
-            path: "\(timestamp)_suite-b-pilot-001_qwen3-0.6b-4bit_\(deviceID)_\(shortID).json",
+            path: "\(timestamp)_b-pipe-001_qwen3-0.6b-4bit_\(deviceID)_\(shortID).json",
             directoryHint: .notDirectory
         )
 
