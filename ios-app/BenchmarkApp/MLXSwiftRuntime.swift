@@ -33,10 +33,8 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
         targets: [Int]
     ) async throws -> [InputLengthFixtureCalibration] {
         guard let modelContainer else { throw RuntimeError.modelNotLoaded }
-        let base = "Read the following benchmark input and reply with OK. Input:"
-
         func prompt(repetitions: Int) -> String {
-            base + String(repeating: " x", count: repetitions)
+            InputLengthFixtureGenerator.prompt(paddingRepetitions: repetitions)
         }
 
         func tokenCount(repetitions: Int) async throws -> Int {

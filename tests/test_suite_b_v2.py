@@ -257,6 +257,15 @@ class WorkloadManifestTests(unittest.TestCase):
         self.assertFalse(
             workload["ordering_policy"]["generation_before_calibration"]
         )
+        calibration = workload["fixture_calibration"]
+        for point in calibration["reference_profile"]["points"]:
+            prompt = calibration["base_text"] + calibration["padding_unit"] * point[
+                "padding_repetitions"
+            ]
+            self.assertEqual(
+                hashlib.sha256(prompt.encode()).hexdigest(),
+                point["prompt_sha256"],
+            )
 
 
 class PilotBundleValidatorTests(unittest.TestCase):

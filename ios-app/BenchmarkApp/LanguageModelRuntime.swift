@@ -66,3 +66,11 @@ struct InputLengthFixtureCalibration: Sendable, Equatable {
     let paddingRepetitions: Int
     let promptSHA256: String
 }
+
+enum InputLengthFixtureGenerator {
+    static let baseText = "Read the following benchmark input and reply with OK. Input:"
+
+    static func prompt(paddingRepetitions: Int) -> String {
+        baseText + String(repeating: " x", count: paddingRepetitions)
+    }
+}
