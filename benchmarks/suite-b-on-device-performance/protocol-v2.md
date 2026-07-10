@@ -53,9 +53,12 @@ warm up through inference, does not produce a performance result, and blocks
 measurement if any target is unavailable; nearest-length substitution is not
 permitted.
 
-The current `suite-b-pilot-001` maps only to the draft sustained-generation
-profile. Its successful real-device run validates instrumentation; it does not
-freeze the final workload.
+The legacy `suite-b-pilot-001` runner has been frozen as
+`b-pipe-001-sustained-generation@0.2.0-pilot`. The fixed prompt, deterministic
+generation settings, one-warm-up plus five-measured procedure, no-rest order,
+fresh KV cache per attempt, metric formulas, and raw evidence requirements are
+versioned together. It remains non-official and five measured runs must not be
+presented as a complete thermal-stability characterization.
 
 ## Standard Session Rules
 

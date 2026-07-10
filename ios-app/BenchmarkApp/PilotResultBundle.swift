@@ -440,7 +440,7 @@ struct PilotResultBundle: Codable, Sendable {
         let failedCount = session.measuredAttempts.count - successful.count
 
         return PilotResultBundle(
-            schemaVersion: "suite-b-pilot-bundle-0.5",
+            schemaVersion: "suite-b-pilot-bundle-0.6",
             resultID: UUID().uuidString.lowercased(),
             createdAt: Date(),
             officialResultEligible: false,

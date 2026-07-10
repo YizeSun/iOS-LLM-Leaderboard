@@ -28,8 +28,9 @@ class BenchmarkAppPlanTests(unittest.TestCase):
         self.plan = load_json(PLAN_PATH)
 
     def test_pilot_cannot_be_treated_as_official(self) -> None:
-        self.assertEqual(self.plan["plan_version"], "0.3.0")
-        self.assertEqual(self.plan["status"], "draft-pilot")
+        self.assertEqual(self.plan["plan_id"], "b-pipe-001-validation")
+        self.assertEqual(self.plan["plan_version"], "0.2.0-pilot")
+        self.assertEqual(self.plan["status"], "pilot-validated")
         self.assertFalse(self.plan["official_result_eligible"])
 
     def test_procedure_is_one_warmup_and_five_measured_runs(self) -> None:
@@ -61,12 +62,14 @@ class BenchmarkAppPlanTests(unittest.TestCase):
         )
         self.assertIn("thermal_state", measurements["secondary_metrics"])
 
-    def test_pilot_is_explicitly_mapped_to_pipeline_profile(self) -> None:
+    def test_plan_uses_frozen_pipeline_workload_identity(self) -> None:
         workload = self.plan["workload"]
         self.assertEqual(workload["category"], "pipeline")
+        self.assertEqual(workload["workload_id"], "b-pipe-001-sustained-generation")
+        self.assertEqual(workload["workload_version"], "0.2.0-pilot")
         self.assertEqual(
             workload["v2_profile_mapping"],
-            "b-pipe-001-sustained-generation@0.1.0-draft",
+            "b-pipe-001-sustained-generation@0.2.0-pilot",
         )
 
     def test_timing_boundary_is_pipeline_not_user_visible(self) -> None:

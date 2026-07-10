@@ -17,6 +17,7 @@ SUPPORTED_SCHEMAS = {
     "suite-b-pilot-bundle-0.3",
     "suite-b-pilot-bundle-0.4",
     "suite-b-pilot-bundle-0.5",
+    "suite-b-pilot-bundle-0.6",
 }
 THERMAL_STATES = {"nominal", "fair", "serious", "critical", "unknown"}
 
@@ -186,8 +187,13 @@ def validate(data: dict[str, Any]) -> list[str]:
         errors.append("pilot officialResultEligible must be false")
 
     plan = require_object(data, "plan", errors)
-    if plan.get("id") != "suite-b-pilot-001":
-        errors.append("plan.id must be suite-b-pilot-001")
+    expected_plan_id = (
+        "b-pipe-001-validation"
+        if schema == "suite-b-pilot-bundle-0.6"
+        else "suite-b-pilot-001"
+    )
+    if plan.get("id") != expected_plan_id:
+        errors.append(f"plan.id must be {expected_plan_id}")
     if plan.get("warmupRuns") != 1 or plan.get("measuredRuns") != 5:
         errors.append("pilot plan must declare 1 warm-up and 5 measured runs")
     prompt_hash = plan.get("promptSHA256")
@@ -227,6 +233,7 @@ def validate(data: dict[str, Any]) -> list[str]:
         "suite-b-pilot-bundle-0.3",
         "suite-b-pilot-bundle-0.4",
         "suite-b-pilot-bundle-0.5",
+        "suite-b-pilot-bundle-0.6",
     }:
         if not isinstance(eligibility, dict):
             errors.append("0.3 bundles require eligibility decisions")
@@ -235,7 +242,7 @@ def validate(data: dict[str, Any]) -> list[str]:
             if not isinstance(official, dict) or official.get("eligible") is not False:
                 errors.append("pilot officialLeaderboard eligibility must be false")
 
-    if schema in {"suite-b-pilot-bundle-0.4", "suite-b-pilot-bundle-0.5"}:
+    if schema in {"suite-b-pilot-bundle-0.4", "suite-b-pilot-bundle-0.5", "suite-b-pilot-bundle-0.6"}:
         require_keys(plan, "plan", ("v2ProfileMapping",), errors)
         workload = require_object(data, "workload", errors)
         measurement = require_object(data, "measurementMode", errors)
@@ -329,7 +336,7 @@ def validate(data: dict[str, Any]) -> list[str]:
             }:
                 errors.append("0.4 device.batteryState is unsupported")
 
-    if schema == "suite-b-pilot-bundle-0.5":
+    if schema in {"suite-b-pilot-bundle-0.5", "suite-b-pilot-bundle-0.6"}:
         require_keys(
             measurement,
             "measurementMode",
@@ -346,23 +353,30 @@ def validate(data: dict[str, Any]) -> list[str]:
             ),
             errors,
         )
-        if plan.get("version") != "0.3.0":
-            errors.append("0.5 plan.version must be 0.3.0")
+        expected_plan_version = "0.2.0-pilot" if schema.endswith("0.6") else "0.3.0"
+        if plan.get("version") != expected_plan_version:
+            errors.append(f"{schema} plan.version must be {expected_plan_version}")
         if plan.get("promptSHA256") != (
             "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996"
         ):
-            errors.append("0.5 plan.promptSHA256 does not match the Pilot plan")
+            errors.append(f"{schema} plan.promptSHA256 does not match the frozen workload")
         if plan.get("outputTokenLimit") != 512:
-            errors.append("0.5 plan.outputTokenLimit must be 512")
-        expected_mapping = "b-pipe-001-sustained-generation@0.1.0-draft"
+            errors.append(f"{schema} plan.outputTokenLimit must be 512")
+        expected_mapping = (
+            "b-pipe-001-sustained-generation@0.2.0-pilot"
+            if schema.endswith("0.6")
+            else "b-pipe-001-sustained-generation@0.1.0-draft"
+        )
         if plan.get("v2ProfileMapping") != expected_mapping:
-            errors.append("0.5 plan.v2ProfileMapping is unsupported")
+            errors.append(f"{schema} plan.v2ProfileMapping is unsupported")
 
         workload = require_object(data, "workload", errors)
-        if workload.get("id") != "suite-b-pilot-001-fixed-generation":
-            errors.append("0.5 workload.id is unsupported")
-        if workload.get("version") != "1.0" or workload.get("category") != "pipeline":
-            errors.append("0.5 workload identity is unsupported")
+        expected_workload_id = "b-pipe-001-sustained-generation" if schema.endswith("0.6") else "suite-b-pilot-001-fixed-generation"
+        expected_workload_version = "0.2.0-pilot" if schema.endswith("0.6") else "1.0"
+        if workload.get("id") != expected_workload_id:
+            errors.append(f"{schema} workload.id is unsupported")
+        if workload.get("version") != expected_workload_version or workload.get("category") != "pipeline":
+            errors.append(f"{schema} workload identity is unsupported")
         if workload.get("promptSHA256") != plan.get("promptSHA256"):
             errors.append("0.5 workload prompt hash must match plan")
 

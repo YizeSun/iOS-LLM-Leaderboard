@@ -11,6 +11,9 @@ transition.
   dependency identity, and power evidence.
 - `suite-b-pilot-bundle-0.5.schema.json` adds revision-specific model cache,
   download, load, restart, and measurement-eligibility evidence.
+- `suite-b-pilot-bundle-0.6.schema.json` freezes the current sustained-generation
+  runner under the B-PIPE-001 workload and plan identities while retaining
+  validator support for older Pilot bundles.
 - `suite-b-ux-bundle-0.1.schema.json` defines the non-official B-UX-001 pilot
   export with Pipeline TTFT, User-visible TTFT, request completion, visible
   output, and raw token-event evidence.

@@ -102,9 +102,9 @@ state. If the state reaches `critical`, the current generation is retained and
 remaining generations are recorded as `notRun` instead of being started.
 
 App version `0.3.0` build `3` exports raw bundle schema
-`suite-b-pilot-bundle-0.5`, which records model-preparation evidence
-alongside the draft v2 workload
-mapping, Pipeline TTFT boundary, generation and cache configuration, underlying
+`suite-b-pilot-bundle-0.6`, which records model-preparation evidence
+alongside the frozen non-official B-PIPE-001 workload identity, Pipeline TTFT
+boundary, generation and cache configuration, underlying
 MLX dependency identity, battery state, and Low Power Mode. It also records
 separate decisions for
 session validity, cold performance, sustained performance, thermal stability,

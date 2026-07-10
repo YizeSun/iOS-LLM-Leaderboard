@@ -113,12 +113,14 @@ final class ModelPreparationTests: XCTestCase {
 
     func testBundledPlanAndPromptLoadTogether() throws {
         let loaded = try PilotPlanLoader.load()
+        XCTAssertEqual(loaded.plan.planId, "b-pipe-001-validation")
         XCTAssertEqual(loaded.plan.planVersion, "0.2.0-pilot")
-        XCTAssertEqual(loaded.plan.workload.workloadId, "b-ux-001-short-interaction")
+        XCTAssertEqual(loaded.plan.workload.workloadId, "b-pipe-001-sustained-generation")
         XCTAssertFalse(loaded.prompt.isEmpty)
 
-        let pipeline = try PilotPlanLoader.load(resource: "suite-b-pilot-001")
-        XCTAssertEqual(pipeline.plan.planVersion, "0.3.0")
+        let ux = try PilotPlanLoader.load(resource: "b-ux-001-short-interaction")
+        XCTAssertEqual(ux.plan.planId, "b-ux-001-validation")
+        XCTAssertEqual(ux.plan.workload.workloadId, "b-ux-001-short-interaction")
     }
 
     func testRuntimeIdentityMismatchStopsPreparation() {
@@ -221,9 +223,9 @@ final class ModelPreparationTests: XCTestCase {
     private func pilotPlan() -> PilotPlan {
         PilotPlan(
             planSchemaVersion: "0.3",
-            planId: "suite-b-pilot-001",
-            planVersion: "0.3.0",
-            status: "draft-pilot",
+            planId: "b-pipe-001-validation",
+            planVersion: "0.2.0-pilot",
+            status: "pilot-validated",
             modelProfile: .init(
                 displayName: "Qwen3 0.6B",
                 baseModelId: "Qwen/Qwen3-0.6B",
@@ -244,9 +246,9 @@ final class ModelPreparationTests: XCTestCase {
                 tokenizerPackage: "swift-transformers 1.3.0"
             ),
             workload: .init(
-                workloadId: "suite-b-pilot-001-fixed-generation",
-                workloadVersion: "1.0",
-                v2ProfileMapping: "b-pipe-001-sustained-generation@0.1.0-draft",
+                workloadId: "b-pipe-001-sustained-generation",
+                workloadVersion: "0.2.0-pilot",
+                v2ProfileMapping: "b-pipe-001-sustained-generation@0.2.0-pilot",
                 category: "pipeline",
                 promptPath: "ios-app/workloads/suite-b-pilot-001-prompt.txt",
                 promptSha256: String(repeating: "a", count: 64),
