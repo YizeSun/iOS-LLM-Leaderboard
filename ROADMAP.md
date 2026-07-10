@@ -30,6 +30,9 @@ validated.
 
 Framework v1 remains active until these rules are accepted and implemented.
 
+Progress: the draft object model, Suite B workload categories, metric set,
+pilot schemas, and migration direction are now documented. They remain draft.
+
 ## Phase 2: Suite B Complete Specification
 
 - Replace evaluator-selected prompt ranges with versioned workloads.
@@ -49,6 +52,11 @@ Framework v1 remains active until these rules are accepted and implemented.
 - Export a result bundle containing summary, raw runs, environment, and
   workload identity.
 - Allow contributors to review all submitted fields.
+
+Progress: the MLX physical-iPhone pilot now loads a pinned Qwen3 artifact,
+runs one warm-up and five measured attempts, captures raw token timing, sampled
+process footprint and thermal boundaries, and exports local JSON. It remains a
+non-official instrumentation baseline.
 
 ## Phase 4: Validation and Repository Submission
 
@@ -100,6 +108,9 @@ Recommended order:
 ## Current Immediate Work
 
 - Keep current results explicitly non-official.
-- Repair Framework v1 validator and leaderboard compatibility.
-- Design Framework v2 without silently changing current task meanings.
-- Complete Suite B before expanding benchmark quantity.
+- Audit and freeze measurement boundaries before accepting Suite B results.
+- Freeze `b-ux-001-short-interaction` prompt and visible-token policy.
+- Make the App emit generation configuration, power evidence, workload identity,
+  and versioned timing-boundary identity.
+- Validate a second physical-iPhone run against recalculated raw evidence.
+- Complete Suite B before expanding model or benchmark quantity.

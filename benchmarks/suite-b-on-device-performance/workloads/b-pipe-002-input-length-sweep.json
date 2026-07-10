@@ -1,0 +1,34 @@
+{
+  "schema_version": "suite-b-workload-0.1",
+  "workload_id": "b-pipe-002-input-length-sweep",
+  "workload_version": "0.1.0-draft",
+  "status": "design-draft",
+  "category": "pipeline",
+  "title": "Input Length Sweep",
+  "scenario": "Token-exact input fixtures characterize prefill, TTFT, and memory scaling.",
+  "official_result_eligible": false,
+  "input": {
+    "fixture_path": null,
+    "sha256": null,
+    "target_model_input_tokens": {
+      "values": [32, 128, 512, 2048]
+    },
+    "token_count_scope": "post-chat-template-model-input"
+  },
+  "output": {
+    "policy": "fixed-limit-or-model-stop",
+    "maximum_tokens": 32
+  },
+  "measurement_mode": "b-mode-length-sweep-v1",
+  "metric_set": "suite-b-metrics-0.1",
+  "primary_metrics": [
+    "prefill_tokens_per_second@1",
+    "pipeline_ttft_ms@1",
+    "process_physical_footprint_mib@1"
+  ],
+  "blocking_decisions": [
+    "define token-exact, redistributable, model-neutral fixtures",
+    "define whether chat-template special tokens count inside each target length",
+    "define cooling and ordering policy across length points"
+  ]
+}

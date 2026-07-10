@@ -7,6 +7,9 @@ Framework v2 is a design target, not an active benchmark standard.
 Framework v1 remains the current repository format until a migration document,
 machine-readable schemas, reference examples, and validators are accepted.
 
+The concrete draft object model now lives in
+[Benchmark Framework v2 Architecture](../methodology/benchmark-framework-v2.md).
+
 ## Why a New Version Is Needed
 
 Framework v1 uses task for several different concepts:
@@ -75,3 +78,16 @@ Suite A may store generated files, compile results, tests, and rubric scores.
 5. implement the reference app export;
 6. publish the first Suite B benchmark release;
 7. migrate other suites separately.
+
+## Current Progress
+
+- The physical-iPhone MLX pilot has completed the execution and raw-evidence
+  feasibility step.
+- Its current TTFT clock starts after MLX prompt preparation, so it is Pipeline
+  TTFT rather than user-visible TTFT.
+- The pilot maps to `b-pipe-001-sustained-generation`, not to a
+  short-interaction user-experience workload.
+- Four draft workload manifests, metric definitions, schemas, and a
+  recalculating pilot-bundle validator now exist.
+- Frozen UX prompts, visible-token behavior, power evidence, and an official v2
+  result envelope remain open work.

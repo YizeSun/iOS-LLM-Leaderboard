@@ -16,16 +16,26 @@ final class BenchmarkViewModel {
     private(set) var resultFileURL: URL?
     private(set) var currentThermalState = SystemMeasurements.thermalState
     private(set) var debuggerAttached = DebuggerStatus.isAttached
+    private(set) var lowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
+    private(set) var buildConfiguration = BuildMetadata.configuration
 
     var canRun: Bool {
         phase != .running
             && !debuggerAttached
+            && buildConfiguration == "Release"
+            && !lowPowerModeEnabled
             && currentThermalState == "nominal"
     }
 
     var statusText: String {
         if debuggerAttached {
             return "Debugger attached. In Edit Scheme → Run → Info, turn off Debug executable before measuring."
+        }
+        if buildConfiguration != "Release" {
+            return "Use the Release build configuration before measuring."
+        }
+        if lowPowerModeEnabled {
+            return "Turn off Low Power Mode before measuring."
         }
         if currentThermalState != "nominal" {
             return "Wait for this iPhone to cool to nominal, then pull down to refresh."
@@ -47,7 +57,10 @@ final class BenchmarkViewModel {
 
     func run() async {
         debuggerAttached = DebuggerStatus.isAttached
+        lowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
+        buildConfiguration = BuildMetadata.configuration
         guard canRun else { return }
+        let sessionEnvironment = DeviceEnvironment.current
         phase = .running
         currentThermalState = SystemMeasurements.thermalState
 
@@ -71,7 +84,7 @@ final class BenchmarkViewModel {
             }.count
             let bundle = PilotResultBundle.make(
                 session: session,
-                environment: .current
+                environment: sessionEnvironment
             )
             resultFileURL = try await resultStore.save(bundle)
             result = bundle
@@ -89,6 +102,8 @@ final class BenchmarkViewModel {
     func refreshThermalState() {
         currentThermalState = SystemMeasurements.thermalState
         debuggerAttached = DebuggerStatus.isAttached
+        lowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
+        buildConfiguration = BuildMetadata.configuration
     }
 
     func metricText(_ value: Double?, unit: String) -> String {

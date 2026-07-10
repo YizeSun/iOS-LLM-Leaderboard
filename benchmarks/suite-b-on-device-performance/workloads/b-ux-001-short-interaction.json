@@ -1,0 +1,35 @@
+{
+  "schema_version": "suite-b-workload-0.1",
+  "workload_id": "b-ux-001-short-interaction",
+  "workload_version": "0.1.0-draft",
+  "status": "design-draft",
+  "category": "user-experience",
+  "title": "Short Interaction",
+  "scenario": "A user makes a short in-app request and expects a concise visible response.",
+  "official_result_eligible": false,
+  "input": {
+    "fixture_path": null,
+    "sha256": null,
+    "target_model_input_tokens": {
+      "minimum": 64,
+      "maximum": 256
+    },
+    "token_count_scope": "post-chat-template-model-input"
+  },
+  "output": {
+    "policy": "natural-stop-with-limit",
+    "maximum_tokens": 128
+  },
+  "measurement_mode": "b-mode-warm-resident-ux-v1",
+  "metric_set": "suite-b-metrics-0.1",
+  "primary_metrics": [
+    "user_visible_ttft_ms@1",
+    "pipeline_ttft_ms@1",
+    "request_completion_ms@1"
+  ],
+  "blocking_decisions": [
+    "freeze redistributable prompt and response requirement",
+    "define first-visible-content behavior for reasoning models",
+    "verify exact tokenizer output on the reference model profile"
+  ]
+}

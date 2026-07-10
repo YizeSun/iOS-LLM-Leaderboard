@@ -66,6 +66,12 @@ Do not mix Swift code generation tasks, app feature intelligence tasks, Xcode wo
 
 Do not add tasks that depend on private data, undisclosed model access, or unverifiable scoring.
 
+Suite B is transitioning to the workload-centric v2 draft. Do not propose new
+Suite B tasks that merely isolate one metric such as TTFT or memory. Propose a
+versioned user-experience workload or pipeline profile and identify the common
+metrics it collects. See
+[Suite B Protocol v2](benchmarks/suite-b-on-device-performance/protocol-v2.md).
+
 ## Result Contributions
 
 New benchmark results must follow [Benchmark Result Specification](methodology/benchmark-result-specification.md).
@@ -89,6 +95,10 @@ Demo or placeholder data must be clearly marked and must not be used for officia
 When the official benchmark app is available, app-generated result bundles
 will be the preferred Suite B submission route. Manual submissions will need
 to demonstrate equivalent workload, runner, and raw-evidence compatibility.
+
+The current Benchmark App is a non-official pilot. Its local bundles may be
+checked with `scripts/validate_suite_b_bundle.py`, but they are not accepted as
+official or verified leaderboard entries.
 
 ## Data Integrity
 

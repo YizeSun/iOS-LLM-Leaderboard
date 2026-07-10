@@ -12,6 +12,10 @@ struct DeviceEnvironment: Sendable {
     let buildConfiguration: String
     let appVersion: String
     let appBuild: String
+    let appSourceCommit: String?
+    let lowPowerModeEnabled: Bool
+    let batteryLevelPercent: Double?
+    let batteryState: String
 
     var systemDescription: String {
         "\(systemName) \(systemVersion)"
@@ -31,6 +35,8 @@ struct DeviceEnvironment: Sendable {
         }
 
         let processInfo = ProcessInfo.processInfo
+        UIDevice.current.isBatteryMonitoringEnabled = true
+        let batteryLevel = UIDevice.current.batteryLevel
         return DeviceEnvironment(
             modelIdentifier: identifier,
             systemName: UIDevice.current.systemName,
@@ -41,7 +47,13 @@ struct DeviceEnvironment: Sendable {
             debuggerAttached: DebuggerStatus.isAttached,
             buildConfiguration: BuildMetadata.configuration,
             appVersion: BuildMetadata.appVersion,
-            appBuild: BuildMetadata.appBuild
+            appBuild: BuildMetadata.appBuild,
+            appSourceCommit: BuildMetadata.sourceCommit,
+            lowPowerModeEnabled: processInfo.isLowPowerModeEnabled,
+            batteryLevelPercent: batteryLevel >= 0
+                ? Double(batteryLevel) * 100
+                : nil,
+            batteryState: UIDevice.current.batteryState.benchmarkName
         )
     }
 
@@ -56,6 +68,18 @@ struct DeviceEnvironment: Sendable {
         }
         let bytes = value.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }
         return String(decoding: bytes, as: UTF8.self)
+    }
+}
+
+private extension UIDevice.BatteryState {
+    var benchmarkName: String {
+        switch self {
+        case .unknown: "unknown"
+        case .unplugged: "unplugged"
+        case .charging: "charging"
+        case .full: "full"
+        @unknown default: "unknown"
+        }
     }
 }
 

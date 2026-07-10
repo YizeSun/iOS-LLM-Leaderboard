@@ -128,20 +128,23 @@ designed. The transition must distinguish workloads, measurement modes,
 metrics, tasks, and result evidence without presenting draft designs as active
 standards.
 
-See [Framework v2 Transition](docs/framework-v2-transition.md).
+See [Framework v2 Transition](docs/framework-v2-transition.md),
+[Framework v2 Architecture](methodology/benchmark-framework-v2.md), and the
+draft [Suite B Protocol v2](benchmarks/suite-b-on-device-performance/protocol-v2.md).
 
 ## Current Repository Contents
 
 - methodology and suite-level design documents;
 - initial tasks for Suites A through E;
-- detailed draft Suite B measurement protocols;
+- a workload-centric Suite B v2 design with four draft workload manifests;
 - Framework v1 result templates and demo placeholders;
 - contributor guidance;
-- initial validation and leaderboard scripts;
-- placeholder directories for future runtime examples and the benchmark app.
+- Framework v1 and Suite B pilot validation tooling;
+- a real physical-iPhone MLX Benchmark App pilot with local JSON export.
 
-No benchmark engine, official rankings, or verified performance dataset is
-included yet.
+No official benchmark release, ranking, or verified performance dataset is
+included yet. The App and its exports remain explicitly non-official pilot
+infrastructure.
 
 ## Result Integrity
 

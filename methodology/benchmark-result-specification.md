@@ -1,5 +1,11 @@
 # Benchmark Result Specification
 
+> This is the Framework v1 result format. The current Benchmark App emits a
+> separate non-official pilot bundle. Suite B v2 will use workload identity,
+> explicit measurement boundaries, raw attempts, environment evidence, and
+> eligibility reason codes; see
+> [Framework v2 Architecture](benchmark-framework-v2.md).
+
 Benchmark results should be stored as JSON files under `results/raw/`.
 
 Official leaderboard generation should only use validated result files. Demo-placeholder results must not be used in official leaderboard generation.

@@ -88,6 +88,8 @@ final class BenchmarkRunnerTests: XCTestCase {
         let eligibility = PilotResultBundle.Eligibility.evaluate(
             attempts: attempts,
             debuggerAttached: false,
+            buildConfiguration: "Release",
+            lowPowerModeEnabled: false,
             plannedMeasuredRuns: 5
         )
 
@@ -96,6 +98,27 @@ final class BenchmarkRunnerTests: XCTestCase {
         XCTAssertTrue(eligibility.sustainedPerformance.eligible)
         XCTAssertTrue(eligibility.thermalStability.eligible)
         XCTAssertFalse(eligibility.officialLeaderboard.eligible)
+    }
+
+    func testInvalidBuildAndPowerConditionsProduceReasonCodes() {
+        let attempts = (1...5).map { index in
+            pilotAttempt(index: index, before: "nominal", after: "nominal")
+        }
+        let eligibility = PilotResultBundle.Eligibility.evaluate(
+            attempts: attempts,
+            debuggerAttached: false,
+            buildConfiguration: "Debug",
+            lowPowerModeEnabled: true,
+            plannedMeasuredRuns: 5
+        )
+
+        XCTAssertFalse(eligibility.sessionValidity.eligible)
+        XCTAssertTrue(
+            eligibility.sessionValidity.reasonCodes.contains("non_release_build")
+        )
+        XCTAssertTrue(
+            eligibility.sessionValidity.reasonCodes.contains("low_power_mode_enabled")
+        )
     }
 
     func testMetricsAreDerivedFromRawTokenEvents() {
