@@ -1,0 +1,71 @@
+from __future__ import annotations
+
+import hashlib
+import json
+import unittest
+from pathlib import Path
+
+from scripts.validate_result import validate
+
+
+ROOT = Path(__file__).resolve().parents[1]
+PLAN_PATH = ROOT / "ios-app" / "benchmark-plans" / "suite-b-pilot-001.json"
+FIXTURE_PATH = (
+    ROOT
+    / "ios-app"
+    / "fixtures"
+    / "suite-b-pilot-001-framework-v1-placeholder.json"
+)
+
+
+def load_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+class BenchmarkAppPlanTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.plan = load_json(PLAN_PATH)
+
+    def test_pilot_cannot_be_treated_as_official(self) -> None:
+        self.assertEqual(self.plan["status"], "draft-pilot")
+        self.assertFalse(self.plan["official_result_eligible"])
+
+    def test_procedure_is_one_warmup_and_five_measured_runs(self) -> None:
+        procedure = self.plan["procedure"]
+        self.assertEqual(procedure["warmup_runs"], 1)
+        self.assertEqual(procedure["measured_runs"], 5)
+        self.assertTrue(procedure["retain_all_attempts"])
+        self.assertTrue(procedure["exclude_warmup_from_summary"])
+
+    def test_workload_hash_matches_prompt(self) -> None:
+        workload = self.plan["workload"]
+        prompt = ROOT / workload["prompt_path"]
+        digest = hashlib.sha256(prompt.read_bytes()).hexdigest()
+        self.assertEqual(digest, workload["prompt_sha256"])
+
+    def test_model_and_runtime_are_immutably_identified(self) -> None:
+        model = self.plan["model_profile"]
+        runtime = self.plan["runtime_profile"]
+        self.assertEqual(len(model["artifact_revision"]), 40)
+        self.assertNotIn(runtime["package_version"], {None, "", "main", "latest"})
+
+    def test_decode_is_the_only_primary_metric(self) -> None:
+        measurements = self.plan["measurements"]
+        self.assertEqual(
+            measurements["primary_metric"], "decode_tokens_per_second"
+        )
+        self.assertIn(
+            "prefill_tokens_per_second", measurements["secondary_metrics"]
+        )
+        self.assertIn("thermal_state", measurements["secondary_metrics"])
+
+    def test_framework_v1_fixture_is_a_valid_empty_placeholder(self) -> None:
+        fixture = load_json(FIXTURE_PATH)
+        self.assertEqual(validate(fixture), [])
+        self.assertEqual(fixture["provenance"]["source"], "demo-placeholder")
+        self.assertTrue(all(value is None for value in fixture["metrics"].values()))
+        self.assertEqual(fixture["suite_b_measurement"]["per_run_metrics"], [])
+
+
+if __name__ == "__main__":
+    unittest.main()
