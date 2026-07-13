@@ -1,5 +1,134 @@
 import Foundation
+import HuggingFace
 import Observation
+
+private struct NightRunArtifactPreparation: Sendable {
+    let cacheStateBeforePreparation: ModelPreparationEvidence.CacheState
+    let downloadOccurred: Bool
+}
+
+private enum NightRunArtifactPreparationError: LocalizedError {
+    case invalidRepositoryID(String)
+    case cacheUnavailable
+    case emptyManifest
+    case incompleteAfterDownload
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidRepositoryID(let id):
+            "Invalid Hugging Face repository ID: \(id)"
+        case .cacheUnavailable:
+            "The Hugging Face cache directory is unavailable."
+        case .emptyManifest:
+            "The pinned revision returned no required model files."
+        case .incompleteAfterDownload:
+            "The snapshot download returned before every required file was complete."
+        }
+    }
+}
+
+/// Branch-only cache preparation that preserves the underlying download error
+/// for the Night Run UI. Formal Power preparation and result evidence remain
+/// owned by `MLXSwiftRuntime.prepare(plan:)` after this step succeeds.
+private actor NightRunArtifactPreparer {
+    private static let requiredFileSuffixes = [
+        ".safetensors", ".json", ".jinja",
+    ]
+
+    private let client = HuggingFace.HubClient()
+
+    func prepare(
+        profile: ProductionModelProfile
+    ) async throws -> NightRunArtifactPreparation {
+        let model = profile.planModelProfile
+        guard let repository = HuggingFace.Repo.ID(
+            rawValue: model.artifactId
+        ) else {
+            throw NightRunArtifactPreparationError.invalidRepositoryID(
+                model.artifactId
+            )
+        }
+        guard let cache = client.cache else {
+            throw NightRunArtifactPreparationError.cacheUnavailable
+        }
+
+        let entries = try await client.listFiles(
+            in: repository,
+            revision: model.artifactRevision,
+            recursive: true
+        ).filter { entry in
+            Self.requiredFileSuffixes.contains {
+                entry.path.hasSuffix($0)
+            }
+        }
+        guard !entries.isEmpty else {
+            throw NightRunArtifactPreparationError.emptyManifest
+        }
+
+        let before = try Self.cacheState(
+            entries: entries,
+            cache: cache,
+            repository: repository,
+            revision: model.artifactRevision
+        )
+        guard before != .cached else {
+            return NightRunArtifactPreparation(
+                cacheStateBeforePreparation: before,
+                downloadOccurred: false
+            )
+        }
+
+        let patterns = Self.requiredFileSuffixes.map { "*\($0)" }
+        _ = try await client.downloadSnapshot(
+            of: repository,
+            revision: model.artifactRevision,
+            matching: patterns
+        )
+        let after = try Self.cacheState(
+            entries: entries,
+            cache: cache,
+            repository: repository,
+            revision: model.artifactRevision
+        )
+        guard after == .cached else {
+            throw NightRunArtifactPreparationError.incompleteAfterDownload
+        }
+        return NightRunArtifactPreparation(
+            cacheStateBeforePreparation: before,
+            downloadOccurred: true
+        )
+    }
+
+    private static func cacheState(
+        entries: [HuggingFace.Git.TreeEntry],
+        cache: HuggingFace.HubCache,
+        repository: HuggingFace.Repo.ID,
+        revision: String
+    ) throws -> ModelPreparationEvidence.CacheState {
+        let expectedFiles = Dictionary(
+            uniqueKeysWithValues: entries.map { ($0.path, $0.size) }
+        )
+        var cachedFileSizes: [String: Int] = [:]
+        for entry in entries {
+            guard let url = cache.cachedFilePath(
+                repo: repository,
+                kind: .model,
+                revision: revision,
+                filename: entry.path
+            ) else { continue }
+            let size = try url.resolvingSymlinksInPath().resourceValues(
+                forKeys: [.fileSizeKey]
+            ).fileSize
+            if let size {
+                cachedFileSizes[entry.path] = size
+            }
+        }
+        return ModelCacheVerification.classify(
+            expectedFiles: expectedFiles,
+            cachedFileSizes: cachedFileSizes
+        )
+    }
+}
 
 struct NightRunCell: Codable, Equatable, Identifiable, Sendable {
     enum Status: String, Codable, Sendable {
@@ -177,11 +306,13 @@ final class NightRunHarnessViewModel {
         let downloaded: Bool
         let loaded: Bool
         let reasonCodes: [String]
+        let diagnostic: String?
     }
 
     private(set) var phase: Phase = .idle
     private(set) var cells: [NightRunCell] = []
     private(set) var preparationRows: [PreparationRow] = []
+    private(set) var availableStorageBytes: Int64?
     private(set) var statusText = "Prepare the selected model cache before starting."
     var selectedProfiles = Set(NightRunPlan.defaultProfiles)
 
@@ -192,6 +323,12 @@ final class NightRunHarnessViewModel {
 
     var completedCount: Int {
         cells.filter { $0.status == .completed }.count
+    }
+
+    var selectedArtifactSizeBytes: Int64 {
+        selectedProfiles.reduce(into: 0) { total, profile in
+            total += profile.planModelProfile.artifactRepositorySizeBytes
+        }
     }
 
     var failedCount: Int {
@@ -205,6 +342,7 @@ final class NightRunHarnessViewModel {
     let runner: BenchmarkViewModel
 
     private let runtime: any ModelPreparingRuntime
+    private let artifactPreparer = NightRunArtifactPreparer()
     private let queueStore: NightRunQueueStore
     private let launchGate: NightRunLaunchGate
     private var queueTask: Task<Void, Never>?
@@ -217,6 +355,7 @@ final class NightRunHarnessViewModel {
         self.runtime = runtime
         self.queueStore = queueStore
         self.launchGate = launchGate
+        availableStorageBytes = Self.currentAvailableStorageBytes()
         runner = BenchmarkViewModel(runtime: runtime)
     }
 
@@ -283,6 +422,7 @@ final class NightRunHarnessViewModel {
         guard !isBusy, !selectedProfiles.isEmpty else { return }
         phase = .preparing
         preparationRows = []
+        availableStorageBytes = Self.currentAvailableStorageBytes()
         let profiles = NightRunPlan.ordered(selectedProfiles)
         cells = NightRunPlan.cells(for: profiles)
         do {
@@ -302,6 +442,27 @@ final class NightRunHarnessViewModel {
                     resource: ProductionBenchmarkPlan.sustainedGeneration.rawValue,
                     modelProfile: profile
                 )
+                let artifactPreparation: NightRunArtifactPreparation
+                do {
+                    artifactPreparation = try await artifactPreparer.prepare(
+                        profile: profile
+                    )
+                } catch {
+                    preparationRows.append(.init(
+                        id: profile.rawValue,
+                        title: profile.planModelProfile.displayName,
+                        cacheState: .unknown,
+                        downloaded: false,
+                        loaded: false,
+                        reasonCodes: ["artifact_download_failed"],
+                        diagnostic: Self.diagnosticDescription(error)
+                    ))
+                    continue
+                }
+                if artifactPreparation.downloadOccurred {
+                    downloadedAny = true
+                    launchGate.recordDownload()
+                }
                 let evidence = await runtime.prepare(plan: loaded.plan)
                 downloadedAny = downloadedAny || evidence.downloadOccurredDuringSession
                 if evidence.downloadOccurredDuringSession {
@@ -310,10 +471,12 @@ final class NightRunHarnessViewModel {
                 preparationRows.append(.init(
                     id: profile.rawValue,
                     title: profile.planModelProfile.displayName,
-                    cacheState: evidence.cacheStateBeforePreparation,
-                    downloaded: evidence.downloadOccurredDuringSession,
+                    cacheState: artifactPreparation.cacheStateBeforePreparation,
+                    downloaded: artifactPreparation.downloadOccurred
+                        || evidence.downloadOccurredDuringSession,
                     loaded: evidence.modelLoadCompleted,
-                    reasonCodes: evidence.reasonCodes
+                    reasonCodes: evidence.reasonCodes,
+                    diagnostic: nil
                 ))
             } catch {
                 preparationRows.append(.init(
@@ -322,10 +485,13 @@ final class NightRunHarnessViewModel {
                     cacheState: .unknown,
                     downloaded: false,
                     loaded: false,
-                    reasonCodes: ["plan_load_failed"]
+                    reasonCodes: ["plan_load_failed"],
+                    diagnostic: Self.diagnosticDescription(error)
                 ))
             }
         }
+
+        availableStorageBytes = Self.currentAvailableStorageBytes()
 
         if downloadedAny {
             phase = .restartRequired
@@ -341,6 +507,10 @@ final class NightRunHarnessViewModel {
 
     func start() {
         guard !isBusy, !selectedProfiles.isEmpty else { return }
+        guard phase == .ready else {
+            statusText = "Prepare every selected model successfully before starting Night Run."
+            return
+        }
         guard !launchGate.restartRequired else {
             phase = .restartRequired
             statusText = "Fully close and relaunch after downloading models."
@@ -515,5 +685,21 @@ final class NightRunHarnessViewModel {
             cells: cells,
             updatedAt: Date()
         ))
+    }
+
+    private static func currentAvailableStorageBytes() -> Int64? {
+        let home = URL(fileURLWithPath: NSHomeDirectory())
+        return try? home.resourceValues(
+            forKeys: [.volumeAvailableCapacityForImportantUsageKey]
+        ).volumeAvailableCapacityForImportantUsage
+    }
+
+    private static func diagnosticDescription(_ error: Error) -> String {
+        let localized = error.localizedDescription
+        let reflected = String(reflecting: error)
+        let combined = reflected.contains(localized)
+            ? reflected
+            : "\(localized) · \(reflected)"
+        return String(combined.prefix(1_000))
     }
 }

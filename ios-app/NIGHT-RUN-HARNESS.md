@@ -33,7 +33,9 @@ result package; this branch's App implementation must not be merged.
 
 1. Build this branch in Release with **Debug executable** disabled.
 2. Connect and unlock the iPhone, then open the **Night Run** tab.
-3. Select models and tap **Prepare Selected Models**.
+3. Select models and tap **Prepare Selected Models**. The branch-only view
+   reports selected artifact size, available iPhone storage, and the underlying
+   Hugging Face error when a snapshot cannot be completed.
 4. If anything downloads, fully close and relaunch the App.
 5. Disconnect USB, MagSafe, and all charging. Keep Low Power Mode off.
 6. Confirm at least 50% battery, detached debugger, Release build, and nominal

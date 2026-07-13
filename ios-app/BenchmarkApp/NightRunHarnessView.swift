@@ -37,6 +37,18 @@ struct NightRunHarnessView: View {
                 }
 
                 Section {
+                    LabeledContent(
+                        "Selected artifacts",
+                        value: storageDescription(
+                            viewModel.selectedArtifactSizeBytes
+                        )
+                    )
+                    LabeledContent(
+                        "Available on iPhone",
+                        value: viewModel.availableStorageBytes.map(
+                            storageDescription
+                        ) ?? "Unavailable"
+                    )
                     Button("Prepare Selected Models") {
                         Task { await viewModel.prepareSelectedModels() }
                     }
@@ -72,7 +84,10 @@ struct NightRunHarnessView: View {
                         Button("Start Night Run") {
                             viewModel.start()
                         }
-                        .disabled(viewModel.isBusy || viewModel.restartRequired)
+                        .disabled(
+                            viewModel.isBusy || viewModel.restartRequired
+                                || viewModel.phase != .ready
+                        )
 
                         if viewModel.isBusy {
                             Button("Stop", role: .destructive) {
@@ -132,6 +147,13 @@ struct NightRunHarnessView: View {
         }
     }
 
+    private func storageDescription(_ bytes: Int64) -> String {
+        ByteCountFormatter.string(
+            fromByteCount: bytes,
+            countStyle: .file
+        )
+    }
+
 }
 
 private struct NightPreparationRows: View {
@@ -144,6 +166,12 @@ private struct NightPreparationRows: View {
                 Text(description(row))
                     .font(.caption)
                     .foregroundStyle(row.loaded ? Color.secondary : Color.red)
+                if let diagnostic = row.diagnostic {
+                    Text(diagnostic)
+                        .font(.caption2.monospaced())
+                        .foregroundStyle(.red)
+                        .textSelection(.enabled)
+                }
             }
         }
     }
