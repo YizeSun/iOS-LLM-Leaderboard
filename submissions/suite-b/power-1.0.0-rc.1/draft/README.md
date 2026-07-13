@@ -1,9 +1,10 @@
-# Power 1.0 RC.1 Draft Packages
+# Power 1.0 Draft Packages — Adopted RC.1 Contract
 
 Each child directory must be named with its `submissionID` UUID and contain
 exactly `submission.json` plus the unmodified `result.json` App export.
 
-Draft packages remain `unreviewed`, never alter the leaderboard, and must pass:
+Public Draft packages remain `unreviewed`, never alter the leaderboard, and
+must pass:
 
 ```bash
 python3 scripts/validate_suite_b_power_submission.py \

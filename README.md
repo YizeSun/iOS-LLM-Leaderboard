@@ -268,15 +268,17 @@ See [LICENSES.md](LICENSES.md).
 
 ## Contributing
 
-Community contributions are central to the project. During the current
-documentation-first stage, contributions may propose tasks, methodology,
-schemas, integrations, and tooling.
+Community contributions are central to the project. Power 1.0 public result
+intake is open for immutable App 0.8.0 build 10 exports using the exact RC1
+source contract adopted by the official release. Contributions may also
+propose methodology, integrations, and tooling.
 
 Official Power result submission uses the frozen App/result contract and the
 hash-bound review process documented below. Passing intake does not
 automatically grant a ranking-eligible evidence level.
 
-Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the
+Start with the [Power 1.0 public-intake guide](docs/power-benchmark-1.0-public-intake.md),
+[CONTRIBUTING.md](CONTRIBUTING.md), and the
 [Contributor Kit](contributor-kit/README.md).
 
 ## Roadmap
