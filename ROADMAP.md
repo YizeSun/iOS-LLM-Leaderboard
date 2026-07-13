@@ -128,9 +128,10 @@ App upload or bot-managed PR creation remains future work.
 - Preserve failed, OOM, interrupted, and unsupported runs as evidence.
 
 Progress: evidence levels and immutable review transitions are implemented.
-The active work is receiving the first community submissions, reviewing them,
-and publishing device-coverage gaps. No community submission is promoted by
-CI alone.
+The live view now counts independent metric-eligible GitHub contributors per
+exact comparison cell and publishes data-derived coverage gaps. The active
+work is receiving and reviewing the first genuine external submission. No
+formal evidence-level transition is promoted by CI alone.
 
 ### Milestone 6: Power Leaderboard
 
@@ -142,8 +143,9 @@ CI alone.
 - Do not publish a global cross-suite score.
 
 Progress: the published site provides sortable workload-specific Power 1.0
-rankings, configuration details, evidence links, and no global score. Current
-official coverage is the six-result Maintainer Reference matrix.
+rankings, configuration details, evidence links, contributor counts, live
+coverage gaps, and no global score. Current official coverage is the
+six-result Maintainer Reference matrix.
 
 ### Milestone 7: Ship Profiles and Developer Integration Guide
 
@@ -217,7 +219,8 @@ release and a stable end-to-end iOS delivery problem can be defined.
 - Operate the open Power 1.0 Draft intake and hash-bound review process.
 - Receive the first genuine community physical-device result without modifying
   the frozen App export.
-- Publish device and configuration coverage gaps.
+- Receive an independent result for an existing exact cell and verify the live
+  `Reproduced` transition.
 - Keep B-PIPE-002, B-UX-002, Suite D, and Suite E outside the 1.0 contract.
 - Add no result to an official ranking without a separate maintainer
   publication decision.

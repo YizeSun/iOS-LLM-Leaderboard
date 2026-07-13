@@ -40,7 +40,10 @@ During the current contribution stage:
 - no contributor or CI job may assign its own verified or ranking status.
 
 Community results use evidence levels. Passing structural validation alone
-does not place a result in the default ranking or alter Power 1.0.
+does not change a formal evidence level or alter the immutable Power 1.0
+release. A valid package merged by a maintainer may appear in the separately
+labeled live community view under the
+[community ranking policy](docs/power-community-ranking.md).
 
 ## Benchmark Task Contributions
 
@@ -112,7 +115,12 @@ For repository placement, rename the untouched App export to
 commands.
 
 Power 1.0 uses the App's unmodified adopted-RC1 Power result plus a separate
-contributor manifest. Create and validate a package with:
+contributor manifest. Follow the
+[Power 1.0 contributor quickstart](contributor-kit/power-1.0-quickstart.md) to
+build the exact frozen App source, run one physical-device cell, create the
+package, validate it, and open a contributor-owned pull request.
+
+Create a package with:
 
 ```bash
 python3 scripts/create_suite_b_power_submission.py \
@@ -128,8 +136,9 @@ Read the current
 [Power 1.0 public-intake guide](docs/power-benchmark-1.0-public-intake.md) and
 the SHA-256-pinned
 [RC1 package definition](docs/power-benchmark-1.0-submission.md) before
-accepting the declarations. Valid Draft evidence remains unreviewed and
-ranking-ineligible until separate review and publication decisions are merged.
+accepting the declarations. Valid Draft evidence remains formally unreviewed
+until a hash-bound review is merged. Once the package itself is merged, it may
+enter the live community view without changing that formal evidence level.
 
 ## Data Integrity
 

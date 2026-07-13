@@ -4,6 +4,10 @@
 
 Power Benchmark 1.0 public result intake is **open**.
 
+New contributors should start with the
+[Power 1.0 contributor quickstart](../contributor-kit/power-1.0-quickstart.md).
+This document remains the complete operational and trust-boundary reference.
+
 - Opened: `2026-07-13`
 - Maintainer authorization: `YizeSun`
 - Official benchmark release: `suite-b-power@1.0.0`

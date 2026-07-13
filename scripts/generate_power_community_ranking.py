@@ -535,6 +535,42 @@ def render_leaderboard(dataset: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def render_coverage(dataset: dict[str, Any]) -> str:
+    lines = [
+        "# Power Evidence Coverage",
+        "",
+        "This report is derived only from retained Power evidence. It does not create placeholder devices, measurements, or benchmark results.",
+        "A cell reaches the live `Reproduced` display at two independent metric-eligible GitHub contributors.",
+        "",
+        f"- Exact comparison cells: {dataset['cellCount']}",
+        f"- Reproduced cells: {dataset['reproducedCellCount']}",
+        f"- Cells still needing independent reproduction: {dataset['cellCount'] - dataset['reproducedCellCount']}",
+        "",
+        "| Workload | Model | Quant | Device | Eligible contributors | Retained runs | Coverage status |",
+        "| --- | --- | --- | --- | ---: | ---: | --- |",
+    ]
+    for row in dataset["results"]:
+        community = row["community"]
+        eligible = community["eligibleContributorCount"]
+        remaining = max(0, 2 - eligible)
+        status = "Reproduced" if remaining == 0 else f"Needs {remaining} more"
+        lines.append(
+            f"| {row['workload']['id']} | "
+            f"{row['configuration']['model']['displayName']} | "
+            f"{row['configuration']['model']['quantization']} | "
+            f"{row['configuration']['device']['displayName']} | "
+            f"{eligible} | {community['runCount']} | {status} |"
+        )
+    lines.extend([
+        "",
+        "An accepted result from a new physical iPhone creates additional device coverage. It is not compared inside an existing exact cell unless every comparison-identity field matches.",
+        "",
+        "See the [Power 1.0 contributor quickstart](../../contributor-kit/power-1.0-quickstart.md) to contribute genuine physical-device evidence.",
+        "",
+    ])
+    return "\n".join(lines)
+
+
 def write_outputs(
     output: Path = DEFAULT_OUTPUT,
     official_path: Path = DEFAULT_OFFICIAL,
@@ -553,6 +589,7 @@ def write_outputs(
         json.dumps(dataset, indent=2, sort_keys=True) + "\n"
     )
     (output / "LEADERBOARD.md").write_text(render_leaderboard(dataset))
+    (output / "COVERAGE.md").write_text(render_coverage(dataset))
     return dataset
 
 
