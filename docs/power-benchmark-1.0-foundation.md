@@ -81,7 +81,7 @@ Complete.
 
 ### F1 — Contract inventory and alignment
 
-Active.
+Complete.
 
 - Document the App-emitted `suite-b-result-bundle-0.3` historical schema.
 - Align schema references, semantic validator support, App export identity,
@@ -93,10 +93,19 @@ Completing F1 does not make schema 0.3 or any Pilot result official.
 
 ### F2 — Protocol freeze
 
+Active.
+
 - Resolve timing, token-count, stop, null, failure, OOM, cancellation, memory,
   and thermal edge cases for both candidate workloads.
 - Freeze per-metric eligibility and aggregation rules.
 - Publish explicit migration rules from the historical Pilot identities.
+- Require bounded, independently recalculable evidence for the
+  First-renderable proxy TTFT without treating it as a screen-render boundary.
+
+Foundation App 0.7.0 build 9 and result envelope
+`suite-b-result-bundle-0.4` exercise the bounded trace contract while F2 is in
+progress. They remain non-official development identities; the final release
+schema and validator are not frozen until F3.
 
 ### F3 — Release schema and validator freeze
 
