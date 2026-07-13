@@ -1,7 +1,7 @@
 # Suite B: On-device Performance Methodology
 
 Suite B evaluates pinned local model artifacts and runtimes on physical Apple
-devices. It belongs to the Embedded Intelligence track.
+devices. It is the canonical measurement foundation for Phase 1 Power.
 
 ## Current Status
 
