@@ -62,6 +62,18 @@ it will sync when connectivity returns. Response conformance is a workload
 eligibility gate, not a performance metric. F4 must make that decision
 reviewable; until then, Foundation App exports cannot become 1.0 results.
 
+`short-interaction-response-v1` makes that existing requirement deterministic.
+The validator normalizes the retained generated text with Unicode NFKC,
+case-folds it, and collapses whitespace. It counts each nonempty segment ended
+by `.`, `!`, or `?`, plus a nonempty trailing segment, as one sentence. The
+normalized response must be nonempty and contain at most two sentences. The
+local-safety claim requires substring `safe` and at least one of `iphone`,
+`device`, or `local`. The sync-return claim requires substring `sync`, at least
+one of `connect`, `network`, or `online`, and at least one of `return`,
+`restore`, `available`, `back`, or `again`. These are substring checks on the
+normalized text. All Short Interaction ranked metrics require this gate to
+pass, and the exact generated text must be retained for review.
+
 The first-renderable proxy starts when the App accepts the canonical request
 and ends when cumulative raw-token decoding first completes a prefix containing
 a Unicode scalar outside the whitespace set frozen in `protocol-v2.md`. The
@@ -82,6 +94,15 @@ converted into failure or a 512-token completion.
 The five measured attempts are one no-rest sustained sequence. It supports a
 first-to-last degradation signal and observed thermal transitions; it does
 not support a claim of complete thermal stability or battery efficiency.
+
+Generation settings are workload-specific and exact. Short Interaction uses
+`top_p = 1`, `top_k = 0`, `seed = 0`, no repetition penalty, thinking disabled
+through the chat-template context, and chat-template identity
+`artifact-tokenizer-config-enable-thinking-false`. Sustained Generation uses
+explicit `null` for `top_p`, `top_k`, `seed`, and repetition penalty, disables
+thinking through the prompt directive, and uses chat-template identity
+`artifact-tokenizer-config`. A runtime that cannot represent these settings is
+incompatible; it must not silently substitute defaults.
 
 ## Clock and token evidence
 
