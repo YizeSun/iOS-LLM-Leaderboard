@@ -14,14 +14,15 @@ This document remains the complete operational and trust-boundary reference.
 - Submission source contract: `suite-b-power@1.0.0-rc.1`
 - Reference App: `0.8.0` build `10`
 
-Two exact App sources are authorized for public intake:
+The following exact App sources are authorized for public intake:
 
 | Purpose | App identity | Exact source |
 | --- | --- | --- |
 | Reproduce the existing Qwen comparison cells | `0.8.0` build `10` | `2f105ff463bc9b281b19655ba711b1ca7dee8759` |
 | Test the four pinned candidates in the non-ranking model catalog | `0.9.0` build `11` | `002c76ccbfed7b1c8b7c13313b887aaebf610a3e` |
+| Test the expanded eight-candidate catalog | `0.10.0` build `12` | `SOURCE_COMMIT_PENDING` |
 
-App 0.9.0 is an additional community-testing source, not a rewrite of the
+App 0.9.0 and App 0.10.0 are additional community-testing sources, not rewrites of the
 published Reference App or its six-result matrix. Its candidate guide is
 [Test a Recommended Power Model](../contributor-kit/test-recommended-model.md).
 
@@ -122,8 +123,9 @@ Public intake does not change:
 - the published Power 1.0 evidence set or rankings; or
 - Ship Deployment Profiles 1.0.
 
-Public intake now additionally permits App 0.9.0 build 11 at the exact source
-listed above for four pinned candidate artifacts. Each accepted candidate run
+Public intake additionally permits App 0.9.0 build 11 for its original four
+candidates and App 0.10.0 build 12 for the expanded eight-candidate catalog at
+the exact sources listed above. Each accepted candidate run
 creates a new exact comparison cell. This operational expansion adds no
 placeholder result, changes no existing rank, and does not imply physical
 iPhone compatibility before evidence is submitted.

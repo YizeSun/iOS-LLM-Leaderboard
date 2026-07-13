@@ -1,8 +1,8 @@
 # Test a Recommended Power Model
 
-This guide is for the four pinned artifacts in the
+This guide is for the eight pinned artifacts in the
 [Power model test catalog](../models/power-test-catalog.json). They are
-available in App `0.9.0` build `11`, but they have no accepted physical-iPhone
+available in App `0.10.0` build `12`, but they have no accepted physical-iPhone
 evidence yet. A catalog entry is not a compatibility claim, benchmark result,
 or ranking.
 
@@ -15,57 +15,53 @@ App version and source commit are part of the exact comparison identity.
 - `mlx-community/Llama-3.2-1B-Instruct-4bit`;
 - `mlx-community/gemma-3-1b-it-qat-4bit`;
 - `mlx-community/granite-3.3-2b-instruct-4bit`;
-- `mlx-community/SmolLM3-3B-4bit`.
+- `mlx-community/SmolLM3-3B-4bit`;
+- `mlx-community/LFM2-1.2B-4bit`;
+- `mlx-community/exaone-4.0-1.2b-4bit`;
+- `mlx-community/bitnet-b1.58-2B-4T-4bit`; and
+- `mlx-community/Llama-3.2-3B-Instruct-4bit`.
 
 The catalog pins each exact artifact revision, license source, repository
 size, and locked-runtime registry basis. Do not substitute a similarly named
 artifact or a newer revision.
 
-## Public-weight model watchlist
+## Small-model compatibility review
 
-The same catalog also records eleven public-weight models requested for future
-compatibility review:
+Four additional pinned artifacts are small enough to be relevant but are not
+selectable in the App:
 
-- `zai-org/GLM-5.2` (shown in the source listing as GLM 5.2 (Max));
-- `zai-org/GLM-5.1`;
-- `moonshotai/Kimi-K2.7-Code`;
-- `deepseek-ai/DeepSeek-V4-Pro`;
-- `moonshotai/Kimi-K2.6`;
-- `XiaomiMiMo/MiMo-V2.5-Pro`;
-- `MiniMaxAI/MiniMax-M3`;
-- `deepseek-ai/DeepSeek-V4-Flash`;
-- `MiniMaxAI/MiniMax-M2.7`;
-- `google/gemma-4-31B-it`; and
-- `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4`.
+- `mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit`: its template forces a
+  reasoning block instead of the frozen non-thinking request behavior;
+- `mlx-community/Qwen3.5-2B-4bit`: the published artifact uses a multimodal
+  loading path that has not been reconciled with the App's MLXLLM text path;
+- `mlx-community/AI21-Jamba-Reasoning-3B-4bit`: its template forces reasoning
+  instead of the frozen non-thinking request behavior; and
+- `mlx-community/OpenELM-270M-Instruct`: the artifact is not 4-bit and lacks
+  the chat template required by the frozen request construction.
 
-“Public-weight” means the official weights can be downloaded under a published,
-inspectable license. It does not assert that every custom license is an
-OSI-approved open-source license. In particular, the source leaderboard labels
-MiniMax M2.7 as Modified MIT, while its official repository currently identifies
-a non-commercial MiniMax license; this catalog follows the official repository.
+The website labels these entries **Needs review** and links their exact pinned
+artifacts. They are not App options and cannot receive benchmark rows until the
+recorded blocker is resolved without changing the Power 1.0 workload contract.
 
-These are model-level watchlist entries, not approved App artifacts. Their
-official weights and license sources are linked, but the App's locked MLX
-Swift LM runtime does not register their exact architectures and no
-iPhone-viable pinned artifacts have been approved. They therefore remain
-visible on the website as **Not App-ready**, are absent from the App model
-picker, and cannot receive benchmark rows or placeholder results.
-
-Do not substitute a smaller distillation or a similarly named API endpoint
-and report it as one of these exact models. Moving a watchlist entry into the
-App-ready list requires a separate artifact and runtime compatibility review.
+Very large public-weight models such as DeepSeek V4, MiniMax M3, MiMo V2.5,
+GLM 5.x, Kimi K2.x, Gemma 4 31B, and Nemotron 3 Ultra have been reviewed and
+retained as internal exclusion records. They are not displayed as recommended
+iPhone tests because they exceed the catalog's initial 3B total-parameter
+boundary and no practical pinned 4-bit App artifact has been approved. Do not
+substitute a smaller distillation or a similarly named API endpoint and report
+it as one of those exact models.
 
 ## 1. Check out the exact candidate App source
 
 Fork and clone the repository, then create a detached worktree at the source
-commit embedded by App 0.9.0:
+commit embedded by App 0.10.0:
 
 ```bash
 git clone https://github.com/YOUR_GITHUB_HANDLE/iOS-LLM-Leaderboard.git
 cd iOS-LLM-Leaderboard
 git remote add upstream https://github.com/YizeSun/iOS-LLM-Leaderboard.git
 git fetch upstream
-git worktree add ../ios-llm-power-candidates 002c76ccbfed7b1c8b7c13313b887aaebf610a3e
+git worktree add ../ios-llm-power-candidates SOURCE_COMMIT_PENDING
 ```
 
 Open:

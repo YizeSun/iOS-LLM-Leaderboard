@@ -6,14 +6,14 @@ an inference framework.
 
 ## Current status
 
-App `0.9.0` build `11` is the current Power 1.0 community-testing App. It keeps
+App `0.10.0` build `12` is the current Power 1.0 community-testing App. It keeps
 the adopted Power 1.0 workload, measurement, result, and validation contracts
-unchanged while adding four explicitly untested model artifacts to the model
+unchanged while exposing eight explicitly untested model artifacts in the model
 picker.
 
 App `0.8.0` build `10` remains the exact reference source for the published
 six-result Maintainer Reference matrix and for reproducing its three existing
-Qwen comparison cells. App 0.9.0 must not be substituted when an exact
+Qwen comparison cells. App 0.10.0 must not be substituted when an exact
 App-0.8.0 reproduction is intended.
 
 Both versions emit the adopted source result contract
@@ -40,13 +40,17 @@ The three pinned Qwen3 profiles have Maintainer Reference evidence:
 - `mlx-community/Qwen3-1.7B-4bit`;
 - `mlx-community/Qwen3-4B-3bit`.
 
-App 0.9.0 also exposes four pinned candidates recommended for physical-iPhone
+App 0.10.0 exposes eight pinned candidates recommended for physical-iPhone
 testing:
 
 - `mlx-community/Llama-3.2-1B-Instruct-4bit`;
 - `mlx-community/gemma-3-1b-it-qat-4bit`;
 - `mlx-community/granite-3.3-2b-instruct-4bit`;
-- `mlx-community/SmolLM3-3B-4bit`.
+- `mlx-community/SmolLM3-3B-4bit`;
+- `mlx-community/LFM2-1.2B-4bit`;
+- `mlx-community/exaone-4.0-1.2b-4bit`;
+- `mlx-community/bitnet-b1.58-2B-4T-4bit`; and
+- `mlx-community/Llama-3.2-3B-Instruct-4bit`.
 
 Their exact revisions, artifact sizes, licenses, runtime-registry basis, and
 evidence state are recorded in
@@ -176,9 +180,9 @@ JSON files are also checked with the frozen F3 Python validator.
   efficiency.
 - Jetsam or other unexplained process loss is preserved conservatively as
   unclassified failure unless trusted evidence identifies OOM.
-- App 0.9.0 candidate entries have no accepted physical-device evidence until
+- App 0.10.0 candidate entries have no accepted physical-device evidence until
   contributors submit genuine exports through the public-intake process.
 
 Historical App 0.6.0/0.7.0 bundle formats remain supported by historical
-ingestion and validation paths, but they are not the current App 0.9.0 export
+ingestion and validation paths, but they are not the current App 0.10.0 export
 and cannot be promoted into Power 1.0 evidence.

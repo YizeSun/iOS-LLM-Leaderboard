@@ -1,11 +1,11 @@
 {
-  "schemaVersion": "power-model-test-catalog-1.1",
+  "schemaVersion": "power-model-test-catalog-1.2",
   "reviewedAt": "2026-07-13",
-  "purpose": "App-ready untested artifacts plus an explicitly non-runnable public-weight watchlist",
+  "purpose": "Pinned App-ready artifacts plus actionable small-model compatibility reviews",
   "referenceApp": {
-    "version": "0.9.0",
-    "build": "11",
-    "sourceCommit": "002c76ccbfed7b1c8b7c13313b887aaebf610a3e"
+    "version": "0.10.0",
+    "build": "12",
+    "sourceCommit": null
   },
   "runtime": {
     "name": "MLX Swift LM",
@@ -22,15 +22,20 @@
     "requiresRuntimeModelTypeRegistration": true,
     "performanceClaimsAllowedWithoutEvidence": false
   },
-  "openModelWatchlistPolicy": {
-    "purpose": "Public-weight models requested for future Apple-device compatibility review",
-    "eligibilityDefinition": "Official weights are publicly downloadable under an inspectable license; inclusion does not assert OSI open-source status",
-    "modelLevelEntriesOnly": true,
+  "compatibilityReviewPolicy": {
+    "purpose": "Small public-weight artifacts with a concrete blocker to the frozen Power 1.0 App path",
+    "eligibilityDefinition": "A specific artifact is plausibly within the initial device scale but is not App-selectable until every recorded blocker is resolved",
     "appSelectable": false,
     "rankingEligible": false,
-    "requiresCompatiblePinnedArtifactBeforeAppAdmission": true,
-    "requiresLockedRuntimeRegistrationBeforeAppAdmission": true,
+    "publicDisplay": true,
     "performanceClaimsAllowedWithoutEvidence": false
+  },
+  "reviewedIneligiblePolicy": {
+    "purpose": "Preserve completed reviews without presenting non-actionable models as recommended tests",
+    "appSelectable": false,
+    "rankingEligible": false,
+    "publicDisplay": false,
+    "initialDeviceScaleRule": "maximum 3B total parameter class and a practical pinned 4-bit MLX artifact"
   },
   "models": [
     {
@@ -108,9 +113,167 @@
       "runtimeRegistryStatus": "registered-not-device-verified",
       "physicalDeviceEvidenceStatus": "untested",
       "recommendationReason": "Adds an Apache-2.0 3B candidate near the upper end of the initial iPhone-oriented test range."
+    },
+    {
+      "recommendedPriority": 5,
+      "displayName": "LFM2 1.2B",
+      "baseModelID": "LiquidAI/LFM2-1.2B",
+      "artifactID": "mlx-community/LFM2-1.2B-4bit",
+      "artifactRevision": "3843e4ad0fcb8b7ed8a050908ac8f0bb5320d1bf",
+      "modelFamily": "LFM2",
+      "modelType": "lfm2",
+      "parameterSizeClass": "medium-1.2b",
+      "quantization": "4-bit",
+      "modelFormat": "MLX Safetensors",
+      "artifactRepositorySizeBytes": 663392070,
+      "licenseIdentifier": "lfm1.0",
+      "licenseSourceURL": "https://huggingface.co/LiquidAI/LFM2-1.2B/blob/933cee00d754fb3bfe06c644c0cb95453f2d8bb2/LICENSE",
+      "sourceURL": "https://huggingface.co/mlx-community/LFM2-1.2B-4bit/tree/3843e4ad0fcb8b7ed8a050908ac8f0bb5320d1bf",
+      "runtimeRegistryStatus": "registered-not-device-verified",
+      "physicalDeviceEvidenceStatus": "untested",
+      "recommendationReason": "Adds an edge-focused hybrid architecture in the small-model tier without making an unverified performance claim."
+    },
+    {
+      "recommendedPriority": 6,
+      "displayName": "EXAONE 4.0 1.2B",
+      "baseModelID": "LGAI-EXAONE/EXAONE-4.0-1.2B",
+      "artifactID": "mlx-community/exaone-4.0-1.2b-4bit",
+      "artifactRevision": "6dbf5f06dcb9526a7c328f692b1e08d35e17bff2",
+      "modelFamily": "EXAONE 4.0",
+      "modelType": "exaone4",
+      "parameterSizeClass": "medium-1.2b",
+      "quantization": "4-bit",
+      "modelFormat": "MLX Safetensors",
+      "artifactRepositorySizeBytes": 731129626,
+      "licenseIdentifier": "exaone",
+      "licenseSourceURL": "https://huggingface.co/LGAI-EXAONE/EXAONE-4.0-1.2B/blob/3abf2810673c7c0778df64a73c2d52eab32d91c4/LICENSE",
+      "sourceURL": "https://huggingface.co/mlx-community/exaone-4.0-1.2b-4bit/tree/6dbf5f06dcb9526a7c328f692b1e08d35e17bff2",
+      "runtimeRegistryStatus": "registered-not-device-verified",
+      "physicalDeviceEvidenceStatus": "untested",
+      "recommendationReason": "Adds a compact multilingual model family; its custom license is recorded without making a deployment-readiness claim."
+    },
+    {
+      "recommendedPriority": 7,
+      "displayName": "BitNet b1.58 2B 4T",
+      "baseModelID": "microsoft/bitnet-b1.58-2B-4T",
+      "artifactID": "mlx-community/bitnet-b1.58-2B-4T-4bit",
+      "artifactRevision": "f4c3737ce9cd34ffe48a01647e779a68f97f08b1",
+      "modelFamily": "BitNet b1.58",
+      "modelType": "bitnet",
+      "parameterSizeClass": "medium-2b",
+      "quantization": "4-bit",
+      "modelFormat": "MLX Safetensors",
+      "artifactRepositorySizeBytes": 723946800,
+      "licenseIdentifier": "mit",
+      "licenseSourceURL": "https://huggingface.co/microsoft/bitnet-b1.58-2B-4T/blob/04c3b9ad9361b824064a1f25ea60a8be9599b127/LICENSE",
+      "sourceURL": "https://huggingface.co/mlx-community/bitnet-b1.58-2B-4T-4bit/tree/f4c3737ce9cd34ffe48a01647e779a68f97f08b1",
+      "runtimeRegistryStatus": "registered-not-device-verified",
+      "physicalDeviceEvidenceStatus": "untested",
+      "recommendationReason": "Adds an alternative weight architecture and a compact artifact in the 2B tier."
+    },
+    {
+      "recommendedPriority": 8,
+      "displayName": "Llama 3.2 3B Instruct",
+      "baseModelID": "meta-llama/Llama-3.2-3B-Instruct",
+      "artifactID": "mlx-community/Llama-3.2-3B-Instruct-4bit",
+      "artifactRevision": "7f0dc925e0d0afb0322d96f9255cfddf2ba5636e",
+      "modelFamily": "Llama 3.2",
+      "modelType": "llama",
+      "parameterSizeClass": "medium-3b",
+      "quantization": "4-bit",
+      "modelFormat": "MLX Safetensors",
+      "artifactRepositorySizeBytes": 1824825759,
+      "licenseIdentifier": "llama3.2",
+      "licenseSourceURL": "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct/blob/0cb88a4f764b7a12671c53f0838cd831a0843b95/LICENSE.txt",
+      "sourceURL": "https://huggingface.co/mlx-community/Llama-3.2-3B-Instruct-4bit/tree/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e",
+      "runtimeRegistryStatus": "registered-not-device-verified",
+      "physicalDeviceEvidenceStatus": "untested",
+      "recommendationReason": "Adds a same-family 1B-to-3B scaling control while staying within the initial candidate-size boundary."
     }
   ],
-  "openModelWatchlist": [
+  "compatibilityReview": [
+    {
+      "reviewPriority": 1,
+      "displayName": "DeepSeek-R1-Distill-Qwen 1.5B",
+      "baseModelID": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+      "artifactID": "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit",
+      "artifactRevision": "933185be1b8f81d9a21dcfa15ff73470d3545240",
+      "modelFamily": "DeepSeek-R1 distill / Qwen2",
+      "modelType": "qwen2",
+      "parameterSizeClass": "medium-1.5b",
+      "quantization": "4-bit",
+      "modelFormat": "MLX Safetensors",
+      "artifactRepositorySizeBytes": 1011386803,
+      "licenseIdentifier": "mit",
+      "licenseSourceURL": "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B/blob/ad9f0ae0864d7fbcd1cd905e3c6c5b069cc8b562/LICENSE",
+      "sourceURL": "https://huggingface.co/mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit/tree/933185be1b8f81d9a21dcfa15ff73470d3545240",
+      "runtimeRegistryStatus": "registered-review-blocked",
+      "physicalDeviceEvidenceStatus": "not-app-testable",
+      "blockerCode": "thinking-mode-contract-incompatible",
+      "reviewReason": "The pinned artifact's chat template opens a reasoning block and does not honor the frozen Power 1.0 requirement to disable thinking for the short-interaction workload."
+    },
+    {
+      "reviewPriority": 2,
+      "displayName": "Qwen3.5 2B",
+      "baseModelID": "Qwen/Qwen3.5-2B",
+      "artifactID": "mlx-community/Qwen3.5-2B-4bit",
+      "artifactRevision": "674aaa7240b91e8012fcad5d791b7dfe5ba90207",
+      "modelFamily": "Qwen3.5",
+      "modelType": "qwen3_5",
+      "parameterSizeClass": "medium-2b",
+      "quantization": "4-bit",
+      "modelFormat": "MLX Safetensors (multimodal conversion)",
+      "artifactRepositorySizeBytes": 1749081927,
+      "licenseIdentifier": "apache-2.0",
+      "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3.5-2B/blob/15852e8c16360a2fea060d615a32b45270f8a8fc/LICENSE",
+      "sourceURL": "https://huggingface.co/mlx-community/Qwen3.5-2B-4bit/tree/674aaa7240b91e8012fcad5d791b7dfe5ba90207",
+      "runtimeRegistryStatus": "multimodal-loader-review-required",
+      "physicalDeviceEvidenceStatus": "not-app-testable",
+      "blockerCode": "current-app-text-loader-not-confirmed",
+      "reviewReason": "The pinned artifact is published through an image-text-to-text path; the current benchmark App uses the MLXLLM text loader, so exact text-only loading and token accounting must be verified before selection is enabled."
+    },
+    {
+      "reviewPriority": 3,
+      "displayName": "Jamba Reasoning 3B",
+      "baseModelID": "ai21labs/AI21-Jamba-Reasoning-3B",
+      "artifactID": "mlx-community/AI21-Jamba-Reasoning-3B-4bit",
+      "artifactRevision": "9517347b9396e80a21750de4d7354c45da98776f",
+      "modelFamily": "Jamba",
+      "modelType": "jamba",
+      "parameterSizeClass": "medium-3b",
+      "quantization": "4-bit",
+      "modelFormat": "MLX Safetensors",
+      "artifactRepositorySizeBytes": 1747687573,
+      "licenseIdentifier": "jamba-open-model-license",
+      "licenseSourceURL": "https://www.ai21.com/licenses/jamba-open-model-license",
+      "sourceURL": "https://huggingface.co/mlx-community/AI21-Jamba-Reasoning-3B-4bit/tree/9517347b9396e80a21750de4d7354c45da98776f",
+      "runtimeRegistryStatus": "registered-review-blocked",
+      "physicalDeviceEvidenceStatus": "not-app-testable",
+      "blockerCode": "thinking-mode-contract-incompatible",
+      "reviewReason": "The pinned artifact's template forces a reasoning prefix and does not provide the frozen non-thinking behavior required by the Power 1.0 short-interaction workload."
+    },
+    {
+      "reviewPriority": 4,
+      "displayName": "OpenELM 270M Instruct",
+      "baseModelID": "apple/OpenELM-270M-Instruct",
+      "artifactID": "mlx-community/OpenELM-270M-Instruct",
+      "artifactRevision": "7cb5ebd2e82067793db75003630ed2442a16a29d",
+      "modelFamily": "OpenELM",
+      "modelType": "openelm",
+      "parameterSizeClass": "tiny-270m",
+      "quantization": "none",
+      "modelFormat": "MLX Safetensors",
+      "artifactRepositorySizeBytes": 545486828,
+      "licenseIdentifier": "apple-sample-code",
+      "licenseSourceURL": "https://huggingface.co/apple/OpenELM-270M-Instruct/blob/main/LICENSE",
+      "sourceURL": "https://huggingface.co/mlx-community/OpenELM-270M-Instruct/tree/7cb5ebd2e82067793db75003630ed2442a16a29d",
+      "runtimeRegistryStatus": "registered-review-blocked",
+      "physicalDeviceEvidenceStatus": "not-app-testable",
+      "blockerCode": "artifact-contract-incomplete",
+      "reviewReason": "The pinned artifact is not 4-bit and does not provide the chat template required for the frozen benchmark request construction, so it does not meet the current candidate policy."
+    }
+  ],
+  "reviewedIneligible": [
     {
       "displayName": "GLM 5.2",
       "sourceListingName": "GLM 5.2 (Max)",
@@ -120,8 +283,8 @@
       "licenseSourceURL": "https://huggingface.co/zai-org/GLM-5.2/blob/main/LICENSE",
       "sourceURL": "https://huggingface.co/zai-org/GLM-5.2",
       "appEligibility": "not-app-testable",
-      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
-      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+      "appEligibilityReasonCode": "exceeds-initial-device-scale",
+      "appEligibilityReason": "The exact requested model exceeds the catalog's initial 3B total-parameter boundary and no practical pinned 4-bit App artifact has been approved."
     },
     {
       "displayName": "GLM 5.1",
@@ -132,8 +295,8 @@
       "licenseSourceURL": "https://huggingface.co/zai-org/GLM-5.1/blob/main/LICENSE",
       "sourceURL": "https://huggingface.co/zai-org/GLM-5.1",
       "appEligibility": "not-app-testable",
-      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
-      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+      "appEligibilityReasonCode": "exceeds-initial-device-scale",
+      "appEligibilityReason": "The exact requested model exceeds the catalog's initial 3B total-parameter boundary and no practical pinned 4-bit App artifact has been approved."
     },
     {
       "displayName": "Kimi K2.7 Code",
@@ -144,8 +307,8 @@
       "licenseSourceURL": "https://huggingface.co/moonshotai/Kimi-K2.7-Code/blob/main/LICENSE",
       "sourceURL": "https://huggingface.co/moonshotai/Kimi-K2.7-Code",
       "appEligibility": "not-app-testable",
-      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
-      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+      "appEligibilityReasonCode": "exceeds-initial-device-scale",
+      "appEligibilityReason": "The exact requested model exceeds the catalog's initial 3B total-parameter boundary and no practical pinned 4-bit App artifact has been approved."
     },
     {
       "displayName": "DeepSeek V4 Pro",
@@ -156,8 +319,8 @@
       "licenseSourceURL": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/blob/main/LICENSE",
       "sourceURL": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
       "appEligibility": "not-app-testable",
-      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
-      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+      "appEligibilityReasonCode": "exceeds-initial-device-scale",
+      "appEligibilityReason": "The exact requested model exceeds the catalog's initial 3B total-parameter boundary and no practical pinned 4-bit App artifact has been approved."
     },
     {
       "displayName": "Kimi K2.6",
@@ -168,8 +331,8 @@
       "licenseSourceURL": "https://huggingface.co/moonshotai/Kimi-K2.6/blob/main/LICENSE",
       "sourceURL": "https://huggingface.co/moonshotai/Kimi-K2.6",
       "appEligibility": "not-app-testable",
-      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
-      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+      "appEligibilityReasonCode": "exceeds-initial-device-scale",
+      "appEligibilityReason": "The exact requested model exceeds the catalog's initial 3B total-parameter boundary and no practical pinned 4-bit App artifact has been approved."
     },
     {
       "displayName": "MiMo V2.5 Pro",
@@ -180,8 +343,8 @@
       "licenseSourceURL": "https://huggingface.co/XiaomiMiMo/MiMo-V2.5-Pro/blob/main/README.md",
       "sourceURL": "https://huggingface.co/XiaomiMiMo/MiMo-V2.5-Pro",
       "appEligibility": "not-app-testable",
-      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
-      "appEligibilityReason": "The official weights are public, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+      "appEligibilityReasonCode": "exceeds-initial-device-scale",
+      "appEligibilityReason": "The exact requested model exceeds the catalog's initial 3B total-parameter boundary and no practical pinned 4-bit App artifact has been approved."
     },
     {
       "displayName": "MiniMax M3",
@@ -192,8 +355,8 @@
       "licenseSourceURL": "https://huggingface.co/MiniMaxAI/MiniMax-M3/blob/main/LICENSE",
       "sourceURL": "https://huggingface.co/MiniMaxAI/MiniMax-M3",
       "appEligibility": "not-app-testable",
-      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
-      "appEligibilityReason": "The official weights are public under the MiniMax Community License, but the locked MLX Swift LM runtime does not register this multimodal architecture and no iPhone-viable pinned artifact has been approved."
+      "appEligibilityReasonCode": "exceeds-initial-device-scale",
+      "appEligibilityReason": "The exact requested model exceeds the catalog's initial 3B total-parameter boundary and no practical pinned 4-bit App artifact has been approved."
     },
     {
       "displayName": "DeepSeek V4 Flash",
@@ -204,8 +367,8 @@
       "licenseSourceURL": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash/blob/main/LICENSE",
       "sourceURL": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash",
       "appEligibility": "not-app-testable",
-      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
-      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+      "appEligibilityReasonCode": "exceeds-initial-device-scale",
+      "appEligibilityReason": "The exact requested model exceeds the catalog's initial 3B total-parameter boundary and no practical pinned 4-bit App artifact has been approved."
     },
     {
       "displayName": "MiniMax M2.7",
@@ -217,8 +380,8 @@
       "licenseNote": "The source listing says Modified MIT, while the official repository currently publishes a non-commercial MiniMax license; the official repository controls.",
       "sourceURL": "https://huggingface.co/MiniMaxAI/MiniMax-M2.7",
       "appEligibility": "not-app-testable",
-      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
-      "appEligibilityReason": "The official weights are public under a non-commercial MiniMax license, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+      "appEligibilityReasonCode": "exceeds-initial-device-scale",
+      "appEligibilityReason": "The exact requested model exceeds the catalog's initial 3B total-parameter boundary and no practical pinned 4-bit App artifact has been approved; its non-commercial license also remains a Ship constraint."
     },
     {
       "displayName": "Gemma 4 31B",
@@ -229,8 +392,8 @@
       "licenseSourceURL": "https://huggingface.co/google/gemma-4-31B-it/blob/main/README.md",
       "sourceURL": "https://huggingface.co/google/gemma-4-31B-it",
       "appEligibility": "not-app-testable",
-      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
-      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this multimodal architecture and no iPhone-viable pinned artifact has been approved."
+      "appEligibilityReasonCode": "exceeds-initial-device-scale",
+      "appEligibilityReason": "The exact requested model exceeds the catalog's initial 3B total-parameter boundary and no practical pinned 4-bit App artifact has been approved."
     },
     {
       "displayName": "Nemotron 3 Ultra",
@@ -241,8 +404,8 @@
       "licenseSourceURL": "https://openmdw.ai/license/1-1/",
       "sourceURL": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4",
       "appEligibility": "not-app-testable",
-      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
-      "appEligibilityReason": "The official weights are public under OpenMDW-1.1, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+      "appEligibilityReasonCode": "exceeds-initial-device-scale",
+      "appEligibilityReason": "The exact requested model exceeds the catalog's initial 3B total-parameter boundary and no practical pinned 4-bit App artifact has been approved."
     }
   ]
 }

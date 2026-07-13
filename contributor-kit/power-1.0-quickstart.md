@@ -7,9 +7,9 @@ personal prompts.
 
 This guide pins App `0.8.0` build `10` so a contribution can reproduce the
 existing Qwen comparison cells exactly. To test one of the separately listed
-Llama, Gemma, Granite, or SmolLM3 candidates, use
+candidate artifacts, use
 [Test a Recommended Power Model](test-recommended-model.md) and its pinned App
-0.9.0 source instead. Mixing App source identities creates a different exact
+0.10.0 source instead. Mixing App source identities creates a different exact
 comparison cell.
 
 ## What you need

@@ -99,7 +99,7 @@ const modeConfig = {
   catalog: {
     kind: "catalog",
     label: "Model catalog",
-    description: "App-ready candidates and requested public-weight models awaiting compatible Apple-device artifacts. These are not rankings.",
+    description: "Pinned App-ready candidates and small artifacts with a specific compatibility blocker. These are not rankings.",
     defaultSort: "priority",
     defaultDirection: "asc",
     columns: [
@@ -110,7 +110,7 @@ const modeConfig = {
       column("license", "License", row => row.configuration.model.licenseIdentifier, value => escapeHtml(value), true),
       column("support", "App status", row => row.runtimeRegistryStatus, (_, row) => catalogSupportMarkup(row), true),
       column("status", "Evidence", row => row.physicalDeviceEvidenceStatus, (_, row) => catalogEvidenceMarkup(row), true),
-      column("reason", "Why listed", row => row.recommendationReason ?? row.appEligibilityReason, value => escapeHtml(value), false),
+      column("reason", "Why listed", row => row.recommendationReason ?? row.reviewReason, value => escapeHtml(value), false),
       column("catalog-action", "Action", () => 0, (_, row) => catalogActionMarkup(row), false),
     ],
   },
@@ -153,7 +153,7 @@ async function loadEvidence() {
     if (!Array.isArray(power.results) || power.results.length === 0) throw new Error("Power evidence is empty");
     if (!Array.isArray(ship.profiles) || ship.profiles.length === 0) throw new Error("Ship profiles are empty");
     if (!Array.isArray(catalog.models) || catalog.models.length === 0) throw new Error("Model test catalog is empty");
-    if (!Array.isArray(catalog.openModelWatchlist)) throw new Error("Public-weight model watchlist is unavailable");
+    if (!Array.isArray(catalog.compatibilityReview)) throw new Error("Compatibility-review catalog is unavailable");
     state.power = power;
     state.ship = ship;
     state.catalog = catalog;
@@ -235,40 +235,35 @@ function buildCatalogRows(catalog) {
     catalogEntryType: "app-ready",
     configuration: { model, runtime: catalog.runtime },
   }));
-  const watchlist = catalog.openModelWatchlist.map(model => ({
+  const compatibilityReview = catalog.compatibilityReview.map(model => ({
     ...model,
-    catalogEntryType: "open-model-watchlist",
-    runtimeRegistryStatus: "unsupported-in-locked-runtime",
-    physicalDeviceEvidenceStatus: "not-app-testable",
+    catalogEntryType: "compatibility-review",
     configuration: {
       model: {
         ...model,
-        artifactID: model.officialModelID,
-        quantization: null,
-        artifactRepositorySizeBytes: null,
       },
       runtime: catalog.runtime,
     },
   }));
-  return [...appReady, ...watchlist];
+  return [...appReady, ...compatibilityReview];
 }
 
 function catalogSupportMarkup(row) {
   return row.catalogEntryType === "app-ready"
     ? '<span class="catalog-support">Ready in App</span>'
-    : '<span class="catalog-watchlist">Not App-ready</span>';
+    : '<span class="catalog-review">Needs review</span>';
 }
 
 function catalogEvidenceMarkup(row) {
   return row.catalogEntryType === "app-ready"
     ? '<span class="catalog-status">Untested</span>'
-    : '<span class="catalog-watchlist">Watchlist</span>';
+    : '<span class="catalog-review">Blocked</span>';
 }
 
 function catalogActionMarkup(row) {
   const source = `<a class="catalog-source" href="${escapeAttribute(row.configuration.model.sourceURL)}" target="_blank" rel="noreferrer">Source</a>`;
   if (row.catalogEntryType !== "app-ready") {
-    return `<span class="catalog-unavailable">Await compatible artifact</span>${source}`;
+    return `<span class="catalog-unavailable">Resolve blocker first</span>${source}`;
   }
   return `<a class="details-button" href="${MODEL_TEST_GUIDE_URL}" target="_blank" rel="noreferrer">Test this model</a>${source}`;
 }
@@ -291,14 +286,14 @@ function renderBoard() {
   elements.rowCount.textContent = config.kind === "coverage"
     ? `${rows.length} tested profile${rows.length === 1 ? "" : "s"} · ${openSlots} open contributor slot${openSlots === 1 ? "" : "s"}`
     : config.kind === "catalog"
-      ? `${rows.filter(row => row.catalogEntryType === "app-ready").length} App-ready · ${rows.filter(row => row.catalogEntryType === "open-model-watchlist").length} watchlist`
+      ? `${rows.filter(row => row.catalogEntryType === "app-ready").length} App-ready · ${rows.filter(row => row.catalogEntryType === "compatibility-review").length} needs review`
       : `${rows.length} tested configuration${rows.length === 1 ? "" : "s"}`;
   elements.footerStatus.textContent = config.kind === "ship"
     ? "Ship 1.0 · Published evidence profiles · No deployment score"
     : config.kind === "coverage"
       ? "Coverage derived from live Power evidence · No placeholder devices"
       : config.kind === "catalog"
-        ? "Model catalog · App-ready and public-weight watchlist entries are explicitly separated · No performance claims"
+        ? "Model catalog · App-ready and compatibility-review entries are explicitly separated · Large ineligible models are not displayed · No performance claims"
       : "Power 1.0 reference · Live merged community evidence";
   elements.footerChecksums.href = config.kind === "ship"
     ? "results/ship-1.0/SHA256SUMS"
@@ -370,8 +365,8 @@ function renderCell(columnConfig, row, index) {
   if (columnConfig.key === "rank") return `<td class="rank-cell">${index + 1}</td>`;
   if (columnConfig.key === "model") {
     const model = row.configuration.model;
-    const metadata = row.catalogEntryType === "open-model-watchlist"
-      ? `${model.licenseIdentifier} · Public-weight watchlist`
+    const metadata = row.catalogEntryType === "compatibility-review"
+      ? `${model.parameterSizeClass} · Compatibility review`
       : `${model.parameterSizeClass} · ${model.modelFormat}`;
     return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(metadata)}</span></td>`;
   }

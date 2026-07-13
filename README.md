@@ -35,13 +35,15 @@ with valid merged community packages. It provides Power workload rankings,
 per-cell contributor and variation evidence, plus a sortable Ship deployment
 profile view linked to exact tested configurations and Swift integration code.
 Its separate **Models** view distinguishes pinned, untested artifacts that the
-community can run now from a public-weight watchlist that is not yet App-ready.
-Neither group has a rank or performance claim, and neither appears in a
-leaderboard until genuine evidence is accepted. A watchlist model becomes an
-App option only after a compatible artifact and locked-runtime support are
-confirmed. Watchlist inclusion means official weights are downloadable under
-an inspectable license; it does not claim that every custom model license is
-OSI-approved open source.
+community can run now from small pinned artifacts with a concrete compatibility
+blocker. Neither group has a rank or performance claim, and neither appears in
+a leaderboard until genuine evidence is accepted. Very large models that have
+already been reviewed are kept as non-public exclusion records instead of
+being promoted as unrealistic iPhone test recommendations.
+
+The Models view is built from exact artifact revisions and the App's locked MLX
+Swift LM registry. Runtime registration is a loader-compatibility prerequisite,
+not proof that a model fits, completes a workload, or performs well on iPhone.
 To preview the site locally from the repository root:
 
 ```bash

@@ -44,8 +44,8 @@ class CommunityOnboardingTests(unittest.TestCase):
 
     def test_recommended_model_path_is_separate_and_source_pinned(self) -> None:
         guide = (ROOT / "contributor-kit/test-recommended-model.md").read_text()
-        self.assertIn("002c76ccbfed7b1c8b7c13313b887aaebf610a3e", guide)
-        self.assertIn("App `0.9.0` build `11`", guide)
+        self.assertIn("SOURCE_COMMIT_PENDING", guide)
+        self.assertIn("App `0.10.0` build `12`", guide)
         self.assertIn("no accepted physical-iPhone", guide)
         self.assertIn("not as a leaderboard result", guide)
 

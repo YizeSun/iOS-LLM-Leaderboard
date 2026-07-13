@@ -9,6 +9,10 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
     case gemma3OneB = "gemma-3-1b-it-qat-4bit"
     case granite33TwoB = "granite-3.3-2b-instruct-4bit"
     case smolLM3ThreeB = "smollm3-3b-4bit"
+    case lfm2OneTwoB = "lfm2-1.2b-4bit"
+    case exaone4OneTwoB = "exaone-4.0-1.2b-4bit"
+    case bitnetTwoB = "bitnet-b1.58-2b-4t-4bit"
+    case llama32ThreeB = "llama-3.2-3b-instruct-4bit"
 
     enum EvidenceStatus: String, Sendable {
         case maintainerReference = "Maintainer reference"
@@ -26,20 +30,25 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
         case .gemma3OneB: "Gemma 3 1B · 4-bit · Untested"
         case .granite33TwoB: "Granite 3.3 2B · 4-bit · Untested"
         case .smolLM3ThreeB: "SmolLM3 3B · 4-bit · Untested"
+        case .lfm2OneTwoB: "LFM2 1.2B · 4-bit · Untested"
+        case .exaone4OneTwoB: "EXAONE 4.0 1.2B · 4-bit · Untested"
+        case .bitnetTwoB: "BitNet 2B · 4-bit · Untested"
+        case .llama32ThreeB: "Llama 3.2 3B · 4-bit · Untested"
         }
     }
 
     var evidenceStatus: EvidenceStatus {
         switch self {
         case .small, .medium, .large: .maintainerReference
-        case .llama32OneB, .gemma3OneB, .granite33TwoB, .smolLM3ThreeB:
+        case .llama32OneB, .gemma3OneB, .granite33TwoB, .smolLM3ThreeB,
+             .lfm2OneTwoB, .exaone4OneTwoB, .bitnetTwoB, .llama32ThreeB:
             .untestedCandidate
         }
     }
 
     var extraEOSTokens: Set<String> {
         switch self {
-        case .llama32OneB: ["<|eot_id|>"]
+        case .llama32OneB, .llama32ThreeB: ["<|eot_id|>"]
         case .gemma3OneB: ["<end_of_turn>"]
         default: []
         }
@@ -187,6 +196,86 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
                 artifactRepositorySizeBytes: 1_747_380_812,
                 compatibilityConstraints: Self.candidateConstraints(
                     modelType: "smollm3"
+                ),
+                artifactContentHash: nil
+            )
+        case .lfm2OneTwoB:
+            .init(
+                displayName: "LFM2 1.2B",
+                baseModelId: "LiquidAI/LFM2-1.2B",
+                artifactId: "mlx-community/LFM2-1.2B-4bit",
+                artifactRevision: "3843e4ad0fcb8b7ed8a050908ac8f0bb5320d1bf",
+                modelFamily: "LFM2",
+                parameterSizeClass: "medium-1.2b",
+                quantization: "4-bit",
+                modelFormat: "MLX Safetensors",
+                tokenizerIdentity: "mlx-community/LFM2-1.2B-4bit@3843e4ad0fcb8b7ed8a050908ac8f0bb5320d1bf/tokenizer_config.json",
+                sourceUrl: "https://huggingface.co/mlx-community/LFM2-1.2B-4bit/tree/3843e4ad0fcb8b7ed8a050908ac8f0bb5320d1bf",
+                licenseIdentifier: "lfm1.0",
+                licenseSourceUrl: "https://huggingface.co/LiquidAI/LFM2-1.2B/blob/933cee00d754fb3bfe06c644c0cb95453f2d8bb2/LICENSE",
+                artifactRepositorySizeBytes: 663_392_070,
+                compatibilityConstraints: Self.candidateConstraints(
+                    modelType: "lfm2"
+                ),
+                artifactContentHash: nil
+            )
+        case .exaone4OneTwoB:
+            .init(
+                displayName: "EXAONE 4.0 1.2B",
+                baseModelId: "LGAI-EXAONE/EXAONE-4.0-1.2B",
+                artifactId: "mlx-community/exaone-4.0-1.2b-4bit",
+                artifactRevision: "6dbf5f06dcb9526a7c328f692b1e08d35e17bff2",
+                modelFamily: "EXAONE 4.0",
+                parameterSizeClass: "medium-1.2b",
+                quantization: "4-bit",
+                modelFormat: "MLX Safetensors",
+                tokenizerIdentity: "mlx-community/exaone-4.0-1.2b-4bit@6dbf5f06dcb9526a7c328f692b1e08d35e17bff2/tokenizer_config.json",
+                sourceUrl: "https://huggingface.co/mlx-community/exaone-4.0-1.2b-4bit/tree/6dbf5f06dcb9526a7c328f692b1e08d35e17bff2",
+                licenseIdentifier: "exaone",
+                licenseSourceUrl: "https://huggingface.co/LGAI-EXAONE/EXAONE-4.0-1.2B/blob/3abf2810673c7c0778df64a73c2d52eab32d91c4/LICENSE",
+                artifactRepositorySizeBytes: 731_129_626,
+                compatibilityConstraints: Self.candidateConstraints(
+                    modelType: "exaone4"
+                ),
+                artifactContentHash: nil
+            )
+        case .bitnetTwoB:
+            .init(
+                displayName: "BitNet b1.58 2B 4T",
+                baseModelId: "microsoft/bitnet-b1.58-2B-4T",
+                artifactId: "mlx-community/bitnet-b1.58-2B-4T-4bit",
+                artifactRevision: "f4c3737ce9cd34ffe48a01647e779a68f97f08b1",
+                modelFamily: "BitNet b1.58",
+                parameterSizeClass: "medium-2b",
+                quantization: "4-bit",
+                modelFormat: "MLX Safetensors",
+                tokenizerIdentity: "mlx-community/bitnet-b1.58-2B-4T-4bit@f4c3737ce9cd34ffe48a01647e779a68f97f08b1/tokenizer_config.json",
+                sourceUrl: "https://huggingface.co/mlx-community/bitnet-b1.58-2B-4T-4bit/tree/f4c3737ce9cd34ffe48a01647e779a68f97f08b1",
+                licenseIdentifier: "mit",
+                licenseSourceUrl: "https://huggingface.co/microsoft/bitnet-b1.58-2B-4T/blob/04c3b9ad9361b824064a1f25ea60a8be9599b127/LICENSE",
+                artifactRepositorySizeBytes: 723_946_800,
+                compatibilityConstraints: Self.candidateConstraints(
+                    modelType: "bitnet"
+                ),
+                artifactContentHash: nil
+            )
+        case .llama32ThreeB:
+            .init(
+                displayName: "Llama 3.2 3B Instruct",
+                baseModelId: "meta-llama/Llama-3.2-3B-Instruct",
+                artifactId: "mlx-community/Llama-3.2-3B-Instruct-4bit",
+                artifactRevision: "7f0dc925e0d0afb0322d96f9255cfddf2ba5636e",
+                modelFamily: "Llama 3.2",
+                parameterSizeClass: "medium-3b",
+                quantization: "4-bit",
+                modelFormat: "MLX Safetensors",
+                tokenizerIdentity: "mlx-community/Llama-3.2-3B-Instruct-4bit@7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/tokenizer_config.json",
+                sourceUrl: "https://huggingface.co/mlx-community/Llama-3.2-3B-Instruct-4bit/tree/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e",
+                licenseIdentifier: "llama3.2",
+                licenseSourceUrl: "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct/blob/0cb88a4f764b7a12671c53f0838cd831a0843b95/LICENSE.txt",
+                artifactRepositorySizeBytes: 1_824_825_759,
+                compatibilityConstraints: Self.candidateConstraints(
+                    modelType: "llama"
                 ),
                 artifactContentHash: nil
             )

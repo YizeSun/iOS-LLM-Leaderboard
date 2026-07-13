@@ -2,13 +2,13 @@
 
 This kit explains how community members can contribute to iOS-LLM-Leaderboard.
 
-Power 1.0 public intake is open for unmodified physical-iPhone exports from two
+Power 1.0 public intake is open for unmodified physical-iPhone exports from
 exact App sources:
 
 - use the [Power 1.0 contributor quickstart](power-1.0-quickstart.md) and App
   0.8.0 build 10 to reproduce an existing Qwen comparison cell;
-- use [Test a Recommended Power Model](test-recommended-model.md) and App 0.9.0
-  build 11 to create evidence for one of four pinned, untested candidates.
+- use [Test a Recommended Power Model](test-recommended-model.md) and App 0.10.0
+  build 12 to create evidence for one of eight pinned, untested candidates.
 
 Both paths cover the exact App checkout, physical-device run, immutable
 package, validation, and contributor-owned pull request. The candidates are
