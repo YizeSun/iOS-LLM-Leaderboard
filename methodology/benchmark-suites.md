@@ -1,10 +1,21 @@
-# Benchmark Suites
+# Framework v1 Suite Namespaces
 
-iOS-LLM-Leaderboard is organized around five independent benchmark suites.
+iOS-LLM-Leaderboard retains five independent suite namespaces in Benchmark
+Framework v1. They organize stable IDs, historical tasks, methodology, and
+evidence ownership during migration.
 
-Suite A and Suite C belong to the Developer Assistance track. Suite B, Suite D,
-and Suite E belong to the Embedded Intelligence track. Track membership does
-not create a shared score.
+These namespaces are not the public product architecture. Product Phase 1 is
+Power + Ship, while Build is a Phase 2 Research Track. The authoritative mapping
+is documented in [Product Architecture](../docs/product-architecture.md#suite-relationships).
+
+- Suite A and Suite C are retained for compatibility and Phase 2 Build research.
+- Suite B is the active measurement foundation for Phase 1 Power.
+- Suite D is potential later Power quality evidence and is not active in Pilot
+  v0.1.
+- Suite E is potential later Ship integration evidence and is not executed or
+  scored in Pilot v0.1.
+
+Namespace membership does not create a shared score or equal product priority.
 
 ## Suite A: Swift Code Generation
 

@@ -22,9 +22,14 @@ The framework prioritizes:
 
 Benchmark quality is more important than benchmark quantity. Do not invent benchmark results, rankings, or performance numbers.
 
-## Independent Suite Model
+## Framework v1 Namespace Model
 
-iOS-LLM-Leaderboard uses five independent benchmark suites:
+The public product is organized as Build, Power, and Ship. Framework v1 retains
+five independent suite namespaces for compatibility and evidence ownership;
+they are not five parallel product tracks. See
+[Product Architecture](../docs/product-architecture.md#suite-relationships).
+
+The retained namespaces are:
 
 - Suite A: Swift Code Generation
 - Suite B: On-device Performance
@@ -32,7 +37,9 @@ iOS-LLM-Leaderboard uses five independent benchmark suites:
 - Suite D: App Feature Intelligence
 - Suite E: Runtime Evaluation
 
-Each suite may produce separate scores, reports, and leaderboards. Do not combine Suite A, B, C, D, and E into a single global score unless a formal weighting methodology is defined.
+Framework v1 suite reports remain separate during migration. Do not combine
+Suite A, B, C, D, and E into a single global score unless a formal weighting
+methodology is defined.
 
 ## Canonical Framework Documents
 
