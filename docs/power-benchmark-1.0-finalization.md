@@ -118,5 +118,6 @@ The confirmed declarations and publication/result/ranking/tag flags are
 recorded in the final manifests. The deterministic generator produces the
 official leaderboard from the same six hash-bound source files. Publication is
 completed by merging the authorized manifest, creating the `1.0.0` tag and
-GitHub Release, and verifying the deployed leaderboard. Ship begins as a
-separate implementation phase after that publication succeeds.
+GitHub Release, and verifying the deployed leaderboard. Ship Deployment
+Profiles 1.0 was subsequently published as `ship-1.0.0`; Power 1.0 public
+intake is now open under the unchanged adopted RC1 source contract.
