@@ -58,6 +58,29 @@ class PowerOneProtocolFreezeTests(unittest.TestCase):
             workloads["b-pipe-001-sustained-generation"]["ranked_metrics"],
         )
 
+    def test_workload_generation_and_response_contracts_are_exact(self) -> None:
+        workloads = {item["workload_id"]: item for item in self.protocol["workloads"]}
+        ux = workloads["b-ux-001-short-interaction"]
+        pipe = workloads["b-pipe-001-sustained-generation"]
+        self.assertEqual(
+            ux["generation_configuration"],
+            {
+                "top_p": 1,
+                "top_k": 0,
+                "seed": 0,
+                "repetition_penalty": None,
+                "thinking_mode": "disabled-via-chat-template",
+                "chat_template_identity": "artifact-tokenizer-config-enable-thinking-false",
+            },
+        )
+        self.assertEqual(pipe["generation_configuration"]["top_p"], None)
+        self.assertEqual(pipe["generation_configuration"]["top_k"], None)
+        self.assertEqual(
+            ux["response_conformance"]["policy_version"],
+            "short-interaction-response-v1",
+        )
+        self.assertEqual(ux["response_conformance"]["maximum_sentences"], 2)
+
 
 if __name__ == "__main__":
     unittest.main()
