@@ -17,27 +17,30 @@ By submitting a pull request, you agree that your contribution will be licensed 
 - Add example integrations for iOS developers.
 - Improve validation and leaderboard tooling.
 
-The long-term contribution path is the official iOS benchmark app described in
-[Community Contribution Model](docs/community-contribution-model.md). The app
-will run a locked benchmark release, export a reviewable result bundle, and
-reduce the need for contributors to construct result JSON manually.
+The official Power contribution path uses the iOS benchmark app described in
+[Community Contribution Model](docs/community-contribution-model.md). App
+0.8.0 build 10 runs the locked adopted-RC1 contract and exports the reviewable
+result; repository tooling adds the contributor manifest without rewriting
+those bytes.
 
 ## Current Contribution Stage
 
-The repository does not yet accept any result as an official or verified
-ranking entry. Power 1.0 RC1 submission and governance contracts are under
-review; public intake begins only after explicit release approval.
+Power Benchmark 1.0 public result intake is open. Contributors may submit an
+immutable App 0.8.0 build 10 export plus its contributor-owned manifest through
+the documented Power intake path. The official 1.0 release adopted the frozen
+RC1 source contract, so its versioned directory and App-emitted identities are
+preserved intentionally.
 
-During the current documentation-first stage:
+During the current contribution stage:
 
 - benchmark and methodology proposals are welcome;
 - integration and validation tooling is welcome;
-- result files may be used to test the Framework v1 format;
-- Suite B performance numbers must remain explicitly non-official until
-  workloads, runner, and evidence rules are frozen.
+- Power results must use the official App and frozen submission package;
+- historical Pilot and Framework v1 examples remain non-official; and
+- no contributor or CI job may assign its own verified or ranking status.
 
-Future community results will use evidence levels. Passing structural
-validation alone will not immediately place a result in the default ranking.
+Community results use evidence levels. Passing structural validation alone
+does not place a result in the default ranking or alter Power 1.0.
 
 ## Benchmark Task Contributions
 
@@ -108,8 +111,8 @@ For repository placement, rename the untouched App export to
 [Community Submissions](submissions/README.md) for CI and maintainer review
 commands.
 
-Power 1.0 RC1 uses the App's unmodified Power result plus a separate contributor
-manifest. Create and validate a proposed package with:
+Power 1.0 uses the App's unmodified adopted-RC1 Power result plus a separate
+contributor manifest. Create and validate a package with:
 
 ```bash
 python3 scripts/create_suite_b_power_submission.py \
@@ -121,9 +124,12 @@ python3 scripts/create_suite_b_power_submission.py \
   --accept-declarations
 ```
 
-Read the complete [Power submission guide](docs/power-benchmark-1.0-submission.md)
-before accepting the declarations. Valid Draft evidence remains unreviewed and
-ranking-ineligible.
+Read the current
+[Power 1.0 public-intake guide](docs/power-benchmark-1.0-public-intake.md) and
+the SHA-256-pinned
+[RC1 package definition](docs/power-benchmark-1.0-submission.md) before
+accepting the declarations. Valid Draft evidence remains unreviewed and
+ranking-ineligible until separate review and publication decisions are merged.
 
 ## Data Integrity
 

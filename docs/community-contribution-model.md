@@ -65,11 +65,12 @@ review control transitions.
 python3 scripts/validate_suite_b_submission.py path/to/submission.json
 ```
 
-Power 1.0 RC1 instead preserves the App result as a standalone, byte-exact
-`result.json` and adds a contributor-owned `submission.json`. This avoids
-Base64 duplication and lets repository validation run the frozen Power
+Power 1.0 public intake preserves the App's adopted RC1 result as a standalone,
+byte-exact `result.json` and adds a contributor-owned `submission.json`. This
+avoids Base64 duplication and lets repository validation run the frozen Power
 semantic validator directly without changing the App export. See the
-[Power submission guide](power-benchmark-1.0-submission.md).
+[Power 1.0 public-intake guide](power-benchmark-1.0-public-intake.md) and the
+pinned [RC1 package definition](power-benchmark-1.0-submission.md).
 
 ## Evidence Levels
 
@@ -83,10 +84,11 @@ semantic validator directly without changing the App export. See the
 
 The App cannot assign Reproduced, Verified, or Maintainer Reference status.
 
-Power RC1 intake stores immutable two-file packages under
+Power 1.0 intake stores immutable two-file packages under
 `submissions/suite-b/power-1.0.0-rc.1/draft/`. CI emits structural, semantic,
 integrity, and declaration findings but does not alter trust. Separate review
-records control evidence transitions. Historical Pilot packages remain under
+records control evidence transitions. The RC1 path is retained because it is
+the exact source contract adopted by Power 1.0. Historical Pilot packages remain under
 `submissions/suite-b/draft/`. See
 [Community Submissions](../submissions/README.md).
 
@@ -113,4 +115,4 @@ Before public result intake:
 - [x] add automated schema and semantic validation;
 - [x] define conflict-of-interest disclosure;
 - [x] define correction, withdrawal, and deprecation procedures;
-- [ ] receive explicit maintainer approval to open public Power intake.
+- [x] receive explicit maintainer approval to open public Power intake.

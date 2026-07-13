@@ -1,12 +1,14 @@
-# Power 1.0 RC.1 Submissions
+# Power 1.0 Submissions — Adopted RC.1 Contract
 
-This directory is the proposed repository intake and review area for
-`suite-b-power@1.0.0-rc.1`.
+This directory is the open repository intake and review area for Power 1.0
+evidence emitted under `suite-b-power@1.0.0-rc.1`.
 
 - `draft/` stores immutable contributor packages.
 - `reviews/` stores maintainer-created, hash-bound evidence transitions.
 
-RC1 is non-official. Adding a file here does not authorize ranking or publish a
-benchmark release. Follow the
-[submission guide](../../../docs/power-benchmark-1.0-submission.md) and
+Power 1.0 adopted this exact RC1 source contract without semantic or byte
+changes. Adding a file here does not add it to the immutable 1.0 release,
+authorize ranking, or publish benchmark evidence. Follow the
+[public-intake guide](../../../docs/power-benchmark-1.0-public-intake.md),
+[frozen package definition](../../../docs/power-benchmark-1.0-submission.md), and
 [governance policy](../../../docs/power-benchmark-1.0-governance.md).
