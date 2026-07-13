@@ -1,6 +1,7 @@
 const POWER_DATA_URL = "results/suite-b-power-community/normalized-results.json";
 const OFFICIAL_POWER_DATA_URL = "results/suite-b-power-1.0/normalized-results.json";
 const SHIP_DATA_URL = "results/ship-1.0/deployment-profiles.json";
+const CONTRIBUTOR_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.0-quickstart.md";
 
 const state = {
   power: null,
@@ -74,6 +75,22 @@ const modeConfig = {
       column("verified", "Verified", row => claimCount(row, "verified"), value => `${value} claims`, true),
       column("unknown", "Unknown", row => claimCount(row, "unknown"), value => `${value} claims`, true),
       column("details", "Profile", () => 0, () => "", false),
+    ],
+  },
+  coverage: {
+    kind: "coverage",
+    label: "Community evidence coverage",
+    description: "Each exact workload cell needs two independent metric-eligible GitHub contributors to display as Reproduced.",
+    defaultSort: "gaps",
+    defaultDirection: "desc",
+    columns: [
+      column("model", "Model", row => row.configuration.model.displayName, value => value),
+      column("quantization", "Quant", row => row.configuration.model.quantization, value => escapeHtml(value)),
+      column("device", "Device", row => row.configuration.device.displayName, value => escapeHtml(value), true),
+      column("coverage-ux", "Responsiveness", row => row.coverage.ux?.eligibleContributorCount ?? -1, (_, row) => coverageCell(row.coverage.ux), true),
+      column("coverage-pipe", "Sustained generation", row => row.coverage.pipe?.eligibleContributorCount ?? -1, (_, row) => coverageCell(row.coverage.pipe), true),
+      column("gaps", "Open contributor slots", row => row.openContributorSlots, value => String(value), true, true),
+      column("contribute", "Action", () => 0, () => `<a class="details-button" href="${CONTRIBUTOR_GUIDE_URL}" target="_blank" rel="noreferrer">Contribute result</a>`, false),
     ],
   },
 };
@@ -151,27 +168,72 @@ function workloadRows(rows, workload) {
   return rows.filter(row => row.workload.id === workload && row.rankingEligibility.candidateEligible);
 }
 
+function buildCoverageRows(rows) {
+  const profiles = new Map();
+  rows.forEach(row => {
+    const identity = row.comparisonIdentity;
+    const key = JSON.stringify({
+      sourceEvidenceRelease: identity.sourceEvidenceRelease,
+      runner: identity.runner,
+      model: identity.model,
+      runtime: identity.runtime,
+      device: identity.device,
+    });
+    if (!profiles.has(key)) {
+      profiles.set(key, {
+        configuration: row.configuration,
+        coverage: { ux: null, pipe: null },
+        openContributorSlots: 4,
+      });
+    }
+    const profile = profiles.get(key);
+    const slot = row.workload.id === "b-ux-001-short-interaction" ? "ux" : "pipe";
+    profile.coverage[slot] = {
+      comparisonID: row.comparisonID,
+      eligibleContributorCount: row.community.eligibleContributorCount,
+      contributorCount: row.community.contributorCount,
+      runCount: row.community.runCount,
+      status: row.community.status,
+    };
+  });
+  return [...profiles.values()].map(profile => {
+    profile.openContributorSlots = [profile.coverage.ux, profile.coverage.pipe]
+      .reduce((total, evidence) => total + Math.max(0, 2 - (evidence?.eligibleContributorCount ?? 0)), 0);
+    return profile;
+  });
+}
+
 function renderBoard() {
   if (!state.power || !state.ship) return;
   const config = modeConfig[state.mode];
-  let rows = config.kind === "ship"
-    ? state.ship.profiles
-    : workloadRows(state.power.results, config.workload);
+  let rows;
+  if (config.kind === "ship") rows = state.ship.profiles;
+  else if (config.kind === "coverage") rows = buildCoverageRows(state.power.results);
+  else rows = workloadRows(state.power.results, config.workload);
   rows = filterRows(rows);
   rows = sortRows(rows, config);
   elements.contextLabel.textContent = config.label;
   elements.contextDescription.textContent = config.description;
-  elements.rowCount.textContent = `${rows.length} tested configuration${rows.length === 1 ? "" : "s"}`;
+  const openSlots = rows.reduce((total, row) => total + (row.openContributorSlots ?? 0), 0);
+  elements.rowCount.textContent = config.kind === "coverage"
+    ? `${rows.length} tested profile${rows.length === 1 ? "" : "s"} · ${openSlots} open contributor slot${openSlots === 1 ? "" : "s"}`
+    : `${rows.length} tested configuration${rows.length === 1 ? "" : "s"}`;
   elements.footerStatus.textContent = config.kind === "ship"
     ? "Ship 1.0 · Published evidence profiles · No deployment score"
-    : "Power 1.0 reference · Live merged community evidence";
+    : config.kind === "coverage"
+      ? "Coverage derived from live Power evidence · No placeholder devices"
+      : "Power 1.0 reference · Live merged community evidence";
   elements.footerChecksums.href = config.kind === "ship"
     ? "results/ship-1.0/SHA256SUMS"
     : "results/suite-b-power-1.0/SHA256SUMS";
   elements.footerTable.href = config.kind === "ship"
     ? "results/ship-1.0/PROFILES.md"
-    : "results/suite-b-power-community/LEADERBOARD.md";
-  elements.footerTable.textContent = config.kind === "ship" ? "Profile table" : "Evidence table";
+    : config.kind === "coverage"
+      ? "results/suite-b-power-community/COVERAGE.md"
+      : "results/suite-b-power-community/LEADERBOARD.md";
+  elements.footerTable.textContent = config.kind === "ship"
+    ? "Profile table"
+    : config.kind === "coverage" ? "Coverage report" : "Evidence table";
   elements.empty.hidden = rows.length !== 0;
   renderHead(config.columns);
   renderRows(rows, config.columns);
@@ -377,6 +439,15 @@ function variationText(row) {
   const variation = row.community.primaryMetricVariation;
   if (variation.value == null) return "Not available with one contributor";
   return `${variation.value.toFixed(2)}%${variation.high ? " · High variation" : ""}`;
+}
+
+function coverageCell(evidence) {
+  if (!evidence) return '<span class="coverage-status missing">No evidence</span>';
+  const eligible = evidence.eligibleContributorCount;
+  const remaining = Math.max(0, 2 - eligible);
+  const label = remaining === 0 ? "Reproduced" : `${eligible} eligible · needs ${remaining}`;
+  const className = remaining === 0 ? "reproduced" : "needed";
+  return `<button class="coverage-status ${className}" type="button" data-result="${escapeAttribute(evidence.comparisonID)}">${escapeHtml(label)}</button>`;
 }
 
 function thermalMarkup(value) {

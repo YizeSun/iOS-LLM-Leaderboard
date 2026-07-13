@@ -96,7 +96,8 @@ App export
 The generated live files are:
 
 - `results/suite-b-power-community/normalized-results.json`; and
-- `results/suite-b-power-community/LEADERBOARD.md`.
+- `results/suite-b-power-community/LEADERBOARD.md`; and
+- `results/suite-b-power-community/COVERAGE.md`.
 
 The published `results/suite-b-power-1.0/` package and the `1.0.0` tag remain
 unchanged. The website labels the combined view as Power 1.0 plus Community
