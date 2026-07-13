@@ -2,9 +2,11 @@
 
 ## Status
 
-Design draft under the
-[Power Benchmark 1.0 Foundation](../../docs/power-benchmark-1.0-foundation.md)
-work order. This protocol does not yet authorize official results.
+The v2 architecture remains a design umbrella. The two Power 1.0 candidate
+workloads now have a frozen F2 execution contract in
+[`power-1.0-protocol.md`](power-1.0-protocol.md) and explicit
+[`migration rules`](power-1.0-migration.md). Neither document authorizes
+official results; the F3 schema and validator are still required.
 
 ## Benchmark Question
 
