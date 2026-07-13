@@ -283,7 +283,8 @@ Official Power result submission uses the frozen App/result contract and the
 hash-bound review process documented below. Passing intake does not
 automatically grant a ranking-eligible evidence level.
 
-Start with the [Power 1.0 public-intake guide](docs/power-benchmark-1.0-public-intake.md),
+Start with the [Power 1.0 contributor quickstart](contributor-kit/power-1.0-quickstart.md),
+[Power 1.0 public-intake guide](docs/power-benchmark-1.0-public-intake.md),
 [CONTRIBUTING.md](CONTRIBUTING.md), and the
 [Contributor Kit](contributor-kit/README.md).
 

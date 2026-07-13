@@ -121,6 +121,11 @@ input:focus-visible {
   color: var(--accent);
 }
 
+.nav-links .contribute-link {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 main {
   padding-block: 28px 40px;
 }
@@ -452,6 +457,34 @@ h1 {
   color: var(--warning);
   font-weight: 600;
   white-space: nowrap;
+}
+
+.coverage-status {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 550;
+  white-space: nowrap;
+}
+
+.coverage-status:hover {
+  text-decoration: underline;
+}
+
+.coverage-status.reproduced {
+  color: var(--nominal);
+}
+
+.coverage-status.needed {
+  color: var(--warning);
+}
+
+.coverage-status.missing {
+  color: var(--text-tertiary);
+  cursor: default;
 }
 
 .details-button {
