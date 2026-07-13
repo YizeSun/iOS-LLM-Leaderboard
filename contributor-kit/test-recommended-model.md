@@ -21,16 +21,28 @@ The catalog pins each exact artifact revision, license source, repository
 size, and locked-runtime registry basis. Do not substitute a similarly named
 artifact or a newer revision.
 
-## Open-model watchlist
+## Public-weight model watchlist
 
-The same catalog also records five open-weight models requested for future
+The same catalog also records eleven public-weight models requested for future
 compatibility review:
 
 - `zai-org/GLM-5.2` (shown in the source listing as GLM 5.2 (Max));
 - `zai-org/GLM-5.1`;
 - `moonshotai/Kimi-K2.7-Code`;
-- `deepseek-ai/DeepSeek-V4-Pro`; and
-- `moonshotai/Kimi-K2.6`.
+- `deepseek-ai/DeepSeek-V4-Pro`;
+- `moonshotai/Kimi-K2.6`;
+- `XiaomiMiMo/MiMo-V2.5-Pro`;
+- `MiniMaxAI/MiniMax-M3`;
+- `deepseek-ai/DeepSeek-V4-Flash`;
+- `MiniMaxAI/MiniMax-M2.7`;
+- `google/gemma-4-31B-it`; and
+- `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4`.
+
+“Public-weight” means the official weights can be downloaded under a published,
+inspectable license. It does not assert that every custom license is an
+OSI-approved open-source license. In particular, the source leaderboard labels
+MiniMax M2.7 as Modified MIT, while its official repository currently identifies
+a non-commercial MiniMax license; this catalog follows the official repository.
 
 These are model-level watchlist entries, not approved App artifacts. Their
 official weights and license sources are linked, but the App's locked MLX

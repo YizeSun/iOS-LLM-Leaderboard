@@ -98,8 +98,8 @@ const modeConfig = {
   },
   catalog: {
     kind: "catalog",
-    label: "Open model catalog",
-    description: "App-ready candidates and requested open models awaiting compatible Apple-device artifacts. These are not rankings.",
+    label: "Model catalog",
+    description: "App-ready candidates and requested public-weight models awaiting compatible Apple-device artifacts. These are not rankings.",
     defaultSort: "priority",
     defaultDirection: "asc",
     columns: [
@@ -153,7 +153,7 @@ async function loadEvidence() {
     if (!Array.isArray(power.results) || power.results.length === 0) throw new Error("Power evidence is empty");
     if (!Array.isArray(ship.profiles) || ship.profiles.length === 0) throw new Error("Ship profiles are empty");
     if (!Array.isArray(catalog.models) || catalog.models.length === 0) throw new Error("Model test catalog is empty");
-    if (!Array.isArray(catalog.openModelWatchlist)) throw new Error("Open model watchlist is unavailable");
+    if (!Array.isArray(catalog.openModelWatchlist)) throw new Error("Public-weight model watchlist is unavailable");
     state.power = power;
     state.ship = ship;
     state.catalog = catalog;
@@ -298,7 +298,7 @@ function renderBoard() {
     : config.kind === "coverage"
       ? "Coverage derived from live Power evidence · No placeholder devices"
       : config.kind === "catalog"
-        ? "Open model catalog · App-ready and watchlist entries are explicitly separated · No performance claims"
+        ? "Model catalog · App-ready and public-weight watchlist entries are explicitly separated · No performance claims"
       : "Power 1.0 reference · Live merged community evidence";
   elements.footerChecksums.href = config.kind === "ship"
     ? "results/ship-1.0/SHA256SUMS"
@@ -371,7 +371,7 @@ function renderCell(columnConfig, row, index) {
   if (columnConfig.key === "model") {
     const model = row.configuration.model;
     const metadata = row.catalogEntryType === "open-model-watchlist"
-      ? `${model.licenseIdentifier} · Open model watchlist`
+      ? `${model.licenseIdentifier} · Public-weight watchlist`
       : `${model.parameterSizeClass} · ${model.modelFormat}`;
     return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(metadata)}</span></td>`;
   }
