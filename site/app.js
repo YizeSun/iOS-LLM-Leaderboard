@@ -101,10 +101,8 @@ async function loadEvidence() {
     if (!Array.isArray(data.results) || data.results.length === 0) throw new Error("Evidence is empty");
     state.data = data;
     populateFilters(data.results);
-    renderSnapshot(data, report);
-    renderHero(data.results);
+    renderReleaseSummary(data, report);
     renderBoard();
-    initMotion();
   } catch (error) {
     console.error(error);
     elements.loadError.hidden = false;
@@ -123,33 +121,14 @@ function uniqueBy(items, key) {
   return [...new Map(items.map(item => [key(item), item])).values()];
 }
 
-function renderSnapshot(data, report) {
-  const uxRows = workloadRows(data.results, modeConfig.ux.workload);
-  const pipeRows = workloadRows(data.results, modeConfig.pipe.workload);
-  const fastestUX = minBy(uxRows, row => row.summary.medianUserVisibleTTFTMilliseconds);
-  const fastestPipe = maxBy(pipeRows, row => row.summary.medianDecodeTokensPerSecond);
-  document.querySelector("#fastest-response").textContent = formatMs(fastestUX.summary.medianUserVisibleTTFTMilliseconds);
-  document.querySelector("#fastest-response-model").textContent = profileLabel(fastestUX);
-  document.querySelector("#fastest-decode").textContent = formatRate(fastestPipe.summary.medianDecodeTokensPerSecond);
-  document.querySelector("#fastest-decode-model").textContent = profileLabel(fastestPipe);
-  document.querySelector("#evidence-count").textContent = String(data.eligibleResultCount ?? data.results.length);
-  document.querySelector("#rejected-count").textContent = String(report.rejectedResultCount ?? "—");
-}
-
-function renderHero(rows) {
-  const uxRows = workloadRows(rows, modeConfig.ux.workload).sort((a, b) => a.summary.medianUserVisibleTTFTMilliseconds - b.summary.medianUserVisibleTTFTMilliseconds);
-  const best = uxRows[0].summary.medianUserVisibleTTFTMilliseconds;
-  const worst = uxRows.at(-1).summary.medianUserVisibleTTFTMilliseconds;
-  document.querySelector("#hero-device").textContent = uxRows[0].configuration.device.displayName;
-  document.querySelector("#hero-race").innerHTML = uxRows.map(row => {
-    const value = row.summary.medianUserVisibleTTFTMilliseconds;
-    const normalized = 100 - ((value - best) / Math.max(1, worst - best)) * 62;
-    return `<div class="race-row">
-      <span class="race-model">${escapeHtml(profileLabel(row))}</span>
-      <span class="race-track"><span style="--width:${normalized.toFixed(1)}%"></span></span>
-      <span class="race-value">${value.toFixed(0)} <span>ms</span></span>
-    </div>`;
-  }).join("");
+function renderReleaseSummary(data, report) {
+  const eligibleRows = data.results.filter(row => row.pilotEligibility.eligible);
+  const configurations = new Set(eligibleRows.map(row => row.configuration.model.artifactID));
+  const devices = uniqueBy(eligibleRows.map(row => row.configuration.device), item => item.machineIdentifier);
+  document.querySelector("#summary-configurations").textContent = String(configurations.size);
+  document.querySelector("#summary-results").textContent = String(data.eligibleResultCount ?? eligibleRows.length);
+  document.querySelector("#summary-rejected").textContent = String(report.rejectedResultCount ?? "—");
+  document.querySelector("#summary-device").textContent = devices.map(device => device.displayName).join(", ");
 }
 
 function workloadRows(rows, workload) {
@@ -227,12 +206,12 @@ function renderRows(rows, columns) {
 }
 
 function renderCell(columnConfig, row, index) {
-  if (columnConfig.key === "rank") return `<td class="rank-cell">${String(index + 1).padStart(2, "0")}</td>`;
+  if (columnConfig.key === "rank") return `<td class="rank-cell">${index + 1}</td>`;
   if (columnConfig.key === "model") {
     const model = row.configuration.model;
     return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(model.parameterSizeClass)} · ${escapeHtml(model.modelFormat)}</span></td>`;
   }
-  if (columnConfig.key === "details") return `<td><button class="details-button" type="button" data-result="${escapeHtml(row.resultID)}">Inspect</button></td>`;
+  if (columnConfig.key === "details") return `<td><button class="details-button" type="button" data-result="${escapeHtml(row.resultID)}">Evidence</button></td>`;
   const value = columnConfig.accessor(row);
   const formatted = columnConfig.formatter(value, row);
   return `<td class="metric-value${columnConfig.primary ? " primary-value" : ""}">${formatted}</td>`;
@@ -329,48 +308,12 @@ function shortWorkload(value) {
   return value;
 }
 
-function minBy(rows, accessor) {
-  return rows.reduce((best, row) => accessor(row) < accessor(best) ? row : best);
-}
-
-function maxBy(rows, accessor) {
-  return rows.reduce((best, row) => accessor(row) > accessor(best) ? row : best);
-}
-
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
 }
 
 function escapeAttribute(value) {
   return escapeHtml(value);
-}
-
-function initMotion() {
-  if (!window.gsap || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  window.gsap.registerPlugin(window.ScrollTrigger);
-  window.gsap.from(".site-header", { y: -30, opacity: 0, duration: 0.8, ease: "power3.out" });
-  window.gsap.from(".hero-copy > *", { y: 28, opacity: 0, duration: 0.9, stagger: 0.1, ease: "power3.out" });
-  window.gsap.from(".device-panel", { scale: 0.84, opacity: 0, rotation: -4, duration: 1.1, ease: "power3.out", delay: 0.25 });
-  window.gsap.from(".signal-ring", { scale: 0.65, opacity: 0, duration: 1.3, stagger: 0.12, ease: "power2.out", delay: 0.2 });
-  window.gsap.utils.toArray(".metric-card").forEach((card, index) => {
-    window.gsap.from(card, {
-      y: 40 + index * 5,
-      scale: 0.94,
-      opacity: 0,
-      duration: 0.8,
-      ease: "power3.out",
-      scrollTrigger: { trigger: card, start: "top 88%" },
-    });
-  });
-  window.gsap.from(".leaderboard-shell", {
-    scale: 0.96,
-    opacity: 0.2,
-    ease: "none",
-    scrollTrigger: { trigger: ".leaderboard-shell", start: "top 92%", end: "top 45%", scrub: true },
-  });
-  window.gsap.utils.toArray(".evidence-notes article").forEach(article => {
-    window.gsap.from(article, { opacity: 0.12, y: 24, scrollTrigger: { trigger: article, start: "top 88%", end: "top 55%", scrub: true } });
-  });
 }
 
 document.querySelectorAll(".mode-tab").forEach(button => button.addEventListener("click", () => {
