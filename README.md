@@ -22,8 +22,8 @@ The Phase 1 product helps developers answer:
 3. Which models and runtimes fit practical integration, distribution,
    privacy-review, and deployment constraints?
 
-This repository is currently a documentation-first framework. It does not yet
-publish official rankings or verified performance results.
+This repository currently publishes non-official Pilot evidence. It does not
+yet publish an official Suite B benchmark release or verified default ranking.
 
 ## Interactive Leaderboard
 
@@ -32,7 +32,7 @@ publish official rankings or verified performance results.
 The website reads the same checked-in `normalized-results.json` used by the
 auditable Markdown reports. It provides workload tabs, configuration filters,
 sortable metric columns, deployment facts, and direct links to raw evidence.
-Until GitHub Pages is enabled, preview it locally from the repository root:
+To preview the site locally from the repository root:
 
 ```bash
 python3 -m http.server 4173
@@ -46,10 +46,10 @@ it does not introduce a global score or change any benchmark rule.
 The long-term architecture is Build, Power, and Ship, with an explicit delivery
 priority.
 
-| Track | Status | Question | Current suite relationship |
+| Track | Status | Question | Current benchmark-namespace relationship |
 | --- | --- | --- | --- |
-| Power | Phase 1 product | Which embedded configurations provide useful, acceptable on-device intelligence? | Suite B and applicable Suite D quality work |
-| Ship | Phase 1 product | Which tested configurations are practical to integrate and deploy? | Suite E evidence reusing Suite B measurements |
+| Power | Phase 1 product | Which embedded configurations provide useful, acceptable on-device intelligence? | Suite B measurements now; Suite D may add a later quality gate |
+| Ship | Phase 1 product | Which tested configurations are practical to integrate and deploy? | Pilot facts reuse Suite B configurations; Suite E may add later integration evidence |
 | Build | Phase 2 Research Track | Can an AI system deliver a complete iOS application? | Suite A and Suite C retained for compatibility, not Phase 1 priority |
 
 Phase 1 success is based entirely on trustworthy Power + Ship evidence. No
@@ -106,18 +106,24 @@ See the [Pilot v0.1 release notes](results/suite-b-pilot-v0.1/RELEASE-NOTES.md)
 and [SHA-256 manifest](results/suite-b-pilot-v0.1/SHA256SUMS) for the frozen
 release-candidate scope, integrity checks, and known limitations.
 
-## Benchmark Suites
+## Legacy Suite Namespaces
 
-| Suite | Name | Focus |
+Suite A–E are retained as Framework v1 benchmark and evidence namespaces. They
+are not the public product tracks, do not have equal Phase 1 priority, and do
+not replace the Build, Power, and Ship architecture.
+
+| Namespace | Framework v1 focus | Current product status |
 | --- | --- | --- |
-| Suite A | Swift Code Generation | Existing Build research material; not a Phase 1 priority |
-| Suite B | On-device Performance | Measured local inference on Apple devices |
-| Suite C | Xcode Integration | Existing Build research material; not a Phase 1 priority |
-| Suite D | App Feature Intelligence | Quality evidence for intelligence used inside product features |
-| Suite E | Runtime Evaluation | Ship compatibility, integration, licensing, and deployment evidence |
+| Suite A | Swift Code Generation | Compatibility and historical Build research material; excluded from Phase 1 |
+| Suite B | On-device Performance | Active measurement foundation for Phase 1 Power |
+| Suite C | Xcode Integration | Compatibility and historical Build research material; excluded from Phase 1 |
+| Suite D | App Feature Intelligence | Potential later Power quality evidence; no Pilot v0.1 task |
+| Suite E | Runtime Evaluation | Potential later Ship integration evidence; no Pilot v0.1 task or score |
 
-Each suite may produce its own reports and leaderboard views. The project does
-not define a single aggregate score across all suites.
+The namespaces remain separate so stable IDs, schemas, historical tasks, and
+metric ownership stay interpretable during migration. Framework v1 suite
+reports must not be mistaken for five parallel product roadmaps, and the
+project does not define a single aggregate score across them.
 
 Suite B remains the first implementation priority and the measurement
 foundation for Phase 1 Power. Ship guidance must reuse this evidence rather

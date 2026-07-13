@@ -1,11 +1,22 @@
 # Methodology Overview
 
-iOS-LLM-Leaderboard is organized around five independent benchmark suites. Each suite evaluates a different part of the iOS developer experience and may produce separate scores, reports, and leaderboards.
+iOS-LLM-Leaderboard's public product architecture is Build, Power, and Ship.
+Product Phase 1 is Power + Ship; Build is a Phase 2 Research Track. See the
+[Product Architecture](../docs/product-architecture.md) for the authoritative
+product mapping and priorities.
 
-The suites are grouped into two product tracks:
+The methodology layer still retains five Framework v1 suite namespaces. These
+are independent benchmark and evidence boundaries, not public product tracks
+or equal implementation priorities:
 
-- Developer Assistance: Suite A and Suite C.
-- Embedded Intelligence: Suite B, Suite D, and Suite E.
+- Suite A and Suite C preserve compatibility and historical Build research
+  material; they are excluded from Phase 1.
+- Suite B owns the canonical physical-device measurements used by Power.
+- Suite D may contribute a later Power quality gate, but Pilot v0.1 executes no
+  Suite D task.
+- Suite E may contribute later Ship integration evidence, but Pilot v0.1
+  executes no Suite E task or score. Its Ship view reuses the tested Suite B
+  configuration.
 
 The public leaderboard may emphasize model names for readability, while the
 underlying evidence must retain the full evaluation-unit configuration.
@@ -18,7 +29,7 @@ Benchmark Framework v1 is defined in:
 - [Benchmark Result Specification](benchmark-result-specification.md)
 - [Benchmark Validation](benchmark-validation.md)
 
-The suites are:
+The retained Framework v1 namespaces are:
 
 - Suite A: Swift Code Generation
 - Suite B: On-device Performance
@@ -26,7 +37,10 @@ The suites are:
 - Suite D: App Feature Intelligence
 - Suite E: Runtime Evaluation
 
-Suites should not be merged into a single score unless a future methodology explicitly defines how to combine them. During the MVP stage, independent suite-level reporting is preferred.
+Suite namespaces should not be merged into a single score unless a future
+methodology explicitly defines how to combine them. During migration,
+independent suite-level reporting preserves evidence ownership and compatibility;
+it does not define the product roadmap.
 
 ## Suite Boundaries
 
