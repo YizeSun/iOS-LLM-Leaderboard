@@ -30,24 +30,24 @@ tagged release.
 
 ## Product Phase 1: Power + Ship
 
-### Current standardization target: Power Benchmark 1.0 Foundation
+### Current published standard: Power + Ship 1.0
 
-The active target is the pre-release
-[Power Benchmark 1.0 Foundation](docs/power-benchmark-1.0-foundation.md), using
-only these stable candidates:
+[Power Benchmark 1.0](docs/power-benchmark-1.0-finalization.md) and
+[Ship Deployment Profiles 1.0](docs/ship-deployment-profiles.md) are published.
+Power 1.0 freezes exactly these workloads:
 
 - `b-ux-001-short-interaction`;
 - `b-pipe-001-sustained-generation`.
 
 B-PIPE-002 and B-UX-002 remain Experimental. No additional workload, Suite D
-task, Suite E task, global score, or Build deliverable is part of the 1.0
-Foundation contract. Ship output remains an evidence profile for the same
-tested Suite B configuration.
+task, Suite E task, global score, or Build deliverable is part of Power 1.0.
+Ship 1.0 remains an evidence profile for the same tested Suite B
+configurations and defines no deployment score.
 
-The active work order and 1.0 release gate are defined in
-[Power Benchmark 1.0 Foundation](docs/power-benchmark-1.0-foundation.md). The
-completed Pilot scope remains documented in
-[Power + Ship Pilot v0.1](docs/power-ship-pilot-v0.1.md).
+Public Power intake is open under the exact RC1 source contract adopted by the
+official release. The current operational target is community evidence and
+device coverage, not a protocol or architecture redesign. The completed Pilot
+scope remains documented in [Power + Ship Pilot v0.1](docs/power-ship-pilot-v0.1.md).
 
 ### Milestone 0: Vision and Architecture
 
@@ -73,8 +73,9 @@ completed Pilot scope remains documented in
 
 Framework v1 remains active until these rules are accepted and implemented.
 
-Progress: the draft object model, Suite B workload categories, metric set,
-pilot schemas, and migration direction are now documented. They remain draft.
+Progress: Power 1.0 implements the workload, measurement-mode, metric, release,
+result-envelope, raw-evidence, and identity slice required by its two frozen
+workloads. Framework v1 remains active outside that adopted Power slice.
 
 ### Milestone 2: Suite B Complete Specification
 
@@ -96,16 +97,11 @@ pilot schemas, and migration direction are now documented. They remain draft.
   workload identity.
 - Allow contributors to review all submitted fields.
 
-Progress: the MLX physical-iPhone pilot now loads a pinned Qwen3 artifact,
-runs one warm-up and five measured attempts, captures raw token timing, sampled
-process footprint and thermal boundaries, and exports local JSON. It remains a
-non-official instrumentation baseline.
-
-Stage 1 is complete for Qwen3 0.6B on one iPhone across both Pilot workloads.
-The App 0.6.0 build 8 matrix is also complete: all three fixed Qwen3 profiles
-were run on the same iPhone across both workloads, producing 6 normalized and
-eligible results with 0 rejection. The Pilot remains non-official evidence and
-does not activate Suite B 1.0.
+Progress: App 0.8.0 build 10 is the Power 1.0 reference App. It loads pinned
+Qwen3 artifacts, runs one warm-up and five measured attempts, captures raw
+token timing, sampled process footprint and thermal boundaries, and exports
+the frozen result envelope. Six unmodified physical-device exports were
+adopted into Power 1.0; five have an eligible primary ranking metric.
 
 ### Milestone 4: Validation and Repository Submission
 
@@ -117,6 +113,11 @@ does not activate Suite B 1.0.
 - Generate a pull request or bot-managed repository submission rather than
   writing directly to the default branch.
 
+Progress: the schema, semantic validator, metric recalculation, immutable
+two-file package, review records, GitHub validation workflow, and local package
+creator are implemented. Public intake is open through pull requests. Direct
+App upload or bot-managed PR creation remains future work.
+
 ### Milestone 5: Community Evidence
 
 - Classify results as Draft, Community Submitted, Reproduced, Verified, or
@@ -126,6 +127,11 @@ does not activate Suite B 1.0.
   still need results.
 - Preserve failed, OOM, interrupted, and unsupported runs as evidence.
 
+Progress: evidence levels and immutable review transitions are implemented.
+The active work is receiving the first community submissions, reviewing them,
+and publishing device-coverage gaps. No community submission is promoted by
+CI alone.
+
 ### Milestone 6: Power Leaderboard
 
 - Generate separate views by device, workload, metric, benchmark release, and
@@ -134,6 +140,10 @@ does not activate Suite B 1.0.
 - Show a concise tested-profile label in the main view.
 - Put full runtime, quantization, OS, and raw evidence on detail pages.
 - Do not publish a global cross-suite score.
+
+Progress: the published site provides sortable workload-specific Power 1.0
+rankings, configuration details, evidence links, and no global score. Current
+official coverage is the six-result Maintainer Reference matrix.
 
 ### Milestone 7: Ship Profiles and Developer Integration Guide
 
@@ -148,6 +158,11 @@ does not activate Suite B 1.0.
   B performance metrics.
 - Represent supported capabilities, constraints, warnings, and unknowns rather
   than producing a false-precision Ship score.
+
+Progress: Ship Deployment Profiles 1.0 publishes three hash-bound profiles and
+a revision-pinned MLX Swift integration recipe. Offline execution,
+cancellation, bundled distribution, minimum hardware, privacy compliance, and
+App Store readiness remain explicitly `Unknown` until direct evidence exists.
 
 ### Milestone 8: Phase 1 Quality and Deployment Coverage
 
@@ -199,10 +214,12 @@ release and a stable end-to-end iOS delivery problem can be defined.
 
 ## Current Immediate Work
 
-- Keep current Pilot results explicitly non-official and untagged.
-- Align the App-emitted historical result schema, semantic validator, and
-  regression coverage.
-- Freeze immutable Power 1.0 release identity and Pilot migration rules.
-- Resolve the protocol and evidence gaps listed in the Foundation work order.
-- Keep both Experimental workloads outside the 1.0 release contract.
-- Do not publish Power 1.0 until every Foundation release gate passes.
+- Operate the open Power 1.0 Draft intake and hash-bound review process.
+- Receive the first genuine community physical-device result without modifying
+  the frozen App export.
+- Publish device and configuration coverage gaps.
+- Keep B-PIPE-002, B-UX-002, Suite D, and Suite E outside the 1.0 contract.
+- Add no result to an official ranking without a separate maintainer
+  publication decision.
+- Preserve Power and Ship 1.0 tags, release packages, checksums, and raw
+  evidence as immutable history.

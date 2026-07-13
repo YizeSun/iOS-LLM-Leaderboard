@@ -1,17 +1,20 @@
 # Community Submissions
 
-Power 1.0 RC1 uses immutable two-file Draft packages and separate,
-hash-bound maintainer review records. The executable candidate path is:
+Power 1.0 public intake is open. It uses immutable two-file Draft packages and
+separate, hash-bound maintainer review records. The active path is:
 
 ```text
 submissions/suite-b/power-1.0.0-rc.1/
 ```
 
-Read the [Power submission guide](../docs/power-benchmark-1.0-submission.md)
-and [governance policy](../docs/power-benchmark-1.0-governance.md). Public
-intake remains closed until explicit release approval.
+Read the current
+[Power 1.0 public-intake guide](../docs/power-benchmark-1.0-public-intake.md),
+the pinned [RC1 package definition](../docs/power-benchmark-1.0-submission.md),
+and the [governance policy](../docs/power-benchmark-1.0-governance.md). Power
+1.0 adopted the exact RC1 App/schema contract, so the path retains `rc.1` for
+provenance and compatibility.
 
-## Power RC1 contributor flow
+## Power 1.0 contributor flow
 
 1. Review the unmodified App Power result.
 2. Explicitly accept the contributor and CC BY 4.0 declarations.
@@ -20,8 +23,9 @@ intake remains closed until explicit release approval.
 4. Validate it with `scripts/validate_suite_b_power_submission.py`.
 5. Open a pull request and wait for both CI and maintainer review.
 
-Passing validation leaves evidence `unreviewed` and ranking-ineligible. Trust
-changes only through a merged record validated by
+Passing validation leaves evidence `unreviewed` and ranking-ineligible. It
+does not modify the frozen Power 1.0 package. Trust changes only through a
+merged record validated by
 `scripts/validate_suite_b_power_reviews.py`.
 
 ## Historical Pilot path
