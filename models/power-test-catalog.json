@@ -1,7 +1,7 @@
 {
   "schemaVersion": "power-model-test-catalog-1.1",
   "reviewedAt": "2026-07-13",
-  "purpose": "App-ready untested artifacts plus an explicitly non-runnable open-model watchlist",
+  "purpose": "App-ready untested artifacts plus an explicitly non-runnable public-weight watchlist",
   "referenceApp": {
     "version": "0.9.0",
     "build": "11",
@@ -23,7 +23,8 @@
     "performanceClaimsAllowedWithoutEvidence": false
   },
   "openModelWatchlistPolicy": {
-    "purpose": "Open-weight models requested for future Apple-device compatibility review",
+    "purpose": "Public-weight models requested for future Apple-device compatibility review",
+    "eligibilityDefinition": "Official weights are publicly downloadable under an inspectable license; inclusion does not assert OSI open-source status",
     "modelLevelEntriesOnly": true,
     "appSelectable": false,
     "rankingEligible": false,
@@ -169,6 +170,79 @@
       "appEligibility": "not-app-testable",
       "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
       "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+    },
+    {
+      "displayName": "MiMo V2.5 Pro",
+      "sourceListingName": "MiMo V2.5 Pro",
+      "officialModelID": "XiaomiMiMo/MiMo-V2.5-Pro",
+      "modelFamily": "MiMo V2.5",
+      "licenseIdentifier": "mit",
+      "licenseSourceURL": "https://huggingface.co/XiaomiMiMo/MiMo-V2.5-Pro/blob/main/README.md",
+      "sourceURL": "https://huggingface.co/XiaomiMiMo/MiMo-V2.5-Pro",
+      "appEligibility": "not-app-testable",
+      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
+      "appEligibilityReason": "The official weights are public, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+    },
+    {
+      "displayName": "MiniMax M3",
+      "sourceListingName": "Minimax M3",
+      "officialModelID": "MiniMaxAI/MiniMax-M3",
+      "modelFamily": "MiniMax M3",
+      "licenseIdentifier": "minimax-community",
+      "licenseSourceURL": "https://huggingface.co/MiniMaxAI/MiniMax-M3/blob/main/LICENSE",
+      "sourceURL": "https://huggingface.co/MiniMaxAI/MiniMax-M3",
+      "appEligibility": "not-app-testable",
+      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
+      "appEligibilityReason": "The official weights are public under the MiniMax Community License, but the locked MLX Swift LM runtime does not register this multimodal architecture and no iPhone-viable pinned artifact has been approved."
+    },
+    {
+      "displayName": "DeepSeek V4 Flash",
+      "sourceListingName": "DeepSeek V4 Flash",
+      "officialModelID": "deepseek-ai/DeepSeek-V4-Flash",
+      "modelFamily": "DeepSeek V4",
+      "licenseIdentifier": "mit",
+      "licenseSourceURL": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash/blob/main/LICENSE",
+      "sourceURL": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash",
+      "appEligibility": "not-app-testable",
+      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
+      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+    },
+    {
+      "displayName": "MiniMax M2.7",
+      "sourceListingName": "Minimax M2.7",
+      "officialModelID": "MiniMaxAI/MiniMax-M2.7",
+      "modelFamily": "MiniMax M2.7",
+      "licenseIdentifier": "minimax-non-commercial",
+      "licenseSourceURL": "https://huggingface.co/MiniMaxAI/MiniMax-M2.7/blob/main/LICENSE",
+      "licenseNote": "The source listing says Modified MIT, while the official repository currently publishes a non-commercial MiniMax license; the official repository controls.",
+      "sourceURL": "https://huggingface.co/MiniMaxAI/MiniMax-M2.7",
+      "appEligibility": "not-app-testable",
+      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
+      "appEligibilityReason": "The official weights are public under a non-commercial MiniMax license, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+    },
+    {
+      "displayName": "Gemma 4 31B",
+      "sourceListingName": "Gemma 4 31B",
+      "officialModelID": "google/gemma-4-31B-it",
+      "modelFamily": "Gemma 4",
+      "licenseIdentifier": "apache-2.0",
+      "licenseSourceURL": "https://huggingface.co/google/gemma-4-31B-it/blob/main/README.md",
+      "sourceURL": "https://huggingface.co/google/gemma-4-31B-it",
+      "appEligibility": "not-app-testable",
+      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
+      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this multimodal architecture and no iPhone-viable pinned artifact has been approved."
+    },
+    {
+      "displayName": "Nemotron 3 Ultra",
+      "sourceListingName": "Nemotron 3 Ultra",
+      "officialModelID": "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4",
+      "modelFamily": "NVIDIA Nemotron 3",
+      "licenseIdentifier": "openmdw-1.1",
+      "licenseSourceURL": "https://openmdw.ai/license/1-1/",
+      "sourceURL": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4",
+      "appEligibility": "not-app-testable",
+      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
+      "appEligibilityReason": "The official weights are public under OpenMDW-1.1, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
     }
   ]
 }

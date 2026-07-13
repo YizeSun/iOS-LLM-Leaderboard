@@ -37,7 +37,7 @@ class PowerModelCatalogTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, catalog_keys)
 
-    def test_catalog_contains_the_five_requested_open_models_as_watchlist_only(self) -> None:
+    def test_catalog_contains_the_eleven_requested_public_weight_models_as_watchlist_only(self) -> None:
         watchlist = self.catalog["openModelWatchlist"]
         self.assertEqual(
             [model["officialModelID"] for model in watchlist],
@@ -47,14 +47,22 @@ class PowerModelCatalogTests(unittest.TestCase):
                 "moonshotai/Kimi-K2.7-Code",
                 "deepseek-ai/DeepSeek-V4-Pro",
                 "moonshotai/Kimi-K2.6",
+                "XiaomiMiMo/MiMo-V2.5-Pro",
+                "MiniMaxAI/MiniMax-M3",
+                "deepseek-ai/DeepSeek-V4-Flash",
+                "MiniMaxAI/MiniMax-M2.7",
+                "google/gemma-4-31B-it",
+                "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4",
             ],
         )
-        self.assertEqual(len({model["officialModelID"] for model in watchlist}), 5)
-        self.assertTrue(all(model["licenseIdentifier"] in {"mit", "modified-mit"} for model in watchlist))
+        self.assertEqual(len({model["officialModelID"] for model in watchlist}), 11)
+        self.assertTrue(all(model["licenseIdentifier"] for model in watchlist))
         self.assertTrue(all(model["appEligibility"] == "not-app-testable" for model in watchlist))
         self.assertTrue(all(model["officialModelID"] in model["sourceURL"] for model in watchlist))
+        self.assertTrue(all(model["licenseSourceURL"].startswith("https://") for model in watchlist))
         self.assertFalse(self.catalog["openModelWatchlistPolicy"]["appSelectable"])
         self.assertFalse(self.catalog["openModelWatchlistPolicy"]["rankingEligible"])
+        self.assertIn("OSI", self.catalog["openModelWatchlistPolicy"]["eligibilityDefinition"])
 
     def test_catalog_runtime_matches_the_locked_app_dependency(self) -> None:
         package = json.loads(
