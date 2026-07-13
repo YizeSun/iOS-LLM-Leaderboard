@@ -1,8 +1,13 @@
 # Scoring Methodology
 
-This document defines the initial scoring model for iOS-LLM-Leaderboard. Scores are intended to be transparent, reviewable, and reproducible across the five independent benchmark suites.
+> This document preserves initial Framework v1 suite-specific scoring notes.
+> It is not the Phase 1 product roadmap and does not define a Power + Ship
+> aggregate score. Pilot v0.1 reports workload-specific measurements and
+> deployment facts instead.
 
-No official benchmark results exist yet.
+Scores are intended to be transparent, reviewable, and reproducible within a
+compatible Framework v1 suite and task. Non-official Pilot evidence exists, but
+no official benchmark release or verified default ranking exists yet.
 
 ## Score Scale
 

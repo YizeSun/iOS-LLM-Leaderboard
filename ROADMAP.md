@@ -52,7 +52,8 @@ checklist are defined in
 - Preserve Build as a Phase 2 Research Track.
 - Define the Benchmark Specification, Community Evidence, and Developer
   Integration Guide layers.
-- Keep the five suites independent.
+- Keep the five Framework v1 suite namespaces independent for compatibility and
+  evidence ownership; do not treat them as equal product tracks.
 - Confirm that the public leaderboard is model-centered while full
   configuration identity remains available as evidence.
 - Define the role of the official community benchmark app.
