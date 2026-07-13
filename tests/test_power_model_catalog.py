@@ -144,9 +144,10 @@ class PowerModelCatalogTests(unittest.TestCase):
         self.assertNotIn("catalog.reviewedIneligible", app)
 
     def test_candidate_source_and_contributor_guide_are_pinned(self) -> None:
-        self.assertIsNone(self.catalog["referenceApp"]["sourceCommit"])
+        source_commit = "e084a562f94201208ee897a4dda58f18ddec0a54"
+        self.assertEqual(self.catalog["referenceApp"]["sourceCommit"], source_commit)
         guide = (ROOT / "contributor-kit" / "test-recommended-model.md").read_text()
-        self.assertIn("SOURCE_COMMIT_PENDING", guide)
+        self.assertIn(source_commit, guide)
         self.assertIn("Export Raw JSON", guide)
         self.assertIn("create_suite_b_power_submission.py", guide)
         self.assertIn("do not manufacture JSON", guide)

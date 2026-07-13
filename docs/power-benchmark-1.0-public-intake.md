@@ -20,7 +20,7 @@ The following exact App sources are authorized for public intake:
 | --- | --- | --- |
 | Reproduce the existing Qwen comparison cells | `0.8.0` build `10` | `2f105ff463bc9b281b19655ba711b1ca7dee8759` |
 | Test the four pinned candidates in the non-ranking model catalog | `0.9.0` build `11` | `002c76ccbfed7b1c8b7c13313b887aaebf610a3e` |
-| Test the expanded eight-candidate catalog | `0.10.0` build `12` | `SOURCE_COMMIT_PENDING` |
+| Test the expanded eight-candidate catalog | `0.10.0` build `12` | `e084a562f94201208ee897a4dda58f18ddec0a54` |
 
 App 0.9.0 and App 0.10.0 are additional community-testing sources, not rewrites of the
 published Reference App or its six-result matrix. Its candidate guide is

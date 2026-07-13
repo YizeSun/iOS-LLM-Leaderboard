@@ -61,7 +61,7 @@ git clone https://github.com/YOUR_GITHUB_HANDLE/iOS-LLM-Leaderboard.git
 cd iOS-LLM-Leaderboard
 git remote add upstream https://github.com/YizeSun/iOS-LLM-Leaderboard.git
 git fetch upstream
-git worktree add ../ios-llm-power-candidates SOURCE_COMMIT_PENDING
+git worktree add ../ios-llm-power-candidates e084a562f94201208ee897a4dda58f18ddec0a54
 ```
 
 Open:
