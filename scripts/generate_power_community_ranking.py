@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import statistics
 from collections import defaultdict
 from pathlib import Path
@@ -438,6 +439,89 @@ def aggregate_contributions(contributions: list[dict[str, Any]]) -> list[dict[st
     return cells
 
 
+def os_minor_family(version: Any) -> str:
+    """Return the display family that may combine patch releases only."""
+    parts = re.findall(r"\d+", str(version))
+    return ".".join(parts[:2]) if len(parts) >= 2 else str(version)
+
+
+def _numeric_version(value: Any) -> tuple[int, ...]:
+    parts = re.findall(r"\d+", str(value))
+    return tuple(int(part) for part in parts) if parts else (0,)
+
+
+def _current_display_key(cell: dict[str, Any]) -> tuple[Any, ...]:
+    """Group display-equivalent cells without weakening exact evidence identity."""
+    identity = cell["comparisonIdentity"]
+    model = identity["model"]
+    runtime = identity["runtime"]
+    device = identity["device"]
+    workload = identity["workload"]
+    source_release = identity["sourceEvidenceRelease"]
+    return (
+        source_release["id"],
+        source_release["version"],
+        workload["id"],
+        workload["version"],
+        workload["fixtureSHA256"],
+        canonical_sha256(identity["generation"]),
+        model["artifactID"],
+        model["artifactRevision"],
+        model["artifactContentHash"],
+        model["quantization"],
+        model["tokenizerIdentity"],
+        runtime["name"],
+        runtime["backend"],
+        device["machineIdentifier"],
+        device["physicalMemoryBytes"],
+        os_minor_family(device["systemVersion"]),
+    )
+
+
+def _current_display_preference(cell: dict[str, Any]) -> tuple[Any, ...]:
+    """Prefer the newest App baseline and patch build inside one display family."""
+    runner = cell["comparisonIdentity"]["runner"]
+    device = cell["comparisonIdentity"]["device"]
+    latest_evidence = max(
+        (str(item["createdAt"]) for item in cell["evidence"]),
+        default="",
+    )
+    return (
+        _numeric_version(runner["appVersion"]),
+        _numeric_version(runner["appBuild"]),
+        _numeric_version(device["systemVersion"]),
+        str(device["systemBuild"]),
+        latest_evidence,
+        cell["comparisonID"],
+    )
+
+
+def current_display_cells(
+    cells: Iterable[dict[str, Any]],
+    workload_id: str | None = None,
+) -> list[dict[str, Any]]:
+    """Select one current cell per model/device/runtime/iOS-minor display family.
+
+    Exact cells and their complete OS builds remain untouched in the dataset.
+    This function is only for the model-centered default leaderboard.
+    """
+    grouped: dict[tuple[Any, ...], list[dict[str, Any]]] = defaultdict(list)
+    for cell in cells:
+        if workload_id is None or cell["workload"]["id"] == workload_id:
+            grouped[_current_display_key(cell)].append(cell)
+    selected = [
+        max(group, key=_current_display_preference)
+        for _, group in sorted(grouped.items())
+    ]
+    selected.sort(key=lambda row: (
+        row["workload"]["id"],
+        row["configuration"]["device"]["machineIdentifier"],
+        row["configuration"]["model"]["artifactID"],
+        row["configuration"]["runtime"]["name"],
+    ))
+    return selected
+
+
 def build_dataset(
     official_path: Path = DEFAULT_OFFICIAL,
     adoption_path: Path = DEFAULT_ADOPTION,
@@ -493,6 +577,7 @@ def render_leaderboard(dataset: dict[str, Any]) -> str:
         "",
         "This live view combines the immutable Power 1.0 Maintainer Reference results with valid merged community submissions.",
         "A GitHub account counts once per exact comparison cell and may contribute independently to any number of different cells.",
+        "The default table shows the newest App baseline inside each model, device, runtime, and iOS minor family. Exact patch builds and older App baselines remain in normalized evidence and coverage history.",
         "",
     ]
     sections = (
@@ -500,16 +585,17 @@ def render_leaderboard(dataset: dict[str, Any]) -> str:
         ("Sustained generation", "b-pipe-001-sustained-generation", "medianDecodeTokensPerSecond", True, "Decode"),
     )
     for label, workload, field, reverse, metric_label in sections:
-        rows = [
-            row for row in dataset["results"]
-            if row["workload"]["id"] == workload and row["rankingEligibility"]["active"]
-        ]
+        current = current_display_cells(dataset["results"], workload)
+        rows = [row for row in current if row["rankingEligibility"]["active"]]
+        unranked = [row for row in current if not row["rankingEligibility"]["active"]]
         rows.sort(key=lambda row: row["summary"][field], reverse=reverse)
         lines.extend([
             f"## {label}",
             "",
-            f"| Rank | Model | Quant | {metric_label} | Device | Contributors | Runs | Status | Variation |",
-            "| ---: | --- | --- | ---: | --- | ---: | ---: | --- | ---: |",
+            f"Current display: {len(current)} model configurations; {len(rows)} ranked; {len(unranked)} retained without a rank.",
+            "",
+            f"| Rank | Model | Quant | {metric_label} | App | iOS | Device | Contributors | Runs | Status | Variation |",
+            "| ---: | --- | --- | ---: | --- | --- | --- | ---: | ---: | --- | ---: |",
         ])
         for rank, row in enumerate(rows, 1):
             metric = row["summary"][field]
@@ -527,11 +613,33 @@ def render_leaderboard(dataset: dict[str, Any]) -> str:
             lines.append(
                 f"| {rank} | {row['configuration']['model']['displayName']} | "
                 f"{row['configuration']['model']['quantization']} | {metric_text} | "
+                f"{row['configuration']['device']['appVersion']} | "
+                f"{row['configuration']['device']['systemVersion']} | "
                 f"{row['configuration']['device']['machineIdentifier']} | "
                 f"{community['eligibleContributorCount']} | {community['runCount']} | {status} | "
                 f"{variation_text} |"
             )
         lines.append("")
+        if unranked:
+            unranked.sort(key=lambda row: row["configuration"]["model"]["displayName"].casefold())
+            lines.extend([
+                "### Current configurations without a rank",
+                "",
+                f"These exact cells are retained, but no metric-eligible {metric_label} is available.",
+                "",
+                "| Model | Quant | App | iOS | Device | Reason |",
+                "| --- | --- | --- | --- | --- | --- |",
+            ])
+            for row in unranked:
+                lines.append(
+                    f"| {row['configuration']['model']['displayName']} | "
+                    f"{row['configuration']['model']['quantization']} | "
+                    f"{row['configuration']['device']['appVersion']} | "
+                    f"{row['configuration']['device']['systemVersion']} | "
+                    f"{row['configuration']['device']['machineIdentifier']} | "
+                    f"No metric-eligible {metric_label} |"
+                )
+            lines.append("")
     lines.extend([
         "The published Power 1.0 release package remains immutable. This file is a reproducible live derivative of that release plus merged community evidence.",
         "",

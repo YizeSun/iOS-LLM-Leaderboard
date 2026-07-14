@@ -395,6 +395,12 @@ h1 {
   font-weight: 600;
 }
 
+.unranked-rank {
+  color: var(--text-tertiary);
+  font-size: 0.67rem;
+  font-weight: 500;
+}
+
 .model-cell {
   min-width: 235px;
 }
@@ -411,6 +417,24 @@ h1 {
   margin-top: 3px;
   color: var(--text-tertiary);
   font-size: 0.67rem;
+}
+
+.model-environment {
+  color: var(--text-secondary);
+}
+
+.unranked-meta {
+  color: var(--warning);
+  font-weight: 550;
+}
+
+.ranking-table tbody tr.is-unranked td {
+  background: #fafbfc;
+  color: var(--text-tertiary);
+}
+
+.ranking-table tbody tr.is-unranked .model-name {
+  color: var(--text-secondary);
 }
 
 .metric-value {
@@ -700,6 +724,49 @@ h1 {
   font-weight: 650;
 }
 
+.dialog-note {
+  margin: -4px 0 10px;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+}
+
+.history-list {
+  border-top: 1px solid var(--border);
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-item strong,
+.history-item span {
+  display: block;
+}
+
+.history-item strong {
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.history-item span {
+  margin-top: 3px;
+  color: var(--text-secondary);
+  font-size: 0.69rem;
+}
+
+.history-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
 .claim-list {
   border-top: 1px solid var(--border);
 }
@@ -875,6 +942,15 @@ h1 {
   .claim-item {
     grid-template-columns: 1fr;
     gap: 4px;
+  }
+
+  .history-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .history-links {
+    justify-content: flex-start;
   }
 }
 

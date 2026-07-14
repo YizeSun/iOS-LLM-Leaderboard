@@ -2,33 +2,49 @@
 
 This live view combines the immutable Power 1.0 Maintainer Reference results with valid merged community submissions.
 A GitHub account counts once per exact comparison cell and may contribute independently to any number of different cells.
+The default table shows the newest App baseline inside each model, device, runtime, and iOS minor family. Exact patch builds and older App baselines remain in normalized evidence and coverage history.
 
 ## Responsiveness
 
-| Rank | Model | Quant | Proxy TTFT | Device | Contributors | Runs | Status | Variation |
-| ---: | --- | --- | ---: | --- | ---: | ---: | --- | ---: |
-| 1 | Qwen3 1.7B | 4-bit | 492.42 ms | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 2 | Qwen3 1.7B | 4-bit | 494.40 ms | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 3 | Qwen3 4B | 3-bit | 1132.81 ms | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 4 | Qwen3 4B | 3-bit | 1138.54 ms | iPhone15,3 | 1 | 1 | Single contributor | — |
+Current display: 11 model configurations; 2 ranked; 9 retained without a rank.
+
+| Rank | Model | Quant | Proxy TTFT | App | iOS | Device | Contributors | Runs | Status | Variation |
+| ---: | --- | --- | ---: | --- | --- | --- | ---: | ---: | --- | ---: |
+| 1 | Qwen3 1.7B | 4-bit | 492.42 ms | 0.10.1 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
+| 2 | Qwen3 4B | 3-bit | 1138.54 ms | 0.10.1 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
+
+### Current configurations without a rank
+
+These exact cells are retained, but no metric-eligible Proxy TTFT is available.
+
+| Model | Quant | App | iOS | Device | Reason |
+| --- | --- | --- | --- | --- | --- |
+| BitNet b1.58 2B 4T | 4-bit | 0.10.1 | 26.5.2 | iPhone15,3 | No metric-eligible Proxy TTFT |
+| EXAONE 4.0 1.2B | 4-bit | 0.10.1 | 26.5.2 | iPhone15,3 | No metric-eligible Proxy TTFT |
+| Gemma 3 1B IT | 4-bit | 0.10.0 | 26.5.2 | iPhone15,3 | No metric-eligible Proxy TTFT |
+| Granite 3.3 2B Instruct | 4-bit | 0.10.1 | 26.5.2 | iPhone15,3 | No metric-eligible Proxy TTFT |
+| LFM2 1.2B | 4-bit | 0.10.1 | 26.5.2 | iPhone15,3 | No metric-eligible Proxy TTFT |
+| Llama 3.2 1B Instruct | 4-bit | 0.10.1 | 26.5.2 | iPhone15,3 | No metric-eligible Proxy TTFT |
+| Llama 3.2 3B Instruct | 4-bit | 0.10.1 | 26.5.2 | iPhone15,3 | No metric-eligible Proxy TTFT |
+| Qwen3 0.6B | 4-bit | 0.10.1 | 26.5.2 | iPhone15,3 | No metric-eligible Proxy TTFT |
+| SmolLM3 3B | 4-bit | 0.10.1 | 26.5.2 | iPhone15,3 | No metric-eligible Proxy TTFT |
 
 ## Sustained generation
 
-| Rank | Model | Quant | Decode | Device | Contributors | Runs | Status | Variation |
-| ---: | --- | --- | ---: | --- | ---: | ---: | --- | ---: |
-| 1 | Qwen3 0.6B | 4-bit | 97.90 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 2 | Qwen3 0.6B | 4-bit | 95.66 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 3 | Gemma 3 1B IT | 4-bit | 65.21 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 4 | LFM2 1.2B | 4-bit | 64.59 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 5 | Llama 3.2 1B Instruct | 4-bit | 60.25 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 6 | EXAONE 4.0 1.2B | 4-bit | 49.36 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 7 | BitNet b1.58 2B 4T | 4-bit | 33.56 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 8 | Qwen3 1.7B | 4-bit | 29.71 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 9 | Qwen3 1.7B | 4-bit | 27.56 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 10 | Granite 3.3 2B Instruct | 4-bit | 18.15 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 11 | Llama 3.2 3B Instruct | 4-bit | 14.59 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 12 | SmolLM3 3B | 4-bit | 13.95 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 13 | Qwen3 4B | 3-bit | 10.52 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
-| 14 | Qwen3 4B | 3-bit | 10.23 tok/s | iPhone15,3 | 1 | 1 | Single contributor | — |
+Current display: 11 model configurations; 11 ranked; 0 retained without a rank.
+
+| Rank | Model | Quant | Decode | App | iOS | Device | Contributors | Runs | Status | Variation |
+| ---: | --- | --- | ---: | --- | --- | --- | ---: | ---: | --- | ---: |
+| 1 | Qwen3 0.6B | 4-bit | 95.66 tok/s | 0.10.1 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
+| 2 | Gemma 3 1B IT | 4-bit | 65.21 tok/s | 0.10.0 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
+| 3 | LFM2 1.2B | 4-bit | 64.59 tok/s | 0.10.1 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
+| 4 | Llama 3.2 1B Instruct | 4-bit | 60.25 tok/s | 0.10.1 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
+| 5 | EXAONE 4.0 1.2B | 4-bit | 49.36 tok/s | 0.10.1 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
+| 6 | BitNet b1.58 2B 4T | 4-bit | 33.56 tok/s | 0.10.1 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
+| 7 | Qwen3 1.7B | 4-bit | 27.56 tok/s | 0.10.1 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
+| 8 | Granite 3.3 2B Instruct | 4-bit | 18.15 tok/s | 0.10.1 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
+| 9 | Llama 3.2 3B Instruct | 4-bit | 14.59 tok/s | 0.10.1 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
+| 10 | SmolLM3 3B | 4-bit | 13.95 tok/s | 0.10.1 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
+| 11 | Qwen3 4B | 3-bit | 10.52 tok/s | 0.10.1 | 26.5.2 | iPhone15,3 | 1 | 1 | Single contributor | — |
 
 The published Power 1.0 release package remains immutable. This file is a reproducible live derivative of that release plus merged community evidence.
