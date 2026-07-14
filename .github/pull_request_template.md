@@ -47,6 +47,8 @@ live-ranking review.
 - Placement: <!-- tabletop | stand | handheld | other | unknown -->
 - Notes: <!-- optional environmental context -->
 - [ ] I have disclosed any deliberate external cooling or heating accurately.
+- [ ] Thermal assistance is `none` for ordinary live intake, or I understand
+      this pull request will remain unmerged until a separate intake path exists.
 
 ## Power evidence-review checklist
 

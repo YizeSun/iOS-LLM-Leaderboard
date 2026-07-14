@@ -72,11 +72,13 @@ is `none`. Deliberate thermal assistance includes ice, chilled objects, fans or
 vents aimed at the phone, powered phone coolers, heating pads, and deliberately
 heated or cooled supports.
 
-The project preserves assisted and unknown evidence rather than discarding it.
-However, a result declared as deliberately cooled, heated, or otherwise
-thermally assisted—or left `unknown`—must not be silently aggregated into the
-ordinary live ranking. An `unknown` declaration may be clarified in review. A
-future schema may support separately labeled environmental classes; this draft
+The current two-file package has no machine-readable field for this
+declaration, and the live-ranking generator cannot separate assisted evidence
+after merge. Therefore, only a declaration of `none` may be merged into the
+ordinary live intake under this draft. Assisted and unresolved `unknown`
+submissions remain reviewable in their pull requests but are not merged into
+`main`. An `unknown` declaration may be clarified before merge. A future schema
+may support retained, separately labeled environmental classes; this draft
 does not add one.
 
 The project relies on transparent contributor disclosure and maintainer review.
@@ -101,9 +103,9 @@ not authorize editing `result.json` or adding a third package file.
 - Temperature, case, and placement observations are context only in this
   draft. They are not exact-cell keys, aggregation inputs, or hard admission
   gates.
-- A declaration of deliberate thermal assistance, or an unresolved `unknown`,
-  prevents the result from entering the ordinary live aggregate, but the
-  evidence remains reviewable.
+- Ordinary live-intake merge requires a thermal-assistance declaration of
+  `none`. Assisted or unresolved `unknown` evidence remains reviewable in its
+  pull request until a separately labeled intake path exists.
 - An observation does not override any protocol, metric, trust, or ranking
   requirement.
 - Historical results are not retroactively invalidated. Missing observations
