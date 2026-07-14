@@ -33,7 +33,8 @@ class CommunityOnboardingTests(unittest.TestCase):
 
     def test_quickstart_pins_app_identity_and_raw_export(self) -> None:
         guide = (ROOT / "contributor-kit/power-1.0-quickstart.md").read_text()
-        self.assertIn("2f105ff463bc9b281b19655ba711b1ca7dee8759", guide)
+        self.assertIn("d7fcff7e27b4c46b1121df8988a0b2fb76d56804", guide)
+        self.assertIn("history correction mapping", guide)
         self.assertIn("Export Raw JSON", guide)
         self.assertIn("create_suite_b_power_submission.py", guide)
         self.assertIn("validate_suite_b_power_submission.py", guide)

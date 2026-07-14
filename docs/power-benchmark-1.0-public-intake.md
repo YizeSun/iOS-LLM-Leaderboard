@@ -13,6 +13,14 @@ This document remains the complete operational and trust-boundary reference.
 - Official benchmark release: `suite-b-power@1.0.0`
 - Submission source contract: `suite-b-power@1.0.0-rc.1`
 - Reference App: `0.8.0` build `10`
+- Current content-equivalent source: `d7fcff7e27b4c46b1121df8988a0b2fb76d56804`
+
+The current source SHA reflects the 2026-07-14 authorship correction. Existing
+immutable exports retain the original SHA they recorded; the exact mapping is
+documented in the
+[history correction record](provenance/2026-07-14-history-correction.md).
+New exports use the corrected checkout SHA and form their own exact comparison
+identity.
 
 Power 1.0 adopted the RC1 protocol, workloads, result schema, validator, and
 reference App without changing their semantics. New submissions therefore keep
