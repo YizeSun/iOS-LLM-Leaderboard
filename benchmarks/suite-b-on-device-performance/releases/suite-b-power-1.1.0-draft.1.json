@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "suite-b-power-release-draft-1.0",
+  "releaseID": "suite-b-power",
+  "releaseVersion": "1.1.0-draft.1",
+  "preparedAt": "2026-07-14T21:45:59Z",
+  "status": "protocol-draft",
+  "officialResultEligible": false,
+  "rankingAuthorized": false,
+  "publicationAuthorized": false,
+  "tagAuthorized": false,
+  "previousPublishedRelease": "1.0.0",
+  "protocol": {
+    "id": "suite-b-power",
+    "version": "1.1.0-draft.1",
+    "markdown": {
+      "path": "benchmarks/suite-b-on-device-performance/power-1.1-protocol.md",
+      "sha256": "afa8bf44ea22a4de88910a7929960e3897605ed7720df975565a93fa17c27fee"
+    },
+    "machineReadable": {
+      "path": "benchmarks/suite-b-on-device-performance/power-1.1-protocol.json",
+      "sha256": "eeeb9a33fe284c5881d9a8b55facc7741a828109c59f0ec43b5ab80ddaa58d02"
+    }
+  },
+  "workloads": [
+    {
+      "id": "b-ux-001-short-interaction",
+      "version": "1.1.0-draft.1"
+    },
+    {
+      "id": "b-pipe-001-sustained-generation",
+      "version": "1.1.0-draft.1"
+    }
+  ],
+  "implementedContracts": [
+    "protocol-draft"
+  ],
+  "requiredBeforeReleaseCandidate": [
+    "suite-b-power-result-1.1-schema",
+    "suite-b-power-validation-report-1.1-schema",
+    "suite-b-power-validator-1.1",
+    "reference-app-independent-metric-export",
+    "physical-device-verification",
+    "maintainer-release-approval"
+  ],
+  "compatibility": {
+    "power1_0EvidenceImmutable": true,
+    "power1_0EvidencePromotable": false,
+    "newExecutionRequired": true,
+    "rawEvidenceMutationAllowed": false
+  }
+}

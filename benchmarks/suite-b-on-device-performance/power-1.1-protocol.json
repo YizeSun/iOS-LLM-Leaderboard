@@ -1,0 +1,115 @@
+{
+  "schema_version": "suite-b-power-protocol-1.1-draft",
+  "protocol_id": "suite-b-power",
+  "protocol_version": "1.1.0-draft.1",
+  "status": "protocol-draft",
+  "official_result_eligible": false,
+  "ranking_authorized": false,
+  "publication_authorized": false,
+  "previous_published_release": "1.0.0",
+  "execution_contract": {
+    "inherits_from": "suite-b-power@1.0.0-rc.1",
+    "unchanged": [
+      "workload_ids",
+      "fixtures",
+      "prompts",
+      "generation_settings",
+      "timing_boundaries",
+      "metric_formulas",
+      "device_requirements",
+      "attempt_counts"
+    ]
+  },
+  "workloads": [
+    {
+      "workload_id": "b-ux-001-short-interaction",
+      "workload_version": "1.1.0-draft.1",
+      "category": "user-experience",
+      "fixture_sha256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
+      "measurement_mode": "b-mode-warm-resident-ux-v1",
+      "primary_performance_metric": "first_renderable_proxy_ttft_ms@1",
+      "response_conformance": {
+        "policy_version": "short-interaction-response-v1",
+        "decision_authority": "submission-validator",
+        "app_assessment_authoritative": false,
+        "affects_measurement_eligibility": false,
+        "affects_performance_ranking_eligibility": false,
+        "affects_recommendation_eligibility": true
+      },
+      "performance_metrics": [
+        "first_renderable_proxy_ttft_ms@1",
+        "pipeline_ttft_ms@1",
+        "request_completion_ms@1",
+        "prefill_tokens_per_second@1",
+        "decode_tokens_per_second@1",
+        "process_physical_footprint_mib@1"
+      ]
+    },
+    {
+      "workload_id": "b-pipe-001-sustained-generation",
+      "workload_version": "1.1.0-draft.1",
+      "category": "pipeline",
+      "fixture_sha256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
+      "measurement_mode": "b-mode-sustained-no-rest-v1",
+      "primary_performance_metric": "decode_tokens_per_second@1",
+      "performance_metrics": [
+        "pipeline_ttft_ms@1",
+        "prefill_tokens_per_second@1",
+        "decode_tokens_per_second@1",
+        "process_physical_footprint_mib@1",
+        "decode_first_to_last_percent_change@1"
+      ]
+    }
+  ],
+  "app_evidence_export": {
+    "role": "evidence-producer",
+    "must_export_raw_evidence": true,
+    "must_export_technically_derivable_metrics": true,
+    "behavior_failure_may_null_metrics": false,
+    "local_behavior_assessment": "advisory-only"
+  },
+  "submission_validator": {
+    "decision_authority": true,
+    "recompute_metrics_from_raw_evidence": true,
+    "recompute_behavior_conformance_from_generated_text": true,
+    "trust_app_behavior_assessment": false,
+    "rewrite_submitted_result": false,
+    "separate_decisions": [
+      "structural-validity",
+      "protocol-conformance",
+      "measurement-eligibility",
+      "behavior-conformance",
+      "performance-ranking-eligibility",
+      "recommendation-eligibility"
+    ]
+  },
+  "metric_behavior_gates": {
+    "pipeline_ttft_ms@1": false,
+    "first_renderable_proxy_ttft_ms@1": false,
+    "request_completion_ms@1": false,
+    "prefill_tokens_per_second@1": false,
+    "decode_tokens_per_second@1": false,
+    "process_physical_footprint_mib@1": false,
+    "decode_first_to_last_percent_change@1": false
+  },
+  "public_views": {
+    "combined_score_defined": false,
+    "measured_performance": "measurement-eligible",
+    "behavior_conformant": "validator-derived-filter-or-badge",
+    "recommended": "performance-ranking-eligible-and-behavior-conformant"
+  },
+  "migration": {
+    "power_1_0_evidence_immutable": true,
+    "power_1_0_evidence_promotable": false,
+    "existing_raw_evidence_design_validation_only": true,
+    "new_execution_required_for_official_1_1": true
+  },
+  "activation_requirements": [
+    "freeze-suite-b-power-result-1.1-schema",
+    "freeze-suite-b-power-validation-report-1.1-schema",
+    "implement-independent-1.1-validator",
+    "implement-app-independent-metric-export",
+    "complete-power-1.1-physical-device-verification",
+    "approve-power-1.1-release-and-ranking"
+  ]
+}
