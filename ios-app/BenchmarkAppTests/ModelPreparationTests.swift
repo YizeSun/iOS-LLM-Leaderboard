@@ -146,23 +146,44 @@ final class ModelPreparationTests: XCTestCase {
                 "mlx-community/gemma-3-1b-it-qat-4bit",
                 "mlx-community/granite-3.3-2b-instruct-4bit",
                 "mlx-community/SmolLM3-3B-4bit",
+                "mlx-community/LFM2-1.2B-4bit",
+                "mlx-community/exaone-4.0-1.2b-4bit",
+                "mlx-community/bitnet-b1.58-2B-4T-4bit",
+                "mlx-community/Llama-3.2-3B-Instruct-4bit",
             ]
         )
         XCTAssertEqual(
             Set(ProductionModelProfile.allCases.map {
                 $0.planModelProfile.artifactRevision
             }).count,
-            7
+            11
         )
         XCTAssertEqual(
             ProductionModelProfile.allCases.filter {
                 $0.evidenceStatus == .communityEvidence
             }.count,
-            4
+            8
         )
         XCTAssertEqual(
             ProductionModelProfile.gemma3OneB.extraEOSTokens,
             ["<end_of_turn>"]
+        )
+    }
+
+    func testModelSwitchRequiresAFullRelaunch() {
+        let evidence = preparationEvidence(
+            cacheState: .cached,
+            eligible: false,
+            reasons: [
+                "different_model_claimed_in_process",
+                "restart_required_after_model_switch",
+                "model_preparation_failed",
+            ]
+        )
+
+        XCTAssertEqual(
+            BenchmarkViewModel.preparationPhase(for: evidence),
+            .restartRequired
         )
     }
 

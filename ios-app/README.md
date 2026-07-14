@@ -6,17 +6,20 @@ an inference framework.
 
 ## Current status
 
-App `0.9.0` build `11` is the current Power 1.0 community-testing App. It keeps
-the adopted Power 1.0 workload, measurement, result, and validation contracts
-unchanged while adding four explicitly untested model artifacts to the model
-picker.
+App `0.11.0` build `14` is the current Power 1.0 production control surface.
+It keeps the adopted Power 1.0 workload, measurement, result, and validation
+contracts unchanged while making the physical-device workflow safer and more
+explicit: one App process may prepare and measure only one exact model
+identity, and optional environment observations are kept outside result JSON.
 
 App `0.8.0` build `10` remains the exact reference source for the published
 six-result Maintainer Reference matrix and for reproducing its three existing
-Qwen comparison cells. App 0.9.0 must not be substituted when an exact
-App-0.8.0 reproduction is intended.
+Qwen comparison cells. App `0.9.0` build `11`, App `0.10.0` build `12`, and App
+`0.10.1` build `13` remain historical exact source identities for results
+created with them. App 0.11.0 must not be substituted when an exact earlier-App
+reproduction is intended.
 
-Both versions emit the adopted source result contract
+All listed versions emit the adopted source result contract
 `suite-b-power-result-1.0.0-rc.1`. Every raw App export sets
 `officialResultEligible` to `false`; acceptance into the separate live
 community ranking occurs only after package validation, contributor review,
@@ -31,7 +34,7 @@ The production control surface exposes exactly two workload identities:
 
 The loader rejects any other plan identity or version. Experimental
 `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` resources are
-retained for repository history and compatibility, but App 0.8.0 cannot
+retained for repository history and compatibility, but App 0.11.0 cannot
 execute them through its production controls.
 
 The three pinned Qwen3 profiles have Maintainer Reference evidence:
@@ -40,24 +43,29 @@ The three pinned Qwen3 profiles have Maintainer Reference evidence:
 - `mlx-community/Qwen3-1.7B-4bit`;
 - `mlx-community/Qwen3-4B-3bit`.
 
-App 0.9.0 also exposes four pinned candidates recommended for physical-iPhone
-testing:
+App 0.11.0 also exposes eight pinned artifacts with accepted single-contributor
+physical-iPhone community evidence:
 
 - `mlx-community/Llama-3.2-1B-Instruct-4bit`;
 - `mlx-community/gemma-3-1b-it-qat-4bit`;
 - `mlx-community/granite-3.3-2b-instruct-4bit`;
-- `mlx-community/SmolLM3-3B-4bit`.
+- `mlx-community/SmolLM3-3B-4bit`;
+- `mlx-community/LFM2-1.2B-4bit`;
+- `mlx-community/exaone-4.0-1.2b-4bit`;
+- `mlx-community/bitnet-b1.58-2B-4T-4bit`;
+- `mlx-community/Llama-3.2-3B-Instruct-4bit`.
 
-Their exact revisions, artifact sizes, licenses, runtime-registry basis, and
-evidence state are recorded in
-[`models/power-test-catalog.json`](../models/power-test-catalog.json). They are
-marked `untested`: registration in the locked MLX Swift LM model factory does
-not prove that an artifact loads, fits memory, completes a workload, or
-performs well on a physical iPhone. Failed and OOM runs are useful evidence and
-must be preserved.
+Every picker entry pins its exact artifact revision, size, license, tokenizer,
+and locked MLX Swift LM runtime requirements. Accepted measurements remain in
+the repository evidence layer; a picker entry is not itself a ranking result.
+Failed and OOM runs remain useful evidence and must be preserved.
 
 Selecting a different workload or model clears preparation and result state.
-The exact artifact must be prepared again before measurement is admitted.
+The exact artifact must be prepared again before measurement is admitted. If a
+different model identity has already been prepared or attempted in the current
+App process, preparation stops and requires the contributor to fully close and
+relaunch the App. This prevents multiple model-weight sets from affecting the
+same process-level measurement session.
 
 ## Measurement admission and procedure
 
@@ -112,6 +120,13 @@ unresolved checkpoint cannot be overwritten by starting another run.
 Results are written atomically under the App Documents directory in
 `PowerBenchmarkResults/` and can be reviewed and shared locally. The App does
 not upload results or write to the repository.
+
+Ambient room temperature and its source, case state, placement, and thermal
+assistance can be recorded as optional local observations. The App can copy a
+plain-text observation block for the contribution PR. These observations never
+modify the frozen result schema, admission decision, measurement, or ranking
+identity. Deliberately cooled or heated evidence is reviewable but is not
+eligible for the ordinary live ranking under the current policy.
 
 The source checkout commit is embedded automatically as a read-only resource
 in the built App bundle. A valid 40-character lowercase commit is required
@@ -176,9 +191,10 @@ JSON files are also checked with the frozen F3 Python validator.
   efficiency.
 - Jetsam or other unexplained process loss is preserved conservatively as
   unclassified failure unless trusted evidence identifies OOM.
-- App 0.9.0 candidate entries have no accepted physical-device evidence until
-  contributors submit genuine exports through the public-intake process.
+- Community evidence reflects one contributor until another GitHub contributor
+  reproduces the exact comparison identity; the App does not claim independent
+  reproduction merely because an artifact appears in the picker.
 
 Historical App 0.6.0/0.7.0 bundle formats remain supported by historical
-ingestion and validation paths, but they are not the current App 0.9.0 export
+ingestion and validation paths, but they are not the current App 0.11.0 export
 and cannot be promoted into Power 1.0 evidence.

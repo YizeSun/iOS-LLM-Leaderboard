@@ -151,7 +151,7 @@ final class BenchmarkViewModel {
     }
 
     // Experimental registry entries remain for historical compatibility, but
-    // App 0.9.0 cannot execute them through the production control surface.
+    // App 0.11.0 cannot execute them through the production control surface.
     var canCalibrateInputLengths: Bool {
         false
     }
@@ -318,6 +318,10 @@ final class BenchmarkViewModel {
         for evidence: ModelPreparationEvidence
     ) -> PreparationPhase {
         if evidence.downloadOccurredDuringSession {
+            return .restartRequired
+        } else if evidence.reasonCodes.contains(
+            "restart_required_after_model_switch"
+        ) {
             return .restartRequired
         } else if evidence.eligibleForPerformanceMeasurement {
             return .ready
