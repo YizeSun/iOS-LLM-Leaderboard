@@ -487,6 +487,61 @@ h1 {
   cursor: default;
 }
 
+.catalog-support {
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 550;
+}
+
+.catalog-status {
+  color: var(--warning);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.catalog-watchlist {
+  color: #6b4f10;
+  font-size: 0.78rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.catalog-reason {
+  min-width: 280px;
+  max-width: 380px;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  text-align: left !important;
+  white-space: normal !important;
+}
+
+.catalog-actions {
+  min-width: 120px;
+  text-align: left !important;
+}
+
+.catalog-source {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-tertiary);
+  font-size: 0.68rem;
+  text-decoration: none;
+}
+
+.catalog-source:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.catalog-unavailable {
+  display: block;
+  color: var(--text-tertiary);
+  font-size: 0.7rem;
+  line-height: 1.25;
+  max-width: 9rem;
+}
+
 .details-button {
   padding: 0;
   border: 0;

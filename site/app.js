@@ -1,11 +1,14 @@
 const POWER_DATA_URL = "results/suite-b-power-community/normalized-results.json";
 const OFFICIAL_POWER_DATA_URL = "results/suite-b-power-1.0/normalized-results.json";
 const SHIP_DATA_URL = "results/ship-1.0/deployment-profiles.json";
+const MODEL_CATALOG_URL = "models/power-test-catalog.json";
 const CONTRIBUTOR_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.0-quickstart.md";
+const MODEL_TEST_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/test-recommended-model.md";
 
 const state = {
   power: null,
   ship: null,
+  catalog: null,
   mode: "ux",
   sortKey: "response",
   sortDirection: "asc",
@@ -93,6 +96,24 @@ const modeConfig = {
       column("contribute", "Action", () => 0, () => `<a class="details-button" href="${CONTRIBUTOR_GUIDE_URL}" target="_blank" rel="noreferrer">Contribute result</a>`, false),
     ],
   },
+  catalog: {
+    kind: "catalog",
+    label: "Model catalog",
+    description: "App-ready tested artifacts and requested public-weight models awaiting compatible Apple-device artifacts. These are not rankings.",
+    defaultSort: "priority",
+    defaultDirection: "asc",
+    columns: [
+      column("priority", "Priority", row => row.catalogEntryType === "app-ready" ? row.recommendedPriority : null, value => value == null ? "—" : `#${value}`, true, true),
+      column("model", "Model", row => row.configuration.model.displayName, value => value),
+      column("quantization", "Quant", row => row.configuration.model.quantization, value => value == null ? "—" : escapeHtml(value)),
+      column("size", "Download", row => row.configuration.model.artifactRepositorySizeBytes, value => value == null ? "—" : formatBytes(value), true),
+      column("license", "License", row => row.configuration.model.licenseIdentifier, value => escapeHtml(value), true),
+      column("support", "App status", row => row.runtimeRegistryStatus, (_, row) => catalogSupportMarkup(row), true),
+      column("status", "Evidence", row => row.physicalDeviceEvidenceStatus, (_, row) => catalogEvidenceMarkup(row), true),
+      column("reason", "Why listed", row => row.recommendationReason ?? row.appEligibilityReason, value => escapeHtml(value), false),
+      column("catalog-action", "Action", () => 0, (_, row) => catalogActionMarkup(row), false),
+    ],
+  },
 };
 
 function column(key, label, accessor, formatter, sortable = true, primary = false) {
@@ -120,17 +141,22 @@ const elements = {
 
 async function loadEvidence() {
   try {
-    const [powerResponse, shipResponse] = await Promise.all([
+    const [powerResponse, shipResponse, catalogResponse] = await Promise.all([
       fetch(POWER_DATA_URL, { cache: "no-store" }),
       fetch(SHIP_DATA_URL, { cache: "no-store" }),
+      fetch(MODEL_CATALOG_URL, { cache: "no-store" }),
     ]);
     if (!powerResponse.ok) throw new Error(`Power evidence request failed: ${powerResponse.status}`);
     if (!shipResponse.ok) throw new Error(`Ship evidence request failed: ${shipResponse.status}`);
-    const [power, ship] = await Promise.all([powerResponse.json(), shipResponse.json()]);
+    if (!catalogResponse.ok) throw new Error(`Model catalog request failed: ${catalogResponse.status}`);
+    const [power, ship, catalog] = await Promise.all([powerResponse.json(), shipResponse.json(), catalogResponse.json()]);
     if (!Array.isArray(power.results) || power.results.length === 0) throw new Error("Power evidence is empty");
     if (!Array.isArray(ship.profiles) || ship.profiles.length === 0) throw new Error("Ship profiles are empty");
+    if (!Array.isArray(catalog.models) || catalog.models.length === 0) throw new Error("Model test catalog is empty");
+    if (!Array.isArray(catalog.openModelWatchlist)) throw new Error("Public-weight model watchlist is unavailable");
     state.power = power;
     state.ship = ship;
+    state.catalog = catalog;
     populateFilters([...power.results, ...ship.profiles]);
     renderReleaseSummary(power);
     renderBoard();
@@ -203,43 +229,103 @@ function buildCoverageRows(rows) {
   });
 }
 
+function buildCatalogRows(catalog) {
+  const appReady = catalog.models.map(model => ({
+    ...model,
+    catalogEntryType: "app-ready",
+    configuration: { model, runtime: catalog.runtime },
+  }));
+  const watchlist = catalog.openModelWatchlist.map(model => ({
+    ...model,
+    catalogEntryType: "open-model-watchlist",
+    runtimeRegistryStatus: "unsupported-in-locked-runtime",
+    physicalDeviceEvidenceStatus: "not-app-testable",
+    configuration: {
+      model: {
+        ...model,
+        artifactID: model.officialModelID,
+        quantization: null,
+        artifactRepositorySizeBytes: null,
+      },
+      runtime: catalog.runtime,
+    },
+  }));
+  return [...appReady, ...watchlist];
+}
+
+function catalogSupportMarkup(row) {
+  return row.catalogEntryType === "app-ready"
+    ? '<span class="catalog-support">Ready in App</span>'
+    : '<span class="catalog-watchlist">Not App-ready</span>';
+}
+
+function catalogEvidenceMarkup(row) {
+  if (row.catalogEntryType !== "app-ready") {
+    return '<span class="catalog-watchlist">Watchlist</span>';
+  }
+  return row.physicalDeviceEvidenceStatus === "community-submitted-single-contributor"
+    ? '<span class="catalog-status">Community tested</span>'
+    : '<span class="catalog-status">Evidence pending</span>';
+}
+
+function catalogActionMarkup(row) {
+  const source = `<a class="catalog-source" href="${escapeAttribute(row.configuration.model.sourceURL)}" target="_blank" rel="noreferrer">Source</a>`;
+  if (row.catalogEntryType !== "app-ready") {
+    return `<span class="catalog-unavailable">Await compatible artifact</span>${source}`;
+  }
+  return `<a class="details-button" href="${MODEL_TEST_GUIDE_URL}" target="_blank" rel="noreferrer">Test this model</a>${source}`;
+}
+
 function renderBoard() {
-  if (!state.power || !state.ship) return;
+  if (!state.power || !state.ship || !state.catalog) return;
   const config = modeConfig[state.mode];
   let rows;
   if (config.kind === "ship") rows = state.ship.profiles;
   else if (config.kind === "coverage") rows = buildCoverageRows(state.power.results);
+  else if (config.kind === "catalog") rows = buildCatalogRows(state.catalog);
   else rows = workloadRows(state.power.results, config.workload);
-  rows = filterRows(rows);
+  rows = filterRows(rows, config);
   rows = sortRows(rows, config);
+  elements.device.disabled = config.kind === "catalog";
+  elements.runtime.disabled = config.kind === "catalog";
   elements.contextLabel.textContent = config.label;
   elements.contextDescription.textContent = config.description;
   const openSlots = rows.reduce((total, row) => total + (row.openContributorSlots ?? 0), 0);
   elements.rowCount.textContent = config.kind === "coverage"
     ? `${rows.length} tested profile${rows.length === 1 ? "" : "s"} · ${openSlots} open contributor slot${openSlots === 1 ? "" : "s"}`
-    : `${rows.length} tested configuration${rows.length === 1 ? "" : "s"}`;
+    : config.kind === "catalog"
+      ? `${rows.filter(row => row.catalogEntryType === "app-ready").length} App-ready · ${rows.filter(row => row.catalogEntryType === "open-model-watchlist").length} watchlist`
+      : `${rows.length} tested configuration${rows.length === 1 ? "" : "s"}`;
   elements.footerStatus.textContent = config.kind === "ship"
     ? "Ship 1.0 · Published evidence profiles · No deployment score"
     : config.kind === "coverage"
       ? "Coverage derived from live Power evidence · No placeholder devices"
+      : config.kind === "catalog"
+        ? "Model catalog · App-ready and public-weight watchlist entries are explicitly separated · No performance claims"
       : "Power 1.0 reference · Live merged community evidence";
   elements.footerChecksums.href = config.kind === "ship"
     ? "results/ship-1.0/SHA256SUMS"
+    : config.kind === "catalog"
+      ? MODEL_CATALOG_URL
     : "results/suite-b-power-1.0/SHA256SUMS";
   elements.footerTable.href = config.kind === "ship"
     ? "results/ship-1.0/PROFILES.md"
+    : config.kind === "catalog"
+      ? MODEL_TEST_GUIDE_URL
     : config.kind === "coverage"
       ? "results/suite-b-power-community/COVERAGE.md"
       : "results/suite-b-power-community/LEADERBOARD.md";
+  elements.footerChecksums.textContent = config.kind === "catalog" ? "Catalog JSON" : "Checksums";
   elements.footerTable.textContent = config.kind === "ship"
     ? "Profile table"
-    : config.kind === "coverage" ? "Coverage report" : "Evidence table";
+    : config.kind === "catalog" ? "Testing guide"
+      : config.kind === "coverage" ? "Coverage report" : "Evidence table";
   elements.empty.hidden = rows.length !== 0;
   renderHead(config.columns);
   renderRows(rows, config.columns);
 }
 
-function filterRows(rows) {
+function filterRows(rows, config) {
   const query = state.query.trim().toLowerCase();
   return rows.filter(row => {
     const model = row.configuration.model;
@@ -248,8 +334,8 @@ function filterRows(rows) {
     const searchable = `${model.displayName} ${model.artifactID} ${model.quantization} ${runtime.name}`.toLowerCase();
     const runtimeKey = `${runtime.name}@${runtime.version}`;
     return (!query || searchable.includes(query))
-      && (state.device === "all" || device.machineIdentifier === state.device)
-      && (state.runtime === "all" || runtimeKey === state.runtime);
+      && (config.kind === "catalog" || state.device === "all" || device.machineIdentifier === state.device)
+      && (config.kind === "catalog" || state.runtime === "all" || runtimeKey === state.runtime);
   });
 }
 
@@ -287,11 +373,20 @@ function renderCell(columnConfig, row, index) {
   if (columnConfig.key === "rank") return `<td class="rank-cell">${index + 1}</td>`;
   if (columnConfig.key === "model") {
     const model = row.configuration.model;
-    return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(model.parameterSizeClass)} · ${escapeHtml(model.modelFormat)}</span></td>`;
+    const metadata = row.catalogEntryType === "open-model-watchlist"
+      ? `${model.licenseIdentifier} · Public-weight watchlist`
+      : `${model.parameterSizeClass} · ${model.modelFormat}`;
+    return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(metadata)}</span></td>`;
   }
   if (columnConfig.key === "details") {
     const identity = row.comparisonID ?? row.profileID;
     return `<td><button class="details-button" type="button" data-result="${escapeHtml(identity)}">${row.profileID ? "Profile" : "Evidence"}</button></td>`;
+  }
+  if (columnConfig.key === "reason") {
+    return `<td class="catalog-reason">${columnConfig.formatter(columnConfig.accessor(row), row)}</td>`;
+  }
+  if (columnConfig.key === "catalog-action") {
+    return `<td class="catalog-actions">${columnConfig.formatter(0, row)}</td>`;
   }
   const value = columnConfig.accessor(row);
   const formatted = columnConfig.formatter(value, row);
@@ -482,6 +577,13 @@ document.querySelectorAll(".mode-tab").forEach(button => button.addEventListener
   state.mode = button.dataset.mode;
   state.sortKey = modeConfig[state.mode].defaultSort;
   state.sortDirection = modeConfig[state.mode].defaultDirection;
+  const tabStrip = button.parentElement;
+  if (tabStrip && tabStrip.scrollWidth > tabStrip.clientWidth) {
+    tabStrip.scrollTo({
+      left: button.offsetLeft - (tabStrip.clientWidth - button.offsetWidth) / 2,
+      behavior: "smooth",
+    });
+  }
   renderBoard();
 }));
 
