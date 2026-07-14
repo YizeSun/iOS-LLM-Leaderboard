@@ -1,102 +1,114 @@
-# Power 1.0 Environmental Control Addendum
+# Power 1.0 Environmental Observation Draft
 
 ## Status and compatibility
 
-This is a normative intake addendum for new Power 1.0 community evidence
-captured on or after **2026-07-14**. It closes an environmental-control gap in
-the frozen Power 1.0 execution contract without changing:
+This document defines observation-first intake guidance for new Power 1.0
+community evidence. It does not change:
 
 - `suite-b-power@1.0.0` or its signed release assets;
 - the adopted `suite-b-power@1.0.0-rc.1` protocol identity;
 - workload IDs, prompts, generation settings, metrics, or eligibility math;
 - the Power result or submission schemas;
 - the reference App; or
-- previously published Maintainer Reference evidence.
+- previously published or submitted evidence.
 
-The original result JSON does not contain ambient-temperature or placement
-fields. Until a future schema version can carry them, the pull request is the
-public declaration record and maintainer review is the enforcement boundary.
-Passing the frozen JSON validators alone does not establish conformance with
-this addendum.
+The current result JSON does not contain ambient-temperature, device-surface,
+case, placement, or thermal-assistance fields. For now, these observations live
+in the pull request and are reviewed as contributor declarations. This draft
+does not make temperature or case metadata a prerequisite for ranking.
 
-Normative requirements use **must**. A result that misses a requirement remains
-valuable retained evidence, but new community evidence is not eligible for the
-live ranking unless every requirement below is declared and reviewable.
+The existing frozen admission rules remain unchanged. In particular, a
+measurement must begin with `ProcessInfo.thermalState == nominal`, along with
+the existing battery, power, build, debugger, cache, and device checks.
 
-## Controlled environment
+## Recommended observations
 
-For every Power workload session, the contributor must:
+Contributors are encouraged to record the following immediately before a
+session and, when practical, again after it:
 
-1. run indoors with ambient temperature between **20.0 °C and 25.0 °C** at
-   both session start and session end;
-2. read ambient temperature from a room thermostat or a thermometer located
-   in the same room and no more than 1 m from the iPhone;
-3. remove the case, MagSafe accessories, and any other attached accessory that
-   can materially change heat transfer;
-4. place the iPhone screen-up, stationary, and uncovered on a dry,
-   room-temperature, non-metal tabletop such as wood or laminate;
-5. leave the iPhone unheld and untouched from request start through the final
-   attempt, except when the App explicitly requires an interaction;
-6. keep the device on battery power and satisfy every existing Power 1.0
-   admission rule; and
-7. begin only after the iPhone has remained in this setup with
-   `ProcessInfo.thermalState == nominal` for at least five consecutive minutes.
+- ambient room temperature in degrees Celsius and the reading source;
+- externally measured device-surface temperature in degrees Celsius;
+- the surface-temperature method, measurement location, and timing;
+- case state: `installed`, `removed`, or `unknown`;
+- placement: `tabletop`, `stand`, `handheld`, `other`, or `unknown`; and
+- any environmental detail likely to affect heat transfer.
 
-Ordinary room heating or air conditioning is allowed only when it controls the
-room generally and is not directed at the iPhone.
+No ambient-temperature range is required. A case does not have to be removed,
+and no particular ordinary support material or fixed stabilization duration is
+required. Missing recommended observations should be shown as `not recorded`;
+they do not by themselves make a result ineligible.
 
-## Prohibited thermal assistance
+## What temperature can mean
 
-The following are prohibited before and during the stabilization period and
-measurement session:
+`ProcessInfo.thermalState` is categorical system evidence: `nominal`, `fair`,
+`serious`, or `critical`. It is not a temperature sensor reading and must never
+be converted into degrees Celsius.
 
-- ice, cold packs, refrigerated or frozen objects, chilled food or drink,
-  wet towels, and refrigerators or freezers;
-- fans or air-conditioning vents aimed at the iPhone;
-- powered phone coolers, cooling plates, laptop cooling pads, external
-  heatsinks, or other equipment intended to remove heat from the device;
-- metal, stone, glass, or another deliberately thermally conductive support
-  used to improve cooling; and
-- direct sunlight, heaters, warming pads, or any other deliberate external
-  heating.
+The public benchmark App has no supported API for exact iPhone internal
+temperature. A contributor may optionally report a surface temperature from
+an external instrument, but must label it as surface temperature and include:
 
-The goal is to measure the retail iPhone in an ordinary controlled indoor
-environment, not the best result obtainable with an undeclared cooling setup.
+- instrument or method;
+- measurement location, such as back center;
+- whether the case was installed; and
+- whether the reading was taken before or after the workload.
 
-## Required pull-request declaration
+An infrared, contact, or other surface reading is useful context, but it is not
+an internal battery, SoC, or enclosure temperature.
 
-For each submitted result, the pull request must record:
+## Thermal-assistance disclosure
 
-- ambient temperature at session start and end, in degrees Celsius;
-- whether the reading came from a room thermostat or nearby thermometer;
-- confirmation that the case and thermally relevant accessories were removed;
-- confirmation that the device was stationary, screen-up, and unheld on the
-  permitted support surface;
-- confirmation that no prohibited cooling or heating was used; and
-- confirmation that the five-minute nominal stabilization completed.
+Every new pull request seeking ordinary live-ranking placement must disclose
+one of these values:
 
-Approximate or inferred device temperature is not a substitute for the ambient
-reading. `ProcessInfo.thermalState` remains the only in-App thermal-state
-evidence and must not be converted into degrees Celsius.
+- `none`;
+- `deliberate-cooling`;
+- `deliberate-heating`;
+- `other-assisted`; or
+- `unknown`.
 
-If a session spans more than one exported workload result, the same declaration
-may cover those results only when they were collected consecutively without
-changing the environment or device setup. Each result must still be identified
-unambiguously in the pull request.
+Ordinary room heating or air conditioning that is not directed at the iPhone
+is `none`. Deliberate thermal assistance includes ice, chilled objects, fans or
+vents aimed at the phone, powered phone coolers, heating pads, and deliberately
+heated or cooled supports.
 
-## Admission and historical evidence
+The project preserves assisted and unknown evidence rather than discarding it.
+However, a result declared as deliberately cooled, heated, or otherwise
+thermally assisted—or left `unknown`—must not be silently aggregated into the
+ordinary live ranking. An `unknown` declaration may be clarified in review. A
+future schema may support separately labeled environmental classes; this draft
+does not add one.
 
-For evidence captured on or after the effective date:
+The project relies on transparent contributor disclosure and maintainer review.
+It does not require App Attest, a persistent device identifier, photographs, or
+other anti-fraud hardware evidence.
 
-- missing declarations make environmental conformance **unreviewed**;
-- a declared violation makes the result environment-ineligible for the live
-  ranking; and
-- a compliant declaration does not override any other protocol, metric, trust,
-  or ranking requirement.
+## Pull-request record
 
-Power 1.0 evidence captured before this addendum remains published with its
-existing status. Because ambient temperature, placement, case use, and external
-thermal assistance were not recorded in the frozen schema, those historical
-results must not be described as conforming to this addendum unless separate
-contemporaneous evidence exists. They are not retroactively invalidated.
+For each result, the pull request should identify:
 
+- result ID;
+- thermal-assistance disclosure; and
+- any available recommended observations listed above.
+
+One observation block may cover consecutive exported workloads only when the
+environment and device setup did not change and every covered result ID is
+listed. The untouched App export remains the measurement record; these notes do
+not authorize editing `result.json` or adding a third package file.
+
+## Ranking and historical evidence
+
+- Temperature, case, and placement observations are context only in this
+  draft. They are not exact-cell keys, aggregation inputs, or hard admission
+  gates.
+- A declaration of deliberate thermal assistance, or an unresolved `unknown`,
+  prevents the result from entering the ordinary live aggregate, but the
+  evidence remains reviewable.
+- An observation does not override any protocol, metric, trust, or ranking
+  requirement.
+- Historical results are not retroactively invalidated. Missing observations
+  are simply `not recorded` unless contemporaneous evidence exists.
+
+Any future decision to require a temperature method, temperature range, case
+state, or placement must use a separately reviewed protocol/schema migration.
+It must not silently reinterpret existing Power 1.0 evidence.

@@ -68,13 +68,15 @@ Open a pull request containing only the new two-file package and select
 template. The frozen RC1 guide remains the normative package definition where
 this authorization does not explicitly change operational status.
 
-For evidence captured on or after 2026-07-14, the pull request must also
-complete the declarations in the
-[Power 1.0 Environmental Control Addendum](../benchmarks/suite-b-on-device-performance/power-1.0-environment-control.md).
-The addendum standardizes ambient temperature, placement, case state, and the
-absence of external heating or cooling. It does not add a third package file or
-modify the frozen JSON schemas. These declarations are reviewed at intake
-because the adopted result schema cannot encode them.
+The pull request should also complete the
+[Power 1.0 Environmental Observation Draft](../benchmarks/suite-b-on-device-performance/power-1.0-environment-control.md).
+Ambient temperature, externally measured device-surface temperature, case
+state, and placement are recommended observations, not current hard admission
+requirements. Deliberate external cooling or heating must be disclosed so
+assisted evidence is not silently aggregated into the ordinary live ranking.
+An unresolved `unknown` thermal-assistance declaration also remains outside the
+ordinary aggregate. This record does not add a third package file or modify the
+frozen JSON schemas.
 
 ## Trust and ranking boundary
 
@@ -96,10 +98,11 @@ adds a separate, explicitly labeled live community view. A valid package
 merged into `main` may enter that view automatically without changing its
 formal evidence level or the Power 1.0 release package.
 
-For post-addendum evidence, the frozen automated checks cover the seven JSON
-manifest declarations, while environmental conformance is a separate manual
-intake gate. Passing CI must not be represented as automatic verification of
-ambient conditions.
+The frozen automated checks cover the seven JSON manifest declarations. The
+environmental observation block is reviewed manually because CI cannot verify
+physical conditions. Missing temperature, case, or placement observations do
+not block ranking under this draft, and passing CI must not be represented as
+verification of those observations.
 
 For the live view, the declared GitHub handle must match the pull-request
 author. Different GitHub accounts count as independent contributors inside an
