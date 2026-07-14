@@ -11,10 +11,13 @@ the adopted Power 1.0 workload, measurement, result, and validation contracts
 unchanged while exposing eight explicitly untested model artifacts in the model
 picker.
 
-The branch-only Night Run harness is App `0.10.1` build `13`. It adds a
-process-isolation guard: one App process may prepare or measure only one model
-identity. It does not replace the App 0.10.0 public reference source and must
-never be merged into `main`.
+The Power Benchmark App Lab on `codex/power-benchmark-app-lab` currently carries
+App `0.10.1` build `13`. Its Night Run mode adds a process-isolation guard: one
+App process may prepare or measure only one model identity. The branch remains
+an integration and physical-device validation workspace; it must not be merged
+into `main` wholesale. Reusable `ios-app/` capabilities may be proposed later
+through a focused App-only review. Night Run evidence, collection helpers, and
+unrelated branch changes remain outside that integration boundary.
 
 App `0.8.0` build `10` remains the exact reference source for the published
 six-result Maintainer Reference matrix and for reproducing its three existing

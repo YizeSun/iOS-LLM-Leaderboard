@@ -1,9 +1,13 @@
-# Night Run Harness Branch
+# Night Run Mode in the Power Benchmark App Lab
 
 ## Branch boundary
 
-This utility exists only on `codex/night-run-harness`. Its App source must
-never be merged into `main`.
+This utility is developed and validated on
+`codex/power-benchmark-app-lab`. The branch is an integration workspace and
+must not be merged into `main` wholesale. Reusable App capabilities may be
+extracted later into a focused App-only pull request after code review,
+simulator verification, and physical-device validation. Night Run evidence,
+collection helpers, and unrelated branch changes remain branch-only.
 
 The branch adds orchestration around the existing Power 1.0 reference runner:
 
@@ -32,9 +36,11 @@ must pass the frozen Power validator, contributor declarations, integrity
 checks, and maintainer review used by every other submission.
 
 Because public intake authorizes exact App source commits, the result review
-must additionally pin the exact Night Run commit and verify that its diff is
-limited to orchestration. The source-review record may be merged with the
-result package; this branch's App implementation must not be merged.
+must additionally pin the exact App Lab commit and verify that the measured
+behavior preserves the frozen Power contract. A source-review record may be
+merged with a result package. Any reusable App implementation follows a
+separate App-only review and is never introduced by merging this branch
+wholesale.
 
 ## Operating sequence
 

@@ -10,11 +10,11 @@ struct NightRunHarnessView: View {
             Form {
                 Section {
                     Label(
-                        "Special branch utility — never merge into main",
+                        "Power Benchmark App Lab — not in main",
                         systemImage: "moon.stars.fill"
                     )
                     .foregroundStyle(.orange)
-                    Text("It only orchestrates the existing Power 1.0 runner. Workloads, result schema, metrics, validation, and ranking logic are unchanged.")
+                    Text("This lab build only orchestrates the existing Power 1.0 runner. Workloads, result schema, metrics, validation, and ranking logic are unchanged. Reusable App features require a separate App-only review before entering main.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 } header: {
