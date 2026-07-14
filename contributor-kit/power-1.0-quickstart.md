@@ -39,7 +39,12 @@ git worktree add ../ios-llm-power-app d7fcff7e27b4c46b1121df8988a0b2fb76d56804
 ```
 
 Building from this exact worktree matters: the App embeds its checkout commit,
-and that identity is part of the exact comparison cell.
+and that identity is part of the exact comparison cell. This is the
+content-equivalent checkout after the 2026-07-14 authorship correction.
+Existing immutable exports retain the original SHA they recorded; see the
+[history correction mapping](../docs/provenance/2026-07-14-history-correction.md).
+New exports record the corrected checkout SHA and therefore preserve their own
+exact comparison identity.
 
 ## 2. Build on the physical iPhone
 
