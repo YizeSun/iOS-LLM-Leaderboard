@@ -94,8 +94,28 @@ class PowerModelCatalogTests(unittest.TestCase):
             self.assertIn(f'artifactId: "{model["artifactID"]}"', swift)
             self.assertIn(f'artifactRevision: "{model["artifactRevision"]}"', swift)
         project = (ROOT / "ios-app" / "BenchmarkApp.xcodeproj" / "project.pbxproj").read_text()
-        self.assertEqual(project.count("MARKETING_VERSION = 0.9.0;"), 2)
-        self.assertEqual(project.count("CURRENT_PROJECT_VERSION = 11;"), 2)
+        self.assertEqual(project.count("MARKETING_VERSION = 0.11.0;"), 2)
+        self.assertEqual(project.count("CURRENT_PROJECT_VERSION = 14;"), 2)
+
+    def test_every_community_app_profile_has_exact_accepted_evidence(self) -> None:
+        swift = SWIFT_PROFILE_PATH.read_text()
+        selectable_pairs = re.findall(
+            r'artifactId: "([^"]+)",\n\s+artifactRevision: "([0-9a-f]{40})"',
+            swift,
+        )
+        self.assertEqual(len(selectable_pairs), 11)
+
+        community = json.loads(
+            (ROOT / "results/suite-b-power-community/normalized-results.json").read_text()
+        )
+        accepted_pairs = {
+            (
+                row["configuration"]["model"]["artifactID"],
+                row["configuration"]["model"]["artifactRevision"],
+            )
+            for row in community["results"]
+        }
+        self.assertTrue(set(selectable_pairs[3:]).issubset(accepted_pairs))
 
     def test_watchlist_models_are_not_misrepresented_as_app_options(self) -> None:
         swift = SWIFT_PROFILE_PATH.read_text()

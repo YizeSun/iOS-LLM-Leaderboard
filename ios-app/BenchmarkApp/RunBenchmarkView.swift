@@ -2,30 +2,29 @@ import SwiftUI
 
 struct RunBenchmarkView: View {
     private let environment = DeviceEnvironment.current
-    @State private var selectedPlan = ProductionBenchmarkPlan.sustainedGeneration
-    @State private var selectedModelProfile = ProductionModelProfile.small
+    @Bindable var settings: PowerAppSettings
     @State private var viewModel = BenchmarkViewModel()
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    Picker("Model profile", selection: $selectedModelProfile) {
+                    Picker("Model profile", selection: $settings.selectedModelProfile) {
                         ForEach(ProductionModelProfile.allCases) { profile in
                             Text(profile.title).tag(profile)
                         }
                     }
                     .disabled(!viewModel.canSelectModelProfile)
-                    .onChange(of: selectedModelProfile) { _, selection in
+                    .onChange(of: settings.selectedModelProfile) { _, selection in
                         viewModel.selectModelProfile(selection)
                     }
-                    Picker("Workload", selection: $selectedPlan) {
+                    Picker("Workload", selection: $settings.selectedManualWorkload) {
                         ForEach(ProductionBenchmarkPlan.allCases) { selection in
                             Text(selection.title).tag(selection)
                         }
                     }
                     .disabled(!viewModel.canSelectBenchmarkPlan)
-                    .onChange(of: selectedPlan) { _, selection in
+                    .onChange(of: settings.selectedManualWorkload) { _, selection in
                         viewModel.selectBenchmarkPlan(selection)
                     }
                     LabeledContent(
@@ -54,9 +53,9 @@ struct RunBenchmarkView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 } header: {
-                    Text("Power Benchmark 1.0 · Reference App")
+                    Text("Power Benchmark 1.0")
                 } footer: {
-                    Text("Adopted RC1 result contract · Reference App 0.9.0")
+                    Text("Frozen Power 1.0 result contract · App 0.11.0")
                 }
 
                 Section {
@@ -95,6 +94,13 @@ struct RunBenchmarkView: View {
                     )
                     LabeledContent("Battery", value: batteryDescription)
                 }
+
+                PowerEnvironmentObservationsSection(
+                    settings: settings,
+                    resultIDs: viewModel.latestPowerResult.map {
+                        [$0.resultID.uuidString.lowercased()]
+                    } ?? []
+                )
 
                 if viewModel.debuggerAttached {
                     Section("Preflight") {
@@ -184,38 +190,17 @@ struct RunBenchmarkView: View {
 
                 if let resultFileURL = viewModel.resultFileURL {
                     Section {
+                        LabeledContent(
+                            "Saved result",
+                            value: resultFileURL.lastPathComponent
+                        )
                         ShareLink(item: resultFileURL) {
-                            Label("Export Raw JSON", systemImage: "square.and.arrow.up")
-                        }
-                    } footer: {
-                        Text("Frozen Power result contract. Candidate profiles remain unranked until physical evidence is accepted.")
-                    }
-                }
-
-                if viewModel.latestUnifiedResult != nil {
-                    Section {
-                        TextField("GitHub handle or public name", text: $viewModel.contributorName)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                        Toggle("I reviewed the result and raw evidence", isOn: $viewModel.reviewedResult)
-                        Toggle("This submission contains no personal data", isOn: $viewModel.confirmsNoPersonalData)
-                        Toggle("I agree to the repository license", isOn: $viewModel.agreesToRepositoryLicense)
-                        Button("Generate Repository Submission") {
-                            Task { await viewModel.generateCommunitySubmission() }
-                        }
-                        .disabled(!viewModel.canGenerateSubmission)
-                        if let error = viewModel.submissionError {
-                            Text(error).foregroundStyle(.red)
-                        }
-                        if let url = viewModel.submissionFileURL {
-                            ShareLink(item: url) {
-                                Label("Export Submission JSON", systemImage: "shippingbox.and.arrow.backward")
-                            }
+                            Label("Share Raw Power JSON", systemImage: "square.and.arrow.up")
                         }
                     } header: {
-                        Text("Legacy Draft Submission")
+                        Text("Result delivery")
                     } footer: {
-                        Text("Legacy Draft submission export; it is not required by the Pilot v0.1 ingestion path. Pilot data uses the unmodified raw result JSON.")
+                        Text("The runner writes this frozen JSON once to Documents/PowerBenchmarkResults. Manual Share and Mac collection deliver the same file; neither path recalculates or rewrites the result.")
                     }
                 }
             }
@@ -224,6 +209,8 @@ struct RunBenchmarkView: View {
                 viewModel.refreshThermalState()
             }
             .task {
+                viewModel.selectModelProfile(settings.selectedModelProfile)
+                viewModel.selectBenchmarkPlan(settings.selectedManualWorkload)
                 viewModel.refreshThermalState()
                 await viewModel.recoverInterruptedSessionIfNeeded()
             }
@@ -392,5 +379,5 @@ struct RunBenchmarkView: View {
 }
 
 #Preview {
-    RunBenchmarkView()
+    RunBenchmarkView(settings: PowerAppSettings())
 }
