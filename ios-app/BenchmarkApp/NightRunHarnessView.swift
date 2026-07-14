@@ -21,7 +21,7 @@ struct NightRunHarnessView: View {
                     Text("Night Run Harness")
                 }
 
-                Section("Models") {
+                Section {
                     ForEach(ProductionModelProfile.allCases) { profile in
                         Toggle(
                             profile.title,
@@ -34,6 +34,10 @@ struct NightRunHarnessView: View {
                         )
                         .disabled(viewModel.isBusy)
                     }
+                } header: {
+                    Text("Model · select exactly one")
+                } footer: {
+                    Text("One App process may load only one model. To test another model, fully close and relaunch the App first.")
                 }
 
                 Section {
@@ -49,16 +53,18 @@ struct NightRunHarnessView: View {
                             storageDescription
                         ) ?? "Unavailable"
                     )
-                    Button("Prepare Selected Models") {
+                    Button("Prepare Selected Model") {
                         Task { await viewModel.prepareSelectedModels() }
                     }
-                    .disabled(viewModel.isBusy || viewModel.selectedProfiles.isEmpty)
+                    .disabled(
+                        viewModel.isBusy || viewModel.selectedProfiles.count != 1
+                    )
 
                     NightPreparationRows(rows: viewModel.preparationRows)
                 } header: {
                     Text("1 · Wired cache preparation")
                 } footer: {
-                    Text("Downloads are allowed here. If any download occurs, fully close and relaunch the App before measurement.")
+                    Text("Downloads are allowed here. If a download occurs—or another model was loaded in this process—fully close and relaunch before measurement.")
                 }
 
                 Section {

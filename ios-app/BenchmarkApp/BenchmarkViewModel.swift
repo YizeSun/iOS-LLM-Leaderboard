@@ -319,6 +319,10 @@ final class BenchmarkViewModel {
     ) -> PreparationPhase {
         if evidence.downloadOccurredDuringSession {
             return .restartRequired
+        } else if evidence.reasonCodes.contains(
+            "restart_required_after_model_switch"
+        ) {
+            return .restartRequired
         } else if evidence.eligibleForPerformanceMeasurement {
             return .ready
         } else if evidence.reasonCodes.contains("model_preparation_failed")

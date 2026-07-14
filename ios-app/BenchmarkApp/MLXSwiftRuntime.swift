@@ -5,6 +5,36 @@ import MLXLLM
 import MLXLMCommon
 import Tokenizers
 
+actor ModelProcessIsolationGate {
+    enum GateError: LocalizedError, Equatable {
+        case differentModelAlreadyClaimed(
+            claimedIdentity: String,
+            requestedIdentity: String
+        )
+
+        var errorDescription: String? {
+            switch self {
+            case .differentModelAlreadyClaimed:
+                "This App process has already prepared or attempted a different model. Fully close and relaunch before measuring another model."
+            }
+        }
+    }
+
+    static let shared = ModelProcessIsolationGate()
+
+    private var claimedIdentity: String?
+
+    func claim(_ requestedIdentity: String) throws {
+        if let claimedIdentity, claimedIdentity != requestedIdentity {
+            throw GateError.differentModelAlreadyClaimed(
+                claimedIdentity: claimedIdentity,
+                requestedIdentity: requestedIdentity
+            )
+        }
+        claimedIdentity = requestedIdentity
+    }
+}
+
 actor MLXSwiftRuntime: ModelPreparingRuntime {
     enum RuntimeError: LocalizedError {
         case modelNotLoaded
@@ -154,6 +184,13 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
     private var modelContainer: ModelContainer?
     private var loadedModelIdentity: String?
     private var preparedPlan: PilotPlan?
+    private let processIsolationGate: ModelProcessIsolationGate
+
+    init(
+        processIsolationGate: ModelProcessIsolationGate = .shared
+    ) {
+        self.processIsolationGate = processIsolationGate
+    }
 
     func prepare(plan: PilotPlan) async -> ModelPreparationEvidence {
         let startedAt = ContinuousClock.now
@@ -221,6 +258,10 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
                 reasons.append("model_download_during_session")
                 reasons.append("restart_required_after_download")
             }
+        } catch is ModelProcessIsolationGate.GateError {
+            reasons.append("different_model_claimed_in_process")
+            reasons.append("restart_required_after_model_switch")
+            reasons.append("model_preparation_failed")
         } catch let error as RuntimeError {
             if case .identityMismatch = error {
                 reasons.append("runtime_identity_mismatch")
@@ -265,6 +306,7 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
         if modelContainer != nil, loadedModelIdentity == requestedIdentity {
             return
         }
+        try await processIsolationGate.claim(requestedIdentity)
         modelContainer = nil
         loadedModelIdentity = nil
         preparedPlan = nil

@@ -56,7 +56,7 @@ struct RunBenchmarkView: View {
                 } header: {
                     Text("Power Benchmark 1.0 · Reference App")
                 } footer: {
-                    Text("Adopted RC1 result contract · Reference App 0.10.0")
+                    Text("Adopted RC1 result contract · Night Run 0.10.1")
                 }
 
                 Section {

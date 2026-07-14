@@ -2,11 +2,14 @@ import XCTest
 @testable import BenchmarkApp
 
 final class NightRunHarnessTests: XCTestCase {
-    func testDefaultNightPlanContainsFourModelsAndTwoFrozenWorkloads() {
-        let cells = NightRunPlan.cells(for: NightRunPlan.defaultProfiles)
+    func testNightPlanContainsOneModelAndTwoFrozenWorkloads() {
+        let cells = NightRunPlan.cells(for: .gemma3OneB)
 
-        XCTAssertEqual(cells.count, 8)
-        XCTAssertEqual(Set(cells.map(\.modelProfileID)).count, 4)
+        XCTAssertEqual(cells.count, 2)
+        XCTAssertEqual(
+            Set(cells.map(\.modelProfileID)),
+            Set([ProductionModelProfile.gemma3OneB.rawValue])
+        )
         XCTAssertEqual(
             Set(cells.map(\.workloadID)),
             [
@@ -18,13 +21,13 @@ final class NightRunHarnessTests: XCTestCase {
     }
 
     func testNightPlanUsesOnlyExistingProductionIdentities() {
-        let cells = NightRunPlan.cells(for: ProductionModelProfile.allCases)
-
-        for cell in cells {
-            XCTAssertNotNil(ProductionModelProfile(rawValue: cell.modelProfileID))
-            XCTAssertTrue(ProductionBenchmarkPlan.allCases.contains {
-                $0.workloadID == cell.workloadID
-            })
+        for profile in ProductionModelProfile.allCases {
+            for cell in NightRunPlan.cells(for: profile) {
+                XCTAssertEqual(cell.modelProfileID, profile.rawValue)
+                XCTAssertTrue(ProductionBenchmarkPlan.allCases.contains {
+                    $0.workloadID == cell.workloadID
+                })
+            }
         }
     }
 
@@ -35,8 +38,8 @@ final class NightRunHarnessTests: XCTestCase {
             fileURL: directory.appending(path: "queue.json")
         )
         let snapshot = NightRunQueueSnapshot(
-            selectedModelProfileIDs: NightRunPlan.defaultProfiles.map(\.rawValue),
-            cells: NightRunPlan.cells(for: NightRunPlan.defaultProfiles),
+            selectedModelProfileIDs: [ProductionModelProfile.gemma3OneB.rawValue],
+            cells: NightRunPlan.cells(for: .gemma3OneB),
             updatedAt: Date(timeIntervalSince1970: 1_000)
         )
 
@@ -46,6 +49,26 @@ final class NightRunHarnessTests: XCTestCase {
         try await store.clear()
         let cleared = try await store.load()
         XCTAssertNil(cleared)
+    }
+
+    func testProcessIsolationGateAllowsOnlyOneModelIdentity() async throws {
+        let gate = ModelProcessIsolationGate()
+
+        try await gate.claim("model-a@revision")
+        try await gate.claim("model-a@revision")
+
+        do {
+            try await gate.claim("model-b@revision")
+            XCTFail("Expected a process-isolation failure")
+        } catch let error as ModelProcessIsolationGate.GateError {
+            XCTAssertEqual(
+                error,
+                .differentModelAlreadyClaimed(
+                    claimedIdentity: "model-a@revision",
+                    requestedIdentity: "model-b@revision"
+                )
+            )
+        }
     }
 
     func testDownloadGateClearsOnlyAfterANewProcessIdentity() {

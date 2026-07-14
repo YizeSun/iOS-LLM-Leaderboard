@@ -13,6 +13,13 @@ The branch adds orchestration around the existing Power 1.0 reference runner:
 - foreground and restart gates; and
 - result-file bookkeeping and interrupted-session recovery.
 
+Measurement is deliberately limited to one model per App process. The two
+frozen Power workloads may run for that model, but selecting or loading another
+model requires a full force-quit and relaunch. Releasing a Swift model object
+is not accepted as proof that MLX, Metal, or process allocator state was reset.
+This guarded branch build is App `0.10.1` build `13`; previously collected
+App-0.10.0 results retain their original App and source-commit identity.
+
 It does not change Power workloads, protocol constants, result schemas,
 measurement formulas, validators, model identities, or leaderboard logic.
 Every result remains an unmodified `PowerResultBundle` written by the existing
@@ -33,8 +40,8 @@ result package; this branch's App implementation must not be merged.
 
 1. Build this branch in Release with **Debug executable** disabled.
 2. Connect and unlock the iPhone, then open the **Night Run** tab.
-3. Select models and tap **Prepare Selected Models**. The branch-only view
-   reports selected artifact size, available iPhone storage, and the underlying
+3. Select exactly one model and tap **Prepare Selected Model**. The branch-only
+   view reports artifact size, available iPhone storage, and the underlying
    Hugging Face error when a snapshot cannot be completed.
 4. If anything downloads, fully close and relaunch the App.
 5. Disconnect USB, MagSafe, and all charging. Keep Low Power Mode off.
@@ -44,6 +51,8 @@ result package; this branch's App implementation must not be merged.
    surface. The harness disables idle sleep only while it is active.
 8. Reconnect the next morning and copy
    `Documents/PowerBenchmarkResults/` from the App data container.
+9. To test another model, fully close and relaunch the App, then repeat from
+   step 2. Do not reuse a process that loaded a different model.
 
 From the repository root, the branch-only collection helper copies exactly the
 filenames referenced by the saved queue and runs the frozen validator:
