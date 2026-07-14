@@ -22,7 +22,7 @@ const modeConfig = {
     kind: "power",
     workload: "b-ux-001-short-interaction",
     label: "First-renderable proxy TTFT",
-    description: "Adapter boundary, not screen-render latency. Lower is better.",
+    description: "Latest App baseline per iOS minor family. Adapter boundary, not screen-render latency. Lower is better.",
     defaultSort: "response",
     defaultDirection: "asc",
     columns: [
@@ -44,7 +44,7 @@ const modeConfig = {
     kind: "power",
     workload: "b-pipe-001-sustained-generation",
     label: "Sustained decode throughput",
-    description: "Five measured generations without a rest interval. Higher is better.",
+    description: "Latest App baseline per iOS minor family. Five measured generations without a rest interval. Higher is better.",
     defaultSort: "decode",
     defaultDirection: "desc",
     columns: [
@@ -191,7 +191,80 @@ function renderReleaseSummary(data) {
 }
 
 function workloadRows(rows, workload) {
-  return rows.filter(row => row.workload.id === workload && row.rankingEligibility.candidateEligible);
+  const groups = new Map();
+  rows.filter(row => row.workload.id === workload).forEach(row => {
+    const key = currentDisplayKey(row);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(row);
+  });
+  return [...groups.values()].map(group => {
+    const selected = [...group].sort(compareDisplayPreference).at(-1);
+    return { ...selected, displayHistoryCount: group.length - 1 };
+  });
+}
+
+function currentDisplayKey(row) {
+  const identity = row.comparisonIdentity;
+  return JSON.stringify([
+    identity.sourceEvidenceRelease.id,
+    identity.sourceEvidenceRelease.version,
+    identity.workload.id,
+    identity.workload.version,
+    identity.workload.fixtureSHA256,
+    identity.generation,
+    identity.model.artifactID,
+    identity.model.artifactRevision,
+    identity.model.artifactContentHash,
+    identity.model.quantization,
+    identity.model.tokenizerIdentity,
+    identity.runtime.name,
+    identity.runtime.backend,
+    identity.device.machineIdentifier,
+    identity.device.physicalMemoryBytes,
+    osMinorFamily(identity.device.systemVersion),
+  ]);
+}
+
+function osMinorFamily(version) {
+  const parts = String(version ?? "").match(/\d+/g) ?? [];
+  return parts.length >= 2 ? `${parts[0]}.${parts[1]}` : String(version ?? "unknown");
+}
+
+function numericVersion(value) {
+  return (String(value ?? "").match(/\d+/g) ?? ["0"]).map(Number);
+}
+
+function compareNumericVersions(left, right) {
+  const length = Math.max(left.length, right.length);
+  for (let index = 0; index < length; index += 1) {
+    const difference = (left[index] ?? 0) - (right[index] ?? 0);
+    if (difference !== 0) return difference;
+  }
+  return 0;
+}
+
+function latestEvidenceAt(row) {
+  return row.evidence.reduce((latest, item) => item.createdAt > latest ? item.createdAt : latest, "");
+}
+
+function compareDisplayPreference(left, right) {
+  const leftRunner = left.comparisonIdentity.runner;
+  const rightRunner = right.comparisonIdentity.runner;
+  const leftDevice = left.comparisonIdentity.device;
+  const rightDevice = right.comparisonIdentity.device;
+  return compareNumericVersions(numericVersion(leftRunner.appVersion), numericVersion(rightRunner.appVersion))
+    || compareNumericVersions(numericVersion(leftRunner.appBuild), numericVersion(rightRunner.appBuild))
+    || compareNumericVersions(numericVersion(leftDevice.systemVersion), numericVersion(rightDevice.systemVersion))
+    || String(leftDevice.systemBuild).localeCompare(String(rightDevice.systemBuild), undefined, { numeric: true })
+    || latestEvidenceAt(left).localeCompare(latestEvidenceAt(right))
+    || left.comparisonID.localeCompare(right.comparisonID);
+}
+
+function historicalDisplayCells(row) {
+  const key = currentDisplayKey(row);
+  return state.power.results
+    .filter(candidate => candidate.comparisonID !== row.comparisonID && currentDisplayKey(candidate) === key)
+    .sort((left, right) => compareDisplayPreference(right, left));
 }
 
 function buildCoverageRows(rows) {
@@ -284,6 +357,7 @@ function renderBoard() {
   else if (config.kind === "coverage") rows = buildCoverageRows(state.power.results);
   else if (config.kind === "catalog") rows = buildCatalogRows(state.catalog);
   else rows = workloadRows(state.power.results, config.workload);
+  rows = withPrimaryRanks(rows, config);
   rows = filterRows(rows, config);
   rows = sortRows(rows, config);
   elements.device.disabled = config.kind === "catalog";
@@ -291,11 +365,14 @@ function renderBoard() {
   elements.contextLabel.textContent = config.label;
   elements.contextDescription.textContent = config.description;
   const openSlots = rows.reduce((total, row) => total + (row.openContributorSlots ?? 0), 0);
+  const rankedCount = rows.filter(row => row.rankingEligibility?.candidateEligible).length;
   elements.rowCount.textContent = config.kind === "coverage"
     ? `${rows.length} tested profile${rows.length === 1 ? "" : "s"} · ${openSlots} open contributor slot${openSlots === 1 ? "" : "s"}`
     : config.kind === "catalog"
       ? `${rows.filter(row => row.catalogEntryType === "app-ready").length} App-ready · ${rows.filter(row => row.catalogEntryType === "open-model-watchlist").length} watchlist`
-      : `${rows.length} tested configuration${rows.length === 1 ? "" : "s"}`;
+      : config.kind === "power"
+        ? `${rows.length} current model configuration${rows.length === 1 ? "" : "s"} · ${rankedCount} ranked · ${rows.length - rankedCount} unranked`
+        : `${rows.length} tested configuration${rows.length === 1 ? "" : "s"}`;
   elements.footerStatus.textContent = config.kind === "ship"
     ? "Ship 1.0 · Published evidence profiles · No deployment score"
     : config.kind === "coverage"
@@ -342,7 +419,25 @@ function filterRows(rows, config) {
 function sortRows(rows, config) {
   const selected = config.columns.find(item => item.key === state.sortKey) ?? config.columns[1];
   const direction = state.sortDirection === "asc" ? 1 : -1;
-  return [...rows].sort((left, right) => compare(selected.accessor(left), selected.accessor(right)) * direction);
+  return [...rows].sort((left, right) => {
+    const leftValue = selected.accessor(left);
+    const rightValue = selected.accessor(right);
+    if (leftValue == null && rightValue == null) return compare(left.configuration.model.displayName, right.configuration.model.displayName);
+    if (leftValue == null) return 1;
+    if (rightValue == null) return -1;
+    return compare(leftValue, rightValue) * direction;
+  });
+}
+
+function withPrimaryRanks(rows, config) {
+  if (config.kind !== "power") return rows;
+  const primary = config.columns.find(columnConfig => columnConfig.primary);
+  const direction = config.defaultDirection === "asc" ? 1 : -1;
+  const ranked = rows
+    .filter(row => row.rankingEligibility.candidateEligible)
+    .sort((left, right) => compare(primary.accessor(left), primary.accessor(right)) * direction);
+  const ranks = new Map(ranked.map((row, index) => [row.comparisonID, index + 1]));
+  return rows.map(row => ({ ...row, primaryRank: ranks.get(row.comparisonID) ?? null }));
 }
 
 function compare(left, right) {
@@ -365,18 +460,32 @@ function renderHead(columns) {
 }
 
 function renderRows(rows, columns) {
-  elements.body.innerHTML = rows.map((row, index) => `<tr>${columns.map(item => renderCell(item, row, index)).join("")}</tr>`).join("");
+  elements.body.innerHTML = rows.map((row, index) => {
+    const className = row.rankingEligibility && !row.rankingEligibility.candidateEligible ? ' class="is-unranked"' : "";
+    return `<tr${className}>${columns.map(item => renderCell(item, row, index)).join("")}</tr>`;
+  }).join("");
   elements.body.querySelectorAll("[data-result]").forEach(button => button.addEventListener("click", () => openDetails(button.dataset.result)));
 }
 
 function renderCell(columnConfig, row, index) {
-  if (columnConfig.key === "rank") return `<td class="rank-cell">${index + 1}</td>`;
+  if (columnConfig.key === "rank") {
+    return row.primaryRank == null
+      ? '<td class="rank-cell"><span class="unranked-rank">Unranked</span></td>'
+      : `<td class="rank-cell">${row.primaryRank}</td>`;
+  }
   if (columnConfig.key === "model") {
     const model = row.configuration.model;
     const metadata = row.catalogEntryType === "open-model-watchlist"
       ? `${model.licenseIdentifier} · Public-weight watchlist`
       : `${model.parameterSizeClass} · ${model.modelFormat}`;
-    return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(metadata)}</span></td>`;
+    const device = row.configuration.device;
+    const environment = row.rankingEligibility && device
+      ? `<span class="model-meta model-environment">App ${escapeHtml(device.appVersion)} · iOS ${escapeHtml(device.systemVersion)}${row.displayHistoryCount ? ` · ${row.displayHistoryCount} previous` : ""}</span>`
+      : "";
+    const eligibility = row.rankingEligibility && !row.rankingEligibility.candidateEligible
+      ? '<span class="model-meta unranked-meta">No metric-eligible result</span>'
+      : "";
+    return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(metadata)}</span>${environment}${eligibility}</td>`;
   }
   if (columnConfig.key === "details") {
     const identity = row.comparisonID ?? row.profileID;
@@ -413,6 +522,20 @@ function openDetails(resultID) {
   const runtime = row.configuration.runtime;
   const device = row.configuration.device;
   const workload = row.workload.id;
+  const history = historicalDisplayCells(row);
+  const historyMarkup = history.length === 0 ? "" : `
+    <h3 class="claim-heading">Related exact cells</h3>
+    <p class="dialog-note">Exact patch builds and App baselines kept as reproducible evidence; only the current baseline appears in the default model-centered ranking.</p>
+    <div class="history-list">${history.map(item => {
+      const historicalDevice = item.configuration.device;
+      const sourceKinds = [...new Set(item.evidence.map(evidence => evidence.sourceKind))]
+        .map(value => value === "maintainer-reference" ? "Maintainer Reference" : "Community evidence")
+        .join(" · ");
+      return `<div class="history-item">
+        <div><strong>App ${escapeHtml(historicalDevice.appVersion)} · iOS ${escapeHtml(historicalDevice.systemVersion)} (${escapeHtml(historicalDevice.systemBuild)})</strong><span>${escapeHtml(sourceKinds)} · ${escapeHtml(primaryMetricText(item))}</span></div>
+        <div class="history-links">${rawLinks(item)}</div>
+      </div>`;
+    }).join("")}</div>`;
   elements.dialogContent.innerHTML = `
     <p class="dialog-kicker">Exact tested configuration</p>
     <h2 class="dialog-title">${escapeHtml(model.displayName)} · ${escapeHtml(model.quantization)}</h2>
@@ -421,6 +544,7 @@ function openDetails(resultID) {
       ${detailItem("Workload", workload)}
       ${detailItem("Runtime", `${runtime.name} ${runtime.version} · ${runtime.backend}`)}
       ${detailItem("Device", `${device.displayName} · iOS ${device.systemVersion} (${device.systemBuild})`)}
+      ${detailItem("Display OS family", `iOS ${osMinorFamily(device.systemVersion)}.x; exact build retained`)}
       ${detailItem("Model format", model.modelFormat)}
       ${detailItem("Repository size", formatBytes(model.artifactRepositorySizeBytes))}
       ${detailItem("License metadata", model.licenseIdentifier)}
@@ -434,8 +558,16 @@ function openDetails(resultID) {
       <a class="button button-primary" href="${escapeAttribute(model.sourceURL)}" target="_blank" rel="noreferrer">Model source</a>
       <a class="button button-secondary" href="${escapeAttribute(model.licenseSourceURL)}" target="_blank" rel="noreferrer">License source</a>
       ${rawLinks(row)}
-    </div>`;
+    </div>
+    ${historyMarkup}`;
   elements.dialog.showModal();
+}
+
+function primaryMetricText(row) {
+  if (!row.rankingEligibility.candidateEligible) return "Unranked · no metric-eligible result";
+  return row.workload.id === "b-ux-001-short-interaction"
+    ? `Proxy TTFT ${formatMs(row.summary.medianFirstRenderableProxyTTFTMilliseconds)}`
+    : `Decode ${formatRate(row.summary.medianDecodeTokensPerSecond)}`;
 }
 
 function openShipDetails(profileID) {
@@ -507,8 +639,11 @@ function formatPercent(value) {
 }
 
 function communityCount(row) {
-  const count = row.community.eligibleContributorCount;
-  const label = `${count} contributor${count === 1 ? "" : "s"}`;
+  const eligible = row.community.eligibleContributorCount;
+  const total = row.community.contributorCount;
+  const label = eligible === total
+    ? `${eligible} contributor${eligible === 1 ? "" : "s"}`
+    : `${eligible} eligible · ${total} total`;
   return row.community.status === "reproduced"
     ? `<span class="evidence-status reproduced">${label}</span>`
     : `<span class="evidence-status">${label}</span>`;
