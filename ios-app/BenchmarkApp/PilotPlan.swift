@@ -16,7 +16,7 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
 
     enum EvidenceStatus: String, Sendable {
         case maintainerReference = "Maintainer reference"
-        case untestedCandidate = "Untested candidate"
+        case liveCommunityEvidence = "Live community evidence"
     }
 
     var id: String { rawValue }
@@ -26,14 +26,14 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
         case .small: "Qwen3 0.6B · 4-bit · Small"
         case .medium: "Qwen3 1.7B · 4-bit · Medium"
         case .large: "Qwen3 4B · 3-bit · Larger"
-        case .llama32OneB: "Llama 3.2 1B · 4-bit · Untested"
-        case .gemma3OneB: "Gemma 3 1B · 4-bit · Untested"
-        case .granite33TwoB: "Granite 3.3 2B · 4-bit · Untested"
-        case .smolLM3ThreeB: "SmolLM3 3B · 4-bit · Untested"
-        case .lfm2OneTwoB: "LFM2 1.2B · 4-bit · Untested"
-        case .exaone4OneTwoB: "EXAONE 4.0 1.2B · 4-bit · Untested"
-        case .bitnetTwoB: "BitNet 2B · 4-bit · Untested"
-        case .llama32ThreeB: "Llama 3.2 3B · 4-bit · Untested"
+        case .llama32OneB: "Llama 3.2 1B · 4-bit"
+        case .gemma3OneB: "Gemma 3 1B · 4-bit"
+        case .granite33TwoB: "Granite 3.3 2B · 4-bit"
+        case .smolLM3ThreeB: "SmolLM3 3B · 4-bit"
+        case .lfm2OneTwoB: "LFM2 1.2B · 4-bit"
+        case .exaone4OneTwoB: "EXAONE 4.0 1.2B · 4-bit"
+        case .bitnetTwoB: "BitNet 2B · 4-bit"
+        case .llama32ThreeB: "Llama 3.2 3B · 4-bit"
         }
     }
 
@@ -42,7 +42,7 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
         case .small, .medium, .large: .maintainerReference
         case .llama32OneB, .gemma3OneB, .granite33TwoB, .smolLM3ThreeB,
              .lfm2OneTwoB, .exaone4OneTwoB, .bitnetTwoB, .llama32ThreeB:
-            .untestedCandidate
+            .liveCommunityEvidence
         }
     }
 

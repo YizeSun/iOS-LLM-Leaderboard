@@ -12,12 +12,21 @@ unchanged while exposing eight explicitly untested model artifacts in the model
 picker.
 
 The Power Benchmark App Lab on `codex/power-benchmark-app-lab` currently carries
-App `0.10.1` build `13`. Its Night Run mode adds a process-isolation guard: one
-App process may prepare or measure only one model identity. The branch remains
-an integration and physical-device validation workspace; it must not be merged
-into `main` wholesale. Reusable `ios-app/` capabilities may be proposed later
-through a focused App-only review. Night Run evidence, collection helpers, and
-unrelated branch changes remain outside that integration boundary.
+App `0.11.0` build `14`. Manual and Guided Run now share one persisted model
+selection and one operation lock. One App process may prepare or measure only
+one model identity; Guided Run may execute both frozen Power workloads for that
+model. Both modes use the same cache preparation, Power admission rules,
+runner, checkpoint, and raw JSON writer. Manual Share and Mac collection are
+delivery choices for the same saved file, not different measurement paths.
+
+The App also records optional ambient temperature, case, placement, and thermal
+assistance observations locally and can copy them as a pull-request note. Those
+observations do not enter the frozen result JSON, measurement admission,
+metrics, validator, or ranking keys. The branch remains an integration and
+physical-device validation workspace; it must not be merged into `main`
+wholesale. Reusable `ios-app/` capabilities may be proposed later through a
+focused App-only review. Guided evidence, collection helpers, and unrelated
+branch changes remain outside that integration boundary.
 
 App `0.8.0` build `10` remains the exact reference source for the published
 six-result Maintainer Reference matrix and for reproducing its three existing
@@ -48,8 +57,8 @@ The three pinned Qwen3 profiles have Maintainer Reference evidence:
 - `mlx-community/Qwen3-1.7B-4bit`;
 - `mlx-community/Qwen3-4B-3bit`.
 
-App 0.10.0 exposes eight pinned candidates recommended for physical-iPhone
-testing:
+The App exposes eight additional pinned model artifacts with accepted live
+community evidence:
 
 - `mlx-community/Llama-3.2-1B-Instruct-4bit`;
 - `mlx-community/gemma-3-1b-it-qat-4bit`;
@@ -61,12 +70,12 @@ testing:
 - `mlx-community/Llama-3.2-3B-Instruct-4bit`.
 
 Their exact revisions, artifact sizes, licenses, runtime-registry basis, and
-evidence state are recorded in
+catalog history are recorded in
 [`models/power-test-catalog.json`](../models/power-test-catalog.json). They are
-marked `untested`: registration in the locked MLX Swift LM model factory does
-not prove that an artifact loads, fits memory, completes a workload, or
-performs well on a physical iPhone. Failed and OOM runs are useful evidence and
-must be preserved.
+not Maintainer Reference results. Every new result still requires the same
+frozen validation and contribution review; registration in the locked MLX
+Swift LM model factory never proves that a particular run is valid. Failed and
+OOM runs are useful evidence and must be preserved.
 
 Selecting a different workload or model clears preparation and result state.
 The exact artifact must be prepared again before measurement is admitted.
@@ -188,8 +197,8 @@ JSON files are also checked with the frozen F3 Python validator.
   efficiency.
 - Jetsam or other unexplained process loss is preserved conservatively as
   unclassified failure unless trusted evidence identifies OOM.
-- App 0.10.0 candidate entries have no accepted physical-device evidence until
-  contributors submit genuine exports through the public-intake process.
+- Live community evidence does not remove the requirement to validate and
+  review each newly submitted physical-device export independently.
 
 Historical App 0.6.0/0.7.0 bundle formats remain supported by historical
 ingestion and validation paths, but they are not the current App 0.10.0 export

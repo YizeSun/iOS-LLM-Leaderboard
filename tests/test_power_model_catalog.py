@@ -107,8 +107,8 @@ class PowerModelCatalogTests(unittest.TestCase):
             self.assertIn(f'artifactId: "{model["artifactID"]}"', swift)
             self.assertIn(f'artifactRevision: "{model["artifactRevision"]}"', swift)
         project = (ROOT / "ios-app" / "BenchmarkApp.xcodeproj" / "project.pbxproj").read_text()
-        self.assertEqual(project.count("MARKETING_VERSION = 0.10.0;"), 2)
-        self.assertEqual(project.count("CURRENT_PROJECT_VERSION = 12;"), 2)
+        self.assertEqual(project.count("MARKETING_VERSION = 0.11.0;"), 2)
+        self.assertEqual(project.count("CURRENT_PROJECT_VERSION = 14;"), 2)
 
     def test_review_only_models_are_not_misrepresented_as_app_options(self) -> None:
         swift = SWIFT_PROFILE_PATH.read_text()

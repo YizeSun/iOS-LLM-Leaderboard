@@ -3,7 +3,15 @@ import UIKit
 
 struct NightRunHarnessView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @State private var viewModel = NightRunHarnessViewModel()
+    @Bindable var settings: PowerAppSettings
+    @State private var viewModel: NightRunHarnessViewModel
+
+    init(settings: PowerAppSettings) {
+        self.settings = settings
+        _viewModel = State(
+            initialValue: NightRunHarnessViewModel(appSettings: settings)
+        )
+    }
 
     var body: some View {
         NavigationStack {
@@ -18,26 +26,28 @@ struct NightRunHarnessView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 } header: {
-                    Text("Night Run Harness")
+                    Text("Guided Run · App Lab")
                 }
 
                 Section {
-                    ForEach(ProductionModelProfile.allCases) { profile in
-                        Toggle(
-                            profile.title,
-                            isOn: Binding(
-                                get: { viewModel.isSelected(profile) },
-                                set: {
-                                    viewModel.setSelected(profile, selected: $0)
-                                }
-                            )
-                        )
-                        .disabled(viewModel.isBusy)
+                    Picker(
+                        "Model profile",
+                        selection: $settings.selectedModelProfile
+                    ) {
+                        ForEach(ProductionModelProfile.allCases) { profile in
+                            Text(profile.title).tag(profile)
+                        }
+                    }
+                    .disabled(
+                        viewModel.isBusy || settings.configurationLocked
+                    )
+                    .onChange(of: settings.selectedModelProfile) { _, _ in
+                        viewModel.modelSelectionDidChange()
                     }
                 } header: {
-                    Text("Model · select exactly one")
+                    Text("Model · one per App process")
                 } footer: {
-                    Text("One App process may load only one model. To test another model, fully close and relaunch the App first.")
+                    Text("Manual and Guided Run share this selection. To test another model after loading one, fully close and relaunch the App first.")
                 }
 
                 Section {
@@ -57,7 +67,7 @@ struct NightRunHarnessView: View {
                         Task { await viewModel.prepareSelectedModels() }
                     }
                     .disabled(
-                        viewModel.isBusy || viewModel.selectedProfiles.count != 1
+                        viewModel.isBusy || settings.configurationLocked
                     )
 
                     NightPreparationRows(rows: viewModel.preparationRows)
@@ -85,14 +95,20 @@ struct NightRunHarnessView: View {
                     Text("Disconnect USB and all charging before starting. The queue stops rather than weakening Power 1.0 admission rules.")
                 }
 
+                PowerEnvironmentObservationsSection(
+                    settings: settings,
+                    resultIDs: viewModel.completedResultIDs
+                )
+
                 Section {
                     HStack {
-                        Button("Start Night Run") {
+                        Button("Start Guided Run") {
                             viewModel.start()
                         }
                         .disabled(
                             viewModel.isBusy || viewModel.restartRequired
                                 || viewModel.phase != .ready
+                                || settings.configurationLocked
                         )
 
                         if viewModel.isBusy {
@@ -120,7 +136,7 @@ struct NightRunHarnessView: View {
                     }
                 }
             }
-            .navigationTitle("Night Run")
+            .navigationTitle("Guided Run")
             .task {
                 viewModel.runner.refreshThermalState()
                 await viewModel.restore()
@@ -213,6 +229,11 @@ private struct NightQueueRows: View {
                 }
                 if let filename = cell.resultFilename {
                     Text(filename)
+                        .font(.caption2.monospaced())
+                        .textSelection(.enabled)
+                }
+                if let resultID = cell.resultID {
+                    Text("Result ID · \(resultID)")
                         .font(.caption2.monospaced())
                         .textSelection(.enabled)
                 }

@@ -160,7 +160,7 @@ final class ModelPreparationTests: XCTestCase {
         )
         XCTAssertEqual(
             ProductionModelProfile.allCases.filter {
-                $0.evidenceStatus == .untestedCandidate
+                $0.evidenceStatus == .liveCommunityEvidence
             }.count,
             8
         )

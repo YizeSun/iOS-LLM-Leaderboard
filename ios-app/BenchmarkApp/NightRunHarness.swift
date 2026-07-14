@@ -28,7 +28,7 @@ private enum NightRunArtifactPreparationError: LocalizedError {
 }
 
 /// Branch-only cache preparation that preserves the underlying download error
-/// for the Night Run UI. Formal Power preparation and result evidence remain
+/// for the Guided Run UI. Formal Power preparation and result evidence remain
 /// owned by `MLXSwiftRuntime.prepare(plan:)` after this step succeeds.
 private actor NightRunArtifactPreparer {
     private static let requiredFileSuffixes = [
@@ -145,11 +145,12 @@ struct NightRunCell: Codable, Equatable, Identifiable, Sendable {
     let workloadID: String
     var status: Status
     var resultFilename: String?
+    var resultID: String?
     var message: String?
 }
 
 struct NightRunQueueSnapshot: Codable, Equatable, Sendable {
-    static let formatVersion = 1
+    static let formatVersion = 2
 
     let formatVersion: Int
     var selectedModelProfileIDs: [String]
@@ -169,18 +170,10 @@ struct NightRunQueueSnapshot: Codable, Equatable, Sendable {
 }
 
 enum NightRunPlan {
-    static let defaultProfiles: [ProductionModelProfile] = []
-
     static let workloadOrder: [ProductionBenchmarkPlan] = [
         .shortInteraction,
         .sustainedGeneration,
     ]
-
-    static func ordered(
-        _ selected: Set<ProductionModelProfile>
-    ) -> [ProductionModelProfile] {
-        ProductionModelProfile.allCases.filter(selected.contains)
-    }
 
     static func cells(for profile: ProductionModelProfile) -> [NightRunCell] {
         workloadOrder.map { workload in
@@ -190,6 +183,7 @@ enum NightRunPlan {
                 workloadID: workload.workloadID,
                 status: .pending,
                 resultFilename: nil,
+                resultID: nil,
                 message: nil
             )
         }
@@ -305,7 +299,6 @@ final class NightRunHarnessViewModel {
     private(set) var preparationRows: [PreparationRow] = []
     private(set) var availableStorageBytes: Int64?
     private(set) var statusText = "Prepare the selected model cache before starting."
-    var selectedProfiles = Set(NightRunPlan.defaultProfiles)
 
     var isBusy: Bool {
         [.restoring, .preparing, .waitingForNominalThermal, .running]
@@ -317,9 +310,12 @@ final class NightRunHarnessViewModel {
     }
 
     var selectedArtifactSizeBytes: Int64 {
-        selectedProfiles.reduce(into: 0) { total, profile in
-            total += profile.planModelProfile.artifactRepositorySizeBytes
-        }
+        appSettings.selectedModelProfile.planModelProfile
+            .artifactRepositorySizeBytes
+    }
+
+    var completedResultIDs: [String] {
+        cells.compactMap(\.resultID)
     }
 
     var failedCount: Int {
@@ -331,6 +327,7 @@ final class NightRunHarnessViewModel {
     }
 
     let runner: BenchmarkViewModel
+    let appSettings: PowerAppSettings
 
     private let runtime: any ModelPreparingRuntime
     private let artifactPreparer = NightRunArtifactPreparer()
@@ -339,10 +336,12 @@ final class NightRunHarnessViewModel {
     private var queueTask: Task<Void, Never>?
 
     init(
+        appSettings: PowerAppSettings = PowerAppSettings(),
         runtime: any ModelPreparingRuntime = MLXSwiftRuntime(),
         queueStore: NightRunQueueStore = NightRunQueueStore(),
         launchGate: NightRunLaunchGate = NightRunLaunchGate()
     ) {
+        self.appSettings = appSettings
         self.runtime = runtime
         self.queueStore = queueStore
         self.launchGate = launchGate
@@ -350,30 +349,27 @@ final class NightRunHarnessViewModel {
         runner = BenchmarkViewModel(runtime: runtime)
     }
 
-    func isSelected(_ profile: ProductionModelProfile) -> Bool {
-        selectedProfiles.contains(profile)
-    }
-
-    func setSelected(
-        _ profile: ProductionModelProfile,
-        selected: Bool
-    ) {
+    func modelSelectionDidChange() {
         guard !isBusy else { return }
-        if selected {
-            selectedProfiles = [profile]
-        } else {
-            selectedProfiles.remove(profile)
+        if !cells.isEmpty,
+           cells.allSatisfy({
+               $0.modelProfileID == appSettings.selectedModelProfile.rawValue
+           }) {
+            return
         }
         cells = []
         preparationRows = []
         phase = .idle
-        statusText = selectedProfiles.isEmpty
-            ? "Select one model to prepare."
-            : "Prepare this model cache before starting."
+        statusText = "Prepare this model cache before starting."
     }
 
     func restore() async {
         guard phase == .idle else { return }
+        guard appSettings.beginOperation(.guided) else {
+            statusText = "Another benchmark operation is active. Try again when it finishes."
+            return
+        }
+        defer { appSettings.endOperation(.guided) }
         phase = .restoring
         do {
             if let snapshot = try await queueStore.load() {
@@ -382,12 +378,13 @@ final class NightRunHarnessViewModel {
                 })
                 cells = snapshot.cells
                 guard restoredProfiles.count <= 1 else {
-                    selectedProfiles = []
                     phase = .failed
-                    statusText = "This saved queue contains multiple models and cannot resume under process-isolated Night Run. Clear it, restart the App, and select one model."
+                    statusText = "This saved queue contains multiple models and cannot resume under process-isolated Guided Run. Clear it, restart the App, and select one model."
                     return
                 }
-                selectedProfiles = restoredProfiles
+                if let restoredProfile = restoredProfiles.first {
+                    appSettings.selectedModelProfile = restoredProfile
+                }
                 if let runningIndex = cells.firstIndex(where: {
                     $0.status == .running
                 }) {
@@ -401,6 +398,8 @@ final class NightRunHarnessViewModel {
                        cells[runningIndex].workloadID == result.execution.workloadID {
                         cells[runningIndex].status = .completed
                         cells[runningIndex].resultFilename = resultURL.lastPathComponent
+                        cells[runningIndex].resultID = result.resultID.uuidString
+                            .lowercased()
                         cells[runningIndex].message = "Recovered after interruption."
                     } else {
                         cells[runningIndex].status = .failed
@@ -424,16 +423,15 @@ final class NightRunHarnessViewModel {
 
     func prepareSelectedModels() async {
         guard !isBusy else { return }
-        guard selectedProfiles.count == 1,
-              let selectedProfile = selectedProfiles.first else {
-            phase = .failed
-            statusText = "Select exactly one model. Every model requires a fresh App process."
+        guard appSettings.beginOperation(.guided) else {
+            statusText = "Another benchmark operation is active. Try again when it finishes."
             return
         }
+        defer { appSettings.endOperation(.guided) }
+        let selectedProfile = appSettings.selectedModelProfile
         phase = .preparing
         preparationRows = []
         availableStorageBytes = Self.currentAvailableStorageBytes()
-        let profiles = [selectedProfile]
         cells = NightRunPlan.cells(for: selectedProfile)
         do {
             try await persist()
@@ -444,7 +442,7 @@ final class NightRunHarnessViewModel {
         }
 
         var downloadedAny = false
-        for profile in profiles {
+        for profile in [selectedProfile] {
             if Task.isCancelled { break }
             statusText = "Preparing \(profile.planModelProfile.displayName)…"
             do {
@@ -513,7 +511,7 @@ final class NightRunHarnessViewModel {
             statusText = "A different model was already loaded in this App process. Fully close and relaunch before measuring this model."
         } else if preparationRows.allSatisfy(\.loaded) {
             phase = .ready
-            statusText = "All selected artifacts were already cached and loaded successfully."
+            statusText = "The selected artifact was already cached and loaded successfully."
         } else {
             phase = .failed
             statusText = "At least one selected artifact could not be prepared. Review the rows below."
@@ -522,14 +520,9 @@ final class NightRunHarnessViewModel {
 
     func start() {
         guard !isBusy else { return }
-        guard selectedProfiles.count == 1,
-              let selectedProfile = selectedProfiles.first else {
-            phase = .failed
-            statusText = "Select exactly one model. Every model requires a fresh App process."
-            return
-        }
+        let selectedProfile = appSettings.selectedModelProfile
         guard phase == .ready else {
-            statusText = "Prepare every selected model successfully before starting Night Run."
+            statusText = "Prepare the selected model successfully before starting Guided Run."
             return
         }
         guard !launchGate.restartRequired else {
@@ -540,14 +533,18 @@ final class NightRunHarnessViewModel {
         if cells.isEmpty {
             cells = NightRunPlan.cells(for: selectedProfile)
         }
-        queueTask = Task { [weak self] in
-            await self?.executeQueue()
+        guard appSettings.beginOperation(.guided) else {
+            statusText = "Another benchmark operation is active. Try again when it finishes."
+            return
+        }
+        phase = .running
+        queueTask = Task {
+            await executeQueue()
         }
     }
 
-    func stop(reason: String = "Night Run stopped by the user.") {
+    func stop(reason: String = "Guided Run stopped by the user.") {
         queueTask?.cancel()
-        queueTask = nil
         if isBusy {
             phase = .stopped
             statusText = reason
@@ -576,8 +573,12 @@ final class NightRunHarnessViewModel {
     }
 
     private func executeQueue() async {
+        defer {
+            appSettings.endOperation(.guided)
+            queueTask = nil
+        }
         phase = .running
-        statusText = "Night Run started. Keep this App active and the iPhone unplugged."
+        statusText = "Guided Run started. Keep this App active and the iPhone unplugged."
         do {
             try await persist()
         } catch {
@@ -651,6 +652,7 @@ final class NightRunHarnessViewModel {
                result.execution.workloadID == workload.workloadID {
                 cells[index].status = .completed
                 cells[index].resultFilename = resultURL.lastPathComponent
+                cells[index].resultID = result.resultID.uuidString.lowercased()
                 cells[index].message = "Raw Power result saved."
                 try? await persist()
             } else {
@@ -664,9 +666,8 @@ final class NightRunHarnessViewModel {
         }
 
         phase = .completed
-        statusText = "Night Run finished: \(completedCount) result files saved, \(failedCount) cells failed before export."
+        statusText = "Guided Run finished: \(completedCount) result files saved, \(failedCount) cells failed before export."
         try? await persist()
-        queueTask = nil
     }
 
     private func waitForAdmission(cellIndex: Int) async -> Bool {
@@ -699,8 +700,7 @@ final class NightRunHarnessViewModel {
 
     private func persist() async throws {
         try await queueStore.save(.init(
-            selectedModelProfileIDs: NightRunPlan.ordered(selectedProfiles)
-                .map(\.rawValue),
+            selectedModelProfileIDs: [appSettings.selectedModelProfile.rawValue],
             cells: cells,
             updatedAt: Date()
         ))
