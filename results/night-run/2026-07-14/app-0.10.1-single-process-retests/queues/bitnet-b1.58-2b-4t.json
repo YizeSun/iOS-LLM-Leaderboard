@@ -1,0 +1,25 @@
+{
+  "cells" : [
+    {
+      "id" : "bitnet-b1.58-2b-4t-4bit::b-ux-001-short-interaction",
+      "message" : "Raw Power result saved.",
+      "modelProfileID" : "bitnet-b1.58-2b-4t-4bit",
+      "resultFilename" : "2026-07-14T09-31-50Z_b-ux-001-short-interaction_mlx-community-bitnet-b1.58-2b-4t-4bit_iphone15-3_a007537a.json",
+      "status" : "completed",
+      "workloadID" : "b-ux-001-short-interaction"
+    },
+    {
+      "id" : "bitnet-b1.58-2b-4t-4bit::b-pipe-001-sustained-generation",
+      "message" : "Raw Power result saved.",
+      "modelProfileID" : "bitnet-b1.58-2b-4t-4bit",
+      "resultFilename" : "2026-07-14T09-33-59Z_b-pipe-001-sustained-generation_mlx-community-bitnet-b1.58-2b-4t-4bit_iphone15-3_1b0bcb84.json",
+      "status" : "completed",
+      "workloadID" : "b-pipe-001-sustained-generation"
+    }
+  ],
+  "formatVersion" : 1,
+  "selectedModelProfileIDs" : [
+    "bitnet-b1.58-2b-4t-4bit"
+  ],
+  "updatedAt" : "2026-07-14T09:33:59Z"
+}
