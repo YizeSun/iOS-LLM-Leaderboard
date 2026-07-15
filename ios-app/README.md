@@ -6,35 +6,37 @@ an inference framework.
 
 ## Current status
 
-App `0.11.0` build `14` is the current Power 1.0 production control surface.
-It keeps the adopted Power 1.0 workload, measurement, result, and validation
-contracts unchanged while making the physical-device workflow safer and more
-explicit: one App process may prepare and measure only one exact model
-identity, and optional environment observations are kept outside result JSON.
+App `0.13.0` build `16` is the frozen, non-official Power 1.1 RC1 runner. It preserves
+the two Power 1.0 workload IDs, fixtures, measurement boundaries, generation
+settings, and attempt counts while changing the export responsibility boundary:
+the App always exports technically derivable measurements, and its local
+response-conformance badge is advisory only. Public Power 1.0 remains active;
+this RC App authorizes neither ranking nor publication.
 
 App `0.8.0` build `10` remains the exact reference source for the published
 six-result Maintainer Reference matrix and for reproducing its three existing
-Qwen comparison cells. App `0.9.0` build `11`, App `0.10.0` build `12`, and App
-`0.10.1` build `13` remain historical exact source identities for results
-created with them. App 0.11.0 must not be substituted when an exact earlier-App
-reproduction is intended.
+Qwen comparison cells. App `0.9.0` build `11`, App `0.10.0` build `12`, App
+`0.10.1` build `13`, and App `0.11.0` build `14` remain historical exact source
+identities for Power 1.0 results created with them. App 0.13.0 must not be
+substituted when an exact Power 1.0 reproduction is intended.
 
-All listed versions emit the adopted source result contract
-`suite-b-power-result-1.0.0-rc.1`. Every raw App export sets
-`officialResultEligible` to `false`; acceptance into the separate live
-community ranking occurs only after package validation, contributor review,
-and merge. A picker entry is never evidence by itself.
+Apps 0.8.0 through 0.11.0 emit the adopted Power 1.0 source result contract
+`suite-b-power-result-1.0.0-rc.1`. App 0.12.0 remains the historical Power 1.1
+draft runner. App 0.13.0 emits `suite-b-power-result-1.1.0-rc.1`. Every raw App export sets
+`officialResultEligible` to `false`; the 1.1 RC requires new physical-device
+verification and explicit release approval before it can affect a ranking. A
+picker entry is never evidence by itself.
 
-## Frozen execution scope
+## Power 1.1 RC1 execution scope
 
 The production control surface exposes exactly two workload identities:
 
-- `b-ux-001-short-interaction@1.0.0-rc.1`;
-- `b-pipe-001-sustained-generation@1.0.0-rc.1`.
+- `b-ux-001-short-interaction@1.1.0-rc.1`;
+- `b-pipe-001-sustained-generation@1.1.0-rc.1`.
 
 The loader rejects any other plan identity or version. Experimental
 `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` resources are
-retained for repository history and compatibility, but App 0.11.0 cannot
+retained for repository history and compatibility, but App 0.13.0 cannot
 execute them through its production controls.
 
 The three pinned Qwen3 profiles have Maintainer Reference evidence:
@@ -43,7 +45,7 @@ The three pinned Qwen3 profiles have Maintainer Reference evidence:
 - `mlx-community/Qwen3-1.7B-4bit`;
 - `mlx-community/Qwen3-4B-3bit`.
 
-App 0.11.0 also exposes eight pinned artifacts with accepted single-contributor
+App 0.13.0 also exposes eight pinned artifacts with accepted single-contributor
 physical-iPhone community evidence:
 
 - `mlx-community/Llama-3.2-1B-Instruct-4bit`;
@@ -92,7 +94,8 @@ that attempt and every remaining planned attempt are retained as `notRun`.
 
 ## Evidence and terminal outcomes
 
-Each exported result retains the raw evidence needed by the frozen validator:
+Each exported result retains the raw evidence needed by the independent RC
+validator:
 
 - exact benchmark, workload, fixture, runner, model, runtime, device, OS, App,
   and source-commit identity;
@@ -107,6 +110,12 @@ The runner distinguishes `completed`, `failed`, `cancelled`, `outOfMemory`,
 and `notRun`. It classifies OOM only from an explicit trusted runtime failure
 or `ENOMEM`; it never guesses that an unexplained process termination was an
 OOM.
+
+For Short Interaction, the App still records its deterministic local
+`responseConformance` observation. That observation never suppresses token,
+timing, memory, or first-renderable metrics. The independent validator
+recomputes behavior status from generated text and records it separately from
+performance eligibility.
 
 An atomic local checkpoint is written before each attempt and after each
 terminal record. If the process ends mid-session, the next launch preserves
@@ -136,12 +145,12 @@ App revision.
 Validate an exported file from the repository root with:
 
 ```sh
-python3 scripts/validate_suite_b_power_result.py /path/to/result.json
+python3 scripts/validate_suite_b_power_1_1_rc1_result.py /path/to/result.json \
+  --output /path/to/validation-report.json
 ```
 
-A conforming raw result is expected to be `validWithWarnings`: evidence remains
-unreviewed and ranking remains unauthorized until the contribution package is
-reviewed and merged under the public-intake policy.
+A conforming raw result receives affirmative structural and protocol decisions,
+but ranking and publication remain unauthorized while Power 1.1 is an RC.
 
 ## Privacy boundary
 
@@ -196,5 +205,5 @@ JSON files are also checked with the frozen F3 Python validator.
   reproduction merely because an artifact appears in the picker.
 
 Historical App 0.6.0/0.7.0 bundle formats remain supported by historical
-ingestion and validation paths, but they are not the current App 0.11.0 export
-and cannot be promoted into Power 1.0 evidence.
+ingestion and validation paths. Power 1.0 evidence remains immutable, and no
+historical App export can be relabeled or promoted into Power 1.1 evidence.

@@ -53,9 +53,9 @@ struct RunBenchmarkView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 } header: {
-                    Text("Power Benchmark 1.0")
+                    Text("Power Benchmark 1.1 RC1")
                 } footer: {
-                    Text("Frozen Power 1.0 result contract · App 0.11.0")
+                    Text("Non-official Power 1.1 RC1 contract · App 0.13.0")
                 }
 
                 Section {

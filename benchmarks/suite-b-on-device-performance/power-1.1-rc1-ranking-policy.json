@@ -1,0 +1,46 @@
+{
+  "schema_version": "suite-b-power-ranking-policy-1.1-rc1",
+  "policy_id": "suite-b-power-ranking-policy",
+  "policy_version": "1.1.0-rc.1",
+  "status": "release-candidate",
+  "ranking_authorized": false,
+  "publication_authorized": false,
+  "supported_identities": {
+    "protocol_version": "1.1.0-rc.1",
+    "result_schema_version": "suite-b-power-result-1.1.0-rc.1",
+    "validation_report_schema_version": "suite-b-power-validation-report-1.1.0-rc.1",
+    "validator_version": "1.1.0-rc.1"
+  },
+  "report_binding": {
+    "exact_result_sha256_required": true,
+    "exact_result_id_required": true,
+    "unsupported_or_missing_report": "fail-closed",
+    "stale_or_digest_mismatched_report": "fail-closed"
+  },
+  "views": {
+    "measured_performance": {
+      "decision": "performanceRankingEligibility",
+      "required_value": true
+    },
+    "recommended": {
+      "decision": "recommendationEligibility",
+      "required_value": true
+    }
+  },
+  "primary_metrics": {
+    "b-ux-001-short-interaction": {
+      "metric": "first_renderable_proxy_ttft_ms@1",
+      "direction": "lower-is-better"
+    },
+    "b-pipe-001-sustained-generation": {
+      "metric": "decode_tokens_per_second@1",
+      "direction": "higher-is-better"
+    }
+  },
+  "combined_score_defined": false,
+  "release_transition": {
+    "requires_new_policy_version": true,
+    "requires_revalidation": true,
+    "historical_reports_reinterpreted": false
+  }
+}

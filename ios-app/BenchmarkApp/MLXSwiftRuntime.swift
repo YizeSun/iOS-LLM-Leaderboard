@@ -175,7 +175,7 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
     }
 
     nonisolated let identity =
-        "MLX Swift LM 3.31.4 · Power 1.0 reference and candidate profiles"
+        "MLX Swift LM 3.31.4 · Power 1.1 RC1 profiles"
 
     private static let cacheVerificationMethod =
         "huggingface_revision_manifest_cached_file_size_v1"

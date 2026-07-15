@@ -94,8 +94,8 @@ class PowerModelCatalogTests(unittest.TestCase):
             self.assertIn(f'artifactId: "{model["artifactID"]}"', swift)
             self.assertIn(f'artifactRevision: "{model["artifactRevision"]}"', swift)
         project = (ROOT / "ios-app" / "BenchmarkApp.xcodeproj" / "project.pbxproj").read_text()
-        self.assertEqual(project.count("MARKETING_VERSION = 0.11.0;"), 2)
-        self.assertEqual(project.count("CURRENT_PROJECT_VERSION = 14;"), 2)
+        self.assertEqual(project.count("MARKETING_VERSION = 0.13.0;"), 2)
+        self.assertEqual(project.count("CURRENT_PROJECT_VERSION = 16;"), 2)
 
     def test_every_community_app_profile_has_exact_accepted_evidence(self) -> None:
         swift = SWIFT_PROFILE_PATH.read_text()
@@ -128,7 +128,7 @@ class PowerModelCatalogTests(unittest.TestCase):
             model["officialModelID"] for model in self.catalog["openModelWatchlist"]
         }
         official = json.loads(
-            (ROOT / "results/suite-b-power-1.0/normalized-results.json").read_text()
+            (ROOT / "results/suite-b-power-1.1/normalized-results.json").read_text()
         )
         community = json.loads(
             (ROOT / "results/suite-b-power-community/normalized-results.json").read_text()

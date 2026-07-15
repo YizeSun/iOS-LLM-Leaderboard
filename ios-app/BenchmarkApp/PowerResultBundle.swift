@@ -626,11 +626,7 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
             outcome: outcome,
             text: generation?.generatedText
         )
-        let metrics = metrics(
-            source,
-            workload: workload,
-            responseConformance: response
-        )
+        let metrics = metrics(source, workload: workload)
         return Attempt(
             runIndex: source.index,
             role: source.role.rawValue,
@@ -681,12 +677,9 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
 
     private static func metrics(
         _ source: BenchmarkAttempt,
-        workload: PowerBenchmarkRelease.Workload,
-        responseConformance: ResponseConformance
+        workload: PowerBenchmarkRelease.Workload
     ) -> Metrics {
-        guard case .completed(let generation) = source.outcome,
-              workload.category != "user-experience"
-                || responseConformance.status == "pass" else {
+        guard case .completed(let generation) = source.outcome else {
             return .unavailable
         }
         let tokens = source.tokens

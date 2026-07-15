@@ -11,6 +11,15 @@ metric.
 - `suite-b-power@1.0.0-rc.1` is the frozen, non-official source candidate.
 - `suite-b-power@1.0.0` is the published Power release. It uses exact,
   hash-bound RC adoption without rerunning or mutating raw evidence.
+- `suite-b-power@1.1.0-draft.1` is a non-official protocol draft. It requires
+  the App to export every technically derivable metric and reserves behavior,
+  metric, ranking, and recommendation decisions for the submission validator.
+  Its independent validator and report contract are implemented as draft,
+  hash-pinned assets. They change no Power 1.0 evidence or active ranking.
+- `suite-b-power@1.1.0-rc.1` freezes the 1.1 result schema, validation report,
+  semantic validator, ranking policy, fixtures, plans, and App 0.13.0 identity.
+  It authorizes RC evidence collection only; ranking, publication, and tagging
+  remain false until physical verification and final maintainer approval.
 - `b-ux-001-short-interaction` and `b-pipe-001-sustained-generation` are the
   only Power 1.0 workload candidates.
 - `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` remain
@@ -39,6 +48,11 @@ Read:
 
 - [Suite B Protocol v2](protocol-v2.md)
 - [Power 1.0 frozen protocol candidate](power-1.0-protocol.md)
+- [Power 1.1 protocol draft](power-1.1-protocol.md)
+- [Power 1.1 draft validation reason registry](power-1.1-validation-reasons.json)
+- [Power 1.1 RC1 protocol](power-1.1-rc1-protocol.md)
+- [Power 1.1 RC1 validation reason registry](power-1.1-rc1-validation-reasons.json)
+- [Power 1.1 RC1 ranking policy](power-1.1-rc1-ranking-policy.json)
 - [Power 1.0 environmental observation draft](power-1.0-environment-control.md)
 - [Power 1.0 migration rules](power-1.0-migration.md)
 - [Power 1.0 schema and validator freeze](power-1.0-schema-validator.md)

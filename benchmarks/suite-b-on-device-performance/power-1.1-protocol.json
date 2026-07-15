@@ -1,0 +1,186 @@
+{
+  "schema_version": "suite-b-power-protocol-1.1-draft",
+  "protocol_id": "suite-b-power",
+  "protocol_version": "1.1.0-draft.1",
+  "status": "protocol-draft",
+  "official_result_eligible": false,
+  "ranking_authorized": false,
+  "publication_authorized": false,
+  "previous_published_release": "1.0.0",
+  "execution_contract": {
+    "inherits_from": "suite-b-power@1.0.0-rc.1",
+    "unchanged": [
+      "workload_ids",
+      "fixtures",
+      "prompts",
+      "generation_settings",
+      "timing_boundaries",
+      "metric_formulas",
+      "device_requirements",
+      "attempt_counts"
+    ]
+  },
+  "workloads": [
+    {
+      "workload_id": "b-ux-001-short-interaction",
+      "workload_version": "1.1.0-draft.1",
+      "category": "user-experience",
+      "fixture_sha256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
+      "measurement_mode": "b-mode-warm-resident-ux-v1",
+      "primary_performance_metric": "first_renderable_proxy_ttft_ms@1",
+      "response_conformance": {
+        "policy_version": "short-interaction-response-v1",
+        "decision_authority": "submission-validator",
+        "app_assessment_authoritative": false,
+        "assessment_statuses": [
+          "verified",
+          "not_verified",
+          "contradicted"
+        ],
+        "policy_non_match_status": "not_verified",
+        "contradicted_requires_positive_versioned_rule": true,
+        "result_level_aggregation": {
+          "warmup_included": false,
+          "measured_attempts": 5,
+          "minimum_individually_verified_attempts": 3
+        },
+        "affects_measurement_eligibility": false,
+        "affects_performance_ranking_eligibility": false,
+        "affects_recommendation_eligibility": true
+      },
+      "performance_metrics": [
+        "first_renderable_proxy_ttft_ms@1",
+        "pipeline_ttft_ms@1",
+        "request_completion_ms@1",
+        "prefill_tokens_per_second@1",
+        "decode_tokens_per_second@1",
+        "process_physical_footprint_mib@1"
+      ]
+    },
+    {
+      "workload_id": "b-pipe-001-sustained-generation",
+      "workload_version": "1.1.0-draft.1",
+      "category": "pipeline",
+      "fixture_sha256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
+      "measurement_mode": "b-mode-sustained-no-rest-v1",
+      "primary_performance_metric": "decode_tokens_per_second@1",
+      "performance_metrics": [
+        "pipeline_ttft_ms@1",
+        "prefill_tokens_per_second@1",
+        "decode_tokens_per_second@1",
+        "process_physical_footprint_mib@1",
+        "decode_first_to_last_percent_change@1"
+      ]
+    }
+  ],
+  "app_evidence_export": {
+    "role": "evidence-producer",
+    "must_export_raw_evidence": true,
+    "must_export_technically_derivable_metrics": true,
+    "behavior_failure_may_null_metrics": false,
+    "local_behavior_assessment": "advisory-only"
+  },
+  "result_schema": {
+    "path": "schemas/suite-b-power-result-1.1.0-draft.1.schema.json",
+    "schema_version": "suite-b-power-result-1.1.0-draft.1",
+    "inherits_field_shape_from": "suite-b-power-result-1.0.0-rc.1",
+    "new_contributor_fields": [],
+    "app_response_conformance_member": "advisory-only",
+    "semantic_validator_recomputes_behavior": true,
+    "technically_derivable_metrics_independent_of_app_behavior_assessment": true
+  },
+  "submission_validator": {
+    "implementation_path": "scripts/validate_suite_b_power_1_1_result.py",
+    "validator_id": "suite-b-power-validator",
+    "validator_version": "1.1.0-draft.1",
+    "implementation_status": "draft",
+    "execution_stage": "submission-intake-and-review",
+    "decision_authority": true,
+    "recompute_metrics_from_raw_evidence": true,
+    "recompute_behavior_conformance_from_generated_text": true,
+    "trust_app_behavior_assessment": false,
+    "rewrite_submitted_result": false,
+    "separate_decisions": [
+      "structural-validity",
+      "protocol-conformance",
+      "measurement-eligibility",
+      "behavior-conformance",
+      "performance-ranking-eligibility",
+      "recommendation-eligibility"
+    ]
+  },
+  "validation_report": {
+    "schema_path": "schemas/suite-b-power-validation-report-1.1.0-draft.1.schema.json",
+    "producer": "submission-validator",
+    "automatically_generated": true,
+    "contributor_supplied": false,
+    "duplicates_raw_evidence": false,
+    "authoritative_fact_record": true,
+    "versioned": true,
+    "immutable": true,
+    "binds_exact_result_sha256": true,
+    "required_version_identities": [
+      "result-schema-version",
+      "protocol-version",
+      "validator-version",
+      "ranking-policy-version"
+    ],
+    "machine_readable_reason_codes_required": true,
+    "behavior_nonconformant_evidence_may_be_retained": true,
+    "behavior_assessment": {
+      "applicable_statuses": [
+        "verified",
+        "not_verified",
+        "contradicted"
+      ],
+      "non_match_is_semantic_failure": false,
+      "non_match_status": "not_verified",
+      "not_applicable_representation": {
+        "applicable": false,
+        "policy_id": null,
+        "status": null
+      }
+    }
+  },
+  "leaderboard_consumer": {
+    "role": "validation-report-policy-consumer",
+    "recompute_conformance_from_raw_result": false,
+    "duplicate_validator_rules": false,
+    "verify_report_version": true,
+    "verify_result_sha256_binding": true,
+    "verify_protocol_validator_and_policy_versions": true,
+    "measured_performance_decision": "performance-ranking-eligibility",
+    "recommended_decision": "recommendation-eligibility",
+    "missing_stale_unsupported_or_mismatched_report": "fail-closed",
+    "policy_change_requires_new_version_and_revalidation": true
+  },
+  "metric_behavior_gates": {
+    "pipeline_ttft_ms@1": false,
+    "first_renderable_proxy_ttft_ms@1": false,
+    "request_completion_ms@1": false,
+    "prefill_tokens_per_second@1": false,
+    "decode_tokens_per_second@1": false,
+    "process_physical_footprint_mib@1": false,
+    "decode_first_to_last_percent_change@1": false
+  },
+  "public_views": {
+    "combined_score_defined": false,
+    "measured_performance": "measurement-eligible",
+    "behavior_status": "validator-derived-verified-not_verified-or-contradicted",
+    "recommended": "performance-ranking-eligible-and-behavior-verified-when-applicable"
+  },
+  "migration": {
+    "power_1_0_evidence_immutable": true,
+    "power_1_0_evidence_promotable": false,
+    "existing_raw_evidence_design_validation_only": true,
+    "new_execution_required_for_official_1_1": true
+  },
+  "activation_requirements": [
+    "freeze-suite-b-power-result-1.1-schema",
+    "freeze-suite-b-power-validation-report-1.1-schema",
+    "freeze-independent-1.1-validator",
+    "implement-app-independent-metric-export",
+    "complete-power-1.1-physical-device-verification",
+    "approve-power-1.1-release-and-ranking"
+  ]
+}

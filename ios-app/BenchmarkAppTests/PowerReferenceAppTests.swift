@@ -13,7 +13,7 @@ final class PowerReferenceAppTests: XCTestCase {
             let loaded = try PilotPlanLoader.load(resource: selection.rawValue)
             let workload = try PowerBenchmarkRelease.workload(for: loaded.plan)
             XCTAssertEqual(workload.id, selection.workloadID)
-            XCTAssertEqual(loaded.plan.workload.workloadVersion, "1.0.0-rc.1")
+            XCTAssertEqual(loaded.plan.workload.workloadVersion, "1.1.0-rc.1")
         }
     }
 
@@ -36,7 +36,7 @@ final class PowerReferenceAppTests: XCTestCase {
         )
         XCTAssertEqual(
             object["schemaVersion"] as? String,
-            "suite-b-power-result-1.0.0-rc.1"
+            "suite-b-power-result-1.1.0-rc.1"
         )
         let configuration = try XCTUnwrap(
             object["configuration"] as? [String: Any]
@@ -168,16 +168,60 @@ final class PowerReferenceAppTests: XCTestCase {
                 "Your note will sync later."
             )
         )
+        XCTAssertFalse(
+            ShortInteractionResponseConformance.passes(
+                "Your note is securely stored on this device. It will sync when connectivity returns."
+            )
+        )
+    }
+
+    func testAdvisoryResponseFailureDoesNotSuppressTechnicalMetrics() throws {
+        let result = try fixtureResult(
+            resource: "b-ux-001-short-interaction",
+            userExperienceText:
+                "Your note is securely stored on this device. It will sync when connectivity returns."
+        )
+
+        for attempt in result.attempts {
+            XCTAssertEqual(attempt.responseConformance.status, "fail")
+            XCTAssertEqual(
+                attempt.responseConformance.reasonCodes,
+                ["response_conformance_failed"]
+            )
+            XCTAssertNotNil(attempt.derivedMetrics.pipelineTTFTMilliseconds)
+            XCTAssertNotNil(
+                attempt.derivedMetrics.firstRenderableProxyTTFTMilliseconds
+            )
+            XCTAssertNotNil(attempt.derivedMetrics.requestCompletionMilliseconds)
+            XCTAssertNotNil(attempt.derivedMetrics.prefillTokensPerSecond)
+            XCTAssertNotNil(attempt.derivedMetrics.decodeTokensPerSecond)
+            XCTAssertNotNil(attempt.derivedMetrics.processPhysicalFootprintMiB)
+        }
+        XCTAssertNotNil(result.summary.metrics.medianPipelineTTFTMilliseconds)
+        XCTAssertNotNil(
+            result.summary.metrics.medianFirstRenderableProxyTTFTMilliseconds
+        )
+        XCTAssertNotNil(result.summary.metrics.medianRequestCompletionMilliseconds)
+        XCTAssertNotNil(result.summary.metrics.medianPrefillTokensPerSecond)
+        XCTAssertNotNil(result.summary.metrics.medianDecodeTokensPerSecond)
+        XCTAssertNotNil(
+            result.summary.metrics.medianProcessPhysicalFootprintMiB
+        )
     }
 
     private func fixtureResult(
-        resource: String = "suite-b-pilot-001"
+        resource: String = "suite-b-pilot-001",
+        userExperienceText: String? = nil
     ) throws -> PowerResultBundle {
         let loaded = try PilotPlanLoader.load(resource: resource)
         let context = try fixtureContext(plan: loaded.plan)
         let isUserExperience = loaded.plan.workload.category == "user-experience"
         let attempts = (0..<6).map {
-            fixtureAttempt(index: $0, userExperience: isUserExperience)
+            fixtureAttempt(
+                index: $0,
+                userExperience: isUserExperience,
+                userExperienceText: userExperienceText
+            )
         }
         return try PowerResultBundle.make(
             session: BenchmarkSession(
@@ -240,9 +284,11 @@ final class PowerReferenceAppTests: XCTestCase {
 
     private func fixtureAttempt(
         index: Int,
-        userExperience: Bool = false
+        userExperience: Bool = false,
+        userExperienceText: String? = nil
     ) -> BenchmarkAttempt {
-        let generatedText = "Your note is safe on this iPhone. Sync will return when the device is online again."
+        let generatedText = userExperienceText
+            ?? "Your note is safe on this iPhone. Sync will return when the device is online again."
         let renderabilityTrace = userExperience
             ? FirstRenderableTrace(
                 policyVersion: FirstRenderableTrace.currentPolicyVersion,

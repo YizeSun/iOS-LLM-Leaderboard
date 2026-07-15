@@ -26,7 +26,7 @@ A cell reaches the live `Reproduced` display at two independent metric-eligible 
 | b-ux-001-short-interaction | LFM2 1.2B | 4-bit | iPhone 14 Pro Max (iPhone15,3) | 0 | 1 | Needs 2 more |
 | b-ux-001-short-interaction | Llama 3.2 1B Instruct | 4-bit | iPhone 14 Pro Max (iPhone15,3) | 0 | 1 | Needs 2 more |
 | b-ux-001-short-interaction | Llama 3.2 3B Instruct | 4-bit | iPhone 14 Pro Max (iPhone15,3) | 0 | 1 | Needs 2 more |
-| b-ux-001-short-interaction | Qwen3 0.6B | 4-bit | iPhone 14 Pro Max (iPhone15,3) | 0 | 1 | Needs 2 more |
+| b-ux-001-short-interaction | Qwen3 0.6B | 4-bit | iPhone 14 Pro Max (iPhone15,3) | 1 | 1 | Needs 1 more |
 | b-ux-001-short-interaction | Qwen3 0.6B | 4-bit | iPhone 14 Pro Max (iPhone15,3) | 0 | 1 | Needs 2 more |
 | b-ux-001-short-interaction | Qwen3 1.7B | 4-bit | iPhone 14 Pro Max (iPhone15,3) | 1 | 1 | Needs 1 more |
 | b-ux-001-short-interaction | Qwen3 1.7B | 4-bit | iPhone 14 Pro Max (iPhone15,3) | 1 | 1 | Needs 1 more |
