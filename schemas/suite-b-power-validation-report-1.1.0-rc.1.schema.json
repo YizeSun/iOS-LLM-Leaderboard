@@ -221,7 +221,7 @@
           "if": { "properties": { "eligible": { "const": true } }, "required": ["eligible"] },
           "then": {
             "properties": {
-              "eligibleMeasuredAttempts": { "minimum": 3 },
+              "eligibleMeasuredAttempts": { "minimum": 1 },
               "reasonCodes": { "maxItems": 0 }
             }
           },

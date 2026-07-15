@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "suite-b-power-release-manifest-1.1",
+  "releaseID": "suite-b-power",
+  "releaseVersion": "1.1.0-rc.1",
+  "preparedAt": "2026-07-15T12:33:39Z",
+  "status": "schema-validator-app-frozen",
+  "officialResultEligible": false,
+  "rankingAuthorized": false,
+  "publicationAuthorized": false,
+  "tagAuthorized": false,
+  "previousPublishedRelease": "1.0.0",
+  "protocol": {
+    "id": "suite-b-power",
+    "version": "1.1.0-rc.1",
+    "markdown": {
+      "path": "benchmarks/suite-b-on-device-performance/power-1.1-rc1-protocol.md",
+      "sha256": "8f7a66d7f9866b46ceb73ed2dfcd43a69c405f22bc5efb634dc49c2eef9a45ba"
+    },
+    "machineReadable": {
+      "path": "benchmarks/suite-b-on-device-performance/power-1.1-rc1-protocol.json",
+      "sha256": "46b96034151b2fb7eba29e94af719e47bfd873b1b9d93cde328104c17e586656"
+    }
+  },
+  "rankingPolicy": {
+    "id": "suite-b-power-ranking-policy",
+    "version": "1.1.0-rc.1",
+    "path": "benchmarks/suite-b-on-device-performance/power-1.1-rc1-ranking-policy.json",
+    "sha256": "2f3fc3858f5e67ac7596252706d3b9d4f4826289c9d5f367b6f3856ce2ee9f0f"
+  },
+  "validationReportSchema": {
+    "id": "suite-b-power-validation-report-1.1.0-rc.1",
+    "version": "1.1.0-rc.1",
+    "path": "schemas/suite-b-power-validation-report-1.1.0-rc.1.schema.json",
+    "sha256": "7c6b783e4bd5bfd59f485ecc873b13b621782acf39e645fe4d7ebc00e16a4dc5"
+  },
+  "validator": {
+    "id": "suite-b-power-validator",
+    "version": "1.1.0-rc.1",
+    "implementationStatus": "frozen-release-candidate",
+    "path": "scripts/validate_suite_b_power_1_1_rc1_result.py",
+    "sha256": "1a32c334a4ce20504707ef45fcfafad37eae2c218b0257fb28b216da5d089f96"
+  },
+  "validationReasonRegistry": {
+    "path": "benchmarks/suite-b-on-device-performance/power-1.1-rc1-validation-reasons.json",
+    "sha256": "ed66c6ce0e4b7440678adb8b0ca63e167833070aba1d63d66d1ae12c4b740a82"
+  },
+  "resultSchema": {
+    "id": "suite-b-power-result-1.1.0-rc.1",
+    "version": "1.1.0-rc.1",
+    "schema": {
+      "path": "schemas/suite-b-power-result-1.1.0-rc.1.schema.json",
+      "sha256": "1a13272215e3708c1343a28ff60f083a9a7fcac2e4e1286059a5a4fceb6bae9c"
+    },
+    "baseShapeDependency": {
+      "path": "schemas/suite-b-power-result-1.0.0-rc.1.schema.json",
+      "sha256": "6082bce60ca23624f68aeb208598088dfe6e6bf312aa3246654d0746c271514e"
+    }
+  },
+  "metricDefinitions": {
+    "path": "benchmarks/suite-b-on-device-performance/metrics.md",
+    "sha256": "a44ab1c4c43071cdff474c7dc05ca0243ba74434a676be696829fdd55251f433"
+  },
+  "fixtures": [
+    {
+      "workloadID": "b-ux-001-short-interaction",
+      "path": "benchmarks/suite-b-on-device-performance/workloads/fixtures/b-ux-001-short-interaction-prompt.txt",
+      "sha256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84"
+    },
+    {
+      "workloadID": "b-pipe-001-sustained-generation",
+      "path": "ios-app/workloads/suite-b-pilot-001-prompt.txt",
+      "sha256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996"
+    }
+  ],
+  "referencePlans": [
+    {
+      "workloadID": "b-ux-001-short-interaction",
+      "path": "ios-app/benchmark-plans/b-ux-001-short-interaction.json",
+      "sha256": "fe052185c3dcb7419abf0f05a79638388c52fa08179cf8552c4c6d608d78e9d4"
+    },
+    {
+      "workloadID": "b-pipe-001-sustained-generation",
+      "path": "ios-app/benchmark-plans/suite-b-pilot-001.json",
+      "sha256": "393219189253c63a8c3ca6b17b5686b3e3e4f3c99f88cf07efaf6c28ca0f06b0"
+    }
+  ],
+  "workloadRegistry": {
+    "path": "ios-app/benchmark-plans/suite-b-workload-registry.json",
+    "sha256": "518ff1a76564122129f48665458f92f9b7370e0dcf9849885f92a18d050abc8a"
+  },
+  "modelCatalog": {
+    "path": "models/power-test-catalog.json",
+    "sha256": "037e9f14f673aa35a06ef6b19cd8648da85f1f41b59dfac205a73ea1961c1365"
+  },
+  "referenceApp": {
+    "id": "ios-reference-benchmark-app",
+    "version": "0.13.0",
+    "build": "16",
+    "sourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+    "runtime": {
+      "name": "MLX Swift LM",
+      "version": "3.31.4",
+      "revision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+      "backend": "MLX/Metal"
+    }
+  },
+  "workloads": [
+    {
+      "id": "b-ux-001-short-interaction",
+      "version": "1.1.0-rc.1",
+      "measurementMode": "b-mode-warm-resident-ux-v1"
+    },
+    {
+      "id": "b-pipe-001-sustained-generation",
+      "version": "1.1.0-rc.1",
+      "measurementMode": "b-mode-sustained-no-rest-v1"
+    }
+  ],
+  "physicalVerificationMatrix": {
+    "deviceModelIdentifier": "iPhone15,3",
+    "minimumDistinctDevices": 1,
+    "models": [
+      {
+        "artifactID": "mlx-community/Qwen3-0.6B-4bit",
+        "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+        "quantization": "4-bit"
+      },
+      {
+        "artifactID": "mlx-community/Qwen3-1.7B-4bit",
+        "artifactRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+        "quantization": "4-bit"
+      },
+      {
+        "artifactID": "mlx-community/Qwen3-4B-3bit",
+        "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+        "quantization": "3-bit"
+      }
+    ],
+    "requiredWorkloadsPerModel": [
+      "b-ux-001-short-interaction",
+      "b-pipe-001-sustained-generation"
+    ],
+    "requiredRawResultCount": 6,
+    "requiredValidationReportCount": 6
+  },
+  "completedReleaseCandidateRequirements": [
+    "result-schema-frozen",
+    "validation-report-schema-frozen",
+    "semantic-validator-frozen",
+    "ranking-policy-frozen",
+    "fixtures-and-metric-definitions-frozen",
+    "reference-plans-and-app-frozen"
+  ],
+  "requiredBeforeOfficialRelease": [
+    "fail-closed-report-consumer-verified",
+    "physical-device-matrix-complete",
+    "release-package-checksums-complete",
+    "limitations-and-review-complete",
+    "maintainer-approval-recorded"
+  ],
+  "compatibility": {
+    "power1_0EvidenceImmutable": true,
+    "power1_0EvidencePromotable": false,
+    "draft1_1EvidencePromotable": false,
+    "newRCExecutionRequired": true,
+    "rawEvidenceMutationAllowed": false
+  }
+}
