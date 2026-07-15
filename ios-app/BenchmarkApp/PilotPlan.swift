@@ -516,8 +516,8 @@ enum PilotPlanLoader {
             )
         }
         let supported = [
-            ("b-pipe-001-validation", "1.1.0-draft.1", "b-pipe-001-sustained-generation"),
-            ("b-ux-001-validation", "1.1.0-draft.1", "b-ux-001-short-interaction"),
+            ("b-pipe-001-validation", "1.1.0-rc.1", "b-pipe-001-sustained-generation"),
+            ("b-ux-001-validation", "1.1.0-rc.1", "b-ux-001-short-interaction"),
         ]
         guard supported.contains(where: {
             $0.0 == plan.planId && $0.1 == plan.planVersion

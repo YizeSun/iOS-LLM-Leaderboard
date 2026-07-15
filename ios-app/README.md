@@ -6,37 +6,37 @@ an inference framework.
 
 ## Current status
 
-App `0.12.0` build `15` is the non-official Power 1.1 draft runner. It preserves
+App `0.13.0` build `16` is the frozen, non-official Power 1.1 RC1 runner. It preserves
 the two Power 1.0 workload IDs, fixtures, measurement boundaries, generation
 settings, and attempt counts while changing the export responsibility boundary:
 the App always exports technically derivable measurements, and its local
 response-conformance badge is advisory only. Public Power 1.0 remains active;
-this draft App authorizes neither ranking nor publication.
+this RC App authorizes neither ranking nor publication.
 
 App `0.8.0` build `10` remains the exact reference source for the published
 six-result Maintainer Reference matrix and for reproducing its three existing
 Qwen comparison cells. App `0.9.0` build `11`, App `0.10.0` build `12`, App
 `0.10.1` build `13`, and App `0.11.0` build `14` remain historical exact source
-identities for Power 1.0 results created with them. App 0.12.0 must not be
+identities for Power 1.0 results created with them. App 0.13.0 must not be
 substituted when an exact Power 1.0 reproduction is intended.
 
 Apps 0.8.0 through 0.11.0 emit the adopted Power 1.0 source result contract
-`suite-b-power-result-1.0.0-rc.1`. App 0.12.0 emits
-`suite-b-power-result-1.1.0-draft.1`. Every raw App export sets
-`officialResultEligible` to `false`; the 1.1 draft requires new physical-device
+`suite-b-power-result-1.0.0-rc.1`. App 0.12.0 remains the historical Power 1.1
+draft runner. App 0.13.0 emits `suite-b-power-result-1.1.0-rc.1`. Every raw App export sets
+`officialResultEligible` to `false`; the 1.1 RC requires new physical-device
 verification and explicit release approval before it can affect a ranking. A
 picker entry is never evidence by itself.
 
-## Power 1.1 draft execution scope
+## Power 1.1 RC1 execution scope
 
 The production control surface exposes exactly two workload identities:
 
-- `b-ux-001-short-interaction@1.1.0-draft.1`;
-- `b-pipe-001-sustained-generation@1.1.0-draft.1`.
+- `b-ux-001-short-interaction@1.1.0-rc.1`;
+- `b-pipe-001-sustained-generation@1.1.0-rc.1`.
 
 The loader rejects any other plan identity or version. Experimental
 `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` resources are
-retained for repository history and compatibility, but App 0.12.0 cannot
+retained for repository history and compatibility, but App 0.13.0 cannot
 execute them through its production controls.
 
 The three pinned Qwen3 profiles have Maintainer Reference evidence:
@@ -45,7 +45,7 @@ The three pinned Qwen3 profiles have Maintainer Reference evidence:
 - `mlx-community/Qwen3-1.7B-4bit`;
 - `mlx-community/Qwen3-4B-3bit`.
 
-App 0.12.0 also exposes eight pinned artifacts with accepted single-contributor
+App 0.13.0 also exposes eight pinned artifacts with accepted single-contributor
 physical-iPhone community evidence:
 
 - `mlx-community/Llama-3.2-1B-Instruct-4bit`;
@@ -94,7 +94,7 @@ that attempt and every remaining planned attempt are retained as `notRun`.
 
 ## Evidence and terminal outcomes
 
-Each exported result retains the raw evidence needed by the independent draft
+Each exported result retains the raw evidence needed by the independent RC
 validator:
 
 - exact benchmark, workload, fixture, runner, model, runtime, device, OS, App,
@@ -145,12 +145,12 @@ App revision.
 Validate an exported file from the repository root with:
 
 ```sh
-python3 scripts/validate_suite_b_power_1_1_result.py /path/to/result.json \
+python3 scripts/validate_suite_b_power_1_1_rc1_result.py /path/to/result.json \
   --output /path/to/validation-report.json
 ```
 
 A conforming raw result receives affirmative structural and protocol decisions,
-but ranking and publication remain unauthorized while Power 1.1 is a draft.
+but ranking and publication remain unauthorized while Power 1.1 is an RC.
 
 ## Privacy boundary
 

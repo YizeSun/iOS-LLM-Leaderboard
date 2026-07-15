@@ -13,7 +13,7 @@ final class PowerReferenceAppTests: XCTestCase {
             let loaded = try PilotPlanLoader.load(resource: selection.rawValue)
             let workload = try PowerBenchmarkRelease.workload(for: loaded.plan)
             XCTAssertEqual(workload.id, selection.workloadID)
-            XCTAssertEqual(loaded.plan.workload.workloadVersion, "1.1.0-draft.1")
+            XCTAssertEqual(loaded.plan.workload.workloadVersion, "1.1.0-rc.1")
         }
     }
 
@@ -36,7 +36,7 @@ final class PowerReferenceAppTests: XCTestCase {
         )
         XCTAssertEqual(
             object["schemaVersion"] as? String,
-            "suite-b-power-result-1.1.0-draft.1"
+            "suite-b-power-result-1.1.0-rc.1"
         )
         let configuration = try XCTUnwrap(
             object["configuration"] as? [String: Any]

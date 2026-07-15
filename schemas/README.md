@@ -50,6 +50,9 @@ transition.
   existing App `responseConformance` observation as advisory, and requires the
   independent draft semantic validator to keep technically derivable metrics
   independent of that observation.
+- `suite-b-power-result-1.1.0-rc.1.schema.json` freezes that submitted evidence
+  contract for Power 1.1 RC1. The RC validator executes this schema directly
+  against its pinned Power 1.0 base-schema dependency.
 - `suite-b-power-validation-report-1.0.0-rc.1.schema.json` keeps structural
   validity, protocol conformance, per-metric eligibility, evidence review, and
   ranking eligibility as separate validator decisions.
@@ -59,6 +62,9 @@ transition.
   metric and recommendation eligibility, and represents applicable behavior
   assessment as `verified`, `not_verified`, or `contradicted`. Contributors do
   not create or upload this report.
+- `suite-b-power-validation-report-1.1.0-rc.1.schema.json` freezes the internal
+  RC report identities and decision invariants. Unsupported identities,
+  inconsistent status/reason pairs, and stale report bindings fail closed.
 - `suite-b-community-submission-0.1.schema.json` wraps exact result bytes,
   integrity evidence, contributor declarations, and a Draft trust request for
   offline repository submission.

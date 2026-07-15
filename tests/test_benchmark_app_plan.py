@@ -28,10 +28,10 @@ class BenchmarkAppPlanTests(unittest.TestCase):
     def setUp(self) -> None:
         self.plan = load_json(PLAN_PATH)
 
-    def test_power_1_1_draft_cannot_be_treated_as_official(self) -> None:
+    def test_power_1_1_rc_cannot_be_treated_as_official(self) -> None:
         self.assertEqual(self.plan["plan_id"], "b-pipe-001-validation")
-        self.assertEqual(self.plan["plan_version"], "1.1.0-draft.1")
-        self.assertEqual(self.plan["status"], "power-1.1-draft-app-candidate")
+        self.assertEqual(self.plan["plan_version"], "1.1.0-rc.1")
+        self.assertEqual(self.plan["status"], "power-1.1-release-candidate")
         self.assertFalse(self.plan["official_result_eligible"])
 
     def test_procedure_is_one_warmup_and_five_measured_runs(self) -> None:
@@ -67,10 +67,10 @@ class BenchmarkAppPlanTests(unittest.TestCase):
         workload = self.plan["workload"]
         self.assertEqual(workload["category"], "pipeline")
         self.assertEqual(workload["workload_id"], "b-pipe-001-sustained-generation")
-        self.assertEqual(workload["workload_version"], "1.1.0-draft.1")
+        self.assertEqual(workload["workload_version"], "1.1.0-rc.1")
         self.assertEqual(
             workload["v2_profile_mapping"],
-            "b-pipe-001-sustained-generation@1.1.0-draft.1",
+            "b-pipe-001-sustained-generation@1.1.0-rc.1",
         )
 
     def test_timing_boundary_is_pipeline_not_user_visible(self) -> None:
@@ -109,12 +109,12 @@ class ShortInteractionPlanTests(unittest.TestCase):
     def setUp(self) -> None:
         self.plan = load_json(UX_PLAN_PATH)
 
-    def test_draft_identity_and_prompt_hash_are_pinned(self) -> None:
+    def test_rc_identity_and_prompt_hash_are_pinned(self) -> None:
         self.assertEqual(self.plan["plan_id"], "b-ux-001-validation")
-        self.assertEqual(self.plan["plan_version"], "1.1.0-draft.1")
-        self.assertEqual(self.plan["status"], "power-1.1-draft-app-candidate")
+        self.assertEqual(self.plan["plan_version"], "1.1.0-rc.1")
+        self.assertEqual(self.plan["status"], "power-1.1-release-candidate")
         workload = self.plan["workload"]
-        self.assertEqual(workload["workload_version"], "1.1.0-draft.1")
+        self.assertEqual(workload["workload_version"], "1.1.0-rc.1")
         prompt = ROOT / workload["prompt_path"]
         self.assertEqual(
             hashlib.sha256(prompt.read_bytes()).hexdigest(),
