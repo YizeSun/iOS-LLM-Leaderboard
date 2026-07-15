@@ -22,11 +22,11 @@ const modeConfig = {
     kind: "power",
     workload: "b-ux-001-short-interaction",
     label: "First-renderable proxy TTFT",
-    description: "Latest App baseline per iOS minor family. Adapter boundary, not screen-render latency. Lower is better.",
+    description: "Latest App baseline per iOS minor family. Adapter boundary, not screen-render latency.",
     defaultSort: "response",
     defaultDirection: "asc",
     columns: [
-      column("rank", "Rank", () => 0, value => value, false),
+      column("rank", "#", () => 0, value => value, false),
       column("model", "Model", row => row.configuration.model.displayName, value => value),
       column("quantization", "Quant", row => row.configuration.model.quantization, value => value),
       column("response", "Proxy TTFT", row => row.summary.medianFirstRenderableProxyTTFTMilliseconds, value => formatMs(value), true, true),
@@ -44,11 +44,11 @@ const modeConfig = {
     kind: "power",
     workload: "b-pipe-001-sustained-generation",
     label: "Sustained decode throughput",
-    description: "Latest App baseline per iOS minor family. Five measured generations without a rest interval. Higher is better.",
+    description: "Latest App baseline per iOS minor family. Five measured generations without a rest interval.",
     defaultSort: "decode",
     defaultDirection: "desc",
     columns: [
-      column("rank", "Rank", () => 0, value => value, false),
+      column("rank", "#", () => 0, value => value, false),
       column("model", "Model", row => row.configuration.model.displayName, value => value),
       column("quantization", "Quant", row => row.configuration.model.quantization, value => value),
       column("decode", "Decode", row => row.summary.medianDecodeTokensPerSecond, value => formatRate(value), true, true),
@@ -353,13 +353,15 @@ function renderBoard() {
   else if (config.kind === "coverage") rows = buildCoverageRows(state.power.results);
   else if (config.kind === "catalog") rows = buildCatalogRows(state.catalog);
   else rows = workloadRows(state.power.results, config.workload);
-  rows = withPrimaryRanks(rows, config);
   rows = filterRows(rows, config);
   rows = sortRows(rows, config);
+  rows = withDisplayRanks(rows, config);
   elements.device.disabled = config.kind === "catalog";
   elements.runtime.disabled = config.kind === "catalog";
   elements.contextLabel.textContent = config.label;
-  elements.contextDescription.textContent = config.description;
+  elements.contextDescription.textContent = config.kind === "power"
+    ? `${config.description} ${activeSortDescription(config)}`
+    : config.description;
   const openSlots = rows.reduce((total, row) => total + (row.openContributorSlots ?? 0), 0);
   const rankedCount = rows.filter(row => row.rankingEligibility?.candidateEligible).length;
   elements.rowCount.textContent = config.kind === "coverage"
@@ -416,6 +418,11 @@ function sortRows(rows, config) {
   const selected = config.columns.find(item => item.key === state.sortKey) ?? config.columns[1];
   const direction = state.sortDirection === "asc" ? 1 : -1;
   return [...rows].sort((left, right) => {
+    if (config.kind === "power") {
+      const leftEligible = left.rankingEligibility.candidateEligible;
+      const rightEligible = right.rankingEligibility.candidateEligible;
+      if (leftEligible !== rightEligible) return leftEligible ? -1 : 1;
+    }
     const leftValue = selected.accessor(left);
     const rightValue = selected.accessor(right);
     if (leftValue == null && rightValue == null) return compare(left.configuration.model.displayName, right.configuration.model.displayName);
@@ -425,15 +432,31 @@ function sortRows(rows, config) {
   });
 }
 
-function withPrimaryRanks(rows, config) {
+function withDisplayRanks(rows, config) {
   if (config.kind !== "power") return rows;
-  const primary = config.columns.find(columnConfig => columnConfig.primary);
-  const direction = config.defaultDirection === "asc" ? 1 : -1;
-  const ranked = rows
-    .filter(row => row.rankingEligibility.candidateEligible)
-    .sort((left, right) => compare(primary.accessor(left), primary.accessor(right)) * direction);
-  const ranks = new Map(ranked.map((row, index) => [row.comparisonID, index + 1]));
-  return rows.map(row => ({ ...row, primaryRank: ranks.get(row.comparisonID) ?? null }));
+  let displayRank = 0;
+  return rows.map(row => ({
+    ...row,
+    displayRank: row.rankingEligibility.candidateEligible ? ++displayRank : null,
+  }));
+}
+
+function activeSortDescription(config) {
+  const selected = config.columns.find(item => item.key === state.sortKey) ?? config.columns[1];
+  const order = sortOrderLabel(selected.key, state.sortDirection);
+  const preference = sortPreference(selected.key);
+  return `Sorted by ${selected.label} · ${order}${preference ? ` · ${preference}` : ""}.`;
+}
+
+function sortOrderLabel(key, direction) {
+  if (key === "model") return direction === "asc" ? "A to Z" : "Z to A";
+  return direction === "asc" ? "low to high" : "high to low";
+}
+
+function sortPreference(key) {
+  if (["response", "pipeline", "memory", "thermal", "variation"].includes(key)) return "lower is better";
+  if (["decode", "prefill", "degradation"].includes(key)) return "higher is better";
+  return "";
 }
 
 function compare(left, right) {
@@ -465,9 +488,9 @@ function renderRows(rows, columns) {
 
 function renderCell(columnConfig, row, index) {
   if (columnConfig.key === "rank") {
-    return row.primaryRank == null
+    return row.displayRank == null
       ? '<td class="rank-cell"><span class="unranked-rank">Unranked</span></td>'
-      : `<td class="rank-cell">${row.primaryRank}</td>`;
+      : `<td class="rank-cell">${row.displayRank}</td>`;
   }
   if (columnConfig.key === "model") {
     const model = row.configuration.model;
@@ -508,7 +531,7 @@ function changeSort(key) {
 }
 
 function defaultDirection(key) {
-  return ["decode", "prefill"].includes(key) ? "desc" : "asc";
+  return ["decode", "prefill", "degradation", "contributors"].includes(key) ? "desc" : "asc";
 }
 
 function openDetails(resultID) {

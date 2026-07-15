@@ -51,6 +51,17 @@ class PublicSurfaceTests(unittest.TestCase):
         self.assertIn("suite-b-power-community/LEADERBOARD.md", leaderboard)
         self.assertNotIn("No eligible non-placeholder results", leaderboard)
 
+    def test_power_table_numbers_follow_the_active_sort(self) -> None:
+        app = (ROOT / "site/app.js").read_text()
+        self.assertIn('column("rank", "#"', app)
+        self.assertIn("rows = withDisplayRanks(rows, config);", app)
+        self.assertLess(
+            app.index("rows = sortRows(rows, config);"),
+            app.index("rows = withDisplayRanks(rows, config);"),
+        )
+        self.assertIn("Sorted by ${selected.label}", app)
+        self.assertNotIn("withPrimaryRanks", app)
+
 
 if __name__ == "__main__":
     unittest.main()
