@@ -167,7 +167,7 @@ final class PowerAppSettings {
             ambient = "not recorded"
         }
         return """
-        Power 1.0 environmental observations
+        Power 1.1 draft environmental observations
         - Result IDs: \(ids)
         - Ambient room temperature: \(ambient)
         - Case state: \(caseState.rawValue)

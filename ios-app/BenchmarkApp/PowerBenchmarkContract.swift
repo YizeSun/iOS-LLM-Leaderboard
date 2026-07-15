@@ -2,8 +2,8 @@ import Foundation
 
 enum PowerBenchmarkRelease {
     static let releaseID = "suite-b-power"
-    static let releaseVersion = "1.0.0-rc.1"
-    static let resultSchemaVersion = "suite-b-power-result-1.0.0-rc.1"
+    static let releaseVersion = "1.1.0-draft.1"
+    static let resultSchemaVersion = "suite-b-power-result-1.1.0-draft.1"
     static let runnerID = "ios-reference-benchmark-app"
     static let minimumRunnerVersion = "0.8.0"
 

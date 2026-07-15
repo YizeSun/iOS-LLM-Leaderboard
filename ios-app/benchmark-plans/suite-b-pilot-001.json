@@ -1,8 +1,8 @@
 {
   "plan_schema_version": "0.3",
   "plan_id": "b-pipe-001-validation",
-  "plan_version": "1.0.0-rc.1",
-  "status": "f4-reference-app-candidate",
+  "plan_version": "1.1.0-draft.1",
+  "status": "power-1.1-draft-app-candidate",
   "suite": "Suite B: On-device Performance",
   "framework_version": "v2-design-draft",
   "official_result_eligible": false,
@@ -44,8 +44,8 @@
   },
   "workload": {
     "workload_id": "b-pipe-001-sustained-generation",
-    "workload_version": "1.0.0-rc.1",
-    "v2_profile_mapping": "b-pipe-001-sustained-generation@1.0.0-rc.1",
+    "workload_version": "1.1.0-draft.1",
+    "v2_profile_mapping": "b-pipe-001-sustained-generation@1.1.0-draft.1",
     "category": "pipeline",
     "prompt_path": "ios-app/workloads/suite-b-pilot-001-prompt.txt",
     "prompt_sha256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
