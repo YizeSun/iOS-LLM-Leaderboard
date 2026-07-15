@@ -207,6 +207,8 @@ class PowerOneOneProtocolDraftTests(unittest.TestCase):
             self.manifest["resultSchema"]["schema"],
             self.manifest["resultSchema"]["baseShapeDependency"],
             self.manifest["validationReportSchema"],
+            self.manifest["validator"],
+            self.manifest["validationReasonRegistry"],
         ):
             path = ROOT / asset["path"]
             self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), asset["sha256"])

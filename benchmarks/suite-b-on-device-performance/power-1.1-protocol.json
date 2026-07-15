@@ -39,6 +39,11 @@
         ],
         "policy_non_match_status": "not_verified",
         "contradicted_requires_positive_versioned_rule": true,
+        "result_level_aggregation": {
+          "warmup_included": false,
+          "measured_attempts": 5,
+          "minimum_individually_verified_attempts": 3
+        },
         "affects_measurement_eligibility": false,
         "affects_performance_ranking_eligibility": false,
         "affects_recommendation_eligibility": true
@@ -85,6 +90,10 @@
     "technically_derivable_metrics_independent_of_app_behavior_assessment": true
   },
   "submission_validator": {
+    "implementation_path": "scripts/validate_suite_b_power_1_1_result.py",
+    "validator_id": "suite-b-power-validator",
+    "validator_version": "1.1.0-draft.1",
+    "implementation_status": "draft",
     "execution_stage": "submission-intake-and-review",
     "decision_authority": true,
     "recompute_metrics_from_raw_evidence": true,
@@ -169,7 +178,7 @@
   "activation_requirements": [
     "freeze-suite-b-power-result-1.1-schema",
     "freeze-suite-b-power-validation-report-1.1-schema",
-    "implement-independent-1.1-validator",
+    "freeze-independent-1.1-validator",
     "implement-app-independent-metric-export",
     "complete-power-1.1-physical-device-verification",
     "approve-power-1.1-release-and-ranking"

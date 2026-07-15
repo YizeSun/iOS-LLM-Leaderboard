@@ -69,7 +69,6 @@
     "protocolConformance": { "$ref": "#/$defs/validityDecision" },
     "metricEligibility": {
       "type": "object",
-      "minProperties": 1,
       "propertyNames": {
         "enum": [
           "pipeline_ttft_ms@1",

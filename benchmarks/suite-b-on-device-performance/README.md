@@ -14,7 +14,8 @@ metric.
 - `suite-b-power@1.1.0-draft.1` is a non-official protocol draft. It requires
   the App to export every technically derivable metric and reserves behavior,
   metric, ranking, and recommendation decisions for the submission validator.
-  It changes no Power 1.0 evidence or active ranking.
+  Its independent validator and report contract are implemented as draft,
+  hash-pinned assets. They change no Power 1.0 evidence or active ranking.
 - `b-ux-001-short-interaction` and `b-pipe-001-sustained-generation` are the
   only Power 1.0 workload candidates.
 - `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` remain
@@ -44,6 +45,7 @@ Read:
 - [Suite B Protocol v2](protocol-v2.md)
 - [Power 1.0 frozen protocol candidate](power-1.0-protocol.md)
 - [Power 1.1 protocol draft](power-1.1-protocol.md)
+- [Power 1.1 validation reason registry](power-1.1-validation-reasons.json)
 - [Power 1.0 environmental observation draft](power-1.0-environment-control.md)
 - [Power 1.0 migration rules](power-1.0-migration.md)
 - [Power 1.0 schema and validator freeze](power-1.0-schema-validator.md)

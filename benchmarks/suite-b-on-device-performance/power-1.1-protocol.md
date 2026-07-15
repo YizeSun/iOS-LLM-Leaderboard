@@ -13,6 +13,11 @@ The minimal internal validation-report contract is
 [`suite-b-power-validation-report-1.1.0-draft.1.schema.json`](../../schemas/suite-b-power-validation-report-1.1.0-draft.1.schema.json).
 The submitted App evidence contract is
 [`suite-b-power-result-1.1.0-draft.1.schema.json`](../../schemas/suite-b-power-result-1.1.0-draft.1.schema.json).
+The independent draft implementation is
+[`validate_suite_b_power_1_1_result.py`](../../scripts/validate_suite_b_power_1_1_result.py),
+and its machine-readable decision vocabulary is
+[`power-1.1-validation-reasons.json`](power-1.1-validation-reasons.json).
+Both remain draft assets and authorize neither ranking nor publication.
 
 Power 1.1 retains exactly the two Power 1.0 workload IDs:
 
@@ -92,6 +97,20 @@ Validation never rewrites the submitted result. Trust or ranking transitions
 remain governed by review records and cannot be granted by App output or CI
 alone.
 
+The current draft validator can be exercised locally without changing the
+submitted result:
+
+```bash
+python3 scripts/validate_suite_b_power_1_1_result.py path/to/result.json \
+  --output path/to/validation-report.json
+```
+
+Exit status `0` means the result is structurally valid and protocol-conformant;
+`1` means it was evaluated but did not conform; and `2` means the input,
+validator assets, or generated report could not be processed. Because 1.1 is
+still a draft, even a conformant report records ranking and publication as
+unauthorized.
+
 ### Submission-time fact determination
 
 The independent validator runs during submission intake and review, before a
@@ -160,6 +179,13 @@ only when the policy version defines positive contradiction evidence. Because
 `short-interaction-response-v1` defines no such contradiction rule, a correct
 synonym such as `secure` that does not match its literal `safe` check is
 `not_verified`, not failed or contradicted.
+
+The result-level behavior status excludes the warm-up and follows the existing
+minimum-evidence threshold. It is `verified` when at least three of the five
+measured attempts are completed and individually verified by the frozen
+policy; otherwise it is `not_verified`, unless a future versioned policy
+positively proves `contradicted`. This preserves the Power 1.0 three-of-five
+evidence threshold without using behavior to gate any performance metric.
 
 An assessment other than `verified`:
 
@@ -233,9 +259,9 @@ official 1.1 ranking or be modified in place.
 
 Power 1.1 requires:
 
-1. a versioned result schema and the freeze of the current draft
-   validation-report schema;
-2. a validator that independently recomputes metrics and behavior conformance;
+1. freeze of the current draft result and validation-report schemas;
+2. freeze of the current draft validator that independently recomputes metrics
+   and behavior conformance;
 3. an App version that exports technically derivable metrics independently of
    behavior conformance;
 4. a new physical-device verification matrix using that complete contract; and

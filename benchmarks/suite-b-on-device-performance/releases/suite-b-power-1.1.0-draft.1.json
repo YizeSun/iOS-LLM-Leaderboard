@@ -14,16 +14,27 @@
     "version": "1.1.0-draft.1",
     "markdown": {
       "path": "benchmarks/suite-b-on-device-performance/power-1.1-protocol.md",
-      "sha256": "feb9a9114e7991d5a3eda7c12698434136902486777699c220b81721d069632d"
+      "sha256": "9f963078d88d38547fdb2fa047df05257308f935b9ad5d0bbe3ee464d8bced5f"
     },
     "machineReadable": {
       "path": "benchmarks/suite-b-on-device-performance/power-1.1-protocol.json",
-      "sha256": "769b9ebabf23b82513b6e02d6bb4e67118ff1aa025fd781521bc6964783b6eed"
+      "sha256": "303126457ccf8314b1fe9dcf82eebb02443d9bd2b588f6f78f43f58ddb0dc4d0"
     }
   },
   "validationReportSchema": {
     "path": "schemas/suite-b-power-validation-report-1.1.0-draft.1.schema.json",
-    "sha256": "4c5191121626fb91ae100db129ac00a6d28b9a0a3fe0b32986cb0bfd88986089"
+    "sha256": "6db0ecb636aae2e6d7b53bab98c877003e6096a29b786652a0c8539fd58fd23d"
+  },
+  "validator": {
+    "id": "suite-b-power-validator",
+    "version": "1.1.0-draft.1",
+    "implementationStatus": "draft",
+    "path": "scripts/validate_suite_b_power_1_1_result.py",
+    "sha256": "f90b60d6243548a30b012ceb8872e82ad25f521107812111d6d74aa4dae05a26"
+  },
+  "validationReasonRegistry": {
+    "path": "benchmarks/suite-b-on-device-performance/power-1.1-validation-reasons.json",
+    "sha256": "c0b37b67dedde00faf55b3cc54e3ad1ac4c3a2d8a231e39b4ddaf215e1415926"
   },
   "resultSchema": {
     "schema": {
@@ -48,7 +59,8 @@
   "implementedContracts": [
     "protocol-draft",
     "result-schema-draft",
-    "validation-report-schema-draft"
+    "validation-report-schema-draft",
+    "semantic-validator-draft"
   ],
   "requiredBeforeReleaseCandidate": [
     "suite-b-power-result-1.1-schema",

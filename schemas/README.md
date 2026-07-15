@@ -48,8 +48,8 @@ transition.
 - `suite-b-power-result-1.1.0-draft.1.schema.json` versions that same submitted
   field shape for the Power 1.1 draft. It adds no contributor field, marks the
   existing App `responseConformance` observation as advisory, and requires the
-  future semantic validator to keep technically derivable metrics independent
-  of that observation.
+  independent draft semantic validator to keep technically derivable metrics
+  independent of that observation.
 - `suite-b-power-validation-report-1.0.0-rc.1.schema.json` keeps structural
   validity, protocol conformance, per-metric eligibility, evidence review, and
   ranking eligibility as separate validator decisions.
