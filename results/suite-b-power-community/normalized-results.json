@@ -3160,7 +3160,9 @@
         "active": false,
         "candidateEligible": false,
         "reasonCodes": [
-          "no_metric_eligible_contribution"
+          "insufficient_metric_eligible_attempts",
+          "no_metric_eligible_contribution",
+          "response_conformance_failed"
         ]
       },
       "sourceEvidenceRelease": {
@@ -3373,7 +3375,9 @@
         "active": false,
         "candidateEligible": false,
         "reasonCodes": [
-          "no_metric_eligible_contribution"
+          "insufficient_metric_eligible_attempts",
+          "no_metric_eligible_contribution",
+          "response_conformance_failed"
         ]
       },
       "sourceEvidenceRelease": {
@@ -3586,7 +3590,9 @@
         "active": false,
         "candidateEligible": false,
         "reasonCodes": [
-          "no_metric_eligible_contribution"
+          "insufficient_metric_eligible_attempts",
+          "no_metric_eligible_contribution",
+          "response_conformance_failed"
         ]
       },
       "sourceEvidenceRelease": {
@@ -4010,7 +4016,9 @@
         "active": false,
         "candidateEligible": false,
         "reasonCodes": [
-          "no_metric_eligible_contribution"
+          "insufficient_metric_eligible_attempts",
+          "no_metric_eligible_contribution",
+          "response_conformance_failed"
         ]
       },
       "sourceEvidenceRelease": {
@@ -5067,7 +5075,9 @@
         "active": false,
         "candidateEligible": false,
         "reasonCodes": [
-          "no_metric_eligible_contribution"
+          "insufficient_metric_eligible_attempts",
+          "no_metric_eligible_contribution",
+          "response_conformance_failed"
         ]
       },
       "sourceEvidenceRelease": {
@@ -5280,7 +5290,9 @@
         "active": false,
         "candidateEligible": false,
         "reasonCodes": [
-          "no_metric_eligible_contribution"
+          "insufficient_metric_eligible_attempts",
+          "no_metric_eligible_contribution",
+          "response_conformance_failed"
         ]
       },
       "sourceEvidenceRelease": {
@@ -5493,7 +5505,9 @@
         "active": false,
         "candidateEligible": false,
         "reasonCodes": [
-          "no_metric_eligible_contribution"
+          "insufficient_metric_eligible_attempts",
+          "no_metric_eligible_contribution",
+          "response_conformance_failed"
         ]
       },
       "sourceEvidenceRelease": {
@@ -5706,7 +5720,9 @@
         "active": false,
         "candidateEligible": false,
         "reasonCodes": [
-          "no_metric_eligible_contribution"
+          "insufficient_metric_eligible_attempts",
+          "no_metric_eligible_contribution",
+          "response_conformance_failed"
         ]
       },
       "sourceEvidenceRelease": {
@@ -5919,7 +5935,9 @@
         "active": false,
         "candidateEligible": false,
         "reasonCodes": [
-          "no_metric_eligible_contribution"
+          "insufficient_metric_eligible_attempts",
+          "no_metric_eligible_contribution",
+          "response_conformance_failed"
         ]
       },
       "sourceEvidenceRelease": {

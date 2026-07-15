@@ -62,6 +62,15 @@ class PublicSurfaceTests(unittest.TestCase):
         self.assertIn("Sorted by ${selected.label}", app)
         self.assertNotIn("withPrimaryRanks", app)
 
+    def test_unranked_result_explains_metric_ineligibility(self) -> None:
+        app = (ROOT / "site/app.js").read_text()
+        styles = (ROOT / "site/styles.css").read_text()
+        self.assertIn("function eligibilityExplanation(row)", app)
+        self.assertIn('title="${escapeAttribute(explanation)}"', app)
+        self.assertIn('tabindex="0"', app)
+        self.assertIn("failed this workload's response check", app)
+        self.assertIn(".unranked-meta:focus-visible", styles)
+
 
 if __name__ == "__main__":
     unittest.main()

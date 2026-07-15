@@ -158,7 +158,37 @@ class CommunityRankingTests(unittest.TestCase):
         selected = current_display_cells(aggregate_contributions([old, current]))
         self.assertEqual(len(selected), 1)
         self.assertFalse(selected[0]["rankingEligibility"]["active"])
+        self.assertIn(
+            "synthetic_test_ineligible",
+            selected[0]["rankingEligibility"]["reasonCodes"],
+        )
         self.assertEqual(selected[0]["configuration"]["device"]["appVersion"], "0.10.1")
+
+    def test_unranked_cell_keeps_response_failure_reason_for_public_explanation(self) -> None:
+        current = contribution(
+            1,
+            "Alice",
+            workload="b-ux-001-short-interaction",
+        )
+        metric_id = "first_renderable_proxy_ttft_ms@1"
+        current["validation"]["metricEligibility"][metric_id] = {
+            "eligible": False,
+            "eligibleMeasuredAttempts": 0,
+            "reasonCodes": ["insufficient_metric_eligible_attempts"],
+        }
+        for attempt in current["result"]["attempts"]:
+            if attempt["role"] == "measured":
+                attempt["responseConformance"] = {
+                    "status": "fail",
+                    "reasonCodes": ["response_conformance_failed"],
+                }
+
+        cell = aggregate_contributions([current])[0]
+        self.assertFalse(cell["rankingEligibility"]["active"])
+        self.assertIn(
+            "response_conformance_failed",
+            cell["rankingEligibility"]["reasonCodes"],
+        )
 
     def test_two_accounts_mark_cell_reproduced_without_enabling_aggregate(self) -> None:
         cell = aggregate_contributions([

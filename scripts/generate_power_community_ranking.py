@@ -338,6 +338,32 @@ def contributor_weighted_metric(
     return median(contributor_medians), contributor_medians
 
 
+def ineligibility_reason_codes(
+    contributions: list[dict[str, Any]], primary_metric_id: str
+) -> list[str]:
+    """Keep a compact explanation for why an exact cell has no ranked metric."""
+    reasons = {"no_metric_eligible_contribution"}
+    for item in contributions:
+        if not item.get("ordinaryLiveRankingAllowed", True):
+            reasons.add("ordinary_live_ranking_not_allowed")
+
+        metric = item["validation"]["metricEligibility"].get(primary_metric_id, {})
+        if not metric.get("eligible"):
+            reasons.update(metric.get("reasonCodes", []))
+
+        for attempt in item["result"].get("attempts", []):
+            if attempt.get("role") != "measured":
+                continue
+            response = attempt.get("responseConformance", {})
+            if response.get("status") not in (None, "pass"):
+                reasons.update(
+                    response.get("reasonCodes", ["response_conformance_not_passed"])
+                )
+            if attempt.get("outcome") not in (None, "completed"):
+                reasons.update(attempt.get("reasonCodes", []))
+    return sorted(reasons)
+
+
 def relative_mad_percent(values: list[float]) -> float | None:
     if len(values) < 2:
         return None
@@ -476,7 +502,11 @@ def build_cell(contributions: list[dict[str, Any]]) -> dict[str, Any]:
         "rankingEligibility": {
             "candidateEligible": primary_value is not None,
             "active": primary_value is not None,
-            "reasonCodes": [] if primary_value is not None else ["no_metric_eligible_contribution"],
+            "reasonCodes": (
+                []
+                if primary_value is not None
+                else ineligibility_reason_codes(contributions, primary_metric_id)
+            ),
         },
         "community": {
             "status": (

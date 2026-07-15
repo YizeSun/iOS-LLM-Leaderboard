@@ -501,8 +501,9 @@ function renderCell(columnConfig, row, index) {
     const environment = row.rankingEligibility && device
       ? `<span class="model-meta model-environment">App ${escapeHtml(device.appVersion)} · iOS ${escapeHtml(device.systemVersion)}${row.displayHistoryCount ? ` · ${row.displayHistoryCount} previous` : ""}</span>`
       : "";
-    const eligibility = row.rankingEligibility && !row.rankingEligibility.candidateEligible
-      ? '<span class="model-meta unranked-meta">No metric-eligible result</span>'
+    const explanation = eligibilityExplanation(row);
+    const eligibility = explanation
+      ? `<span class="model-meta unranked-meta" tabindex="0" title="${escapeAttribute(explanation)}" aria-label="No metric-eligible result. ${escapeAttribute(explanation)}">No metric-eligible result</span>`
       : "";
     return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(metadata)}</span>${environment}${eligibility}</td>`;
   }
@@ -519,6 +520,21 @@ function renderCell(columnConfig, row, index) {
   const value = columnConfig.accessor(row);
   const formatted = columnConfig.formatter(value, row);
   return `<td class="metric-value${columnConfig.primary ? " primary-value" : ""}">${formatted}</td>`;
+}
+
+function eligibilityExplanation(row) {
+  if (!row.rankingEligibility || row.rankingEligibility.candidateEligible) return "";
+  const reasons = new Set(row.rankingEligibility.reasonCodes ?? []);
+  if (reasons.has("response_conformance_failed") || reasons.has("response_conformance_not_passed")) {
+    return "The recorded response failed this workload's response check, so its measurements are excluded from ranking.";
+  }
+  if (reasons.has("ordinary_live_ranking_not_allowed")) {
+    return "The result is retained as evidence, but its test conditions are not eligible for the live ranking.";
+  }
+  if (reasons.has("insufficient_metric_eligible_attempts")) {
+    return "Not enough measured attempts passed this workload's metric checks to produce a ranked result.";
+  }
+  return "A result exists, but none of its measurements met this workload's ranking requirements.";
 }
 
 function changeSort(key) {
