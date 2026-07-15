@@ -17,7 +17,7 @@ def encoded(result: dict) -> bytes:
 
 
 class PowerOneOneFinalReportConsumerTests(unittest.TestCase):
-    def test_exact_pair_is_accepted_but_candidate_is_not_published(self) -> None:
+    def test_exact_pair_is_accepted_by_the_published_release(self) -> None:
         result = power_1_1_result()
         raw = encoded(result)
         report = validate(result, hashlib.sha256(raw).hexdigest())
@@ -26,8 +26,8 @@ class PowerOneOneFinalReportConsumerTests(unittest.TestCase):
         record = consumption_record(result, report)
         self.assertTrue(record["acceptedForFinalReview"])
         self.assertTrue(record["measuredPerformanceRankingEligible"])
-        self.assertFalse(record["activePublicRelease"])
-        self.assertFalse(record["publicationAuthorized"])
+        self.assertTrue(record["activePublicRelease"])
+        self.assertTrue(record["publicationAuthorized"])
 
     def test_changed_result_bytes_fail_closed(self) -> None:
         result = power_1_1_result()

@@ -3,12 +3,12 @@
   "releaseID": "suite-b-power",
   "releaseVersion": "1.1.0",
   "preparedAt": "2026-07-15T17:52:13Z",
-  "approvedAt": null,
-  "status": "final-review-candidate",
-  "officialResultEligible": false,
-  "rankingAuthorized": false,
-  "publicationAuthorized": false,
-  "tagAuthorized": false,
+  "approvedAt": "2026-07-15T18:09:56Z",
+  "status": "published",
+  "officialResultEligible": true,
+  "rankingAuthorized": true,
+  "publicationAuthorized": true,
+  "tagAuthorized": true,
   "previousPublishedRelease": "1.0.0",
   "contractAdoption": {
     "method": "exact-release-candidate-adoption-with-final-revalidation",
@@ -67,7 +67,7 @@
     "rcValidationReportCount": 6,
     "finalValidationDirectory": "results/suite-b-power-1.1/final-validation",
     "evidenceAdoptionPath": "results/suite-b-power-1.1/evidence-adoption.json",
-    "evidenceAdoptionSHA256": "f5571b25b2f0d63343edee9747dad8c58517f26ce35b3c3d9464be219c97b766"
+    "evidenceAdoptionSHA256": "6a5857f8a74c4a860bd8503b69e682250c4694ada9ccedafcbb2ed049109cac5"
   },
   "rankingPolicy": {
     "configurationSpecific": true,
@@ -78,14 +78,21 @@
     "shipScoreDefined": false,
     "publicationControlledByThisManifest": true
   },
-  "activationRequirements": [
-    "contributor-declarations-confirmed",
-    "conflict-disclosure-confirmed",
-    "thermal-assistance-disclosure-none",
-    "evidence-adoption-approved",
-    "final-generated-package-verified",
-    "maintainer-publication-authorization"
-  ],
+  "activationRequirements": [],
+  "activationRecord": {
+    "approvedAt": "2026-07-15T18:09:56Z",
+    "approvedBy": "YizeSun",
+    "contributorDeclarationsConfirmed": true,
+    "conflictDisclosure": "none",
+    "thermalAssistanceDisclosure": "none",
+    "officialResultCount": 6,
+    "performanceRankedResultCount": 6,
+    "recommendationEligibleResultCount": 5,
+    "mergeAuthorized": true,
+    "tagAuthorized": true,
+    "githubReleaseAuthorized": true,
+    "leaderboardUpdateAuthorized": true
+  },
   "pinnedAssets": [
     {
       "role": "source-release-manifest",

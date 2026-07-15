@@ -1,5 +1,5 @@
 {
-  "activeRankedResultCount": 0,
+  "activeRankedResultCount": 6,
   "benchmarkRelease": {
     "id": "suite-b-power",
     "version": "1.1.0"
@@ -8,12 +8,12 @@
   "generatedAt": "2026-07-15T17:52:13Z",
   "performanceEligibleResultCount": 6,
   "publication": {
-    "active": false,
-    "officialResultEligible": false,
-    "publicationAuthorized": false,
-    "rankingAuthorized": false,
-    "status": "final-review-candidate",
-    "tagAuthorized": false
+    "active": true,
+    "officialResultEligible": true,
+    "publicationAuthorized": true,
+    "rankingAuthorized": true,
+    "status": "published",
+    "tagAuthorized": true
   },
   "recommendationEligibleResultCount": 5,
   "resultCount": 6,
@@ -103,8 +103,8 @@
         "thermalStateAtSessionStart": "nominal"
       },
       "evidence": {
-        "adoptionStatus": "candidate-maintainer-reference",
-        "level": "unreviewed",
+        "adoptionStatus": "maintainer-reference",
+        "level": "maintainer-reference",
         "proposedLevel": "maintainer-reference",
         "sourceResultUnmodified": true
       },
@@ -149,12 +149,12 @@
         "value": 96.83915390816341
       },
       "rankingEligibility": {
-        "active": false,
+        "active": true,
         "measuredPerformance": {
           "eligible": true,
           "reasonCodes": []
         },
-        "performanceRank": null,
+        "performanceRank": 1,
         "recommendation": {
           "eligible": true,
           "reasonCodes": []
@@ -287,8 +287,8 @@
         "thermalStateAtSessionStart": "nominal"
       },
       "evidence": {
-        "adoptionStatus": "candidate-maintainer-reference",
-        "level": "unreviewed",
+        "adoptionStatus": "maintainer-reference",
+        "level": "maintainer-reference",
         "proposedLevel": "maintainer-reference",
         "sourceResultUnmodified": true
       },
@@ -339,12 +339,12 @@
         "value": 183.087959
       },
       "rankingEligibility": {
-        "active": false,
+        "active": true,
         "measuredPerformance": {
           "eligible": true,
           "reasonCodes": []
         },
-        "performanceRank": null,
+        "performanceRank": 1,
         "recommendation": {
           "eligible": false,
           "reasonCodes": [
@@ -477,8 +477,8 @@
         "thermalStateAtSessionStart": "nominal"
       },
       "evidence": {
-        "adoptionStatus": "candidate-maintainer-reference",
-        "level": "unreviewed",
+        "adoptionStatus": "maintainer-reference",
+        "level": "maintainer-reference",
         "proposedLevel": "maintainer-reference",
         "sourceResultUnmodified": true
       },
@@ -524,12 +524,12 @@
         "value": 40.973314537523144
       },
       "rankingEligibility": {
-        "active": false,
+        "active": true,
         "measuredPerformance": {
           "eligible": true,
           "reasonCodes": []
         },
-        "performanceRank": null,
+        "performanceRank": 2,
         "recommendation": {
           "eligible": true,
           "reasonCodes": []
@@ -660,8 +660,8 @@
         "thermalStateAtSessionStart": "nominal"
       },
       "evidence": {
-        "adoptionStatus": "candidate-maintainer-reference",
-        "level": "unreviewed",
+        "adoptionStatus": "maintainer-reference",
+        "level": "maintainer-reference",
         "proposedLevel": "maintainer-reference",
         "sourceResultUnmodified": true
       },
@@ -712,12 +712,12 @@
         "value": 487.732667
       },
       "rankingEligibility": {
-        "active": false,
+        "active": true,
         "measuredPerformance": {
           "eligible": true,
           "reasonCodes": []
         },
-        "performanceRank": null,
+        "performanceRank": 2,
         "recommendation": {
           "eligible": true,
           "reasonCodes": []
@@ -848,8 +848,8 @@
         "thermalStateAtSessionStart": "nominal"
       },
       "evidence": {
-        "adoptionStatus": "candidate-maintainer-reference",
-        "level": "unreviewed",
+        "adoptionStatus": "maintainer-reference",
+        "level": "maintainer-reference",
         "proposedLevel": "maintainer-reference",
         "sourceResultUnmodified": true
       },
@@ -895,12 +895,12 @@
         "value": 9.819666524270113
       },
       "rankingEligibility": {
-        "active": false,
+        "active": true,
         "measuredPerformance": {
           "eligible": true,
           "reasonCodes": []
         },
-        "performanceRank": null,
+        "performanceRank": 3,
         "recommendation": {
           "eligible": true,
           "reasonCodes": []
@@ -1031,8 +1031,8 @@
         "thermalStateAtSessionStart": "nominal"
       },
       "evidence": {
-        "adoptionStatus": "candidate-maintainer-reference",
-        "level": "unreviewed",
+        "adoptionStatus": "maintainer-reference",
+        "level": "maintainer-reference",
         "proposedLevel": "maintainer-reference",
         "sourceResultUnmodified": true
       },
@@ -1083,12 +1083,12 @@
         "value": 1137.577417
       },
       "rankingEligibility": {
-        "active": false,
+        "active": true,
         "measuredPerformance": {
           "eligible": true,
           "reasonCodes": []
         },
-        "performanceRank": null,
+        "performanceRank": 3,
         "recommendation": {
           "eligible": true,
           "reasonCodes": []

@@ -16,7 +16,7 @@ from scripts.generate_suite_b_power_1_1_release import write_outputs
 
 
 class PowerOneOneReleaseGenerationTests(unittest.TestCase):
-    def test_candidate_preserves_rc_identity_and_disables_public_ranks(self) -> None:
+    def test_published_release_preserves_rc_identity_and_activates_performance_ranks(self) -> None:
         dataset, adoption = build_dataset()
 
         self.assertEqual(dataset["benchmarkRelease"]["version"], "1.1.0")
@@ -24,15 +24,15 @@ class PowerOneOneReleaseGenerationTests(unittest.TestCase):
         self.assertEqual(dataset["resultCount"], 6)
         self.assertEqual(dataset["performanceEligibleResultCount"], 6)
         self.assertEqual(dataset["recommendationEligibleResultCount"], 5)
-        self.assertEqual(dataset["activeRankedResultCount"], 0)
-        self.assertFalse(dataset["publication"]["active"])
-        self.assertEqual(adoption["decision"]["status"], "final-review-pending")
+        self.assertEqual(dataset["activeRankedResultCount"], 6)
+        self.assertTrue(dataset["publication"]["active"])
+        self.assertEqual(adoption["decision"]["status"], "approved-for-publication")
         for row in dataset["results"]:
             self.assertEqual(row["sourceEvidenceRelease"]["version"], "1.1.0-rc.1")
             self.assertTrue(row["evidence"]["sourceResultUnmodified"])
-            self.assertEqual(row["evidence"]["level"], "unreviewed")
-            self.assertFalse(row["rankingEligibility"]["active"])
-            self.assertIsNone(row["rankingEligibility"]["performanceRank"])
+            self.assertEqual(row["evidence"]["level"], "maintainer-reference")
+            self.assertTrue(row["rankingEligibility"]["active"])
+            self.assertIsNotNone(row["rankingEligibility"]["performanceRank"])
 
     def test_behavior_not_verified_only_blocks_recommendation(self) -> None:
         dataset, _ = build_dataset()
@@ -71,19 +71,11 @@ class PowerOneOneReleaseGenerationTests(unittest.TestCase):
             verify_entries(adoption)
 
     def test_activation_requires_confirmed_declarations(self) -> None:
-        release = copy.deepcopy(load_json(DEFAULT_RELEASE))
-        adoption = load_json(DEFAULT_ADOPTION)
-        release.update(
-            {
-                "officialResultEligible": True,
-                "rankingAuthorized": True,
-                "publicationAuthorized": True,
-                "tagAuthorized": True,
-                "status": "published",
-            }
-        )
+        release = load_json(DEFAULT_RELEASE)
+        adoption = copy.deepcopy(load_json(DEFAULT_ADOPTION))
+        adoption["contributor"]["declarations"]["containsNoPersonalData"] = False
 
-        with self.assertRaisesRegex(ValueError, "adoption is not approved"):
+        with self.assertRaisesRegex(ValueError, "all seven contributor declarations"):
             verify_activation(release, adoption)
 
 

@@ -1,7 +1,7 @@
 # Power Benchmark 1.1 Finalization Checklist
 
-This checklist prepares the formal Power 1.1 release. It does not itself grant
-ranking, publication, tagging, or release authorization.
+This checklist records the formal Power 1.1 release decision and its exact
+evidence, validation, ranking, publication, and tagging boundaries.
 
 ## RC freeze
 
@@ -32,8 +32,8 @@ ranking, publication, tagging, or release authorization.
 - [x] Six hash-bound validation reports exist.
 - [x] Every result/report pair passes the independent consumer.
 - [x] Failures and replacement runs, if any, are retained and documented.
-- [x] Exported environment observations and deviations are reviewed. External
-  thermal-assistance disclosure remains a maintainer-approval gate.
+- [x] Exported environment observations and deviations are reviewed. The
+  maintainer disclosed that no external thermal assistance was used.
 
 ## Release package
 
@@ -46,32 +46,32 @@ ranking, publication, tagging, or release authorization.
 - [x] Metric eligibility and behavior status are presented separately.
 - [x] Known limitations are complete.
 - [x] Release notes contain no unsupported performance or quality claim.
-- [x] Final-review ranking data and tables are generated from adopted reports,
-  not handwritten. The public website remains unchanged until authorization.
+- [x] Ranking data and tables are generated from adopted reports, not handwritten.
 - [x] All 231 automated tests pass and the unchanged reference App sources build
   successfully in Release configuration for generic iOS without code signing.
 
 ## Approval and publication
 
-- [ ] Maintainer reviews the final package and exact checksums.
-- [ ] Maintainer explicitly approves official-result adoption.
-- [ ] Maintainer explicitly approves which metric-eligible results enter ranking.
-- [ ] Maintainer explicitly authorizes merge, `1.1.0` tag, GitHub Release, and
+- [x] Maintainer reviews the final package and exact checksums.
+- [x] Maintainer explicitly approves official-result adoption.
+- [x] Maintainer explicitly approves all six metric-eligible results for the
+  measured-performance ranking and five results for the recommendation view.
+- [x] Maintainer explicitly authorizes merge, `1.1.0` tag, GitHub Release, and
   public leaderboard update.
-- [ ] Release is published only after all prior boxes are complete.
+- [x] Release is published only after all prior boxes are complete.
 
-Until the final approval is recorded, Power 1.0 remains the active public
-release and Power 1.1 RC evidence remains non-official.
+Power 1.1 is the active public Power release. Its RC source identities remain
+visible and immutable in every adopted result.
 
-## Final-review candidate record
+## Publication record
 
 - Six raw results are bound to six preserved RC reports and six final reports by
   result ID and SHA-256.
-- Generated candidate: `results/suite-b-power-1.1/normalized-results.json`.
+- Generated release dataset: `results/suite-b-power-1.1/normalized-results.json`.
 - Reproducibility inventory: `results/suite-b-power-1.1/SHA256SUMS`.
 - Technical outcome: six measured-performance-eligible results and five
   recommendation-eligible results.
-- Public activation outcome: zero active ranked results while approval flags
-  remain false.
+- Public activation outcome: six measured-performance ranks and five
+  recommendation-eligible results.
 - The 1.7B and 4B sustained-generation sessions ending at `serious` thermal
   state are retained without adjustment or replacement.

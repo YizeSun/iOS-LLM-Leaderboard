@@ -10,29 +10,29 @@
   },
   "decision": {
     "method": "exact-release-candidate-adoption-with-final-revalidation",
-    "status": "final-review-pending",
+    "status": "approved-for-publication",
     "recordedAt": "2026-07-15T17:52:13Z",
-    "approvedAt": null,
+    "approvedAt": "2026-07-15T18:09:56Z",
     "maintainer": "YizeSun",
     "referenceAppChanged": false,
     "protocolSemanticsChanged": false,
     "newExecutionRequired": false,
     "rawEvidenceMutationAllowed": false,
-    "finalPublicationApprovalRequired": true
+    "finalPublicationApprovalRequired": false
   },
   "contributor": {
     "githubHandle": "YizeSun",
     "proposedEvidenceLevel": "maintainer-reference",
-    "evidenceLevel": null,
-    "declarationsStatus": "pending",
-    "declarationsConfirmedAt": null,
+    "evidenceLevel": "maintainer-reference",
+    "declarationsStatus": "confirmed",
+    "declarationsConfirmedAt": "2026-07-15T18:09:56Z",
     "conflictOfInterest": {
-      "category": "pending",
-      "statement": null
+      "category": "none",
+      "statement": "No conflict of interest disclosed."
     },
     "thermalAssistance": {
-      "category": "pending",
-      "statement": null
+      "category": "none",
+      "statement": "No external thermal assistance was used."
     },
     "recommendedEnvironmentObservations": {
       "ambientTemperature": "not recorded",
@@ -41,13 +41,13 @@
       "placement": "not recorded"
     },
     "declarations": {
-      "physicalDeviceRun": null,
-      "authorizedToSubmit": null,
-      "publicMetadataReviewed": null,
-      "unmodifiedAppExport": null,
-      "containsNoPersonalData": null,
-      "ccBy4Contribution": null,
-      "acceptanceVerificationRankingNotGuaranteed": null
+      "physicalDeviceRun": true,
+      "authorizedToSubmit": true,
+      "publicMetadataReviewed": true,
+      "unmodifiedAppExport": true,
+      "containsNoPersonalData": true,
+      "ccBy4Contribution": true,
+      "acceptanceVerificationRankingNotGuaranteed": true
     }
   },
   "reviewSummary": {
@@ -83,7 +83,7 @@
       "behaviorStatus": "not_verified",
       "performanceRankingEligible": true,
       "recommendationEligible": false,
-      "adoptionStatus": "candidate-maintainer-reference"
+      "adoptionStatus": "maintainer-reference"
     },
     {
       "resultID": "8C10D75C-5C9A-4D16-8751-5CA3B0A3667A",
@@ -102,7 +102,7 @@
       "behaviorStatus": null,
       "performanceRankingEligible": true,
       "recommendationEligible": true,
-      "adoptionStatus": "candidate-maintainer-reference"
+      "adoptionStatus": "maintainer-reference"
     },
     {
       "resultID": "169EBB65-2DF6-4BF6-9F85-C36109C2700F",
@@ -121,7 +121,7 @@
       "behaviorStatus": "verified",
       "performanceRankingEligible": true,
       "recommendationEligible": true,
-      "adoptionStatus": "candidate-maintainer-reference"
+      "adoptionStatus": "maintainer-reference"
     },
     {
       "resultID": "4784FF6E-3126-4415-A437-CAEF257818B0",
@@ -140,7 +140,7 @@
       "behaviorStatus": null,
       "performanceRankingEligible": true,
       "recommendationEligible": true,
-      "adoptionStatus": "candidate-maintainer-reference"
+      "adoptionStatus": "maintainer-reference"
     },
     {
       "resultID": "E357D4E7-1BEA-4EA3-9C0C-59B664FDD471",
@@ -159,7 +159,7 @@
       "behaviorStatus": "verified",
       "performanceRankingEligible": true,
       "recommendationEligible": true,
-      "adoptionStatus": "candidate-maintainer-reference"
+      "adoptionStatus": "maintainer-reference"
     },
     {
       "resultID": "167679D8-B390-43A2-A6AB-DE662F4EF8BE",
@@ -178,7 +178,7 @@
       "behaviorStatus": null,
       "performanceRankingEligible": true,
       "recommendationEligible": true,
-      "adoptionStatus": "candidate-maintainer-reference"
+      "adoptionStatus": "maintainer-reference"
     }
   ]
 }

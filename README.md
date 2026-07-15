@@ -22,12 +22,12 @@ The Phase 1 product helps developers answer:
 3. Which models and runtimes fit practical integration, distribution,
    privacy-review, and deployment constraints?
 
-This repository publishes Power Benchmark 1.0 and its workload-specific
+This repository publishes Power Benchmark 1.1 and its workload-specific
 official ranking. Historical Pilot and RC evidence remains available with its
 original non-official identity.
 
-Power 1.1 RC1 is now frozen for new physical-device verification. It does not
-replace Power 1.0, authorize a 1.1 ranking, or reuse draft evidence. See the
+Power 1.1 adopts six immutable RC1 physical-device results through deterministic
+final validation without rewriting their source identities. See the
 [RC freeze record](docs/power-benchmark-1.1-rc1-freeze.md) and
 [finalization checklist](docs/power-benchmark-1.1-finalization.md).
 
@@ -35,8 +35,8 @@ replace Power 1.0, authorize a 1.1 ranking, or reuse draft evidence. See the
 
 [**Open the interactive Power + Ship leaderboard →**](https://yizesun.github.io/iOS-LLM-Leaderboard/)
 
-The website combines the immutable Power 1.0 Maintainer Reference evidence
-with valid merged community packages. It provides Power workload rankings,
+The website combines the immutable Power 1.1 Maintainer Reference evidence
+with retained valid community packages. It provides Power workload rankings,
 per-cell contributor and variation evidence, plus a sortable Ship deployment
 profile view linked to exact tested configurations and Swift integration code.
 Its separate **Models** view distinguishes pinned, App-ready artifacts with
@@ -54,10 +54,11 @@ To preview the site locally from the repository root:
 python3 -m http.server 4173
 ```
 
-Then open `http://localhost:4173/`. The live dataset begins with the five
-eligible Power 1.0 rows and retains the sixth response-ineligible result
-outside the ranking. Merged community runs are grouped only with exact
-matching configurations. The Ship tab shows three evidence profiles with
+Then open `http://localhost:4173/`. The live dataset contains six
+measured-performance-eligible Power 1.1 rows; five are also recommendation
+eligible. Merged community runs are grouped only with exact matching
+configurations, while the default display prefers the newest App baseline.
+The Ship tab shows three evidence profiles with
 explicit verified, implementation-only, and unknown claims. It does not
 introduce a global score or change any benchmark rule.
 
@@ -87,22 +88,22 @@ success.
 See [Project Vision](docs/project-vision.md) and
 [Product Architecture](docs/product-architecture.md).
 
-## Current Release: Power Benchmark 1.0
+## Current Release: Power Benchmark 1.1
 
-F2–F6 froze and reviewed the Power protocol, result schema, semantic
-validator, reference App, physical-device verification matrix, submission
-package, and evidence governance. The published release adopts the exact six
-F5 RC1 result files without rerunning them because the App and every benchmark
-semantic contract remain unchanged. Their original bytes and RC1 identities
-remain visible and are bound into Power 1.0 by result ID and SHA-256.
+Power 1.1 freezes the two existing workloads, separates measured performance
+from recommendation eligibility, and adopts the exact six RC1 result files
+without rewriting or relabeling them. Their original bytes and RC1 identities
+remain visible and are bound into the final release by result ID and SHA-256.
 
-See the [Power 1.0 finalization decision](docs/power-benchmark-1.0-finalization.md),
-[generated leaderboard](results/suite-b-power-1.0/LEADERBOARD.md),
-[release notes](results/suite-b-power-1.0/RELEASE-NOTES.md), and
-[checksums](results/suite-b-power-1.0/SHA256SUMS). The six adopted results are
-Maintainer Reference evidence; the five primary-metric-eligible rows are active
-in the official workload-specific ranking. See the
-[`1.0.0` GitHub Release](https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/1.0.0).
+See the [Power 1.1 finalization decision](docs/power-benchmark-1.1-finalization.md),
+[generated leaderboard](results/suite-b-power-1.1/LEADERBOARD.md),
+[release notes](results/suite-b-power-1.1/RELEASE-NOTES.md), and
+[checksums](results/suite-b-power-1.1/SHA256SUMS). The six adopted results are
+Maintainer Reference evidence and active in the measured-performance ranking;
+five are recommendation eligible. See the
+[`1.1.0` GitHub Release](https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/1.1.0).
+
+Power 1.0 remains available as an immutable historical release.
 
 ## Current Ship Release: Deployment Profiles 1.0
 

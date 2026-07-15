@@ -13,18 +13,20 @@ from pathlib import Path
 from typing import Any, Iterable
 
 try:
+    from scripts.consume_suite_b_power_1_1_report import verify_pair as verify_final_pair
     from scripts.validate_suite_b_power_result import validate as validate_power_result
     from scripts.validate_suite_b_power_reviews import validate_reviews
     from scripts.validate_suite_b_power_submission import validate_package
 except ModuleNotFoundError:
+    from consume_suite_b_power_1_1_report import verify_pair as verify_final_pair
     from validate_suite_b_power_result import validate as validate_power_result
     from validate_suite_b_power_reviews import validate_reviews
     from validate_suite_b_power_submission import validate_package
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_OFFICIAL = ROOT / "results/suite-b-power-1.0/normalized-results.json"
-DEFAULT_ADOPTION = ROOT / "results/suite-b-power-1.0/evidence-adoption.json"
+DEFAULT_OFFICIAL = ROOT / "results/suite-b-power-1.1/normalized-results.json"
+DEFAULT_ADOPTION = ROOT / "results/suite-b-power-1.1/evidence-adoption.json"
 DEFAULT_SUBMISSIONS = ROOT / "submissions/suite-b/power-1.0.0-rc.1/draft"
 DEFAULT_OUTPUT = ROOT / "results/suite-b-power-community"
 
@@ -171,24 +173,47 @@ def load_official_contributions(
     contributor = adoption.get("contributor", {}).get("githubHandle")
     if not isinstance(contributor, str) or not contributor:
         raise ValueError("official adoption does not identify its contributor")
+    evidence_level = adoption.get("contributor", {}).get("evidenceLevel")
+    if evidence_level != "maintainer-reference":
+        raise ValueError("official adoption is not maintainer-reference evidence")
     contributions: list[dict[str, Any]] = []
     for row in official.get("results", []):
         raw_path = ROOT / row.get("source", {}).get("rawPath", "")
+        validation_path = ROOT / row.get("source", {}).get("finalValidationPath", "")
         if not raw_path.is_file():
             raise ValueError(f"official raw result is missing: {raw_path}")
+        if not validation_path.is_file():
+            raise ValueError(f"official final validation is missing: {validation_path}")
         expected_sha = row.get("source", {}).get("rawSHA256")
         actual_sha = result_sha256(raw_path)
         if expected_sha != actual_sha:
             raise ValueError(f"official raw result digest mismatch: {raw_path}")
-        result = load_json(raw_path)
-        contributions.append(make_contribution(
-            contributor=contributor,
-            result=result,
-            raw_path=raw_path.relative_to(ROOT).as_posix(),
-            raw_sha256=actual_sha,
-            source_kind="maintainer-reference",
-            evidence_level="maintainer-reference",
-        ))
+        expected_validation_sha = row.get("source", {}).get("finalValidationSHA256")
+        if expected_validation_sha != result_sha256(validation_path):
+            raise ValueError(f"official final validation digest mismatch: {validation_path}")
+        raw_bytes = raw_path.read_bytes()
+        result = json.loads(raw_bytes)
+        report = load_json(validation_path)
+        errors = verify_final_pair(raw_bytes, result, report)
+        if errors:
+            raise ValueError("invalid official result/report pair: " + "; ".join(errors))
+        identity = comparison_identity(result)
+        contributions.append({
+            "comparisonID": canonical_sha256(identity),
+            "comparisonIdentity": identity,
+            "contributor": contributor,
+            "contributorKey": contributor.casefold(),
+            "submissionID": None,
+            "sourceKind": "maintainer-reference",
+            "evidenceLevel": evidence_level,
+            "resultID": result["resultID"],
+            "sessionID": result["execution"]["sessionID"],
+            "createdAt": result["createdAt"],
+            "rawPath": raw_path.relative_to(ROOT).as_posix(),
+            "rawSHA256": actual_sha,
+            "result": result,
+            "validation": report,
+        })
     return contributions
 
 
@@ -366,7 +391,7 @@ def build_cell(contributions: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "comparisonID": representative["comparisonID"],
         "comparisonIdentity": representative["comparisonIdentity"],
-        "benchmarkRelease": {"id": "suite-b-power", "version": "1.0.0"},
+        "benchmarkRelease": {"id": "suite-b-power", "version": "1.1.0"},
         "sourceEvidenceRelease": result["benchmarkRelease"],
         "workload": {
             "id": workload_id,
@@ -457,13 +482,8 @@ def _current_display_key(cell: dict[str, Any]) -> tuple[Any, ...]:
     runtime = identity["runtime"]
     device = identity["device"]
     workload = identity["workload"]
-    source_release = identity["sourceEvidenceRelease"]
     return (
-        source_release["id"],
-        source_release["version"],
         workload["id"],
-        workload["version"],
-        workload["fixtureSHA256"],
         canonical_sha256(identity["generation"]),
         model["artifactID"],
         model["artifactRevision"],
@@ -536,12 +556,12 @@ def build_dataset(
     community_runs = sum(item["sourceKind"] == "community-submission" for item in contributions)
     contributors = {item["contributorKey"] for item in contributions}
     return {
-        "schemaVersion": "suite-b-power-community-ranking-1.0",
+        "schemaVersion": "suite-b-power-community-ranking-1.1",
         "generatedAt": max(
             [str(official.get("generatedAt", ""))]
             + [item["createdAt"] for item in contributions]
         ),
-        "benchmarkRelease": {"id": "suite-b-power", "version": "1.0.0"},
+        "benchmarkRelease": {"id": "suite-b-power", "version": "1.1.0"},
         "sourceEvidenceRelease": official["sourceEvidenceRelease"],
         "policy": {
             "comparison": "exact-comparison-identity-v1",
@@ -575,7 +595,7 @@ def render_leaderboard(dataset: dict[str, Any]) -> str:
     lines = [
         "# Power Community Live Ranking",
         "",
-        "This live view combines the immutable Power 1.0 Maintainer Reference results with valid merged community submissions.",
+        "This live view combines the immutable Power 1.1 Maintainer Reference results with valid merged community submissions.",
         "A GitHub account counts once per exact comparison cell and may contribute independently to any number of different cells.",
         "The default table shows the newest App baseline inside each model, device, runtime, and iOS minor family. Exact patch builds and older App baselines remain in normalized evidence and coverage history.",
         "",
@@ -641,7 +661,7 @@ def render_leaderboard(dataset: dict[str, Any]) -> str:
                 )
             lines.append("")
     lines.extend([
-        "The published Power 1.0 release package remains immutable. This file is a reproducible live derivative of that release plus merged community evidence.",
+        "Power 1.0 and every historical community result remain immutable. This file is a reproducible live derivative of Power 1.1 plus retained merged community evidence.",
         "",
     ])
     return "\n".join(lines)

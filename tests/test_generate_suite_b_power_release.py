@@ -100,7 +100,7 @@ class PowerReleaseGenerationTests(unittest.TestCase):
     def test_site_reads_power_1_data_and_ship_profiles(self) -> None:
         app = (ROOT / "site/app.js").read_text()
         page = (ROOT / "index.html").read_text()
-        self.assertIn('results/suite-b-power-1.0/normalized-results.json', app)
+        self.assertIn('results/suite-b-power-1.1/normalized-results.json', app)
         self.assertIn('results/ship-1.0/deployment-profiles.json', app)
         self.assertNotIn("suite-b-pilot-v0.1/normalized-results.json", app)
         self.assertIn('data-mode="ship"', page)
@@ -108,7 +108,7 @@ class PowerReleaseGenerationTests(unittest.TestCase):
         self.assertIn('results/ship-1.0/SHA256SUMS', app)
         self.assertIn('results/ship-1.0/PROFILES.md', app)
         self.assertIn("Ship 1.0 · Published evidence profiles", app)
-        self.assertIn('<span id="release-label">Power 1.0</span>', page)
+        self.assertIn('<span id="release-label">Power 1.1</span>', page)
 
 
 if __name__ == "__main__":

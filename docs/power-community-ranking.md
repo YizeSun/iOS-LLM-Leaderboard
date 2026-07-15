@@ -3,8 +3,9 @@
 ## Status
 
 This policy defines the live community view layered on top of the immutable
-Power Benchmark 1.0 release. It changes no workload, result schema, validator,
-App, metric, or published Power 1.0 file.
+Power Benchmark 1.1 release. It changes no workload, result schema, validator,
+App, metric, or published Power release file. Previously merged Power 1.0
+community evidence remains visible with its original identity.
 
 The live view deliberately uses a low-friction community trust model. App
 Attest, UDID, serial number, and persistent device fingerprints are not
@@ -110,6 +111,6 @@ The generated live files are:
 - `results/suite-b-power-community/LEADERBOARD.md`; and
 - `results/suite-b-power-community/COVERAGE.md`.
 
-The published `results/suite-b-power-1.0/` package and the `1.0.0` tag remain
-unchanged. The website labels the combined view as Power 1.0 plus Community
-evidence and continues to link the immutable official checksums.
+The published Power 1.0 package, tag, and historical community result files
+remain unchanged. The website labels the combined view as Power 1.1 plus
+Community evidence and links the Power 1.1 official checksums.

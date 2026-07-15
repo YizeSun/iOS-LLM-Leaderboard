@@ -1,5 +1,5 @@
 const POWER_DATA_URL = "results/suite-b-power-community/normalized-results.json";
-const OFFICIAL_POWER_DATA_URL = "results/suite-b-power-1.0/normalized-results.json";
+const OFFICIAL_POWER_DATA_URL = "results/suite-b-power-1.1/normalized-results.json";
 const SHIP_DATA_URL = "results/ship-1.0/deployment-profiles.json";
 const MODEL_CATALOG_URL = "models/power-test-catalog.json";
 const CONTRIBUTOR_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.0-quickstart.md";
@@ -185,9 +185,9 @@ function renderReleaseSummary(data) {
   document.querySelector("#summary-configurations").textContent = String(configurations.size);
   document.querySelector("#summary-results").textContent = String(data.resultCount);
   document.querySelector("#summary-device").textContent = devices.map(device => device.displayName).join(", ");
-  elements.releaseLabel.textContent = "Power 1.0 + Community";
+  elements.releaseLabel.textContent = "Power 1.1 + Community";
   elements.releaseLabel.title = `Live community view derived from ${OFFICIAL_POWER_DATA_URL}`;
-  elements.footerStatus.textContent = "Power 1.0 reference · Live merged community evidence";
+  elements.footerStatus.textContent = "Power 1.1 reference · Live merged community evidence";
 }
 
 function workloadRows(rows, workload) {
@@ -206,11 +206,7 @@ function workloadRows(rows, workload) {
 function currentDisplayKey(row) {
   const identity = row.comparisonIdentity;
   return JSON.stringify([
-    identity.sourceEvidenceRelease.id,
-    identity.sourceEvidenceRelease.version,
     identity.workload.id,
-    identity.workload.version,
-    identity.workload.fixtureSHA256,
     identity.generation,
     identity.model.artifactID,
     identity.model.artifactRevision,
@@ -379,12 +375,12 @@ function renderBoard() {
       ? "Coverage derived from live Power evidence · No placeholder devices"
       : config.kind === "catalog"
         ? "Model catalog · App-ready and public-weight watchlist entries are explicitly separated · No performance claims"
-      : "Power 1.0 reference · Live merged community evidence";
+      : "Power 1.1 reference · Live merged community evidence";
   elements.footerChecksums.href = config.kind === "ship"
     ? "results/ship-1.0/SHA256SUMS"
     : config.kind === "catalog"
       ? MODEL_CATALOG_URL
-    : "results/suite-b-power-1.0/SHA256SUMS";
+    : "results/suite-b-power-1.1/SHA256SUMS";
   elements.footerTable.href = config.kind === "ship"
     ? "results/ship-1.0/PROFILES.md"
     : config.kind === "catalog"

@@ -128,7 +128,7 @@ class PowerModelCatalogTests(unittest.TestCase):
             model["officialModelID"] for model in self.catalog["openModelWatchlist"]
         }
         official = json.loads(
-            (ROOT / "results/suite-b-power-1.0/normalized-results.json").read_text()
+            (ROOT / "results/suite-b-power-1.1/normalized-results.json").read_text()
         )
         community = json.loads(
             (ROOT / "results/suite-b-power-community/normalized-results.json").read_text()

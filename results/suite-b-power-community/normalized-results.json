@@ -1,14 +1,14 @@
 {
-  "activeRankedCellCount": 18,
+  "activeRankedCellCount": 19,
   "aggregateCellCount": 0,
   "benchmarkRelease": {
     "id": "suite-b-power",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "cellCount": 28,
   "communityResultCount": 22,
   "contributorCount": 1,
-  "generatedAt": "2026-07-14T10:13:20Z",
+  "generatedAt": "2026-07-15T17:52:13Z",
   "officialReferenceResultCount": 6,
   "policy": {
     "aggregateMinimumContributors": 3,
@@ -26,7 +26,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -237,7 +237,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -448,7 +448,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -659,7 +659,218 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
+      },
+      "community": {
+        "aggregateStatus": "provisional",
+        "contributorCount": 1,
+        "contributors": [
+          "YizeSun"
+        ],
+        "eligibleContributorCount": 1,
+        "eligibleRunCount": 1,
+        "primaryMetricVariation": {
+          "affectsEligibility": false,
+          "high": false,
+          "method": "contributor-weighted-median-absolute-deviation-percent",
+          "value": null,
+          "warningThreshold": 10.0
+        },
+        "runCount": 1,
+        "status": "single-contributor"
+      },
+      "comparisonID": "1fe696fca5b32622d95b8e4e4f1ebc96092d4fedefe57438b95d78245f7dd5c8",
+      "comparisonIdentity": {
+        "device": {
+          "machineIdentifier": "iPhone15,3",
+          "physicalMemoryBytes": 5909987328,
+          "systemBuild": "23F84",
+          "systemName": "iOS",
+          "systemVersion": "26.5.2"
+        },
+        "generation": {
+          "automaticRetries": 0,
+          "chatTemplateIdentity": "artifact-tokenizer-config",
+          "clock": "monotonic-nanoseconds",
+          "contextPolicy": "fresh-conversation-per-attempt",
+          "includeStopTokenInRawEvents": false,
+          "kvCachePolicy": "fresh-kv-cache-per-attempt",
+          "measuredAttempts": 5,
+          "memoryMetric": "TASK_VM_INFO.phys_footprint",
+          "memorySamplingIntervalMilliseconds": 50,
+          "minimumMetricEligibleMeasuredAttempts": 3,
+          "modelLoadPolicy": "load-once-before-warmup",
+          "outputTokenLimit": 512,
+          "repetitionPenalty": null,
+          "restIntervalSeconds": 0,
+          "samplingEnabled": false,
+          "seed": null,
+          "temperature": 0,
+          "thermalSource": "ProcessInfo.thermalState",
+          "thinkingMode": "disabled-via-prompt-directive",
+          "topK": null,
+          "topP": null,
+          "warmupAttempts": 1
+        },
+        "model": {
+          "artifactContentHash": null,
+          "artifactID": "mlx-community/Qwen3-0.6B-4bit",
+          "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+          "modelFormat": "MLX Safetensors",
+          "quantization": "4-bit",
+          "tokenizerIdentity": "mlx-community/Qwen3-0.6B-4bit@73e3e38d981303bc594367cd910ea6eb48349da8/tokenizer_config.json"
+        },
+        "runner": {
+          "appBuild": "16",
+          "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+          "appVersion": "0.13.0",
+          "id": "ios-reference-benchmark-app",
+          "version": "0.13.0"
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "dependencyVersions": {
+            "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+            "swift-huggingface": "swift-huggingface 0.9.0",
+            "swift-transformers": "swift-transformers 1.3.0"
+          },
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "version": "3.31.4"
+        },
+        "sourceEvidenceRelease": {
+          "id": "suite-b-power",
+          "protocolID": "suite-b-power",
+          "protocolVersion": "1.1.0-rc.1",
+          "version": "1.1.0-rc.1"
+        },
+        "workload": {
+          "category": "pipeline",
+          "fixtureSHA256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
+          "id": "b-pipe-001-sustained-generation",
+          "measurementModeID": "b-mode-sustained-no-rest-v1",
+          "version": "1.1.0-rc.1"
+        }
+      },
+      "configuration": {
+        "device": {
+          "appBuild": "16",
+          "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+          "appVersion": "0.13.0",
+          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
+          "machineIdentifier": "iPhone15,3",
+          "physicalMemoryBytes": 5909987328,
+          "systemBuild": "23F84",
+          "systemName": "iOS",
+          "systemVersion": "26.5.2"
+        },
+        "generation": {
+          "automaticRetries": 0,
+          "chatTemplateIdentity": "artifact-tokenizer-config",
+          "clock": "monotonic-nanoseconds",
+          "contextPolicy": "fresh-conversation-per-attempt",
+          "includeStopTokenInRawEvents": false,
+          "kvCachePolicy": "fresh-kv-cache-per-attempt",
+          "measuredAttempts": 5,
+          "memoryMetric": "TASK_VM_INFO.phys_footprint",
+          "memorySamplingIntervalMilliseconds": 50,
+          "minimumMetricEligibleMeasuredAttempts": 3,
+          "modelLoadPolicy": "load-once-before-warmup",
+          "outputTokenLimit": 512,
+          "repetitionPenalty": null,
+          "restIntervalSeconds": 0,
+          "samplingEnabled": false,
+          "seed": null,
+          "temperature": 0,
+          "thermalSource": "ProcessInfo.thermalState",
+          "thinkingMode": "disabled-via-prompt-directive",
+          "topK": null,
+          "topP": null,
+          "warmupAttempts": 1
+        },
+        "model": {
+          "artifactContentHash": null,
+          "artifactID": "mlx-community/Qwen3-0.6B-4bit",
+          "artifactRepositorySizeBytes": 682323786,
+          "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+          "baseModelID": "Qwen/Qwen3-0.6B",
+          "displayName": "Qwen3 0.6B",
+          "licenseIdentifier": "apache-2.0",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+          "modelFormat": "MLX Safetensors",
+          "parameterSizeClass": "small-0.6b",
+          "quantization": "4-bit",
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-0.6B-4bit/tree/73e3e38d981303bc594367cd910ea6eb48349da8",
+          "tokenizerIdentity": "mlx-community/Qwen3-0.6B-4bit@73e3e38d981303bc594367cd910ea6eb48349da8/tokenizer_config.json"
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "dependencyVersions": {
+            "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+            "swift-huggingface": "swift-huggingface 0.9.0",
+            "swift-transformers": "swift-transformers 1.3.0"
+          },
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "version": "3.31.4"
+        }
+      },
+      "evidence": [
+        {
+          "contributor": "YizeSun",
+          "createdAt": "2026-07-15T15:30:51Z",
+          "evidenceLevel": "maintainer-reference",
+          "primaryMetricEligible": true,
+          "rawPath": "results/suite-b-power-1.1.0-rc.1/device-verification/raw/2026-07-15T15-30-51Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_8c10d75c.json",
+          "rawSHA256": "430a54072f1905b9acaa2459d9d96f67c02ce9a1f7dc123b058a0c8810272b7b",
+          "resultID": "8C10D75C-5C9A-4D16-8751-5CA3B0A3667A",
+          "sessionID": "B3B384F4-819A-459F-A912-6C08816165AC",
+          "sourceKind": "maintainer-reference",
+          "submissionID": null
+        }
+      ],
+      "primaryMetric": {
+        "eligible": true,
+        "id": "decode_tokens_per_second@1",
+        "summaryField": "medianDecodeTokensPerSecond",
+        "value": 96.83915390816341
+      },
+      "rankingEligibility": {
+        "active": true,
+        "candidateEligible": true,
+        "reasonCodes": []
+      },
+      "sourceEvidenceRelease": {
+        "id": "suite-b-power",
+        "protocolID": "suite-b-power",
+        "protocolVersion": "1.1.0-rc.1",
+        "version": "1.1.0-rc.1"
+      },
+      "summary": {
+        "completedMeasuredAttempts": 5,
+        "decodeFirstToLastPercentChange": 0.07846777099185243,
+        "failedMeasuredAttempts": 0,
+        "finalThermalState": "nominal",
+        "medianDecodeTokensPerSecond": 96.83915390816341,
+        "medianFirstRenderableProxyTTFTMilliseconds": null,
+        "medianPeakMemoryMiB": 803.0794830322266,
+        "medianPipelineTTFTMilliseconds": 454.116084,
+        "medianPrefillTokensPerSecond": 517.6941459505057,
+        "medianRequestCompletionMilliseconds": null,
+        "notRunMeasuredAttempts": 0
+      },
+      "workload": {
+        "category": "pipeline",
+        "fixtureSHA256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
+        "id": "b-pipe-001-sustained-generation",
+        "measurementModeID": "b-mode-sustained-no-rest-v1",
+        "version": "1.1.0-rc.1"
+      }
+    },
+    {
+      "benchmarkRelease": {
+        "id": "suite-b-power",
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -870,7 +1081,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -890,14 +1101,14 @@
         "runCount": 1,
         "status": "single-contributor"
       },
-      "comparisonID": "876ce7c3bf8425c5f4e31f98fa35c2acc41c9dcff6658a19f0385ed9eae62d1d",
+      "comparisonID": "555cfe7b324c022226c46eb7023bad2e664a32ae6706814dff0d89720ba62cd0",
       "comparisonIdentity": {
         "device": {
           "machineIdentifier": "iPhone15,3",
           "physicalMemoryBytes": 5909987328,
-          "systemBuild": "23F77",
+          "systemBuild": "23F84",
           "systemName": "iOS",
-          "systemVersion": "26.5"
+          "systemVersion": "26.5.2"
         },
         "generation": {
           "automaticRetries": 0,
@@ -925,18 +1136,18 @@
         },
         "model": {
           "artifactContentHash": null,
-          "artifactID": "mlx-community/Qwen3-0.6B-4bit",
-          "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+          "artifactID": "mlx-community/Qwen3-1.7B-4bit",
+          "artifactRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
           "modelFormat": "MLX Safetensors",
           "quantization": "4-bit",
-          "tokenizerIdentity": "mlx-community/Qwen3-0.6B-4bit@73e3e38d981303bc594367cd910ea6eb48349da8/tokenizer_config.json"
+          "tokenizerIdentity": "mlx-community/Qwen3-1.7B-4bit@3b1b1768f8f8cf8351c712464f906e86c2b8269e/tokenizer_config.json"
         },
         "runner": {
-          "appBuild": "10",
-          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
-          "appVersion": "0.8.0",
+          "appBuild": "16",
+          "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+          "appVersion": "0.13.0",
           "id": "ios-reference-benchmark-app",
-          "version": "0.8.0"
+          "version": "0.13.0"
         },
         "runtime": {
           "backend": "MLX/Metal",
@@ -952,28 +1163,28 @@
         "sourceEvidenceRelease": {
           "id": "suite-b-power",
           "protocolID": "suite-b-power",
-          "protocolVersion": "1.0.0-rc.1",
-          "version": "1.0.0-rc.1"
+          "protocolVersion": "1.1.0-rc.1",
+          "version": "1.1.0-rc.1"
         },
         "workload": {
           "category": "pipeline",
           "fixtureSHA256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
           "id": "b-pipe-001-sustained-generation",
           "measurementModeID": "b-mode-sustained-no-rest-v1",
-          "version": "1.0.0-rc.1"
+          "version": "1.1.0-rc.1"
         }
       },
       "configuration": {
         "device": {
-          "appBuild": "10",
-          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
-          "appVersion": "0.8.0",
+          "appBuild": "16",
+          "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+          "appVersion": "0.13.0",
           "displayName": "iPhone 14 Pro Max (iPhone15,3)",
           "machineIdentifier": "iPhone15,3",
           "physicalMemoryBytes": 5909987328,
-          "systemBuild": "23F77",
+          "systemBuild": "23F84",
           "systemName": "iOS",
-          "systemVersion": "26.5"
+          "systemVersion": "26.5.2"
         },
         "generation": {
           "automaticRetries": 0,
@@ -1001,18 +1212,18 @@
         },
         "model": {
           "artifactContentHash": null,
-          "artifactID": "mlx-community/Qwen3-0.6B-4bit",
-          "artifactRepositorySizeBytes": 682323786,
-          "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
-          "baseModelID": "Qwen/Qwen3-0.6B",
-          "displayName": "Qwen3 0.6B",
+          "artifactID": "mlx-community/Qwen3-1.7B-4bit",
+          "artifactRepositorySizeBytes": 979502864,
+          "artifactRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+          "baseModelID": "Qwen/Qwen3-1.7B",
+          "displayName": "Qwen3 1.7B",
           "licenseIdentifier": "apache-2.0",
-          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-1.7B/blob/70d244cc86ccca08cf5af4e1e306ecf908b1ad5e/LICENSE",
           "modelFormat": "MLX Safetensors",
-          "parameterSizeClass": "small-0.6b",
+          "parameterSizeClass": "small-1.7b",
           "quantization": "4-bit",
-          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-0.6B-4bit/tree/73e3e38d981303bc594367cd910ea6eb48349da8",
-          "tokenizerIdentity": "mlx-community/Qwen3-0.6B-4bit@73e3e38d981303bc594367cd910ea6eb48349da8/tokenizer_config.json"
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-1.7B-4bit/tree/3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+          "tokenizerIdentity": "mlx-community/Qwen3-1.7B-4bit@3b1b1768f8f8cf8351c712464f906e86c2b8269e/tokenizer_config.json"
         },
         "runtime": {
           "backend": "MLX/Metal",
@@ -1029,13 +1240,13 @@
       "evidence": [
         {
           "contributor": "YizeSun",
-          "createdAt": "2026-07-13T12:11:49Z",
+          "createdAt": "2026-07-15T15:44:46Z",
           "evidenceLevel": "maintainer-reference",
           "primaryMetricEligible": true,
-          "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-11-49Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_1b0a18f0.json",
-          "rawSHA256": "f11dd3282daa10d4080b1a510c959baa53bf37c865ddfbdd04e2d73ee4685687",
-          "resultID": "1B0A18F0-2914-40CF-AFEE-A82CBECD97A4",
-          "sessionID": "DD912FD6-6B27-4A9E-9D59-BE5C78BBA135",
+          "rawPath": "results/suite-b-power-1.1.0-rc.1/device-verification/raw/2026-07-15T15-44-46Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_4784ff6e.json",
+          "rawSHA256": "a2f4970bd33ffa6ac3175c42c6a3a00f9fd5feba97883832f9a6d2d5cdd856cd",
+          "resultID": "4784FF6E-3126-4415-A437-CAEF257818B0",
+          "sessionID": "05909BD7-0A2A-4BD3-8FA1-07FB32200603",
           "sourceKind": "maintainer-reference",
           "submissionID": null
         }
@@ -1044,7 +1255,7 @@
         "eligible": true,
         "id": "decode_tokens_per_second@1",
         "summaryField": "medianDecodeTokensPerSecond",
-        "value": 97.90016049365309
+        "value": 40.973314537523144
       },
       "rankingEligibility": {
         "active": true,
@@ -1054,19 +1265,19 @@
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
         "protocolID": "suite-b-power",
-        "protocolVersion": "1.0.0-rc.1",
-        "version": "1.0.0-rc.1"
+        "protocolVersion": "1.1.0-rc.1",
+        "version": "1.1.0-rc.1"
       },
       "summary": {
         "completedMeasuredAttempts": 5,
-        "decodeFirstToLastPercentChange": 3.0792965912211034,
+        "decodeFirstToLastPercentChange": -37.83923489643273,
         "failedMeasuredAttempts": 0,
-        "finalThermalState": "fair",
-        "medianDecodeTokensPerSecond": 97.90016049365309,
+        "finalThermalState": "serious",
+        "medianDecodeTokensPerSecond": 40.973314537523144,
         "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": 798.5325622558594,
-        "medianPipelineTTFTMilliseconds": 463.9825,
-        "medianPrefillTokensPerSecond": 506.6860501607202,
+        "medianPeakMemoryMiB": 1474.9236450195312,
+        "medianPipelineTTFTMilliseconds": 1239.752875,
+        "medianPrefillTokensPerSecond": 189.58584249859734,
         "medianRequestCompletionMilliseconds": null,
         "notRunMeasuredAttempts": 0
       },
@@ -1075,13 +1286,13 @@
         "fixtureSHA256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
         "id": "b-pipe-001-sustained-generation",
         "measurementModeID": "b-mode-sustained-no-rest-v1",
-        "version": "1.0.0-rc.1"
+        "version": "1.1.0-rc.1"
       }
     },
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -1292,7 +1503,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -1312,14 +1523,14 @@
         "runCount": 1,
         "status": "single-contributor"
       },
-      "comparisonID": "be302b46b873e8940c68dfc9208209e985c38ac783e522de34a44c6b0cbcdbd5",
+      "comparisonID": "690bc26fb25aec43fe5a4cea1ffbc52950006e3c6fe47ac041202d108958f058",
       "comparisonIdentity": {
         "device": {
           "machineIdentifier": "iPhone15,3",
           "physicalMemoryBytes": 5909987328,
-          "systemBuild": "23F77",
+          "systemBuild": "23F84",
           "systemName": "iOS",
-          "systemVersion": "26.5"
+          "systemVersion": "26.5.2"
         },
         "generation": {
           "automaticRetries": 0,
@@ -1347,18 +1558,18 @@
         },
         "model": {
           "artifactContentHash": null,
-          "artifactID": "mlx-community/Qwen3-1.7B-4bit",
-          "artifactRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+          "artifactID": "mlx-community/Qwen3-4B-3bit",
+          "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
           "modelFormat": "MLX Safetensors",
-          "quantization": "4-bit",
-          "tokenizerIdentity": "mlx-community/Qwen3-1.7B-4bit@3b1b1768f8f8cf8351c712464f906e86c2b8269e/tokenizer_config.json"
+          "quantization": "3-bit",
+          "tokenizerIdentity": "mlx-community/Qwen3-4B-3bit@c4e8054c71facfa84f781cdb7c1ffab3f09f89bf/tokenizer_config.json"
         },
         "runner": {
-          "appBuild": "10",
-          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
-          "appVersion": "0.8.0",
+          "appBuild": "16",
+          "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+          "appVersion": "0.13.0",
           "id": "ios-reference-benchmark-app",
-          "version": "0.8.0"
+          "version": "0.13.0"
         },
         "runtime": {
           "backend": "MLX/Metal",
@@ -1374,28 +1585,28 @@
         "sourceEvidenceRelease": {
           "id": "suite-b-power",
           "protocolID": "suite-b-power",
-          "protocolVersion": "1.0.0-rc.1",
-          "version": "1.0.0-rc.1"
+          "protocolVersion": "1.1.0-rc.1",
+          "version": "1.1.0-rc.1"
         },
         "workload": {
           "category": "pipeline",
           "fixtureSHA256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
           "id": "b-pipe-001-sustained-generation",
           "measurementModeID": "b-mode-sustained-no-rest-v1",
-          "version": "1.0.0-rc.1"
+          "version": "1.1.0-rc.1"
         }
       },
       "configuration": {
         "device": {
-          "appBuild": "10",
-          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
-          "appVersion": "0.8.0",
+          "appBuild": "16",
+          "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+          "appVersion": "0.13.0",
           "displayName": "iPhone 14 Pro Max (iPhone15,3)",
           "machineIdentifier": "iPhone15,3",
           "physicalMemoryBytes": 5909987328,
-          "systemBuild": "23F77",
+          "systemBuild": "23F84",
           "systemName": "iOS",
-          "systemVersion": "26.5"
+          "systemVersion": "26.5.2"
         },
         "generation": {
           "automaticRetries": 0,
@@ -1423,18 +1634,18 @@
         },
         "model": {
           "artifactContentHash": null,
-          "artifactID": "mlx-community/Qwen3-1.7B-4bit",
-          "artifactRepositorySizeBytes": 979502864,
-          "artifactRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
-          "baseModelID": "Qwen/Qwen3-1.7B",
-          "displayName": "Qwen3 1.7B",
+          "artifactID": "mlx-community/Qwen3-4B-3bit",
+          "artifactRepositorySizeBytes": 1771660929,
+          "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+          "baseModelID": "Qwen/Qwen3-4B",
+          "displayName": "Qwen3 4B",
           "licenseIdentifier": "apache-2.0",
-          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-1.7B/blob/70d244cc86ccca08cf5af4e1e306ecf908b1ad5e/LICENSE",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-4B/blob/1cfa9a7208912126459214e8b04321603b3df60c/LICENSE",
           "modelFormat": "MLX Safetensors",
-          "parameterSizeClass": "small-1.7b",
-          "quantization": "4-bit",
-          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-1.7B-4bit/tree/3b1b1768f8f8cf8351c712464f906e86c2b8269e",
-          "tokenizerIdentity": "mlx-community/Qwen3-1.7B-4bit@3b1b1768f8f8cf8351c712464f906e86c2b8269e/tokenizer_config.json"
+          "parameterSizeClass": "small-4b",
+          "quantization": "3-bit",
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-4B-3bit/tree/c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+          "tokenizerIdentity": "mlx-community/Qwen3-4B-3bit@c4e8054c71facfa84f781cdb7c1ffab3f09f89bf/tokenizer_config.json"
         },
         "runtime": {
           "backend": "MLX/Metal",
@@ -1451,13 +1662,13 @@
       "evidence": [
         {
           "contributor": "YizeSun",
-          "createdAt": "2026-07-13T12:16:23Z",
+          "createdAt": "2026-07-15T15:56:24Z",
           "evidenceLevel": "maintainer-reference",
           "primaryMetricEligible": true,
-          "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-16-23Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_f64ab629.json",
-          "rawSHA256": "ea1f59492705668b2e9525e5c7f17a4d81a8e1d2346da7d01beb381acf86a0da",
-          "resultID": "F64AB629-2AAE-4EE2-862F-957044A82323",
-          "sessionID": "AEC32337-403C-4E18-A86B-72FD7BE3D705",
+          "rawPath": "results/suite-b-power-1.1.0-rc.1/device-verification/raw/2026-07-15T15-56-24Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_167679d8.json",
+          "rawSHA256": "66eea26f93e6a664e8bd9cf87878d2079e3560c4b038184d706806d55713cc9b",
+          "resultID": "167679D8-B390-43A2-A6AB-DE662F4EF8BE",
+          "sessionID": "6B37E315-CB9C-459F-BF8D-116F53D21E75",
           "sourceKind": "maintainer-reference",
           "submissionID": null
         }
@@ -1466,7 +1677,7 @@
         "eligible": true,
         "id": "decode_tokens_per_second@1",
         "summaryField": "medianDecodeTokensPerSecond",
-        "value": 29.70885129512823
+        "value": 9.819666524270113
       },
       "rankingEligibility": {
         "active": true,
@@ -1476,19 +1687,19 @@
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
         "protocolID": "suite-b-power",
-        "protocolVersion": "1.0.0-rc.1",
-        "version": "1.0.0-rc.1"
+        "protocolVersion": "1.1.0-rc.1",
+        "version": "1.1.0-rc.1"
       },
       "summary": {
         "completedMeasuredAttempts": 5,
-        "decodeFirstToLastPercentChange": -45.75356214805646,
+        "decodeFirstToLastPercentChange": -45.66042357768016,
         "failedMeasuredAttempts": 0,
         "finalThermalState": "serious",
-        "medianDecodeTokensPerSecond": 29.70885129512823,
+        "medianDecodeTokensPerSecond": 9.819666524270113,
         "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": 1755.5020217895508,
-        "medianPipelineTTFTMilliseconds": 1416.035417,
-        "medianPrefillTokensPerSecond": 165.9789656650798,
+        "medianPeakMemoryMiB": 2372.783660888672,
+        "medianPipelineTTFTMilliseconds": 4889.42625,
+        "medianPrefillTokensPerSecond": 48.0630983874412,
         "medianRequestCompletionMilliseconds": null,
         "notRunMeasuredAttempts": 0
       },
@@ -1497,13 +1708,13 @@
         "fixtureSHA256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
         "id": "b-pipe-001-sustained-generation",
         "measurementModeID": "b-mode-sustained-no-rest-v1",
-        "version": "1.0.0-rc.1"
+        "version": "1.1.0-rc.1"
       }
     },
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -1714,218 +1925,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
-      },
-      "community": {
-        "aggregateStatus": "provisional",
-        "contributorCount": 1,
-        "contributors": [
-          "YizeSun"
-        ],
-        "eligibleContributorCount": 1,
-        "eligibleRunCount": 1,
-        "primaryMetricVariation": {
-          "affectsEligibility": false,
-          "high": false,
-          "method": "contributor-weighted-median-absolute-deviation-percent",
-          "value": null,
-          "warningThreshold": 10.0
-        },
-        "runCount": 1,
-        "status": "single-contributor"
-      },
-      "comparisonID": "ce9f89dae7075fe8895130e37f1ee32fc9d6954520619a110c899c97345b3671",
-      "comparisonIdentity": {
-        "device": {
-          "machineIdentifier": "iPhone15,3",
-          "physicalMemoryBytes": 5909987328,
-          "systemBuild": "23F77",
-          "systemName": "iOS",
-          "systemVersion": "26.5"
-        },
-        "generation": {
-          "automaticRetries": 0,
-          "chatTemplateIdentity": "artifact-tokenizer-config",
-          "clock": "monotonic-nanoseconds",
-          "contextPolicy": "fresh-conversation-per-attempt",
-          "includeStopTokenInRawEvents": false,
-          "kvCachePolicy": "fresh-kv-cache-per-attempt",
-          "measuredAttempts": 5,
-          "memoryMetric": "TASK_VM_INFO.phys_footprint",
-          "memorySamplingIntervalMilliseconds": 50,
-          "minimumMetricEligibleMeasuredAttempts": 3,
-          "modelLoadPolicy": "load-once-before-warmup",
-          "outputTokenLimit": 512,
-          "repetitionPenalty": null,
-          "restIntervalSeconds": 0,
-          "samplingEnabled": false,
-          "seed": null,
-          "temperature": 0,
-          "thermalSource": "ProcessInfo.thermalState",
-          "thinkingMode": "disabled-via-prompt-directive",
-          "topK": null,
-          "topP": null,
-          "warmupAttempts": 1
-        },
-        "model": {
-          "artifactContentHash": null,
-          "artifactID": "mlx-community/Qwen3-4B-3bit",
-          "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
-          "modelFormat": "MLX Safetensors",
-          "quantization": "3-bit",
-          "tokenizerIdentity": "mlx-community/Qwen3-4B-3bit@c4e8054c71facfa84f781cdb7c1ffab3f09f89bf/tokenizer_config.json"
-        },
-        "runner": {
-          "appBuild": "10",
-          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
-          "appVersion": "0.8.0",
-          "id": "ios-reference-benchmark-app",
-          "version": "0.8.0"
-        },
-        "runtime": {
-          "backend": "MLX/Metal",
-          "dependencyVersions": {
-            "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
-            "swift-huggingface": "swift-huggingface 0.9.0",
-            "swift-transformers": "swift-transformers 1.3.0"
-          },
-          "name": "MLX Swift LM",
-          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
-          "version": "3.31.4"
-        },
-        "sourceEvidenceRelease": {
-          "id": "suite-b-power",
-          "protocolID": "suite-b-power",
-          "protocolVersion": "1.0.0-rc.1",
-          "version": "1.0.0-rc.1"
-        },
-        "workload": {
-          "category": "pipeline",
-          "fixtureSHA256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
-          "id": "b-pipe-001-sustained-generation",
-          "measurementModeID": "b-mode-sustained-no-rest-v1",
-          "version": "1.0.0-rc.1"
-        }
-      },
-      "configuration": {
-        "device": {
-          "appBuild": "10",
-          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
-          "appVersion": "0.8.0",
-          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
-          "machineIdentifier": "iPhone15,3",
-          "physicalMemoryBytes": 5909987328,
-          "systemBuild": "23F77",
-          "systemName": "iOS",
-          "systemVersion": "26.5"
-        },
-        "generation": {
-          "automaticRetries": 0,
-          "chatTemplateIdentity": "artifact-tokenizer-config",
-          "clock": "monotonic-nanoseconds",
-          "contextPolicy": "fresh-conversation-per-attempt",
-          "includeStopTokenInRawEvents": false,
-          "kvCachePolicy": "fresh-kv-cache-per-attempt",
-          "measuredAttempts": 5,
-          "memoryMetric": "TASK_VM_INFO.phys_footprint",
-          "memorySamplingIntervalMilliseconds": 50,
-          "minimumMetricEligibleMeasuredAttempts": 3,
-          "modelLoadPolicy": "load-once-before-warmup",
-          "outputTokenLimit": 512,
-          "repetitionPenalty": null,
-          "restIntervalSeconds": 0,
-          "samplingEnabled": false,
-          "seed": null,
-          "temperature": 0,
-          "thermalSource": "ProcessInfo.thermalState",
-          "thinkingMode": "disabled-via-prompt-directive",
-          "topK": null,
-          "topP": null,
-          "warmupAttempts": 1
-        },
-        "model": {
-          "artifactContentHash": null,
-          "artifactID": "mlx-community/Qwen3-4B-3bit",
-          "artifactRepositorySizeBytes": 1771660929,
-          "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
-          "baseModelID": "Qwen/Qwen3-4B",
-          "displayName": "Qwen3 4B",
-          "licenseIdentifier": "apache-2.0",
-          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-4B/blob/1cfa9a7208912126459214e8b04321603b3df60c/LICENSE",
-          "modelFormat": "MLX Safetensors",
-          "parameterSizeClass": "small-4b",
-          "quantization": "3-bit",
-          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-4B-3bit/tree/c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
-          "tokenizerIdentity": "mlx-community/Qwen3-4B-3bit@c4e8054c71facfa84f781cdb7c1ffab3f09f89bf/tokenizer_config.json"
-        },
-        "runtime": {
-          "backend": "MLX/Metal",
-          "dependencyVersions": {
-            "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
-            "swift-huggingface": "swift-huggingface 0.9.0",
-            "swift-transformers": "swift-transformers 1.3.0"
-          },
-          "name": "MLX Swift LM",
-          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
-          "version": "3.31.4"
-        }
-      },
-      "evidence": [
-        {
-          "contributor": "YizeSun",
-          "createdAt": "2026-07-13T12:27:41Z",
-          "evidenceLevel": "maintainer-reference",
-          "primaryMetricEligible": true,
-          "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-27-41Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_c4f133ed.json",
-          "rawSHA256": "026fde6bbb1f9d45524cc7c8f3e7558d0e6185bab4677cb327a3847b1169651e",
-          "resultID": "C4F133ED-64F8-4019-9AB8-5322FBBDA217",
-          "sessionID": "D0837D01-C44A-42D8-B5F0-D87F16917D43",
-          "sourceKind": "maintainer-reference",
-          "submissionID": null
-        }
-      ],
-      "primaryMetric": {
-        "eligible": true,
-        "id": "decode_tokens_per_second@1",
-        "summaryField": "medianDecodeTokensPerSecond",
-        "value": 10.231071477266088
-      },
-      "rankingEligibility": {
-        "active": true,
-        "candidateEligible": true,
-        "reasonCodes": []
-      },
-      "sourceEvidenceRelease": {
-        "id": "suite-b-power",
-        "protocolID": "suite-b-power",
-        "protocolVersion": "1.0.0-rc.1",
-        "version": "1.0.0-rc.1"
-      },
-      "summary": {
-        "completedMeasuredAttempts": 5,
-        "decodeFirstToLastPercentChange": -13.767108952400587,
-        "failedMeasuredAttempts": 0,
-        "finalThermalState": "serious",
-        "medianDecodeTokensPerSecond": 10.231071477266088,
-        "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": 2276.8773651123047,
-        "medianPipelineTTFTMilliseconds": 4858.103,
-        "medianPrefillTokensPerSecond": 48.3737958030803,
-        "medianRequestCompletionMilliseconds": null,
-        "notRunMeasuredAttempts": 0
-      },
-      "workload": {
-        "category": "pipeline",
-        "fixtureSHA256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
-        "id": "b-pipe-001-sustained-generation",
-        "measurementModeID": "b-mode-sustained-no-rest-v1",
-        "version": "1.0.0-rc.1"
-      }
-    },
-    {
-      "benchmarkRelease": {
-        "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -2136,7 +2136,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -2347,7 +2347,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -2558,7 +2558,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -2769,7 +2769,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -2980,7 +2980,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -3193,7 +3193,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -3406,7 +3406,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -3619,7 +3619,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -3627,8 +3627,8 @@
         "contributors": [
           "YizeSun"
         ],
-        "eligibleContributorCount": 0,
-        "eligibleRunCount": 0,
+        "eligibleContributorCount": 1,
+        "eligibleRunCount": 1,
         "primaryMetricVariation": {
           "affectsEligibility": false,
           "high": false,
@@ -3639,14 +3639,14 @@
         "runCount": 1,
         "status": "single-contributor"
       },
-      "comparisonID": "609045c96466be304ba319fa560bdd5610a22dc694882c9a50d8f69d17406510",
+      "comparisonID": "9377814f84bb60a14b00be208166901a67482475f90ca3b0ff455ad08b127f9f",
       "comparisonIdentity": {
         "device": {
           "machineIdentifier": "iPhone15,3",
           "physicalMemoryBytes": 5909987328,
-          "systemBuild": "23F77",
+          "systemBuild": "23F84",
           "systemName": "iOS",
-          "systemVersion": "26.5"
+          "systemVersion": "26.5.2"
         },
         "generation": {
           "automaticRetries": 0,
@@ -3681,11 +3681,11 @@
           "tokenizerIdentity": "mlx-community/Qwen3-0.6B-4bit@73e3e38d981303bc594367cd910ea6eb48349da8/tokenizer_config.json"
         },
         "runner": {
-          "appBuild": "10",
-          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
-          "appVersion": "0.8.0",
+          "appBuild": "16",
+          "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+          "appVersion": "0.13.0",
           "id": "ios-reference-benchmark-app",
-          "version": "0.8.0"
+          "version": "0.13.0"
         },
         "runtime": {
           "backend": "MLX/Metal",
@@ -3701,28 +3701,28 @@
         "sourceEvidenceRelease": {
           "id": "suite-b-power",
           "protocolID": "suite-b-power",
-          "protocolVersion": "1.0.0-rc.1",
-          "version": "1.0.0-rc.1"
+          "protocolVersion": "1.1.0-rc.1",
+          "version": "1.1.0-rc.1"
         },
         "workload": {
           "category": "user-experience",
           "fixtureSHA256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
           "id": "b-ux-001-short-interaction",
           "measurementModeID": "b-mode-warm-resident-ux-v1",
-          "version": "1.0.0-rc.1"
+          "version": "1.1.0-rc.1"
         }
       },
       "configuration": {
         "device": {
-          "appBuild": "10",
-          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
-          "appVersion": "0.8.0",
+          "appBuild": "16",
+          "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+          "appVersion": "0.13.0",
           "displayName": "iPhone 14 Pro Max (iPhone15,3)",
           "machineIdentifier": "iPhone15,3",
           "physicalMemoryBytes": 5909987328,
-          "systemBuild": "23F77",
+          "systemBuild": "23F84",
           "systemName": "iOS",
-          "systemVersion": "26.5"
+          "systemVersion": "26.5.2"
         },
         "generation": {
           "automaticRetries": 0,
@@ -3778,47 +3778,45 @@
       "evidence": [
         {
           "contributor": "YizeSun",
-          "createdAt": "2026-07-13T12:10:55Z",
+          "createdAt": "2026-07-15T15:25:48Z",
           "evidenceLevel": "maintainer-reference",
-          "primaryMetricEligible": false,
-          "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-10-55Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_2c2f23b4.json",
-          "rawSHA256": "a930c344f4b4d408479957ebdc07ab51727e8e0ac2e8e987ec2eb04277edfcae",
-          "resultID": "2C2F23B4-58FA-460E-9481-EB2D3837FDE2",
-          "sessionID": "E2F16565-C476-4290-8E26-777EED71FD3B",
+          "primaryMetricEligible": true,
+          "rawPath": "results/suite-b-power-1.1.0-rc.1/device-verification/raw/2026-07-15T15-25-48Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_21b5f28f.json",
+          "rawSHA256": "bcc40c1b4dd06143c9877b049c748520d7a61c579d4699902a7b60d0d1e1153b",
+          "resultID": "21B5F28F-DA9C-4381-87BA-DBFFEB1D8A84",
+          "sessionID": "2B4F1D15-5548-47CE-8313-307F49726B42",
           "sourceKind": "maintainer-reference",
           "submissionID": null
         }
       ],
       "primaryMetric": {
-        "eligible": false,
+        "eligible": true,
         "id": "first_renderable_proxy_ttft_ms@1",
         "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
-        "value": null
+        "value": 183.087959
       },
       "rankingEligibility": {
-        "active": false,
-        "candidateEligible": false,
-        "reasonCodes": [
-          "no_metric_eligible_contribution"
-        ]
+        "active": true,
+        "candidateEligible": true,
+        "reasonCodes": []
       },
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
         "protocolID": "suite-b-power",
-        "protocolVersion": "1.0.0-rc.1",
-        "version": "1.0.0-rc.1"
+        "protocolVersion": "1.1.0-rc.1",
+        "version": "1.1.0-rc.1"
       },
       "summary": {
         "completedMeasuredAttempts": 5,
         "decodeFirstToLastPercentChange": null,
         "failedMeasuredAttempts": 0,
         "finalThermalState": "nominal",
-        "medianDecodeTokensPerSecond": null,
-        "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": null,
-        "medianPipelineTTFTMilliseconds": null,
-        "medianPrefillTokensPerSecond": null,
-        "medianRequestCompletionMilliseconds": null,
+        "medianDecodeTokensPerSecond": 104.93998226118757,
+        "medianFirstRenderableProxyTTFTMilliseconds": 183.087959,
+        "medianPeakMemoryMiB": 473.39196014404297,
+        "medianPipelineTTFTMilliseconds": 181.719334,
+        "medianPrefillTokensPerSecond": 385.4031550170387,
+        "medianRequestCompletionMilliseconds": 446.240125,
         "notRunMeasuredAttempts": 0
       },
       "workload": {
@@ -3826,13 +3824,13 @@
         "fixtureSHA256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
         "id": "b-ux-001-short-interaction",
         "measurementModeID": "b-mode-warm-resident-ux-v1",
-        "version": "1.0.0-rc.1"
+        "version": "1.1.0-rc.1"
       }
     },
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -4045,7 +4043,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -4256,7 +4254,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -4276,14 +4274,14 @@
         "runCount": 1,
         "status": "single-contributor"
       },
-      "comparisonID": "a95d5106ca95fec8f500f6b8d7094583b576faeda45eff4f30a0d8b838da0501",
+      "comparisonID": "f808810a2bfed32f45a9941e0785ff75e9be36b718c61faa02a8a75425f3c248",
       "comparisonIdentity": {
         "device": {
           "machineIdentifier": "iPhone15,3",
           "physicalMemoryBytes": 5909987328,
-          "systemBuild": "23F77",
+          "systemBuild": "23F84",
           "systemName": "iOS",
-          "systemVersion": "26.5"
+          "systemVersion": "26.5.2"
         },
         "generation": {
           "automaticRetries": 0,
@@ -4318,11 +4316,11 @@
           "tokenizerIdentity": "mlx-community/Qwen3-1.7B-4bit@3b1b1768f8f8cf8351c712464f906e86c2b8269e/tokenizer_config.json"
         },
         "runner": {
-          "appBuild": "10",
-          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
-          "appVersion": "0.8.0",
+          "appBuild": "16",
+          "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+          "appVersion": "0.13.0",
           "id": "ios-reference-benchmark-app",
-          "version": "0.8.0"
+          "version": "0.13.0"
         },
         "runtime": {
           "backend": "MLX/Metal",
@@ -4338,28 +4336,28 @@
         "sourceEvidenceRelease": {
           "id": "suite-b-power",
           "protocolID": "suite-b-power",
-          "protocolVersion": "1.0.0-rc.1",
-          "version": "1.0.0-rc.1"
+          "protocolVersion": "1.1.0-rc.1",
+          "version": "1.1.0-rc.1"
         },
         "workload": {
           "category": "user-experience",
           "fixtureSHA256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
           "id": "b-ux-001-short-interaction",
           "measurementModeID": "b-mode-warm-resident-ux-v1",
-          "version": "1.0.0-rc.1"
+          "version": "1.1.0-rc.1"
         }
       },
       "configuration": {
         "device": {
-          "appBuild": "10",
-          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
-          "appVersion": "0.8.0",
+          "appBuild": "16",
+          "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+          "appVersion": "0.13.0",
           "displayName": "iPhone 14 Pro Max (iPhone15,3)",
           "machineIdentifier": "iPhone15,3",
           "physicalMemoryBytes": 5909987328,
-          "systemBuild": "23F77",
+          "systemBuild": "23F84",
           "systemName": "iOS",
-          "systemVersion": "26.5"
+          "systemVersion": "26.5.2"
         },
         "generation": {
           "automaticRetries": 0,
@@ -4415,13 +4413,13 @@
       "evidence": [
         {
           "contributor": "YizeSun",
-          "createdAt": "2026-07-13T12:20:48Z",
+          "createdAt": "2026-07-15T15:41:21Z",
           "evidenceLevel": "maintainer-reference",
           "primaryMetricEligible": true,
-          "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-20-48Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_99a70d26.json",
-          "rawSHA256": "be6d1613da47b7340cc6cf50b1f6fa9748fc2fd91b554783731b4e58f91d658a",
-          "resultID": "99A70D26-F1FC-49F4-A375-762FEDFE90AC",
-          "sessionID": "6E56765F-52F7-4F44-BE51-17489701298A",
+          "rawPath": "results/suite-b-power-1.1.0-rc.1/device-verification/raw/2026-07-15T15-41-21Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_169ebb65.json",
+          "rawSHA256": "dffaef97d53b597fcef086d806e7cf1ca3f05a5d0f138e868cd0ecc08365af03",
+          "resultID": "169EBB65-2DF6-4BF6-9F85-C36109C2700F",
+          "sessionID": "E3F8C702-0034-4171-8E5C-D1E84A39CF34",
           "sourceKind": "maintainer-reference",
           "submissionID": null
         }
@@ -4430,7 +4428,7 @@
         "eligible": true,
         "id": "first_renderable_proxy_ttft_ms@1",
         "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
-        "value": 494.403417
+        "value": 487.732667
       },
       "rankingEligibility": {
         "active": true,
@@ -4440,20 +4438,20 @@
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
         "protocolID": "suite-b-power",
-        "protocolVersion": "1.0.0-rc.1",
-        "version": "1.0.0-rc.1"
+        "protocolVersion": "1.1.0-rc.1",
+        "version": "1.1.0-rc.1"
       },
       "summary": {
         "completedMeasuredAttempts": 5,
         "decodeFirstToLastPercentChange": null,
         "failedMeasuredAttempts": 0,
         "finalThermalState": "nominal",
-        "medianDecodeTokensPerSecond": 43.53266931275009,
-        "medianFirstRenderableProxyTTFTMilliseconds": 494.403417,
-        "medianPeakMemoryMiB": 1791.470817565918,
-        "medianPipelineTTFTMilliseconds": 492.027,
-        "medianPrefillTokensPerSecond": 142.32387794213142,
-        "medianRequestCompletionMilliseconds": 1262.601584,
+        "medianDecodeTokensPerSecond": 41.33471521142037,
+        "medianFirstRenderableProxyTTFTMilliseconds": 487.732667,
+        "medianPeakMemoryMiB": 1098.095474243164,
+        "medianPipelineTTFTMilliseconds": 484.778875,
+        "medianPrefillTokensPerSecond": 144.46510880240044,
+        "medianRequestCompletionMilliseconds": 1299.456709,
         "notRunMeasuredAttempts": 0
       },
       "workload": {
@@ -4461,13 +4459,224 @@
         "fixtureSHA256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
         "id": "b-ux-001-short-interaction",
         "measurementModeID": "b-mode-warm-resident-ux-v1",
-        "version": "1.0.0-rc.1"
+        "version": "1.1.0-rc.1"
       }
     },
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
+      },
+      "community": {
+        "aggregateStatus": "provisional",
+        "contributorCount": 1,
+        "contributors": [
+          "YizeSun"
+        ],
+        "eligibleContributorCount": 1,
+        "eligibleRunCount": 1,
+        "primaryMetricVariation": {
+          "affectsEligibility": false,
+          "high": false,
+          "method": "contributor-weighted-median-absolute-deviation-percent",
+          "value": null,
+          "warningThreshold": 10.0
+        },
+        "runCount": 1,
+        "status": "single-contributor"
+      },
+      "comparisonID": "1045221438358e899c7f800a2dbabe7e774d48fa1c06e9d5057adb15bab27dd9",
+      "comparisonIdentity": {
+        "device": {
+          "machineIdentifier": "iPhone15,3",
+          "physicalMemoryBytes": 5909987328,
+          "systemBuild": "23F84",
+          "systemName": "iOS",
+          "systemVersion": "26.5.2"
+        },
+        "generation": {
+          "automaticRetries": 0,
+          "chatTemplateIdentity": "artifact-tokenizer-config-enable-thinking-false",
+          "clock": "monotonic-nanoseconds",
+          "contextPolicy": "fresh-conversation-per-attempt",
+          "includeStopTokenInRawEvents": false,
+          "kvCachePolicy": "fresh-kv-cache-per-attempt",
+          "measuredAttempts": 5,
+          "memoryMetric": "TASK_VM_INFO.phys_footprint",
+          "memorySamplingIntervalMilliseconds": 50,
+          "minimumMetricEligibleMeasuredAttempts": 3,
+          "modelLoadPolicy": "load-once-before-warmup",
+          "outputTokenLimit": 128,
+          "repetitionPenalty": null,
+          "restIntervalSeconds": 0,
+          "samplingEnabled": false,
+          "seed": 0,
+          "temperature": 0,
+          "thermalSource": "ProcessInfo.thermalState",
+          "thinkingMode": "disabled-via-chat-template",
+          "topK": 0,
+          "topP": 1,
+          "warmupAttempts": 1
+        },
+        "model": {
+          "artifactContentHash": null,
+          "artifactID": "mlx-community/Qwen3-4B-3bit",
+          "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+          "modelFormat": "MLX Safetensors",
+          "quantization": "3-bit",
+          "tokenizerIdentity": "mlx-community/Qwen3-4B-3bit@c4e8054c71facfa84f781cdb7c1ffab3f09f89bf/tokenizer_config.json"
+        },
+        "runner": {
+          "appBuild": "16",
+          "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+          "appVersion": "0.13.0",
+          "id": "ios-reference-benchmark-app",
+          "version": "0.13.0"
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "dependencyVersions": {
+            "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+            "swift-huggingface": "swift-huggingface 0.9.0",
+            "swift-transformers": "swift-transformers 1.3.0"
+          },
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "version": "3.31.4"
+        },
+        "sourceEvidenceRelease": {
+          "id": "suite-b-power",
+          "protocolID": "suite-b-power",
+          "protocolVersion": "1.1.0-rc.1",
+          "version": "1.1.0-rc.1"
+        },
+        "workload": {
+          "category": "user-experience",
+          "fixtureSHA256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
+          "id": "b-ux-001-short-interaction",
+          "measurementModeID": "b-mode-warm-resident-ux-v1",
+          "version": "1.1.0-rc.1"
+        }
+      },
+      "configuration": {
+        "device": {
+          "appBuild": "16",
+          "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+          "appVersion": "0.13.0",
+          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
+          "machineIdentifier": "iPhone15,3",
+          "physicalMemoryBytes": 5909987328,
+          "systemBuild": "23F84",
+          "systemName": "iOS",
+          "systemVersion": "26.5.2"
+        },
+        "generation": {
+          "automaticRetries": 0,
+          "chatTemplateIdentity": "artifact-tokenizer-config-enable-thinking-false",
+          "clock": "monotonic-nanoseconds",
+          "contextPolicy": "fresh-conversation-per-attempt",
+          "includeStopTokenInRawEvents": false,
+          "kvCachePolicy": "fresh-kv-cache-per-attempt",
+          "measuredAttempts": 5,
+          "memoryMetric": "TASK_VM_INFO.phys_footprint",
+          "memorySamplingIntervalMilliseconds": 50,
+          "minimumMetricEligibleMeasuredAttempts": 3,
+          "modelLoadPolicy": "load-once-before-warmup",
+          "outputTokenLimit": 128,
+          "repetitionPenalty": null,
+          "restIntervalSeconds": 0,
+          "samplingEnabled": false,
+          "seed": 0,
+          "temperature": 0,
+          "thermalSource": "ProcessInfo.thermalState",
+          "thinkingMode": "disabled-via-chat-template",
+          "topK": 0,
+          "topP": 1,
+          "warmupAttempts": 1
+        },
+        "model": {
+          "artifactContentHash": null,
+          "artifactID": "mlx-community/Qwen3-4B-3bit",
+          "artifactRepositorySizeBytes": 1771660929,
+          "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+          "baseModelID": "Qwen/Qwen3-4B",
+          "displayName": "Qwen3 4B",
+          "licenseIdentifier": "apache-2.0",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-4B/blob/1cfa9a7208912126459214e8b04321603b3df60c/LICENSE",
+          "modelFormat": "MLX Safetensors",
+          "parameterSizeClass": "small-4b",
+          "quantization": "3-bit",
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-4B-3bit/tree/c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+          "tokenizerIdentity": "mlx-community/Qwen3-4B-3bit@c4e8054c71facfa84f781cdb7c1ffab3f09f89bf/tokenizer_config.json"
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "dependencyVersions": {
+            "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+            "swift-huggingface": "swift-huggingface 0.9.0",
+            "swift-transformers": "swift-transformers 1.3.0"
+          },
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "version": "3.31.4"
+        }
+      },
+      "evidence": [
+        {
+          "contributor": "YizeSun",
+          "createdAt": "2026-07-15T15:48:56Z",
+          "evidenceLevel": "maintainer-reference",
+          "primaryMetricEligible": true,
+          "rawPath": "results/suite-b-power-1.1.0-rc.1/device-verification/raw/2026-07-15T15-48-56Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_e357d4e7.json",
+          "rawSHA256": "a87e1416d99cae09cb28b705a5432b8854fe7a677d1f492ca96f28c5ee9e127c",
+          "resultID": "E357D4E7-1BEA-4EA3-9C0C-59B664FDD471",
+          "sessionID": "15A29226-8ACD-4F49-862E-39E657661981",
+          "sourceKind": "maintainer-reference",
+          "submissionID": null
+        }
+      ],
+      "primaryMetric": {
+        "eligible": true,
+        "id": "first_renderable_proxy_ttft_ms@1",
+        "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
+        "value": 1137.577417
+      },
+      "rankingEligibility": {
+        "active": true,
+        "candidateEligible": true,
+        "reasonCodes": []
+      },
+      "sourceEvidenceRelease": {
+        "id": "suite-b-power",
+        "protocolID": "suite-b-power",
+        "protocolVersion": "1.1.0-rc.1",
+        "version": "1.1.0-rc.1"
+      },
+      "summary": {
+        "completedMeasuredAttempts": 5,
+        "decodeFirstToLastPercentChange": null,
+        "failedMeasuredAttempts": 0,
+        "finalThermalState": "nominal",
+        "medianDecodeTokensPerSecond": 20.988247044631045,
+        "medianFirstRenderableProxyTTFTMilliseconds": 1137.577417,
+        "medianPeakMemoryMiB": 1883.3928985595703,
+        "medianPipelineTTFTMilliseconds": 1133.060667,
+        "medianPrefillTokensPerSecond": 61.793461124170676,
+        "medianRequestCompletionMilliseconds": 2821.789834,
+        "notRunMeasuredAttempts": 0
+      },
+      "workload": {
+        "category": "user-experience",
+        "fixtureSHA256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
+        "id": "b-ux-001-short-interaction",
+        "measurementModeID": "b-mode-warm-resident-ux-v1",
+        "version": "1.1.0-rc.1"
+      }
+    },
+    {
+      "benchmarkRelease": {
+        "id": "suite-b-power",
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -4678,218 +4887,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
-      },
-      "community": {
-        "aggregateStatus": "provisional",
-        "contributorCount": 1,
-        "contributors": [
-          "YizeSun"
-        ],
-        "eligibleContributorCount": 1,
-        "eligibleRunCount": 1,
-        "primaryMetricVariation": {
-          "affectsEligibility": false,
-          "high": false,
-          "method": "contributor-weighted-median-absolute-deviation-percent",
-          "value": null,
-          "warningThreshold": 10.0
-        },
-        "runCount": 1,
-        "status": "single-contributor"
-      },
-      "comparisonID": "8494829faf93bd970c52e9c86ac7418d0050d841b6bac479a2fdfa5c58574417",
-      "comparisonIdentity": {
-        "device": {
-          "machineIdentifier": "iPhone15,3",
-          "physicalMemoryBytes": 5909987328,
-          "systemBuild": "23F77",
-          "systemName": "iOS",
-          "systemVersion": "26.5"
-        },
-        "generation": {
-          "automaticRetries": 0,
-          "chatTemplateIdentity": "artifact-tokenizer-config-enable-thinking-false",
-          "clock": "monotonic-nanoseconds",
-          "contextPolicy": "fresh-conversation-per-attempt",
-          "includeStopTokenInRawEvents": false,
-          "kvCachePolicy": "fresh-kv-cache-per-attempt",
-          "measuredAttempts": 5,
-          "memoryMetric": "TASK_VM_INFO.phys_footprint",
-          "memorySamplingIntervalMilliseconds": 50,
-          "minimumMetricEligibleMeasuredAttempts": 3,
-          "modelLoadPolicy": "load-once-before-warmup",
-          "outputTokenLimit": 128,
-          "repetitionPenalty": null,
-          "restIntervalSeconds": 0,
-          "samplingEnabled": false,
-          "seed": 0,
-          "temperature": 0,
-          "thermalSource": "ProcessInfo.thermalState",
-          "thinkingMode": "disabled-via-chat-template",
-          "topK": 0,
-          "topP": 1,
-          "warmupAttempts": 1
-        },
-        "model": {
-          "artifactContentHash": null,
-          "artifactID": "mlx-community/Qwen3-4B-3bit",
-          "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
-          "modelFormat": "MLX Safetensors",
-          "quantization": "3-bit",
-          "tokenizerIdentity": "mlx-community/Qwen3-4B-3bit@c4e8054c71facfa84f781cdb7c1ffab3f09f89bf/tokenizer_config.json"
-        },
-        "runner": {
-          "appBuild": "10",
-          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
-          "appVersion": "0.8.0",
-          "id": "ios-reference-benchmark-app",
-          "version": "0.8.0"
-        },
-        "runtime": {
-          "backend": "MLX/Metal",
-          "dependencyVersions": {
-            "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
-            "swift-huggingface": "swift-huggingface 0.9.0",
-            "swift-transformers": "swift-transformers 1.3.0"
-          },
-          "name": "MLX Swift LM",
-          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
-          "version": "3.31.4"
-        },
-        "sourceEvidenceRelease": {
-          "id": "suite-b-power",
-          "protocolID": "suite-b-power",
-          "protocolVersion": "1.0.0-rc.1",
-          "version": "1.0.0-rc.1"
-        },
-        "workload": {
-          "category": "user-experience",
-          "fixtureSHA256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
-          "id": "b-ux-001-short-interaction",
-          "measurementModeID": "b-mode-warm-resident-ux-v1",
-          "version": "1.0.0-rc.1"
-        }
-      },
-      "configuration": {
-        "device": {
-          "appBuild": "10",
-          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
-          "appVersion": "0.8.0",
-          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
-          "machineIdentifier": "iPhone15,3",
-          "physicalMemoryBytes": 5909987328,
-          "systemBuild": "23F77",
-          "systemName": "iOS",
-          "systemVersion": "26.5"
-        },
-        "generation": {
-          "automaticRetries": 0,
-          "chatTemplateIdentity": "artifact-tokenizer-config-enable-thinking-false",
-          "clock": "monotonic-nanoseconds",
-          "contextPolicy": "fresh-conversation-per-attempt",
-          "includeStopTokenInRawEvents": false,
-          "kvCachePolicy": "fresh-kv-cache-per-attempt",
-          "measuredAttempts": 5,
-          "memoryMetric": "TASK_VM_INFO.phys_footprint",
-          "memorySamplingIntervalMilliseconds": 50,
-          "minimumMetricEligibleMeasuredAttempts": 3,
-          "modelLoadPolicy": "load-once-before-warmup",
-          "outputTokenLimit": 128,
-          "repetitionPenalty": null,
-          "restIntervalSeconds": 0,
-          "samplingEnabled": false,
-          "seed": 0,
-          "temperature": 0,
-          "thermalSource": "ProcessInfo.thermalState",
-          "thinkingMode": "disabled-via-chat-template",
-          "topK": 0,
-          "topP": 1,
-          "warmupAttempts": 1
-        },
-        "model": {
-          "artifactContentHash": null,
-          "artifactID": "mlx-community/Qwen3-4B-3bit",
-          "artifactRepositorySizeBytes": 1771660929,
-          "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
-          "baseModelID": "Qwen/Qwen3-4B",
-          "displayName": "Qwen3 4B",
-          "licenseIdentifier": "apache-2.0",
-          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-4B/blob/1cfa9a7208912126459214e8b04321603b3df60c/LICENSE",
-          "modelFormat": "MLX Safetensors",
-          "parameterSizeClass": "small-4b",
-          "quantization": "3-bit",
-          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-4B-3bit/tree/c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
-          "tokenizerIdentity": "mlx-community/Qwen3-4B-3bit@c4e8054c71facfa84f781cdb7c1ffab3f09f89bf/tokenizer_config.json"
-        },
-        "runtime": {
-          "backend": "MLX/Metal",
-          "dependencyVersions": {
-            "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
-            "swift-huggingface": "swift-huggingface 0.9.0",
-            "swift-transformers": "swift-transformers 1.3.0"
-          },
-          "name": "MLX Swift LM",
-          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
-          "version": "3.31.4"
-        }
-      },
-      "evidence": [
-        {
-          "contributor": "YizeSun",
-          "createdAt": "2026-07-13T12:32:28Z",
-          "evidenceLevel": "maintainer-reference",
-          "primaryMetricEligible": true,
-          "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-32-28Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_ecb64a54.json",
-          "rawSHA256": "64c7d6077156412fb1afe26e3c377d42e98706d65cd708f91f608727492c60dc",
-          "resultID": "ECB64A54-9791-463E-B92A-29983648F9AF",
-          "sessionID": "A69A11D5-5FC1-42D6-8BA9-AF8B5C61F048",
-          "sourceKind": "maintainer-reference",
-          "submissionID": null
-        }
-      ],
-      "primaryMetric": {
-        "eligible": true,
-        "id": "first_renderable_proxy_ttft_ms@1",
-        "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
-        "value": 1132.813042
-      },
-      "rankingEligibility": {
-        "active": true,
-        "candidateEligible": true,
-        "reasonCodes": []
-      },
-      "sourceEvidenceRelease": {
-        "id": "suite-b-power",
-        "protocolID": "suite-b-power",
-        "protocolVersion": "1.0.0-rc.1",
-        "version": "1.0.0-rc.1"
-      },
-      "summary": {
-        "completedMeasuredAttempts": 5,
-        "decodeFirstToLastPercentChange": null,
-        "failedMeasuredAttempts": 0,
-        "finalThermalState": "nominal",
-        "medianDecodeTokensPerSecond": 21.048323084959506,
-        "medianFirstRenderableProxyTTFTMilliseconds": 1132.813042,
-        "medianPeakMemoryMiB": 2370.4399795532227,
-        "medianPipelineTTFTMilliseconds": 1127.857208,
-        "medianPrefillTokensPerSecond": 62.07412731423199,
-        "medianRequestCompletionMilliseconds": 2810.886708,
-        "notRunMeasuredAttempts": 0
-      },
-      "workload": {
-        "category": "user-experience",
-        "fixtureSHA256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
-        "id": "b-ux-001-short-interaction",
-        "measurementModeID": "b-mode-warm-resident-ux-v1",
-        "version": "1.0.0-rc.1"
-      }
-    },
-    {
-      "benchmarkRelease": {
-        "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -5102,7 +5100,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -5315,7 +5313,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -5528,7 +5526,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -5741,7 +5739,7 @@
     {
       "benchmarkRelease": {
         "id": "suite-b-power",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       "community": {
         "aggregateStatus": "provisional",
@@ -5952,9 +5950,9 @@
       }
     }
   ],
-  "schemaVersion": "suite-b-power-community-ranking-1.0",
+  "schemaVersion": "suite-b-power-community-ranking-1.1",
   "sourceEvidenceRelease": {
     "id": "suite-b-power",
-    "version": "1.0.0-rc.1"
+    "version": "1.1.0-rc.1"
   }
 }

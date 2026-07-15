@@ -2,7 +2,7 @@
 
 This directory is generated from immutable Power 1.1 RC1 evidence and hash-bound final validation reports.
 
-This is a final review candidate and does not activate public ranking.
+This is the published Power 1.1 package.
 
 Regenerate and verify from the repository root:
 

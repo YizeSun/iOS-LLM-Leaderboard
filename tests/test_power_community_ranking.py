@@ -67,7 +67,7 @@ class CommunityRankingTests(unittest.TestCase):
         self.assertEqual(dataset["officialReferenceResultCount"], 6)
         self.assertEqual(dataset["communityResultCount"], 22)
         self.assertEqual(dataset["cellCount"], 28)
-        self.assertEqual(dataset["activeRankedCellCount"], 18)
+        self.assertEqual(dataset["activeRankedCellCount"], 19)
         self.assertEqual(dataset["contributorCount"], 1)
         self.assertEqual(dataset["reproducedCellCount"], 0)
 
@@ -208,6 +208,7 @@ class CommunityRankingTests(unittest.TestCase):
     def test_site_reads_live_community_dataset(self) -> None:
         app = (ROOT / "site/app.js").read_text()
         self.assertIn("results/suite-b-power-community/normalized-results.json", app)
+        self.assertIn("results/suite-b-power-1.1/normalized-results.json", app)
         self.assertIn("currentDisplayKey", app)
         self.assertIn("osMinorFamily", app)
         self.assertIn("No metric-eligible result", app)

@@ -2,7 +2,7 @@
 
 ## Status
 
-Power 1.1 is frozen for final review; publishing, tagging, and public ranking remain disabled.
+Power 1.1 is published and workload-specific measured-performance ranking is active.
 
 ## Evidence boundary
 
