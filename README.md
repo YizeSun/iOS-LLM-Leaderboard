@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="docs/assets/readme/header.svg" width="100%" alt="iOS LLM Leaderboard — reproducible on-device model evidence for Apple platforms">
+  <img src="docs/assets/readme/header.svg" width="100%" alt="Compare small language models on real iPhones using reproducible on-device evidence">
 </p>
 
 <p align="center">
-  <a href="https://yizesun.github.io/iOS-LLM-Leaderboard/"><img src="docs/assets/readme/open-leaderboard.svg" width="360" alt="Open the leaderboard"></a>
+  <a href="https://yizesun.github.io/iOS-LLM-Leaderboard/"><img src="docs/assets/readme/open-leaderboard.svg" width="360" alt="Compare models on iPhone"></a>
 </p>
 
 <p align="center">
@@ -20,14 +20,14 @@
   <a href="LICENSE"><img alt="MIT and CC BY 4.0 licenses" src="https://img.shields.io/badge/license-MIT%20%2B%20CC%20BY%204.0-57606a?style=flat-square"></a>
 </p>
 
-## What this project answers
+## What you can learn
 
-- **Power:** how responsive, fast, memory-efficient, and thermally stable is an
-  exact model configuration on a physical Apple device?
-- **Ship:** what is known about integrating and distributing that tested
-  configuration in an iOS app?
-- **Build Research:** can an AI system eventually deliver a complete,
-  reviewable iOS application? This is Phase 2 research, not a current ranking.
+- **Power:** compare response speed, generation speed, memory use, and thermal
+  behavior for exact model configurations on physical Apple devices.
+- **Ship:** check what is known about integrating and distributing a tested
+  configuration in an iOS app.
+- **Build Research:** follow the longer-term research into whether an AI system
+  can deliver a complete, reviewable iOS application. This is not a current ranking.
 
 The leaderboard never ranks a model name in isolation. Evidence always keeps
 the model artifact and revision, quantization, runtime, device, OS, settings,

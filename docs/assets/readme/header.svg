@@ -13,10 +13,10 @@
 
   <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
     <rect x="62" y="52" width="5" height="190" rx="2.5" fill="#d96b43"/>
-    <text x="96" y="60" fill="#e5a17f" font-size="12" font-weight="700" letter-spacing="2.4">OPEN BENCHMARK STANDARD · APPLE PLATFORMS</text>
-    <text x="94" y="132" fill="#fff8ee" font-size="59" font-weight="760" letter-spacing="-2.7">iOS LLM</text>
-    <text x="94" y="195" fill="#fff8ee" font-size="59" font-weight="760" letter-spacing="-2.7">Leaderboard</text>
-    <text x="96" y="232" fill="#c9b9ac" font-size="19" font-weight="450">Real devices. Reproducible results. Reviewable evidence.</text>
+    <text x="96" y="60" fill="#e5a17f" font-size="12" font-weight="700" letter-spacing="2.4">IOS LLM LEADERBOARD · OPEN BENCHMARK</text>
+    <text x="94" y="132" fill="#fff8ee" font-size="54" font-weight="760" letter-spacing="-2.5">Compare small LLMs</text>
+    <text x="94" y="192" fill="#fff8ee" font-size="54" font-weight="760" letter-spacing="-2.5">on real iPhones</text>
+    <text x="96" y="232" fill="#c9b9ac" font-size="18" font-weight="450">Speed, memory, thermals, and ship readiness — measured on-device.</text>
 
     <g transform="translate(94 270)" font-size="12" font-weight="700" letter-spacing="1.5">
       <text x="0" y="0" fill="#e5a17f">POWER 1.1</text>
