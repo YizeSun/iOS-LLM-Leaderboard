@@ -17,6 +17,38 @@ const state = {
   runtime: "all",
 };
 
+const COLUMN_HELP = Object.freeze({
+  rank: "Position within the active sort. Rank changes when you sort by a different metric; unranked rows have no metric-eligible result.",
+  model: "Model name. The evidence keeps the exact artifact, revision, format, App version, and iOS version behind this row.",
+  quantization: "Weight precision used by the artifact, such as 4-bit. Lower precision usually reduces download size and memory use, but can affect quality.",
+  response: "Time from request acceptance to the first renderable decoded output at the adapter boundary. Lower is better; this is not screen-render latency.",
+  pipeline: "Time from the prepared inference request to the first raw token returned by the runtime. Lower is better.",
+  prefill: "Input tokens processed per second before output generation begins. Higher is better, especially for longer prompts.",
+  decode: "Output tokens generated per second after the first token. Higher is better.",
+  memory: "Peak memory observed in the retained measurements. Lower values leave more headroom for the app and operating system.",
+  thermal: "Device thermal state at the end of the workload: Nominal, Fair, Serious, or Critical. Lower thermal pressure is better.",
+  contributors: "Independent GitHub contributors represented in this comparison. Two metric-eligible contributors mark a result as reproduced.",
+  variation: "Spread of the primary metric across independent contributors. Lower values mean closer agreement; shown only when comparable results exist.",
+  details: "Open the exact configuration, retained evidence, source files, and related runs or deployment profile.",
+  degradation: "Percentage change in decode speed from the first to the last measured generation. Values near zero are more stable; negative values indicate slowdown.",
+  artifact: "Repository size of the exact model artifact used by this profile. Smaller downloads are generally easier to distribute.",
+  device: "Physical Apple device on which this configuration was measured.",
+  runtime: "Inference runtime and version used to execute the model.",
+  verified: "Number of deployment claims directly supported by retained evidence.",
+  unknown: "Number of deployment questions not established by current evidence. Unknowns remain explicit rather than being guessed.",
+  "coverage-ux": "Eligible contributor coverage for the Responsiveness workload. Two independent contributors mark the cell as reproduced.",
+  "coverage-pipe": "Eligible contributor coverage for Sustained generation. Two independent contributors mark the cell as reproduced.",
+  gaps: "Additional independent contributor results needed to reproduce both Power workloads for this configuration.",
+  contribute: "Open the contribution guide to submit another physical-device result.",
+  priority: "Recommended testing order for App-ready models. This is not a performance rank.",
+  size: "Artifact download size reported by the model repository.",
+  license: "Published model license identifier. Developers should review the complete license before shipping.",
+  support: "Whether the locked benchmark App can currently load and run this artifact.",
+  status: "Current physical-device evidence status. Watchlist entries are not yet App-testable.",
+  reason: "Why this model is included in the App-ready catalog or public-weight watchlist.",
+  "catalog-action": "Available next step: test the model, open its source, or wait for a compatible artifact.",
+});
+
 const modeConfig = {
   ux: {
     kind: "power",
@@ -117,7 +149,7 @@ const modeConfig = {
 };
 
 function column(key, label, accessor, formatter, sortable = true, primary = false) {
-  return { key, label, accessor, formatter, sortable, primary };
+  return { key, label, accessor, formatter, sortable, primary, help: COLUMN_HELP[key] };
 }
 
 const elements = {
@@ -137,7 +169,10 @@ const elements = {
   footerStatus: document.querySelector("#footer-status"),
   footerChecksums: document.querySelector("#footer-checksums"),
   footerTable: document.querySelector("#footer-table"),
+  columnTooltip: document.querySelector("#column-tooltip"),
 };
+
+let activeColumnHelp = null;
 
 async function loadEvidence() {
   try {
@@ -468,14 +503,60 @@ function compare(left, right) {
 }
 
 function renderHead(columns) {
+  hideColumnHelp();
   elements.head.innerHTML = `<tr>${columns.map(item => {
-    if (!item.sortable) return `<th scope="col">${escapeHtml(item.label)}</th>`;
     const active = state.sortKey === item.key;
     const ariaSort = active ? (state.sortDirection === "asc" ? "ascending" : "descending") : "none";
     const arrow = state.sortDirection === "asc" ? "↑" : "↓";
-    return `<th scope="col" aria-sort="${ariaSort}"><button class="sort-control${active ? " is-active" : ""}" data-sort="${item.key}" data-arrow="${arrow}">${escapeHtml(item.label)}</button></th>`;
+    const label = item.sortable
+      ? `<button class="sort-control${active ? " is-active" : ""}" data-sort="${item.key}" data-arrow="${arrow}">${escapeHtml(item.label)}</button>`
+      : `<span class="column-label">${escapeHtml(item.label)}</span>`;
+    const help = `<button class="column-help" type="button" data-column-help="${escapeAttribute(item.help)}" aria-label="Explain ${escapeAttribute(item.label)}" aria-describedby="column-tooltip" aria-expanded="false">?</button>`;
+    return `<th scope="col"${item.sortable ? ` aria-sort="${ariaSort}"` : ""}><span class="column-heading">${label}${help}</span></th>`;
   }).join("")}</tr>`;
   elements.head.querySelectorAll("[data-sort]").forEach(button => button.addEventListener("click", () => changeSort(button.dataset.sort)));
+  bindColumnHelp();
+}
+
+function bindColumnHelp() {
+  elements.head.querySelectorAll("[data-column-help]").forEach(button => {
+    button.addEventListener("mouseenter", () => showColumnHelp(button));
+    button.addEventListener("mouseleave", () => {
+      if (document.activeElement !== button) hideColumnHelp(button);
+    });
+    button.addEventListener("focus", () => showColumnHelp(button));
+    button.addEventListener("blur", () => hideColumnHelp(button));
+    button.addEventListener("click", event => {
+      event.stopPropagation();
+      showColumnHelp(button);
+    });
+  });
+}
+
+function showColumnHelp(button) {
+  if (!elements.columnTooltip) return;
+  if (activeColumnHelp && activeColumnHelp !== button) activeColumnHelp.setAttribute("aria-expanded", "false");
+  activeColumnHelp = button;
+  button.setAttribute("aria-expanded", "true");
+  elements.columnTooltip.textContent = button.dataset.columnHelp;
+  elements.columnTooltip.hidden = false;
+
+  const anchor = button.getBoundingClientRect();
+  const tooltip = elements.columnTooltip.getBoundingClientRect();
+  const edge = 12;
+  let left = anchor.left + (anchor.width / 2) - (tooltip.width / 2);
+  left = Math.min(window.innerWidth - tooltip.width - edge, Math.max(edge, left));
+  let top = anchor.bottom + 8;
+  if (top + tooltip.height > window.innerHeight - edge) top = anchor.top - tooltip.height - 8;
+  elements.columnTooltip.style.left = `${Math.round(left)}px`;
+  elements.columnTooltip.style.top = `${Math.max(edge, Math.round(top))}px`;
+}
+
+function hideColumnHelp(button = activeColumnHelp) {
+  if (!activeColumnHelp || (button && button !== activeColumnHelp)) return;
+  activeColumnHelp.setAttribute("aria-expanded", "false");
+  activeColumnHelp = null;
+  if (elements.columnTooltip) elements.columnTooltip.hidden = true;
 }
 
 function renderRows(rows, columns) {
@@ -764,5 +845,13 @@ document.querySelector(".dialog-close").addEventListener("click", () => elements
 elements.dialog.addEventListener("click", event => {
   if (event.target === elements.dialog) elements.dialog.close();
 });
+document.addEventListener("pointerdown", event => {
+  if (!event.target.closest(".column-help")) hideColumnHelp();
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") hideColumnHelp();
+});
+window.addEventListener("resize", () => hideColumnHelp());
+window.addEventListener("scroll", () => hideColumnHelp(), true);
 
 loadEvidence();
