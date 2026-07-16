@@ -15,6 +15,7 @@ const state = {
   query: "",
   device: "all",
   runtime: "all",
+  size: "all",
 };
 
 const COLUMN_HELP = Object.freeze({
@@ -161,6 +162,7 @@ const elements = {
   search: document.querySelector("#model-search"),
   device: document.querySelector("#device-filter"),
   runtime: document.querySelector("#runtime-filter"),
+  size: document.querySelector("#size-filter"),
   contextLabel: document.querySelector("#context-label"),
   contextDescription: document.querySelector("#context-description"),
   dialog: document.querySelector("#detail-dialog"),
@@ -444,9 +446,33 @@ function filterRows(rows, config) {
     const searchable = `${model.displayName} ${model.artifactID} ${model.quantization} ${runtime.name}`.toLowerCase();
     const runtimeKey = `${runtime.name}@${runtime.version}`;
     return (!query || searchable.includes(query))
+      && (state.size === "all" || modelSizeBucket(model) === state.size)
       && (config.kind === "catalog" || state.device === "all" || device.machineIdentifier === state.device)
       && (config.kind === "catalog" || state.runtime === "all" || runtimeKey === state.runtime);
   });
+}
+
+function modelParameterBillions(model) {
+  const candidates = [
+    model.parameterSizeClass,
+    model.baseModelID,
+    model.displayName,
+    model.artifactID,
+  ];
+  for (const candidate of candidates) {
+    const match = String(candidate ?? "").match(/(?:^|[-_/\s])(\d+(?:\.\d+)?)\s*[bB](?=$|[-_/\s])/);
+    if (match) return Number(match[1]);
+  }
+  return null;
+}
+
+function modelSizeBucket(model) {
+  const billions = modelParameterBillions(model);
+  if (billions == null || !Number.isFinite(billions)) return "unknown";
+  if (billions <= 1) return "up-to-1b";
+  if (billions <= 2) return "1b-to-2b";
+  if (billions <= 4) return "2b-to-4b";
+  return "over-4b";
 }
 
 function sortRows(rows, config) {
@@ -922,6 +948,7 @@ document.querySelectorAll(".mode-tab").forEach(button => button.addEventListener
 elements.search.addEventListener("input", event => { state.query = event.target.value; renderBoard(); });
 elements.device.addEventListener("change", event => { state.device = event.target.value; renderBoard(); });
 elements.runtime.addEventListener("change", event => { state.runtime = event.target.value; renderBoard(); });
+elements.size.addEventListener("change", event => { state.size = event.target.value; renderBoard(); });
 document.querySelector(".dialog-close").addEventListener("click", () => elements.dialog.close());
 elements.dialog.addEventListener("click", event => {
   if (event.target === elements.dialog) elements.dialog.close();
