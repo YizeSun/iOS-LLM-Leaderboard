@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="docs/assets/readme/header.svg" width="100%" alt="Compare small language models on real iPhones using reproducible on-device evidence">
+  <img src="docs/assets/readme/header-v2.svg" width="100%" alt="Compare small language models on real iPhones using reproducible on-device evidence">
 </p>
 
 <p align="center">
-  <a href="https://yizesun.github.io/iOS-LLM-Leaderboard/"><img src="docs/assets/readme/open-leaderboard.svg" width="360" alt="Compare models on iPhone"></a>
+  <a href="https://yizesun.github.io/iOS-LLM-Leaderboard/"><img src="docs/assets/readme/open-leaderboard-v2.svg" width="360" alt="Compare models on iPhone"></a>
 </p>
 
 <p align="center">
@@ -13,8 +13,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/1.1.0"><img alt="Power 1.1" src="https://img.shields.io/badge/Power-1.1-c85e37?style=flat-square"></a>
-  <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/ship-1.0.0"><img alt="Ship 1.0" src="https://img.shields.io/badge/Ship-1.0-c85e37?style=flat-square"></a>
+  <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/1.1.0"><img alt="Power 1.1" src="https://img.shields.io/badge/Power-1.1-a94747?style=flat-square"></a>
+  <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/ship-1.0.0"><img alt="Ship 1.0" src="https://img.shields.io/badge/Ship-1.0-a94747?style=flat-square"></a>
   <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/actions/workflows/power-community-ranking.yml"><img alt="Power community ranking checks" src="https://github.com/YizeSun/iOS-LLM-Leaderboard/actions/workflows/power-community-ranking.yml/badge.svg?branch=main"></a>
   <a href="https://yizesun.github.io/iOS-LLM-Leaderboard/"><img alt="Leaderboard live" src="https://img.shields.io/badge/leaderboard-live-238636?style=flat-square"></a>
   <a href="LICENSE"><img alt="MIT and CC BY 4.0 licenses" src="https://img.shields.io/badge/license-MIT%20%2B%20CC%20BY%204.0-57606a?style=flat-square"></a>
@@ -34,7 +34,7 @@ the model artifact and revision, quantization, runtime, device, OS, settings,
 workload, and App version together.
 
 <p align="center">
-  <img src="docs/assets/readme/power-ship-flow.svg" width="100%" alt="Exact model configuration becomes Power evidence and an evidence-backed Ship profile">
+  <img src="docs/assets/readme/power-ship-flow-v2.svg" width="100%" alt="Exact model configuration becomes Power evidence and an evidence-backed Ship profile">
 </p>
 
 ## Current releases
