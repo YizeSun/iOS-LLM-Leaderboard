@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title description">
+  <title id="title">iOS LLM Leaderboard</title>
+  <desc id="description">A dark blue project banner showing a physical iPhone benchmark signal and the project focus on Power, Ship, and Build Research.</desc>
+  <defs>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" fill="none" stroke="#24324a" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="300" rx="24" fill="#0b1220"/>
+  <rect x="1" y="1" width="1198" height="298" rx="23" fill="none" stroke="#28364f" stroke-width="2"/>
+  <rect x="2" y="2" width="1196" height="296" rx="22" fill="url(#grid)" opacity="0.34"/>
+
+  <g transform="translate(68 57)">
+    <rect x="0" y="0" width="118" height="186" rx="29" fill="#101b30" stroke="#4c8dff" stroke-width="3"/>
+    <rect x="12" y="18" width="94" height="148" rx="18" fill="#0b1220" stroke="#30415f" stroke-width="2"/>
+    <rect x="43" y="8" width="32" height="4" rx="2" fill="#4c8dff"/>
+    <circle cx="59" cy="176" r="4" fill="#4c8dff"/>
+    <g transform="translate(29 58)" fill="#4c8dff">
+      <rect x="0" y="47" width="10" height="19" rx="3" opacity="0.45"/>
+      <rect x="18" y="34" width="10" height="32" rx="3" opacity="0.63"/>
+      <rect x="36" y="18" width="10" height="48" rx="3" opacity="0.82"/>
+      <rect x="54" y="0" width="10" height="66" rx="3"/>
+    </g>
+  </g>
+
+  <text x="225" y="113" fill="#f7f9fc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="52" font-weight="720" letter-spacing="-1.8">iOS LLM Leaderboard</text>
+  <text x="228" y="158" fill="#afbdd2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="23" font-weight="450">Reproducible on-device model evidence for Apple platforms</text>
+
+  <g transform="translate(228 194)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" font-weight="650" letter-spacing="1.4">
+    <rect width="126" height="36" rx="8" fill="#15233a" stroke="#4c8dff"/>
+    <text x="63" y="23" text-anchor="middle" fill="#dce7f8">POWER 1.1</text>
+    <rect x="138" width="112" height="36" rx="8" fill="#15233a" stroke="#40506a"/>
+    <text x="194" y="23" text-anchor="middle" fill="#dce7f8">SHIP 1.0</text>
+    <rect x="262" width="172" height="36" rx="8" fill="#15233a" stroke="#40506a"/>
+    <text x="348" y="23" text-anchor="middle" fill="#dce7f8">BUILD RESEARCH</text>
+  </g>
+
+  <g transform="translate(930 65)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+    <rect x="0" y="0" width="202" height="48" rx="10" fill="#111d31" stroke="#334663"/>
+    <circle cx="24" cy="24" r="5" fill="#4c8dff"/>
+    <text x="42" y="20" fill="#8190a8" font-size="11" letter-spacing="1">MODEL</text>
+    <text x="42" y="35" fill="#e8eef7" font-size="14">artifact + quant</text>
+    <path d="M101 48V62" stroke="#4c8dff" stroke-width="2"/>
+
+    <rect x="0" y="62" width="202" height="48" rx="10" fill="#111d31" stroke="#334663"/>
+    <circle cx="24" cy="86" r="5" fill="#4c8dff"/>
+    <text x="42" y="82" fill="#8190a8" font-size="11" letter-spacing="1">RUNTIME</text>
+    <text x="42" y="97" fill="#e8eef7" font-size="14">version + settings</text>
+    <path d="M101 110V124" stroke="#4c8dff" stroke-width="2"/>
+
+    <rect x="0" y="124" width="202" height="48" rx="10" fill="#111d31" stroke="#334663"/>
+    <circle cx="24" cy="148" r="5" fill="#4c8dff"/>
+    <text x="42" y="144" fill="#8190a8" font-size="11" letter-spacing="1">DEVICE</text>
+    <text x="42" y="159" fill="#e8eef7" font-size="14">hardware + OS</text>
+  </g>
+</svg>
