@@ -8,6 +8,9 @@ layer for responses that a deterministic policy cannot verify. It evaluates
 semantic content and response-format compliance separately so semantic rescue
 does not silently waive benchmark instructions.
 
+This is the retained hosted-GPT branch of the two-stage experiment. It has no
+NLI dependency and does not contain the discontinued local NLI evaluator.
+
 ## Isolation and privacy
 
 - Only the supplied text cases are sent to GitHub Models.
