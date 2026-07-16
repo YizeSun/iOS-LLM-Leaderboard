@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import unittest
 from pathlib import Path
 
@@ -70,6 +71,30 @@ class PublicSurfaceTests(unittest.TestCase):
         self.assertIn('tabindex="0"', app)
         self.assertIn("not a semantic-failure claim", app)
         self.assertIn(".unranked-meta:focus-visible", styles)
+
+    def test_every_leaderboard_column_has_accessible_help(self) -> None:
+        index = (ROOT / "index.html").read_text()
+        app = (ROOT / "site/app.js").read_text()
+        styles = (ROOT / "site/styles.css").read_text()
+        column_keys = set(re.findall(r'column\("([^"]+)"', app))
+        help_start = app.index("const COLUMN_HELP")
+        help_end = app.index("\n});", help_start)
+        help_block = app[help_start:help_end]
+        help_keys = {
+            quoted or plain
+            for quoted, plain in re.findall(
+                r'^\s*(?:"([^"]+)"|([A-Za-z][A-Za-z0-9]*))\s*:',
+                help_block,
+                re.MULTILINE,
+            )
+        }
+        self.assertEqual(column_keys, help_keys)
+        self.assertIn('id="column-tooltip" role="tooltip"', index)
+        self.assertIn('aria-describedby="column-tooltip"', app)
+        self.assertIn('button.addEventListener("mouseenter"', app)
+        self.assertIn('button.addEventListener("focus"', app)
+        self.assertIn(".column-help", styles)
+        self.assertIn(".column-tooltip", styles)
 
 
 if __name__ == "__main__":
