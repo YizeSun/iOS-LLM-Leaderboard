@@ -1,57 +1,65 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="title description">
   <title id="title">iOS LLM Leaderboard</title>
-  <desc id="description">A dark blue project banner showing a physical iPhone benchmark signal and the project focus on Power, Ship, and Build Research.</desc>
+  <desc id="description">An open benchmark standard for reproducible, reviewable on-device language-model evidence on Apple platforms.</desc>
   <defs>
-    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
-      <path d="M36 0H0V36" fill="none" stroke="#24324a" stroke-width="1"/>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M28 0H0V28" fill="none" stroke="#172944" stroke-width="1"/>
     </pattern>
   </defs>
 
-  <rect width="1200" height="300" rx="24" fill="#0b1220"/>
-  <rect x="1" y="1" width="1198" height="298" rx="23" fill="none" stroke="#28364f" stroke-width="2"/>
-  <rect x="2" y="2" width="1196" height="296" rx="22" fill="url(#grid)" opacity="0.34"/>
+  <rect width="1200" height="320" rx="22" fill="#07111f"/>
+  <rect x="1" y="1" width="1198" height="318" rx="21" fill="none" stroke="#293b57" stroke-width="2"/>
+  <path d="M760 1H1178Q1199 1 1199 22V298Q1199 319 1178 319H760Z" fill="url(#grid)" opacity=".5"/>
+  <path d="M760 26V294" stroke="#293b57"/>
 
-  <g transform="translate(68 57)">
-    <rect x="0" y="0" width="118" height="186" rx="29" fill="#101b30" stroke="#4c8dff" stroke-width="3"/>
-    <rect x="12" y="18" width="94" height="148" rx="18" fill="#0b1220" stroke="#30415f" stroke-width="2"/>
-    <rect x="43" y="8" width="32" height="4" rx="2" fill="#4c8dff"/>
-    <circle cx="59" cy="176" r="4" fill="#4c8dff"/>
-    <g transform="translate(29 58)" fill="#4c8dff">
-      <rect x="0" y="47" width="10" height="19" rx="3" opacity="0.45"/>
-      <rect x="18" y="34" width="10" height="32" rx="3" opacity="0.63"/>
-      <rect x="36" y="18" width="10" height="48" rx="3" opacity="0.82"/>
-      <rect x="54" y="0" width="10" height="66" rx="3"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <rect x="62" y="52" width="4" height="190" rx="2" fill="#4c8dff"/>
+    <text x="94" y="60" fill="#6fa2ff" font-size="12" font-weight="700" letter-spacing="2.4">OPEN BENCHMARK STANDARD · APPLE PLATFORMS</text>
+    <text x="92" y="132" fill="#f7f9fc" font-size="59" font-weight="760" letter-spacing="-2.7">iOS LLM</text>
+    <text x="92" y="195" fill="#f7f9fc" font-size="59" font-weight="760" letter-spacing="-2.7">Leaderboard</text>
+    <text x="94" y="232" fill="#aebdd1" font-size="19" font-weight="450">Rank exact deployments. Keep every result reviewable.</text>
+
+    <g transform="translate(94 270)" font-size="12" font-weight="700" letter-spacing="1.5">
+      <text x="0" y="0" fill="#6fa2ff">POWER 1.1</text>
+      <circle cx="96" cy="-4" r="2" fill="#435673"/>
+      <text x="112" y="0" fill="#c8d4e5">SHIP 1.0</text>
+      <circle cx="194" cy="-4" r="2" fill="#435673"/>
+      <text x="210" y="0" fill="#8192aa">BUILD RESEARCH</text>
     </g>
   </g>
 
-  <text x="225" y="113" fill="#f7f9fc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="52" font-weight="720" letter-spacing="-1.8">iOS LLM Leaderboard</text>
-  <text x="228" y="158" fill="#afbdd2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="23" font-weight="450">Reproducible on-device model evidence for Apple platforms</text>
+  <g transform="translate(806 43)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+    <text x="0" y="0" fill="#6fa2ff" font-size="11" font-weight="700" letter-spacing="2">RANKING UNIT</text>
+    <text x="0" y="25" fill="#dbe5f3" font-size="15" font-weight="650">EXACT DEPLOYMENT</text>
+    <path d="M0 39H324" stroke="#30425e"/>
 
-  <g transform="translate(228 194)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" font-weight="650" letter-spacing="1.4">
-    <rect width="126" height="36" rx="8" fill="#15233a" stroke="#4c8dff"/>
-    <text x="63" y="23" text-anchor="middle" fill="#dce7f8">POWER 1.1</text>
-    <rect x="138" width="112" height="36" rx="8" fill="#15233a" stroke="#40506a"/>
-    <text x="194" y="23" text-anchor="middle" fill="#dce7f8">SHIP 1.0</text>
-    <rect x="262" width="172" height="36" rx="8" fill="#15233a" stroke="#40506a"/>
-    <text x="348" y="23" text-anchor="middle" fill="#dce7f8">BUILD RESEARCH</text>
-  </g>
+    <g transform="translate(0 61)">
+      <text x="0" y="0" fill="#58708f" font-size="11">01</text>
+      <text x="34" y="0" fill="#8596ad" font-size="11" letter-spacing="1.2">MODEL</text>
+      <text x="112" y="0" fill="#eef3fa" font-size="13">artifact + revision + quant</text>
+      <path d="M10 13V31H22" fill="none" stroke="#4c8dff" stroke-width="2"/>
 
-  <g transform="translate(930 65)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
-    <rect x="0" y="0" width="202" height="48" rx="10" fill="#111d31" stroke="#334663"/>
-    <circle cx="24" cy="24" r="5" fill="#4c8dff"/>
-    <text x="42" y="20" fill="#8190a8" font-size="11" letter-spacing="1">MODEL</text>
-    <text x="42" y="35" fill="#e8eef7" font-size="14">artifact + quant</text>
-    <path d="M101 48V62" stroke="#4c8dff" stroke-width="2"/>
+      <text x="0" y="49" fill="#58708f" font-size="11">02</text>
+      <text x="34" y="49" fill="#8596ad" font-size="11" letter-spacing="1.2">RUNTIME</text>
+      <text x="112" y="49" fill="#eef3fa" font-size="13">version + inference settings</text>
+      <path d="M10 62V80H22" fill="none" stroke="#4c8dff" stroke-width="2"/>
 
-    <rect x="0" y="62" width="202" height="48" rx="10" fill="#111d31" stroke="#334663"/>
-    <circle cx="24" cy="86" r="5" fill="#4c8dff"/>
-    <text x="42" y="82" fill="#8190a8" font-size="11" letter-spacing="1">RUNTIME</text>
-    <text x="42" y="97" fill="#e8eef7" font-size="14">version + settings</text>
-    <path d="M101 110V124" stroke="#4c8dff" stroke-width="2"/>
+      <text x="0" y="98" fill="#58708f" font-size="11">03</text>
+      <text x="34" y="98" fill="#8596ad" font-size="11" letter-spacing="1.2">DEVICE</text>
+      <text x="112" y="98" fill="#eef3fa" font-size="13">hardware + OS + conditions</text>
+    </g>
 
-    <rect x="0" y="124" width="202" height="48" rx="10" fill="#111d31" stroke="#334663"/>
-    <circle cx="24" cy="148" r="5" fill="#4c8dff"/>
-    <text x="42" y="144" fill="#8190a8" font-size="11" letter-spacing="1">DEVICE</text>
-    <text x="42" y="159" fill="#e8eef7" font-size="14">hardware + OS</text>
+    <path d="M0 182H324" stroke="#30425e"/>
+    <text x="0" y="205" fill="#8596ad" font-size="10" letter-spacing="1.4">MEASURED EVIDENCE</text>
+    <g transform="translate(0 220)" font-size="11" font-weight="700">
+      <rect width="61" height="25" rx="4" fill="#10223a" stroke="#355a8e"/>
+      <text x="30.5" y="16" text-anchor="middle" fill="#8eb7ff">TTFT</text>
+      <rect x="70" width="61" height="25" rx="4" fill="#10223a" stroke="#355a8e"/>
+      <text x="100.5" y="16" text-anchor="middle" fill="#8eb7ff">TOK/S</text>
+      <rect x="140" width="81" height="25" rx="4" fill="#10223a" stroke="#355a8e"/>
+      <text x="180.5" y="16" text-anchor="middle" fill="#8eb7ff">MEMORY</text>
+      <rect x="230" width="94" height="25" rx="4" fill="#10223a" stroke="#355a8e"/>
+      <text x="277" y="16" text-anchor="middle" fill="#8eb7ff">THERMAL</text>
+    </g>
   </g>
 </svg>

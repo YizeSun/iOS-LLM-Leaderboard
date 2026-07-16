@@ -3,19 +3,21 @@
 </p>
 
 <p align="center">
+  <a href="https://yizesun.github.io/iOS-LLM-Leaderboard/"><img src="docs/assets/readme/open-leaderboard.svg" width="360" alt="Open the leaderboard"></a>
+</p>
+
+<p align="center">
+  <a href="contributor-kit/power-1.1-quickstart.md">Run the benchmark</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="docs/power.md">Read the methodology</a>
+</p>
+
+<p align="center">
   <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/1.1.0"><img alt="Power 1.1" src="https://img.shields.io/badge/Power-1.1-1f6feb?style=flat-square"></a>
   <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/ship-1.0.0"><img alt="Ship 1.0" src="https://img.shields.io/badge/Ship-1.0-1f6feb?style=flat-square"></a>
   <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/actions/workflows/power-community-ranking.yml"><img alt="Power community ranking checks" src="https://github.com/YizeSun/iOS-LLM-Leaderboard/actions/workflows/power-community-ranking.yml/badge.svg?branch=main"></a>
   <a href="https://yizesun.github.io/iOS-LLM-Leaderboard/"><img alt="Leaderboard live" src="https://img.shields.io/badge/leaderboard-live-238636?style=flat-square"></a>
   <a href="LICENSE"><img alt="MIT and CC BY 4.0 licenses" src="https://img.shields.io/badge/license-MIT%20%2B%20CC%20BY%204.0-57606a?style=flat-square"></a>
-</p>
-
-<p align="center"><strong>A reproducible leaderboard for small language models running on Apple devices.</strong></p>
-
-<p align="center">
-  <a href="https://yizesun.github.io/iOS-LLM-Leaderboard/"><strong>Open the leaderboard</strong></a> ·
-  <a href="contributor-kit/power-1.1-quickstart.md">Run and contribute Power 1.1</a> ·
-  <a href="docs/power.md">Understand the method</a>
 </p>
 
 ## What this project answers
