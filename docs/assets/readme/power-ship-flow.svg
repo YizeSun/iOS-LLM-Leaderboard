@@ -2,48 +2,48 @@
   <title id="title">From exact configuration to Power evidence and Ship profile</title>
   <desc id="description">A three-stage diagram showing exact model configuration metadata producing Power measurements and an evidence-backed Ship deployment profile.</desc>
 
-  <rect width="1200" height="330" rx="22" fill="#0b1220"/>
-  <rect x="1" y="1" width="1198" height="328" rx="21" fill="none" stroke="#28364f" stroke-width="2"/>
+  <rect width="1200" height="330" rx="22" fill="#1b1714"/>
+  <rect x="1" y="1" width="1198" height="328" rx="21" fill="none" stroke="#5b4437" stroke-width="2"/>
 
   <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
-    <text x="56" y="52" fill="#f7f9fc" font-size="22" font-weight="680">One comparison keeps the entire deployment configuration attached.</text>
-    <text x="56" y="80" fill="#92a2ba" font-size="16">The leaderboard shows measurements; the evidence layer preserves what produced them.</text>
+    <text x="56" y="52" fill="#fff8ee" font-size="22" font-weight="680">One comparison keeps the entire deployment configuration attached.</text>
+    <text x="56" y="80" fill="#bba99b" font-size="16">The leaderboard shows measurements; the evidence layer preserves what produced them.</text>
 
     <g transform="translate(56 110)">
-      <rect width="292" height="156" rx="15" fill="#111d31" stroke="#334663"/>
-      <text x="22" y="31" fill="#4c8dff" font-size="13" font-weight="700" letter-spacing="1.2">EXACT CONFIGURATION</text>
-      <text x="22" y="65" fill="#e7edf6" font-size="17">Model artifact + revision</text>
-      <text x="22" y="91" fill="#e7edf6" font-size="17">Quantization + runtime</text>
-      <text x="22" y="117" fill="#e7edf6" font-size="17">Physical device + OS</text>
-      <text x="22" y="143" fill="#e7edf6" font-size="17">Settings + workload</text>
+      <rect width="292" height="156" rx="15" fill="#28201b" stroke="#684c3d"/>
+      <text x="22" y="31" fill="#e59a76" font-size="13" font-weight="700" letter-spacing="1.2">EXACT CONFIGURATION</text>
+      <text x="22" y="65" fill="#f1e5d9" font-size="17">Model artifact + revision</text>
+      <text x="22" y="91" fill="#f1e5d9" font-size="17">Quantization + runtime</text>
+      <text x="22" y="117" fill="#f1e5d9" font-size="17">Physical device + OS</text>
+      <text x="22" y="143" fill="#f1e5d9" font-size="17">Settings + workload</text>
     </g>
 
     <g transform="translate(454 110)">
-      <rect width="292" height="156" rx="15" fill="#111d31" stroke="#4c8dff" stroke-width="2"/>
-      <text x="22" y="31" fill="#4c8dff" font-size="13" font-weight="700" letter-spacing="1.2">POWER EVIDENCE</text>
-      <text x="22" y="65" fill="#e7edf6" font-size="17">Responsiveness</text>
-      <text x="22" y="91" fill="#e7edf6" font-size="17">Sustained generation</text>
-      <text x="22" y="117" fill="#e7edf6" font-size="17">Peak memory</text>
-      <text x="22" y="143" fill="#e7edf6" font-size="17">Thermal behavior</text>
+      <rect width="292" height="156" rx="15" fill="#302019" stroke="#d96b43" stroke-width="2"/>
+      <text x="22" y="31" fill="#ee9b76" font-size="13" font-weight="700" letter-spacing="1.2">POWER EVIDENCE</text>
+      <text x="22" y="65" fill="#f1e5d9" font-size="17">Responsiveness</text>
+      <text x="22" y="91" fill="#f1e5d9" font-size="17">Sustained generation</text>
+      <text x="22" y="117" fill="#f1e5d9" font-size="17">Peak memory</text>
+      <text x="22" y="143" fill="#f1e5d9" font-size="17">Thermal behavior</text>
     </g>
 
     <g transform="translate(852 110)">
-      <rect width="292" height="156" rx="15" fill="#111d31" stroke="#334663"/>
-      <text x="22" y="31" fill="#4c8dff" font-size="13" font-weight="700" letter-spacing="1.2">SHIP PROFILE</text>
-      <text x="22" y="65" fill="#e7edf6" font-size="17">Integration facts</text>
-      <text x="22" y="91" fill="#e7edf6" font-size="17">Packaging + license</text>
-      <text x="22" y="117" fill="#e7edf6" font-size="17">Known limitations</text>
-      <text x="22" y="143" fill="#e7edf6" font-size="17">Unknowns stay unknown</text>
+      <rect width="292" height="156" rx="15" fill="#28201b" stroke="#684c3d"/>
+      <text x="22" y="31" fill="#e59a76" font-size="13" font-weight="700" letter-spacing="1.2">SHIP PROFILE</text>
+      <text x="22" y="65" fill="#f1e5d9" font-size="17">Integration facts</text>
+      <text x="22" y="91" fill="#f1e5d9" font-size="17">Packaging + license</text>
+      <text x="22" y="117" fill="#f1e5d9" font-size="17">Known limitations</text>
+      <text x="22" y="143" fill="#f1e5d9" font-size="17">Unknowns stay unknown</text>
     </g>
 
-    <g fill="none" stroke="#4c8dff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <g fill="none" stroke="#d96b43" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
       <path d="M370 188H425"/>
       <path d="M414 177L425 188 414 199"/>
       <path d="M768 188H823"/>
       <path d="M812 177L823 188 812 199"/>
     </g>
 
-    <circle cx="56" cy="297" r="4" fill="#4c8dff"/>
-    <text x="70" y="303" fill="#aebbd0" font-size="15">No global score. Raw attempts and exact identities remain reviewable evidence.</text>
+    <circle cx="56" cy="297" r="4" fill="#d96b43"/>
+    <text x="70" y="303" fill="#bba99b" font-size="15">No global score. Raw attempts and exact identities remain reviewable evidence.</text>
   </g>
 </svg>

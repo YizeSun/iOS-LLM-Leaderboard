@@ -13,8 +13,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/1.1.0"><img alt="Power 1.1" src="https://img.shields.io/badge/Power-1.1-1f6feb?style=flat-square"></a>
-  <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/ship-1.0.0"><img alt="Ship 1.0" src="https://img.shields.io/badge/Ship-1.0-1f6feb?style=flat-square"></a>
+  <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/1.1.0"><img alt="Power 1.1" src="https://img.shields.io/badge/Power-1.1-c85e37?style=flat-square"></a>
+  <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/ship-1.0.0"><img alt="Ship 1.0" src="https://img.shields.io/badge/Ship-1.0-c85e37?style=flat-square"></a>
   <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/actions/workflows/power-community-ranking.yml"><img alt="Power community ranking checks" src="https://github.com/YizeSun/iOS-LLM-Leaderboard/actions/workflows/power-community-ranking.yml/badge.svg?branch=main"></a>
   <a href="https://yizesun.github.io/iOS-LLM-Leaderboard/"><img alt="Leaderboard live" src="https://img.shields.io/badge/leaderboard-live-238636?style=flat-square"></a>
   <a href="LICENSE"><img alt="MIT and CC BY 4.0 licenses" src="https://img.shields.io/badge/license-MIT%20%2B%20CC%20BY%204.0-57606a?style=flat-square"></a>
