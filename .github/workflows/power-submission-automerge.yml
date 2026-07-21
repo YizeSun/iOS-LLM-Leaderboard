@@ -1,0 +1,56 @@
+name: Power submission auto-merge
+
+on:
+  workflow_run:
+    workflows:
+      - Power submission triage
+      - Commit identity integrity
+    types: [completed]
+
+# A GITHUB_TOKEN merge does not emit a new push workflow run. After a clean
+# evidence PR merges, explicitly dispatch the trusted ranking workflow so the
+# live community view is regenerated from the new main revision.
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge:
+    name: Merge accepted Power submission
+    if: github.event.workflow_run.event == 'pull_request' || github.event.workflow_run.event == 'pull_request_target'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: power-submission-auto-merge-${{ github.event.workflow_run.pull_requests[0].number || github.run_id }}
+      cancel-in-progress: false
+    steps:
+      - name: Merge when classification and required checks are ready
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+        run: |
+          if [ -z "$PR_NUMBER" ]; then
+            echo "The completed workflow is not associated with a pull request."
+            exit 0
+          fi
+          state="$(gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json state --jq .state)"
+          draft="$(gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json isDraft --jq .isDraft)"
+          accepted="$(gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json labels --jq 'any(.labels[].name; . == "power:auto-accept")')"
+          if [ "$state" != "OPEN" ] || [ "$draft" != "false" ] || [ "$accepted" != "true" ]; then
+            echo "PR is not an open, ready, automatically accepted Power submission."
+            exit 0
+          fi
+          checks_ready="$(gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json statusCheckRollup --jq '
+            (any(.statusCheckRollup[]; .workflowName == "Power submission triage" and .name == "Power submission intake" and .conclusion == "SUCCESS")) and
+            (any(.statusCheckRollup[]; .workflowName == "Commit identity integrity" and .name == "Validate commit identity" and .conclusion == "SUCCESS"))
+          ')"
+          if [ "$checks_ready" != "true" ]; then
+            echo "Trusted intake and commit-identity checks are not both successful yet."
+            exit 0
+          fi
+          if gh pr merge "$PR_NUMBER" --repo "$REPOSITORY" --squash; then
+            gh workflow run power-community-ranking.yml --repo "$REPOSITORY" --ref main
+          else
+            echo "Required checks are not all ready; another check completion will retry."
+          fi

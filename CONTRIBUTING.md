@@ -6,7 +6,8 @@ Choose the smallest contribution path that fits your change.
 ## 1. Submit a Power 1.1 result
 
 Follow the [Power 1.1 quickstart](contributor-kit/power-1.1-quickstart.md). The
-public flow is:
+App can create the pull request directly when its GitHub OAuth Client ID is
+configured. The equivalent CLI flow is:
 
 ```bash
 python3 scripts/power.py submit /path/to/result.json \
@@ -24,7 +25,8 @@ submissions/suite-b/power-1.1.0/draft/<submission-id>/
 
 Do not edit `result.json`. Review both files, commit only that package, and
 open the pull request from the declared GitHub account. CI checks the package,
-the frozen Power contract, and the live-ranking preview.
+the frozen Power contract, duplicates, and the live-ranking preview, then
+classifies it as automatic acceptance, manual review, or rejection.
 
 The declarations confirm that you ran the benchmark on a physical device, may
 submit the evidence, reviewed public metadata, left the raw result untouched,

@@ -10,11 +10,13 @@ manually constructing benchmark JSON or learning the whole repository.
 ```text
 official App → one physical-device run → untouched result export
 → contributor manifest → pull request → CI validation
-→ maintainer merge → live community view
+→ automatic acceptance or maintainer review → live community view
 ```
 
-The App does not upload directly or write to `main`. The current contributor
-creates a two-file package with:
+A configured App can create the contributor-owned fork, evidence commit, and
+pull request through GitHub device authorization. It never writes directly to
+`main`. Builds without the public OAuth Client ID use the CLI to create the
+same two-file package:
 
 ```bash
 python3 scripts/power.py submit /path/to/result.json \
@@ -43,8 +45,12 @@ name, personal prompts, user documents, or unrelated app data.
 ## Validation and publication
 
 CI validates package shape, raw hash binding, contributor declarations, the
-frozen Power contract, and a live-ranking preview. Validation does not mutate
-the result, assign Maintainer Reference status, or change an immutable release.
+frozen Power contract, duplicate identity, and a live-ranking preview. Clean
+evidence-only PRs are labeled `power:auto-accept` and may auto-merge after
+required checks. Valid conflict or environmental-assistance disclosures route
+to `power:manual-review`; invalid, incompatible, duplicated, or mixed-scope
+PRs route to `power:rejected`. Validation does not mutate the result, assign
+Maintainer Reference status, or change an immutable release.
 
 Merging a valid package makes it eligible for the live community evidence view
 when its primary metric and ordinary thermal policy are eligible. Deliberate
@@ -70,12 +76,13 @@ may contribute to any number of different cells. Repeated eligible runs are
 retained, then reduced to one per-contributor median before cross-contributor
 aggregation.
 
-## Future convenience
+## Automation boundary
 
-A future service may create the same pull request after an in-App review. It
-must preserve the two-file evidence boundary, contributor ownership, public
-validation, and maintainer merge. Automation may reduce clicks; it must not
-weaken reproducibility or bypass review.
+The in-App flow preserves the two-file evidence boundary, contributor
+ownership, and public validation. Automatic merge applies only to new package
+files that pass all ordinary ranking gates. Disclosed conflicts and assisted
+environments remain human decisions; frozen runner incompatibility and invalid
+evidence cannot be overridden by the App.
 
 Historical Framework v1 and Power 1.0 submission paths remain in versioned
 directories for auditability. They are not the current public contribution

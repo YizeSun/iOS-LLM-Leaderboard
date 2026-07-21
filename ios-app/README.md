@@ -6,11 +6,13 @@ an inference framework.
 
 ## Current status
 
-App `0.14.0` build `17` is the development runner for the draft
-`short-interaction-response-v2` behavior policy. It retains the frozen Power
+App `0.15.0` build `18` adds contributor-owned GitHub PR creation and trusted
+repository intake triage while retaining the draft
+`short-interaction-response-v2` behavior preview. It retains the frozen Power
 1.1 workload IDs, fixtures, measurement boundaries, generation settings,
-attempt counts, and submitted result identity. Only the advisory local behavior
-preview changes. Power 1.1 performance evidence remains governed by its
+attempt counts, and source-result schema identity. Its App version, build, and
+source commit remain exact metadata and are not relabeled as the frozen
+reference runner. Power 1.1 performance evidence remains governed by its
 published validator and ranking policy until a later policy release is
 explicitly approved.
 
@@ -28,7 +30,7 @@ substituted when an exact Power 1.0 reproduction is intended.
 
 Apps 0.8.0 through 0.11.0 emit the adopted Power 1.0 source result contract
 `suite-b-power-result-1.0.0-rc.1`. App 0.12.0 remains the historical Power 1.1
-draft runner. Apps 0.13.0 and 0.14.0 emit
+draft runner. Apps 0.13.0 through 0.15.0 emit
 `suite-b-power-result-1.1.0-rc.1`. Every raw App export sets
 `officialResultEligible` to `false`; no App export assigns its own publication,
 trust, or ranking status. Repository validation and release policy do. A
@@ -43,7 +45,7 @@ The production control surface exposes exactly two workload identities:
 
 The loader rejects any other plan identity or version. Experimental
 `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` resources are
-retained for repository history and compatibility, but App 0.14.0 cannot
+retained for repository history and compatibility, but App 0.15.0 cannot
 execute them through its production controls.
 
 The three pinned Qwen3 profiles have Maintainer Reference evidence:
@@ -52,7 +54,7 @@ The three pinned Qwen3 profiles have Maintainer Reference evidence:
 - `mlx-community/Qwen3-1.7B-4bit`;
 - `mlx-community/Qwen3-4B-3bit`.
 
-App 0.14.0 also exposes eight pinned artifacts with accepted single-contributor
+App 0.15.0 also exposes eight pinned artifacts with accepted single-contributor
 physical-iPhone community evidence:
 
 - `mlx-community/Llama-3.2-1B-Instruct-4bit`;
@@ -136,8 +138,24 @@ unresolved checkpoint cannot be overwritten by starting another run.
 ## Result export and validation
 
 Results are written atomically under the App Documents directory in
-`PowerBenchmarkResults/` and can be reviewed and shared locally. The App does
-not upload results or write to the repository.
+`PowerBenchmarkResults/` and can be reviewed and shared locally. A configured
+build can also create a contributor-owned GitHub pull request. The App builds
+the current two-file Power 1.1 package, verifies that the saved result bytes
+still match the completed in-memory result, preserves `result.json`
+byte-for-byte, and saves a local copy under `PowerSubmissionPackages/`.
+
+Direct GitHub submission uses OAuth device flow and requests `public_repo` for
+the one submission session. The token is held only in memory. Register an OAuth
+App, enable Device Flow, and supply its public client ID as the
+`GITHUB_OAUTH_CLIENT_ID` Xcode build setting. Do not add a client secret to the
+iOS project. A build without this setting keeps raw sharing and the contributor
+guide available but disables the direct-submit button.
+
+The feature changes no frozen validation rule. App 0.13.0 build 16 at its exact
+source commit remains the only Power 1.1 reference runner identity. Results
+from App 0.14.0, App 0.15.0, or any later unapproved source identity are retained locally but
+are rejected as `runner_incompatible` by current Power 1.1 intake; accepting a
+new runner requires an explicitly versioned future contract.
 
 Ambient room temperature and its source, case state, placement, and thermal
 assistance can be recorded as optional local observations. The App can copy a

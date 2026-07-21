@@ -4,6 +4,14 @@ import Observation
 @MainActor
 @Observable
 final class BenchmarkViewModel {
+    enum GitHubSubmissionPhase: Equatable {
+        case idle
+        case authorizing(code: String, verificationURL: URL)
+        case publishing
+        case completed(pullRequestURL: URL)
+        case failed(message: String)
+    }
+
     struct UXValidationSummary: Equatable {
         let promptTokenCount: Int?
         let medianPipelineTTFTMilliseconds: Double?
@@ -84,6 +92,13 @@ final class BenchmarkViewModel {
     private(set) var recoveryNotice: String?
     private(set) var submissionFileURL: URL?
     private(set) var submissionError: String?
+    private(set) var powerSubmissionPackageURL: URL?
+    private(set) var githubSubmissionPhase: GitHubSubmissionPhase = .idle
+    var submissionConflictCategory: SubmissionConflictCategory = .none
+    var submissionConflictStatement = ""
+    var submissionThermalAssistance: SubmissionThermalAssistance = .none
+    var submissionEnvironmentNotes = ""
+    var acceptsPowerSubmissionDeclarations = false
     var contributorName = ""
     var reviewedResult = false
     var confirmsNoPersonalData = false
@@ -151,7 +166,7 @@ final class BenchmarkViewModel {
     }
 
     // Experimental registry entries remain for historical compatibility, but
-    // App 0.14.0 cannot execute them through the Power control surface.
+    // App 0.15.0 cannot execute them through the Power control surface.
     var canCalibrateInputLengths: Bool {
         false
     }
@@ -201,6 +216,78 @@ final class BenchmarkViewModel {
         latestUnifiedResult != nil
             && !contributorName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             && reviewedResult && confirmsNoPersonalData && agreesToRepositoryLicense
+    }
+
+    var githubSubmissionConfigured: Bool {
+        guard let clientID = Bundle.main.object(
+            forInfoDictionaryKey: "GitHubOAuthClientID"
+        ) as? String else { return false }
+        return !clientID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && !clientID.contains("$(")
+    }
+
+    var canSubmitLatestPowerResultToGitHub: Bool {
+        let disclosureComplete = submissionConflictCategory == .none
+            || !submissionConflictStatement.trimmingCharacters(
+                in: .whitespacesAndNewlines
+            ).isEmpty
+        let submissionIdle: Bool
+        switch githubSubmissionPhase {
+        case .authorizing, .publishing, .completed:
+            submissionIdle = false
+        case .idle, .failed:
+            submissionIdle = true
+        }
+        return latestPowerResult != nil
+            && resultFileURL != nil
+            && acceptsPowerSubmissionDeclarations
+            && githubSubmissionConfigured
+            && disclosureComplete
+            && submissionIdle
+    }
+
+    func submitLatestPowerResultToGitHub() async {
+        guard let result = latestPowerResult,
+              let resultFileURL,
+              acceptsPowerSubmissionDeclarations else { return }
+        do {
+            guard let clientID = Bundle.main.object(
+                forInfoDictionaryKey: "GitHubOAuthClientID"
+            ) as? String else {
+                throw GitHubSubmissionClient.ClientError.missingClientID
+            }
+            let client = try GitHubSubmissionClient(clientID: clientID)
+            let authorization = try await client.startAuthorization()
+            githubSubmissionPhase = .authorizing(
+                code: authorization.userCode,
+                verificationURL: authorization.verificationURL
+            )
+            let token = try await client.waitForAccessToken(authorization)
+            githubSubmissionPhase = .publishing
+            let contributor = try await client.authenticatedUser(token: token)
+            let package = try PowerSubmissionPackage.make(
+                result: result,
+                resultURL: resultFileURL,
+                githubHandle: contributor,
+                conflictCategory: submissionConflictCategory,
+                conflictStatement: submissionConflictStatement,
+                thermalAssistance: submissionThermalAssistance,
+                environmentNotes: submissionEnvironmentNotes
+            )
+            powerSubmissionPackageURL = try await resultStore.save(package)
+            let pullRequestURL = try await client.publish(
+                package: package,
+                contributor: contributor,
+                token: token
+            )
+            githubSubmissionPhase = .completed(
+                pullRequestURL: pullRequestURL
+            )
+        } catch {
+            githubSubmissionPhase = .failed(
+                message: error.localizedDescription
+            )
+        }
     }
 
     func selectBenchmarkPlan(_ selection: ProductionBenchmarkPlan) {
@@ -348,6 +435,9 @@ final class BenchmarkViewModel {
         guard canRun,
               let loadedPlan,
               let modelPreparation else { return }
+        powerSubmissionPackageURL = nil
+        githubSubmissionPhase = .idle
+        acceptsPowerSubmissionDeclarations = false
         phase = .running
         currentThermalState = SystemMeasurements.thermalState
 
@@ -736,6 +826,9 @@ final class BenchmarkViewModel {
         recoveryNotice = nil
         submissionFileURL = nil
         submissionError = nil
+        powerSubmissionPackageURL = nil
+        githubSubmissionPhase = .idle
+        acceptsPowerSubmissionDeclarations = false
         reviewedResult = false
         confirmsNoPersonalData = false
         agreesToRepositoryLicense = false

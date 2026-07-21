@@ -55,7 +55,7 @@ struct RunBenchmarkView: View {
                 } header: {
                     Text("Power Benchmark 1.1")
                 } footer: {
-                    Text("Power 1.1 measurement contract · behavior preview v2 draft · App 0.14.0")
+                    Text("Power 1.1 measurement contract · behavior preview v2 draft · App 0.15.0")
                 }
 
                 Section {
@@ -202,6 +202,77 @@ struct RunBenchmarkView: View {
                     } footer: {
                         Text("The runner writes this frozen JSON once to Documents/PowerBenchmarkResults. Manual Share and Mac collection deliver the same file; neither path recalculates or rewrites the result.")
                     }
+
+                    Section {
+                        Picker(
+                            "Conflict of interest",
+                            selection: $viewModel.submissionConflictCategory
+                        ) {
+                            ForEach(SubmissionConflictCategory.allCases) { category in
+                                Text(category.title).tag(category)
+                            }
+                        }
+                        if viewModel.submissionConflictCategory != .none {
+                            TextField(
+                                "Disclosure statement",
+                                text: $viewModel.submissionConflictStatement,
+                                axis: .vertical
+                            )
+                        }
+                        Picker(
+                            "Thermal assistance",
+                            selection: $viewModel.submissionThermalAssistance
+                        ) {
+                            ForEach(SubmissionThermalAssistance.allCases) { assistance in
+                                Text(assistance.title).tag(assistance)
+                            }
+                        }
+                        TextField(
+                            "Optional environment notes",
+                            text: $viewModel.submissionEnvironmentNotes,
+                            axis: .vertical
+                        )
+                        Toggle(
+                            "I ran this on a physical device, reviewed the public metadata, confirm the raw result is unmodified and contains no personal data, accept CC BY 4.0, and understand that submission does not guarantee ranking.",
+                            isOn: $viewModel.acceptsPowerSubmissionDeclarations
+                        )
+                        Button {
+                            Task {
+                                await viewModel.submitLatestPowerResultToGitHub()
+                            }
+                        } label: {
+                            Label("Submit to GitHub", systemImage: "arrow.up.circle.fill")
+                        }
+                        .disabled(!viewModel.canSubmitLatestPowerResultToGitHub)
+
+                        githubSubmissionStatus
+
+                        if let packageURL = viewModel.powerSubmissionPackageURL {
+                            ShareLink(item: packageURL) {
+                                Label(
+                                    "Share Two-file Package",
+                                    systemImage: "square.and.arrow.up"
+                                )
+                            }
+                        }
+                        if !viewModel.githubSubmissionConfigured {
+                            Label(
+                                "Direct submission is unavailable because this build has no GitHub OAuth Client ID.",
+                                systemImage: "exclamationmark.triangle"
+                            )
+                            .foregroundStyle(.orange)
+                            Link(
+                                "Open contributor guide",
+                                destination: URL(
+                                    string: "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.1-quickstart.md"
+                                )!
+                            )
+                        }
+                    } header: {
+                        Text("GitHub contribution")
+                    } footer: {
+                        Text("The App creates the current Power 1.1 two-file package, preserves result.json byte-for-byte, commits it to your fork, and opens a pull request. Repository CI makes the authoritative accept, manual-review, or reject decision.")
+                    }
                 }
             }
             .navigationTitle("Run Benchmark")
@@ -214,6 +285,36 @@ struct RunBenchmarkView: View {
                 viewModel.refreshThermalState()
                 await viewModel.recoverInterruptedSessionIfNeeded()
             }
+        }
+    }
+
+    @ViewBuilder
+    private var githubSubmissionStatus: some View {
+        switch viewModel.githubSubmissionPhase {
+        case .idle:
+            EmptyView()
+        case .authorizing(let code, let verificationURL):
+            VStack(alignment: .leading, spacing: 8) {
+                Text("GitHub code: \(code)")
+                    .font(.headline.monospaced())
+                    .textSelection(.enabled)
+                Link("Authorize on GitHub", destination: verificationURL)
+                Text("Return to the App after authorizing; submission continues automatically.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        case .publishing:
+            HStack {
+                ProgressView()
+                Text("Creating fork, evidence commit, and pull request…")
+            }
+        case .completed(let pullRequestURL):
+            Label("Pull request created", systemImage: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+            Link("Open pull request", destination: pullRequestURL)
+        case .failed(let message):
+            Label(message, systemImage: "xmark.circle.fill")
+                .foregroundStyle(.red)
         }
     }
 

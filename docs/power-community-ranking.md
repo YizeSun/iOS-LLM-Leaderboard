@@ -13,7 +13,35 @@ A current result enters the live dataset after its two-file Power 1.1 package:
 
 1. is opened by the GitHub account named in `contributor.githubHandle`;
 2. passes package, hash, source-result, and protocol validation; and
-3. is merged into `main` by a maintainer.
+3. is merged into `main` by the repository's evidence-only automation or a
+   maintainer.
+
+The PR intake automation reads candidate JSON from the pull-request git object
+while executing only trusted base-branch code. It accepts up to ten new
+packages in one PR and assigns one of three outcomes:
+
+| Outcome | Conditions | Repository action |
+| --- | --- | --- |
+| `power:auto-accept` | Evidence-only additions; author binding, hashes, declarations, frozen protocol, primary metric, ordinary environment, and duplicate checks all pass; no conflict is disclosed | Squash-merge after required checks |
+| `power:manual-review` | The package is structurally valid, but a conflict or thermal/environmental assistance is disclosed | Preserve the evidence for maintainer review; do not auto-merge |
+| `power:rejected` | Invalid/missing files, non-submission changes, contributor mismatch, protocol or primary-metric failure, duplicate evidence, or more than ten packages | Fail intake and do not merge |
+
+The merge worker runs only after trusted intake and commit-identity workflows
+complete. It attempts the squash merge only for an open, non-draft PR carrying
+`power:auto-accept`; repository rules still enforce all required checks. After
+the merge it explicitly dispatches the ranking workflow, because GitHub does
+not emit a second workflow run for ordinary events caused by `GITHUB_TOKEN`.
+This automation assigns no formal Verified or Maintainer Reference status.
+
+The `main` ruleset should require the uniquely named **Power submission
+intake** and **Validate commit identity** checks, allow squash merges, and
+require zero approving reviews. The intake workflow runs for every pull
+request so the required check is never left pending by a path filter; PRs that
+do not touch the current Power intake return `not_applicable` without labels or
+automatic merge. Do not require the path-filtered ranking and Suite B checks
+globally, because unrelated PRs would otherwise wait for checks that never
+start. The repository-level **Allow auto-merge** option may remain enabled, but
+the evidence worker does not depend on it.
 
 The package records thermal assistance. `none` may enter the ordinary live
 ranking; deliberate cooling, deliberate heating, other assistance, or
@@ -64,8 +92,8 @@ Variation is a warning, not an automatic exclusion.
 ## Automatic publication
 
 ```text
-App export → contributor-owned PR → CI validation and ranking preview
-→ maintainer merge → deterministic generation → one GitHub Pages deploy
+App export → contributor-owned PR → trusted CI triage and ranking preview
+→ automatic or maintainer merge → deterministic generation → one GitHub Pages deploy
 ```
 
 Generated files:
