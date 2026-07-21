@@ -42,6 +42,21 @@ kept outside the ordinary live ranking.
 
 ## Create the pull-request package
 
+If the App build has direct GitHub submission configured, expand **GitHub
+contribution** after a completed result, review the disclosures, accept the
+declarations, and tap **Submit to GitHub**. The App uses GitHub's device flow,
+creates the current two-file package without rewriting `result.json`, commits
+it to a contributor-owned fork, and opens the PR. The access token stays in the
+submission session and is not written into the evidence package.
+
+Direct submission does not relax frozen runner identity. In particular, a
+development App whose version, build, or source commit differs from the Power
+1.1 reference App is rejected as `runner_incompatible`; it cannot be made
+eligible by App-side packaging or maintainer review. Use the exact runner
+identity above for current Power 1.1 evidence.
+
+For builds without GitHub OAuth configuration, use the existing Mac flow:
+
 Return to the current repository checkout and create a branch:
 
 ```bash
@@ -77,8 +92,11 @@ Open a pull request. The pull-request author must match
 
 ## What happens next
 
-CI validates the package and creates a ranking preview. After maintainer review
-and merge, valid evidence appears in the live community view. One account
+CI validates and classifies the package as automatic acceptance, manual review,
+or rejection, and creates a ranking preview. A clean evidence-only PR is
+squash-merged after the repository's required checks; disclosed conflicts or
+thermal assistance require maintainer review. After merge, valid evidence
+appears in the live community view. One account
 counts once per exact cell; two independent contributors mark the cell as
 reproduced. Merge does not modify the frozen Power 1.1 release or automatically
 assign Verified status.

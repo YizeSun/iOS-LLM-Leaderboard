@@ -1,6 +1,32 @@
 import Foundation
 
 actor ResultStore {
+    func save(_ package: PowerSubmissionPackage) throws -> URL {
+        let root = try FileManager.default.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        ).appending(path: "PowerSubmissionPackages", directoryHint: .isDirectory)
+        let directory = root.appending(
+            path: package.submissionID.uuidString.lowercased(),
+            directoryHint: .isDirectory
+        )
+        try FileManager.default.createDirectory(
+            at: directory,
+            withIntermediateDirectories: true
+        )
+        try package.resultData.write(
+            to: directory.appending(path: "result.json"),
+            options: [.atomic, .withoutOverwriting]
+        )
+        try package.manifestData.write(
+            to: directory.appending(path: "submission.json"),
+            options: [.atomic, .withoutOverwriting]
+        )
+        return directory
+    }
+
     func save(_ result: PowerResultBundle) throws -> URL {
         try result.validateForExport()
         let directory = try FileManager.default.url(

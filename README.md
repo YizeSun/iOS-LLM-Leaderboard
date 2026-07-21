@@ -74,7 +74,8 @@ to locate. They are not five equal product priorities.
 1. Follow the [Power 1.1 quickstart](contributor-kit/power-1.1-quickstart.md)
    and run one model on one physical device.
 2. Export the untouched JSON result from the Benchmark App.
-3. Create the two-file pull-request package:
+3. Use **Submit to GitHub** in a configured App build, or create the same
+   two-file pull-request package on a Mac:
 
 ```bash
 python3 scripts/power.py submit /path/to/result.json \
@@ -82,11 +83,12 @@ python3 scripts/power.py submit /path/to/result.json \
   --accept-declarations
 ```
 
-4. Commit the generated directory and open a pull request from the same GitHub
-   account named in the manifest.
+4. For the CLI path, commit the generated directory and open a pull request
+   from the same GitHub account named in the manifest.
 
-CI validates the package, frozen result contract, contributor identity, and
-ranking eligibility. Merging adds evidence to the live community view; it does
+CI validates the package, frozen result contract, contributor identity,
+duplicates, and ranking eligibility, then labels it for automatic acceptance,
+manual review, or rejection. Merging adds evidence to the live community view; it does
 not rewrite an immutable release or automatically grant Verified status.
 Deliberately cooled, heated, or unknown thermal-assistance runs may be retained
 as evidence but are excluded from the ordinary live ranking.

@@ -230,6 +230,53 @@ final class PowerReferenceAppTests: XCTestCase {
         )
     }
 
+    func testPowerSubmissionPackagePreservesRawBytesAndCurrentManifest() throws {
+        let result = try fixtureResult(resource: "b-ux-001-short-interaction")
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [
+            .prettyPrinted, .sortedKeys, .withoutEscapingSlashes,
+        ]
+        let rawBytes = try encoder.encode(result)
+        let resultURL = FileManager.default.temporaryDirectory.appending(
+            path: "\(UUID().uuidString)-power-result.json"
+        )
+        try rawBytes.write(to: resultURL)
+        defer { try? FileManager.default.removeItem(at: resultURL) }
+
+        let package = try PowerSubmissionPackage.make(
+            result: result,
+            resultURL: resultURL,
+            githubHandle: "ExampleContributor",
+            conflictCategory: .none,
+            conflictStatement: "",
+            thermalAssistance: .none,
+            environmentNotes: nil,
+            submissionID: UUID(
+                uuidString: "11111111-2222-4333-8444-555555555555"
+            )!,
+            createdAt: Date(timeIntervalSince1970: 4)
+        )
+        XCTAssertEqual(package.resultData, rawBytes)
+        let manifest = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: package.manifestData)
+                as? [String: Any]
+        )
+        XCTAssertEqual(
+            manifest["schemaVersion"] as? String,
+            "suite-b-power-submission-1.1.0"
+        )
+        XCTAssertEqual(
+            (manifest["contributor"] as? [String: Any])?["githubHandle"]
+                as? String,
+            "ExampleContributor"
+        )
+        XCTAssertEqual(
+            (manifest["result"] as? [String: Any])?["resultID"] as? String,
+            result.resultID.uuidString.lowercased()
+        )
+    }
+
     private func fixtureResult(
         resource: String = "suite-b-pilot-001",
         userExperienceText: String? = nil
