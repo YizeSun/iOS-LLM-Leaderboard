@@ -23,6 +23,13 @@ PREFIX = "submissions/suite-b/power-1.1.0/draft"
 
 
 class PowerSubmissionPRTriageTests(unittest.TestCase):
+    def test_trusted_workflow_invokes_triage_as_a_module(self) -> None:
+        workflow = (
+            ROOT / ".github/workflows/power-submission-triage.yml"
+        ).read_text()
+        self.assertIn("python3 -m scripts.triage_power_submission_pr", workflow)
+        self.assertNotIn("python3 scripts/triage_power_submission_pr.py", workflow)
+
     def make_package(
         self,
         root: Path,

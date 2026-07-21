@@ -45,7 +45,7 @@ jobs:
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          python3 scripts/triage_power_submission_pr.py \
+          python3 -m scripts.triage_power_submission_pr \
             --base "$BASE_SHA" \
             --head "refs/remotes/origin/power-intake-${PR_NUMBER}" \
             --expected-contributor "$PR_AUTHOR" \
