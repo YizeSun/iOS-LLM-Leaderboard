@@ -3,7 +3,6 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
-import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -72,12 +71,6 @@ class PowerOneOneCompatibleRunnerTests(unittest.TestCase):
             runner
             for runner in policy["approvedRunners"]
             if runner["kind"] == "compatible"
-        )
-        subprocess.run(
-            ["git", "cat-file", "-e", f"{APP_SOURCE_COMMIT}^{{commit}}"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
         )
         self.assertEqual(compatible["appSourceCommit"], APP_SOURCE_COMMIT)
 

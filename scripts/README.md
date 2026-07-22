@@ -12,7 +12,7 @@ python3 scripts/power.py preview
 
 This command is SHA-256-pinned by the Power 1.1.1 release and therefore keeps
 that release's App 0.13.0/App 0.16.0 compatibility boundary. App 0.17.0 direct
-submission is handled by the configured App and the trusted Power 1.1.2 CI
+submission is handled by the configured App and the trusted Power 1.1.3 CI
 adapters; do not modify `power.py` or advertise a second contributor CLI to
 work around the frozen boundary.
 
@@ -28,10 +28,10 @@ work around the frozen boundary.
   Markdown views.
 - `generate_ship_profiles.py` builds Ship evidence profiles.
 
-Power 1.1.2 adds isolated, version-suffixed adapters for trusted validation,
-triage, and ranking. They load the frozen implementations without changing
-their module globals or pinned bytes. They are release and CI assets, not a
-parallel public contributor flow.
+Power 1.1.2 and 1.1.3 add isolated, version-suffixed adapters for trusted
+validation, triage, and ranking. They load the frozen implementations without
+changing their module globals or pinned bytes. They are release and CI assets,
+not a parallel public contributor flow.
 
 ## Versioned and historical tools
 
