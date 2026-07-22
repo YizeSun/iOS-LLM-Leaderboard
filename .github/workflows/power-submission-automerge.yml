@@ -29,10 +29,25 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_REPOSITORY: ${{ github.event.workflow_run.head_repository.full_name }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           if [ -z "$PR_NUMBER" ]; then
-            echo "The completed workflow is not associated with a pull request."
-            exit 0
+            HEAD_OWNER="${HEAD_REPOSITORY%%/*}"
+            PR_NUMBER="$(gh api --method GET "repos/$REPOSITORY/pulls" \
+              -f state=open \
+              -f head="$HEAD_OWNER:$HEAD_BRANCH" \
+              --jq '.[0].number // empty')"
+          fi
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Unable to resolve an open pull request for $HEAD_REPOSITORY:$HEAD_BRANCH." >&2
+            exit 1
+          fi
+          pr_head_sha="$(gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json headRefOid --jq .headRefOid)"
+          if [ "$pr_head_sha" != "$HEAD_SHA" ]; then
+            echo "Resolved PR head $pr_head_sha does not match completed workflow head $HEAD_SHA." >&2
+            exit 1
           fi
           state="$(gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json state --jq .state)"
           draft="$(gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json isDraft --jq .isDraft)"
@@ -49,8 +64,5 @@ jobs:
             echo "Trusted intake and commit-identity checks are not both successful yet."
             exit 0
           fi
-          if gh pr merge "$PR_NUMBER" --repo "$REPOSITORY" --squash; then
-            gh workflow run power-community-ranking.yml --repo "$REPOSITORY" --ref main
-          else
-            echo "Required checks are not all ready; another check completion will retry."
-          fi
+          gh pr merge "$PR_NUMBER" --repo "$REPOSITORY" --squash
+          gh workflow run power-community-ranking.yml --repo "$REPOSITORY" --ref main

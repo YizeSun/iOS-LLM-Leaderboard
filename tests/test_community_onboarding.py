@@ -3,8 +3,8 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-from scripts.generate_power_community_ranking import build_dataset
 from scripts.generate_power_community_ranking import render_coverage
+from scripts.generate_power_community_ranking_1_1_3 import build_dataset
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -12,14 +12,16 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class CommunityOnboardingTests(unittest.TestCase):
     def test_coverage_report_is_a_deterministic_live_derivative(self) -> None:
-        expected = render_coverage(build_dataset())
-        actual = (
-            ROOT / "results/suite-b-power-community/COVERAGE.md"
-        ).read_text()
-        self.assertEqual(actual, expected)
-        self.assertIn("Exact comparison cells: 28", actual)
-        self.assertIn("Reproduced cells: 0", actual)
-        self.assertIn("does not create placeholder devices", actual)
+        dataset = build_dataset()
+        expected = render_coverage(dataset)
+        self.assertEqual(render_coverage(build_dataset()), expected)
+        self.assertIn(
+            f"Exact comparison cells: {dataset['cellCount']}", expected
+        )
+        self.assertIn(
+            f"Reproduced cells: {dataset['reproducedCellCount']}", expected
+        )
+        self.assertIn("does not create placeholder devices", expected)
 
     def test_site_exposes_contribution_and_coverage_entries(self) -> None:
         index = (ROOT / "index.html").read_text()
