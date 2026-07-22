@@ -56,6 +56,75 @@ final class PowerReferenceAppTests: XCTestCase {
         XCTAssertTrue(metrics?["medianRequestCompletionMilliseconds"] is NSNull)
     }
 
+    func testPowerResultRoundTripsThroughDecoder() throws {
+        let result = try fixtureResult(
+            resource: "b-ux-001-short-interaction"
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        XCTAssertEqual(
+            try decoder.decode(
+                PowerResultBundle.self,
+                from: encoder.encode(result)
+            ),
+            result
+        )
+    }
+
+    @MainActor
+    func testLatestSavedPowerResultRestoresWithoutRewritingRawBytes() async throws {
+        let documents = FileManager.default.temporaryDirectory.appending(
+            path: UUID().uuidString,
+            directoryHint: .isDirectory
+        )
+        try FileManager.default.createDirectory(
+            at: documents,
+            withIntermediateDirectories: true
+        )
+        defer { try? FileManager.default.removeItem(at: documents) }
+        let store = ResultStore(documentsDirectory: documents)
+        let earlier = try fixtureResult(
+            createdAt: Date(timeIntervalSince1970: 2),
+            resultID: UUID(uuidString: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb")!
+        )
+        let earlierURL = try await store.save(earlier)
+        let latest = try fixtureResult(
+            resource: "b-ux-001-short-interaction",
+            createdAt: Date(timeIntervalSince1970: 3),
+            resultID: UUID(uuidString: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa")!
+        )
+        let latestURL = try await store.save(latest)
+        let originalBytes = try Data(contentsOf: latestURL)
+        let corruptURL = documents
+            .appending(path: "PowerBenchmarkResults", directoryHint: .isDirectory)
+            .appending(path: "newer-but-corrupt.json")
+        try Data("not-json".utf8).write(to: corruptURL)
+
+        let loaded = try await store.loadLatestPowerResult()
+        let restored = try XCTUnwrap(loaded)
+        XCTAssertEqual(restored.result, latest)
+        XCTAssertEqual(restored.fileURL, latestURL)
+        XCTAssertEqual(try Data(contentsOf: latestURL), originalBytes)
+        let history = try await store.loadPowerResults()
+        XCTAssertEqual(history.map(\.result), [latest, earlier])
+
+        let viewModel = BenchmarkViewModel(resultStore: store)
+        await viewModel.restoreLatestPowerResultIfNeeded()
+        XCTAssertEqual(viewModel.latestPowerResult, latest)
+        XCTAssertEqual(viewModel.resultFileURL, latestURL)
+        XCTAssertEqual(viewModel.storedPowerResults.map(\.result), [latest, earlier])
+        XCTAssertTrue(viewModel.recoveryNotice?.contains("Restored") == true)
+
+        viewModel.selectStoredPowerResult(id: earlier.resultID)
+        XCTAssertEqual(viewModel.latestPowerResult, earlier)
+        XCTAssertEqual(viewModel.resultFileURL, earlierURL)
+        XCTAssertEqual(viewModel.githubSubmissionPhase, .idle)
+        XCTAssertFalse(viewModel.acceptsPowerSubmissionDeclarations)
+    }
+
     func testUXEncodingRetainsRecalculableRenderableEvidence() throws {
         let result = try fixtureResult(
             resource: "b-ux-001-short-interaction"
@@ -230,7 +299,7 @@ final class PowerReferenceAppTests: XCTestCase {
         )
     }
 
-    func testPowerSubmissionPackagePreservesRawBytesAndCurrentManifest() throws {
+    func testPowerSubmissionPackagePreservesRawBytesAndCurrentManifest() async throws {
         let result = try fixtureResult(resource: "b-ux-001-short-interaction")
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -275,11 +344,54 @@ final class PowerReferenceAppTests: XCTestCase {
             (manifest["result"] as? [String: Any])?["resultID"] as? String,
             result.resultID.uuidString.lowercased()
         )
+
+        let documents = FileManager.default.temporaryDirectory.appending(
+            path: UUID().uuidString,
+            directoryHint: .isDirectory
+        )
+        try FileManager.default.createDirectory(
+            at: documents,
+            withIntermediateDirectories: true
+        )
+        defer { try? FileManager.default.removeItem(at: documents) }
+        let store = ResultStore(documentsDirectory: documents)
+        let packageURL = try await store.save(package)
+        let savedResultURL = packageURL.appending(path: "result.json")
+        let savedManifestURL = packageURL.appending(path: "submission.json")
+        XCTAssertEqual(try Data(contentsOf: savedResultURL), rawBytes)
+        XCTAssertEqual(
+            try Data(contentsOf: savedManifestURL),
+            package.manifestData
+        )
+
+        do {
+            _ = try await store.save(package)
+            XCTFail("A saved package must not be overwritten")
+        } catch {
+            XCTAssertEqual(try Data(contentsOf: savedResultURL), rawBytes)
+            XCTAssertEqual(
+                try Data(contentsOf: savedManifestURL),
+                package.manifestData
+            )
+        }
+        let packageRoot = documents.appending(
+            path: "PowerSubmissionPackages",
+            directoryHint: .isDirectory
+        )
+        let packageRootContents = try FileManager.default.contentsOfDirectory(
+            at: packageRoot,
+            includingPropertiesForKeys: nil
+        )
+        XCTAssertFalse(packageRootContents.contains { $0.lastPathComponent.hasPrefix(".") })
     }
 
     private func fixtureResult(
         resource: String = "suite-b-pilot-001",
-        userExperienceText: String? = nil
+        userExperienceText: String? = nil,
+        createdAt: Date = Date(timeIntervalSince1970: 3),
+        resultID: UUID = UUID(
+            uuidString: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+        )!
     ) throws -> PowerResultBundle {
         let loaded = try PilotPlanLoader.load(resource: resource)
         let context = try fixtureContext(plan: loaded.plan)
@@ -302,8 +414,8 @@ final class PowerReferenceAppTests: XCTestCase {
                 attempts: attempts
             ),
             context: context,
-            resultID: UUID(uuidString: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa")!,
-            createdAt: Date(timeIntervalSince1970: 3)
+            resultID: resultID,
+            createdAt: createdAt
         )
     }
 

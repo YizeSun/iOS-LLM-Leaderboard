@@ -6,8 +6,10 @@ an inference framework.
 
 ## Current status
 
-App `0.15.0` build `18` adds contributor-owned GitHub PR creation and trusted
-repository intake triage while retaining the draft
+App `0.16.0` build `19` adds safe result recovery, a selectable history of
+frozen local Power results, and a more robust GitHub authorization and package
+save flow. It retains the contributor-owned GitHub PR creation and trusted
+repository intake triage introduced by App 0.15.0 while retaining the draft
 `short-interaction-response-v2` behavior preview. It retains the frozen Power
 1.1 workload IDs, fixtures, measurement boundaries, generation settings,
 attempt counts, and source-result schema identity. Its App version, build, and
@@ -30,7 +32,7 @@ substituted when an exact Power 1.0 reproduction is intended.
 
 Apps 0.8.0 through 0.11.0 emit the adopted Power 1.0 source result contract
 `suite-b-power-result-1.0.0-rc.1`. App 0.12.0 remains the historical Power 1.1
-draft runner. Apps 0.13.0 through 0.15.0 emit
+draft runner. Apps 0.13.0 through 0.16.0 emit
 `suite-b-power-result-1.1.0-rc.1`. Every raw App export sets
 `officialResultEligible` to `false`; no App export assigns its own publication,
 trust, or ranking status. Repository validation and release policy do. A
@@ -45,7 +47,7 @@ The production control surface exposes exactly two workload identities:
 
 The loader rejects any other plan identity or version. Experimental
 `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` resources are
-retained for repository history and compatibility, but App 0.15.0 cannot
+retained for repository history and compatibility, but App 0.16.0 cannot
 execute them through its production controls.
 
 The three pinned Qwen3 profiles have Maintainer Reference evidence:
@@ -54,7 +56,7 @@ The three pinned Qwen3 profiles have Maintainer Reference evidence:
 - `mlx-community/Qwen3-1.7B-4bit`;
 - `mlx-community/Qwen3-4B-3bit`.
 
-App 0.15.0 also exposes eight pinned artifacts with accepted single-contributor
+App 0.16.0 also exposes eight pinned artifacts with accepted single-contributor
 physical-iPhone community evidence:
 
 - `mlx-community/Llama-3.2-1B-Instruct-4bit`;
@@ -153,9 +155,10 @@ guide available but disables the direct-submit button.
 
 The feature changes no frozen validation rule. App 0.13.0 build 16 at its exact
 source commit remains the only Power 1.1 reference runner identity. Results
-from App 0.14.0, App 0.15.0, or any later unapproved source identity are retained locally but
-are rejected as `runner_incompatible` by current Power 1.1 intake; accepting a
-new runner requires an explicitly versioned future contract.
+from an App runner not listed by the current versioned compatibility policy are
+retained locally but rejected as `runner_incompatible`. Power 1.1's original
+App 0.13.0 reference identity remains immutable; later exact runner identities
+must be approved by a separate, versioned compatibility policy.
 
 Ambient room temperature and its source, case state, placement, and thermal
 assistance can be recorded as optional local observations. The App can copy a

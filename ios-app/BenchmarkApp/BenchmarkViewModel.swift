@@ -89,6 +89,7 @@ final class BenchmarkViewModel {
     private(set) var workloadRegistry: SuiteBPlanRegistry?
     private(set) var latestUnifiedResult: SuiteBResultBundle?
     private(set) var latestPowerResult: PowerResultBundle?
+    private(set) var storedPowerResults: [ResultStore.StoredPowerResult] = []
     private(set) var recoveryNotice: String?
     private(set) var submissionFileURL: URL?
     private(set) var submissionError: String?
@@ -108,14 +109,16 @@ final class BenchmarkViewModel {
     private(set) var selectedModelProfile: ProductionModelProfile = .small
 
     private let runtime: any ModelPreparingRuntime
-    private let resultStore = ResultStore()
+    private let resultStore: ResultStore
     private let powerCheckpointStore = PowerSessionCheckpointStore()
 
     init(
         runtime: any ModelPreparingRuntime = MLXSwiftRuntime(),
-        loadedPlan: LoadedPilotPlan? = nil
+        loadedPlan: LoadedPilotPlan? = nil,
+        resultStore: ResultStore = ResultStore()
     ) {
         self.runtime = runtime
+        self.resultStore = resultStore
         if let loadedPlan {
             self.loadedPlan = loadedPlan
             selectedModelProfile = ProductionModelProfile.matching(
@@ -166,7 +169,7 @@ final class BenchmarkViewModel {
     }
 
     // Experimental registry entries remain for historical compatibility, but
-    // App 0.15.0 cannot execute them through the Power control surface.
+    // App 0.16.0 cannot execute them through the Power control surface.
     var canCalibrateInputLengths: Bool {
         false
     }
@@ -246,6 +249,29 @@ final class BenchmarkViewModel {
             && submissionIdle
     }
 
+    var selectedPowerResultID: UUID? { latestPowerResult?.resultID }
+
+    var canSelectStoredPowerResult: Bool {
+        guard phase != .running else { return false }
+        switch githubSubmissionPhase {
+        case .authorizing, .publishing:
+            return false
+        case .idle, .completed, .failed:
+            return true
+        }
+    }
+
+    func selectStoredPowerResult(id: UUID) {
+        guard canSelectStoredPowerResult,
+              id != selectedPowerResultID,
+              let stored = storedPowerResults.first(where: { $0.id == id })
+        else { return }
+        applyStoredPowerResult(
+            stored,
+            notice: "Selected a validated saved Power result. GitHub submission will reuse its original JSON bytes."
+        )
+    }
+
     func submitLatestPowerResultToGitHub() async {
         guard let result = latestPowerResult,
               let resultFileURL,
@@ -257,6 +283,7 @@ final class BenchmarkViewModel {
                 throw GitHubSubmissionClient.ClientError.missingClientID
             }
             let client = try GitHubSubmissionClient(clientID: clientID)
+            await releasePreparedModelForSubmission()
             let authorization = try await client.startAuthorization()
             githubSubmissionPhase = .authorizing(
                 code: authorization.userCode,
@@ -476,9 +503,13 @@ final class BenchmarkViewModel {
                 session: session,
                 context: context
             )
-            resultFileURL = try await resultStore.save(bundle)
+            let savedURL = try await resultStore.save(bundle)
+            resultFileURL = savedURL
             try await powerCheckpointStore.clear()
             latestPowerResult = bundle
+            recordStoredPowerResult(
+                .init(result: bundle, fileURL: savedURL)
+            )
             latestUnifiedResult = nil
             submissionFileURL = nil
             result = nil
@@ -505,9 +536,13 @@ final class BenchmarkViewModel {
                 session: recovered.session,
                 context: recovered.context
             )
-            resultFileURL = try await resultStore.save(bundle)
+            let savedURL = try await resultStore.save(bundle)
+            resultFileURL = savedURL
             try await powerCheckpointStore.clear()
             latestPowerResult = bundle
+            recordStoredPowerResult(
+                .init(result: bundle, fileURL: savedURL)
+            )
             result = nil
             latestUnifiedResult = nil
             recoveryNotice = "Recovered an interrupted Power session without discarding planned attempts."
@@ -521,6 +556,23 @@ final class BenchmarkViewModel {
             )
         } catch {
             recoveryNotice = "Interrupted Power session could not be exported: \(error.localizedDescription)"
+        }
+    }
+
+    func restoreLatestPowerResultIfNeeded() async {
+        guard phase != .running else { return }
+        do {
+            storedPowerResults = try await resultStore.loadPowerResults()
+            guard !storedPowerResults.isEmpty else { return }
+            let selected = selectedPowerResultID.flatMap { selectedID in
+                storedPowerResults.first(where: { $0.id == selectedID })
+            } ?? storedPowerResults[0]
+            applyStoredPowerResult(
+                selected,
+                notice: "Restored \(storedPowerResults.count) validated Power result(s) from local storage. The newest result is selected; choosing another result never rewrites its JSON bytes."
+            )
+        } catch {
+            recoveryNotice = "A saved Power result exists but could not be restored safely: \(error.localizedDescription)"
         }
     }
 
@@ -832,6 +884,45 @@ final class BenchmarkViewModel {
         reviewedResult = false
         confirmsNoPersonalData = false
         agreesToRepositoryLicense = false
+    }
+
+    private func releasePreparedModelForSubmission() async {
+        await runtime.releaseModel()
+        modelPreparation = nil
+        preparationPhase = .notPrepared
+    }
+
+    private func recordStoredPowerResult(
+        _ stored: ResultStore.StoredPowerResult
+    ) {
+        storedPowerResults.removeAll { $0.id == stored.id }
+        storedPowerResults.append(stored)
+        storedPowerResults.sort {
+            if $0.result.createdAt != $1.result.createdAt {
+                return $0.result.createdAt > $1.result.createdAt
+            }
+            return $0.result.resultID.uuidString < $1.result.resultID.uuidString
+        }
+    }
+
+    private func applyStoredPowerResult(
+        _ stored: ResultStore.StoredPowerResult,
+        notice: String
+    ) {
+        latestPowerResult = stored.result
+        resultFileURL = stored.fileURL
+        latestUnifiedResult = nil
+        result = nil
+        submissionFileURL = nil
+        powerSubmissionPackageURL = nil
+        githubSubmissionPhase = .idle
+        acceptsPowerSubmissionDeclarations = false
+        let measured = stored.result.attempts.filter { $0.role == "measured" }
+        phase = .completed(
+            measuredAttempts: measured.count,
+            failedAttempts: measured.filter { $0.outcome != "completed" }.count
+        )
+        recoveryNotice = notice
     }
 
     private static func failureMessage(_ attempt: BenchmarkAttempt) -> String {

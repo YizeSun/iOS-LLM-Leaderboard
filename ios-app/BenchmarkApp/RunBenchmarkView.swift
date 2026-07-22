@@ -1,9 +1,11 @@
 import SwiftUI
+import UIKit
 
 struct RunBenchmarkView: View {
     private let environment = DeviceEnvironment.current
     @Bindable var settings: PowerAppSettings
     @State private var viewModel = BenchmarkViewModel()
+    @State private var copiedGitHubCode = false
 
     var body: some View {
         NavigationStack {
@@ -55,7 +57,7 @@ struct RunBenchmarkView: View {
                 } header: {
                     Text("Power Benchmark 1.1")
                 } footer: {
-                    Text("Power 1.1 measurement contract · behavior preview v2 draft · App 0.15.0")
+                    Text("Power 1.1 measurement contract · behavior preview v2 draft · App 0.16.0")
                 }
 
                 Section {
@@ -167,9 +169,47 @@ struct RunBenchmarkView: View {
                     }
                 }
 
+                if !viewModel.storedPowerResults.isEmpty {
+                    Section {
+                        Picker(
+                            "Selected result",
+                            selection: Binding<UUID?>(
+                                get: { viewModel.selectedPowerResultID },
+                                set: { selectedID in
+                                    if let selectedID {
+                                        viewModel.selectStoredPowerResult(
+                                            id: selectedID
+                                        )
+                                    }
+                                }
+                            )
+                        ) {
+                            ForEach(viewModel.storedPowerResults, id: \.id) { stored in
+                                Text(storedPowerResultLabel(stored))
+                                    .tag(Optional(stored.id))
+                            }
+                        }
+                        .disabled(!viewModel.canSelectStoredPowerResult)
+                        if let selected = viewModel.latestPowerResult {
+                            LabeledContent(
+                                "Result ID",
+                                value: selected.resultID.uuidString.lowercased()
+                            )
+                            LabeledContent(
+                                "Runner",
+                                value: "App \(selected.execution.appVersion) (\(selected.execution.appBuild))"
+                            )
+                        }
+                    } header: {
+                        Text("Saved Power Results")
+                    } footer: {
+                        Text("Every completed result remains on this iPhone. Selecting a result changes only what is displayed, shared, or submitted; its frozen JSON is never recalculated or rewritten.")
+                    }
+                }
+
                 if let result = viewModel.latestPowerResult {
                     let metrics = result.summary.metrics
-                    Section("Latest Power Result · Median") {
+                    Section("Selected Power Result · Median") {
                         LabeledContent("Pipeline TTFT", value: viewModel.metricText(metrics.medianPipelineTTFTMilliseconds, unit: "ms"))
                         LabeledContent("First-renderable proxy TTFT", value: viewModel.metricText(metrics.medianFirstRenderableProxyTTFTMilliseconds, unit: "ms"))
                         LabeledContent("Request completion", value: viewModel.metricText(metrics.medianRequestCompletionMilliseconds, unit: "ms"))
@@ -191,7 +231,7 @@ struct RunBenchmarkView: View {
                 if let resultFileURL = viewModel.resultFileURL {
                     Section {
                         LabeledContent(
-                            "Saved result",
+                            "Selected result file",
                             value: resultFileURL.lastPathComponent
                         )
                         ShareLink(item: resultFileURL) {
@@ -237,6 +277,7 @@ struct RunBenchmarkView: View {
                             isOn: $viewModel.acceptsPowerSubmissionDeclarations
                         )
                         Button {
+                            dismissKeyboard()
                             Task {
                                 await viewModel.submitLatestPowerResultToGitHub()
                             }
@@ -276,6 +317,15 @@ struct RunBenchmarkView: View {
                 }
             }
             .navigationTitle("Run Benchmark")
+            .scrollDismissesKeyboard(.interactively)
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        dismissKeyboard()
+                    }
+                }
+            }
             .refreshable {
                 viewModel.refreshThermalState()
             }
@@ -284,8 +334,18 @@ struct RunBenchmarkView: View {
                 viewModel.selectBenchmarkPlan(settings.selectedManualWorkload)
                 viewModel.refreshThermalState()
                 await viewModel.recoverInterruptedSessionIfNeeded()
+                await viewModel.restoreLatestPowerResultIfNeeded()
             }
         }
+    }
+
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
 
     @ViewBuilder
@@ -295,14 +355,30 @@ struct RunBenchmarkView: View {
             EmptyView()
         case .authorizing(let code, let verificationURL):
             VStack(alignment: .leading, spacing: 8) {
-                Text("GitHub code: \(code)")
+                Text("GitHub code")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(code)
                     .font(.headline.monospaced())
                     .textSelection(.enabled)
-                Link("Authorize on GitHub", destination: verificationURL)
-                Text("Return to the App after authorizing; submission continues automatically.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .accessibilityLabel("GitHub authorization code \(code)")
             }
+            Button {
+                copyGitHubCode(code)
+            } label: {
+                Label(
+                    copiedGitHubCode ? "Code copied" : "Copy code",
+                    systemImage: copiedGitHubCode
+                        ? "checkmark.circle.fill"
+                        : "doc.on.doc"
+                )
+            }
+            Link(destination: verificationURL) {
+                Label("Authorize on GitHub", systemImage: "safari")
+            }
+            Text("The model was released before authorization to reduce memory pressure. Return to the App after authorizing; if iOS relaunches it, the saved result will be restored and you can start a fresh authorization.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
         case .publishing:
             HStack {
                 ProgressView()
@@ -312,10 +388,29 @@ struct RunBenchmarkView: View {
             Label("Pull request created", systemImage: "checkmark.circle.fill")
                 .foregroundStyle(.green)
             Link("Open pull request", destination: pullRequestURL)
+            Text("Choose another saved result above to submit it. To run a new test, prepare the model again, then tap Run Benchmark; the new result will be saved and selected automatically.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
         case .failed(let message):
             Label(message, systemImage: "xmark.circle.fill")
                 .foregroundStyle(.red)
         }
+    }
+
+    private func copyGitHubCode(_ code: String) {
+        UIPasteboard.general.string = code
+        copiedGitHubCode = true
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            copiedGitHubCode = false
+        }
+    }
+
+    private func storedPowerResultLabel(
+        _ stored: ResultStore.StoredPowerResult
+    ) -> String {
+        let result = stored.result
+        return "\(result.createdAt.formatted(date: .abbreviated, time: .shortened)) · \(result.model.displayName) · \(result.execution.workloadID)"
     }
 
     private var batteryDescription: String {
