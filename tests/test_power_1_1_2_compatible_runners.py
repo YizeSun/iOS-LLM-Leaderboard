@@ -21,7 +21,6 @@ from tests.test_power_1_1_compatible_runners import compatible_result, digest
 ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "benchmarks/suite-b-on-device-performance"
 POLICY_PATH = SUITE / "power-1.1-compatible-runners-1.1.2.json"
-INDEX_PATH = SUITE / "power-compatible-runners-current.json"
 RELEASE_PATH = SUITE / "releases/suite-b-power-1.1.2.json"
 APP_SOURCE_COMMIT = "7e99fb060454f5f59e4255d04981d38eeec732f0"
 
@@ -51,29 +50,18 @@ class PowerOneOneTwoCompatibleRunnerTests(unittest.TestCase):
             release["contractAdoption"]["compatibleRunnerPolicyExtended"]
         )
 
-        index = json.loads(INDEX_PATH.read_text())
-        current = index["currentPolicy"]
-        self.assertEqual(current["policyVersion"], "1.1.2")
-        self.assertEqual(current["path"], POLICY_PATH.relative_to(ROOT).as_posix())
         self.assertEqual(
-            current["sha256"], hashlib.sha256(POLICY_PATH.read_bytes()).hexdigest()
+            hashlib.sha256(POLICY_PATH.read_bytes()).hexdigest(),
+            "aa60839915f6bf081e25933b61ff73d1cf226f7b07170dba59a65ee44de7c6af",
         )
 
-    def test_app_017_policy_commit_is_latest_ios_app_commit(self) -> None:
+    def test_app_017_policy_commit_remains_the_approved_branch_commit(self) -> None:
         policy = json.loads(POLICY_PATH.read_text())
         app_017 = next(
             runner
             for runner in policy["approvedRunners"]
             if runner["approvalID"] == "ios-compatible-app-0.17.0-build-20"
         )
-        latest_ios_commit = subprocess.run(
-            ["git", "log", "-1", "--format=%H", "--", "ios-app"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.strip()
-        self.assertEqual(app_017["appSourceCommit"], latest_ios_commit)
         self.assertEqual(app_017["appSourceCommit"], APP_SOURCE_COMMIT)
 
     def test_reference_app_016_and_exact_app_017_are_accepted(self) -> None:

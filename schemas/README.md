@@ -11,7 +11,7 @@ manifest is immutable.
   validation decisions.
 - `suite-b-power-submission-1.1.0.schema.json` — current two-file contributor
   manifest bound to an untouched source export.
-- `suite-b-power-compatible-runners-1.1.2.schema.json` — current exact
+- `suite-b-power-compatible-runners-1.1.3.schema.json` — current exact
   runner/runtime compatibility-policy contract used by trusted intake.
 
 The source result retains its RC1 schema identity because Power 1.1 adopted

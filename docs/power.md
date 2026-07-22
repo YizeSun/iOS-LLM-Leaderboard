@@ -12,9 +12,9 @@ model artifact + quantization + runtime + device + OS
 Power 1.1 is the active public release. Release 1.1.0 adopts the frozen Power
 1.1 RC1 execution contract and six immutable physical-iPhone results, then
 applies the final 1.1 ranking policy without rewriting the original result
-bytes or source identities. Patch policies 1.1.1 and 1.1.2 leave that protocol,
-schema, reference App, evidence, and ranking policy unchanged. They add and
-extend an exact compatible-runner allowlist for community intake.
+bytes or source identities. Patch policies 1.1.1 through 1.1.3 leave that
+protocol, schema, reference App, evidence, and ranking policy unchanged. They
+add and extend an exact compatible-runner allowlist for community intake.
 
 The active workloads are:
 
@@ -51,12 +51,13 @@ is ineligible. Submission validation happens before merge; the generated
 ranking independently derives eligibility again from retained evidence.
 
 Runner compatibility is an additional closed gate. The original App 0.13.0
-build 16 reference identity remains frozen. Policy 1.1.2 preserves the exact
-App 0.16.0 build 19 approval and also approves App 0.17.0 build 20 only at
-source commit `7e99fb060454f5f59e4255d04981d38eeec732f0` and the pinned runtime
-identity. App 0.14.0, App 0.15.0, a different approved-App build/commit, or a
-later App is not implicitly accepted. A newly approved runner needs a new
-versioned policy; old rejected evidence is never relabeled.
+build 16 reference identity remains frozen. Policy 1.1.3 preserves the exact
+App 0.16.0 build 19 and App 0.17.0 build 20 approvals, and adds the App 0.17.0
+`main` source commit `508eaec469b5cc0f2556d464b22d056ec7c15b03` produced by the
+protected merge. Both App 0.17 identities use the same pinned runtime and App
+bytes. App 0.14.0, App 0.15.0, a different approved-App build/commit, or a later
+App is not implicitly accepted. A newly approved runner needs a new versioned
+policy; old rejected evidence is never relabeled.
 
 Power 1.1 source exports retain the schema identity
 `suite-b-power-result-1.1.0-rc.1` because finalization adopted the frozen RC1
@@ -81,9 +82,9 @@ the evidence dataset.
 
 This page is the short public explanation. Normative details are in:
 
-- [current compatibility release manifest](../benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.2.json);
+- [current compatibility release manifest](../benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.3.json);
 - [source release manifest](../benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.0.json);
-- [compatible-runner policy](../benchmarks/suite-b-on-device-performance/power-1.1-compatible-runners-1.1.2.json);
+- [compatible-runner policy](../benchmarks/suite-b-on-device-performance/power-1.1-compatible-runners-1.1.3.json);
 - [frozen RC1 protocol](../benchmarks/suite-b-on-device-performance/power-1.1-rc1-protocol.md);
 - [final ranking policy](../benchmarks/suite-b-on-device-performance/power-1.1-ranking-policy.json);
 - [result schema](../schemas/suite-b-power-result-1.1.0-rc.1.schema.json);

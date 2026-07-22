@@ -12,14 +12,14 @@ live Power ranking.
 
 The frozen reference remains Benchmark App 0.13.0 build 16 at source commit
 `f5b863cc0ca4d82d987cd9779f8875939d7bf90c`. Current compatibility policy
-1.1.2 preserves Benchmark App 0.16.0 build 19 and also approves Benchmark App
-0.17.0 build 20 at App source commit
-`7e99fb060454f5f59e4255d04981d38eeec732f0`. The App embeds the latest commit
+1.1.3 preserves Benchmark App 0.16.0 build 19 and approves Benchmark App
+0.17.0 build 20 at the reviewed App commit and its source-equivalent `main`
+commit `508eaec469b5cc0f2556d464b22d056ec7c15b03`. The App embeds the latest commit
 that changed `ios-app/`, so repository documentation and ranking updates do not
 silently change its runner identity.
 
 For a new run, build the current `main` checkout and verify the App displays
-version 0.17.0 and shows **Approved for Power 1.1.2**:
+version 0.17.0 and shows **Approved for Power 1.1.3**:
 
 ```bash
 git clone https://github.com/YOUR_GITHUB_HANDLE/iOS-LLM-Leaderboard.git
@@ -90,7 +90,7 @@ submission route. A development build without that configuration may still
 share the untouched raw JSON as a backup, but it cannot create the contributor
 manifest or PR. Do not send an App 0.17.0 result through the retained
 `scripts/power.py` command: that command is an immutable Power 1.1.1 asset and
-correctly rejects runners added by policy 1.1.2. Configure the public Client ID
+correctly rejects runners added by later policies. Configure the public Client ID
 and rebuild the App instead.
 
 The older CLI remains available only for exact App 0.13.0/App 0.16.0 runner
