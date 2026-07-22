@@ -7,8 +7,8 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
+from scripts import triage_power_submission_pr_1_1_3 as current_triage
 from scripts.power import create_package
-from scripts.triage_power_submission_pr import _changes, classify
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,6 +20,8 @@ FIXTURE = (
 )
 SUBMISSION_ID = "11111111-2222-4333-8444-555555555555"
 PREFIX = "submissions/suite-b/power-1.1.0/draft"
+_changes = current_triage.base._changes
+classify = current_triage.classify
 
 
 class PowerSubmissionPRTriageTests(unittest.TestCase):
@@ -27,8 +29,25 @@ class PowerSubmissionPRTriageTests(unittest.TestCase):
         workflow = (
             ROOT / ".github/workflows/power-submission-triage.yml"
         ).read_text()
-        self.assertIn("python3 -m scripts.triage_power_submission_pr", workflow)
+        self.assertIn(
+            "python3 -m scripts.triage_power_submission_pr_1_1_3", workflow
+        )
         self.assertNotIn("python3 scripts/triage_power_submission_pr.py", workflow)
+
+    def test_fork_checks_and_auto_merge_resolve_trusted_pr_context(self) -> None:
+        identity = (ROOT / ".github/workflows/commit-identity.yml").read_text()
+        self.assertIn("  pull_request_target:", identity)
+        self.assertNotIn("  pull_request:\n", identity)
+        self.assertIn("github.event.pull_request.base.sha || github.sha", identity)
+        self.assertIn('pull/${PR_NUMBER}/head:', identity)
+
+        auto_merge = (
+            ROOT / ".github/workflows/power-submission-automerge.yml"
+        ).read_text()
+        self.assertIn("HEAD_REPOSITORY", auto_merge)
+        self.assertIn('head="$HEAD_OWNER:$HEAD_BRANCH"', auto_merge)
+        self.assertIn("headRefOid", auto_merge)
+        self.assertIn("Unable to resolve an open pull request", auto_merge)
 
     def make_package(
         self,
@@ -71,11 +90,10 @@ class PowerSubmissionPRTriageTests(unittest.TestCase):
             shutil.copytree(package, target)
             return target
 
-        with mock.patch(
-            "scripts.triage_power_submission_pr._changes", return_value=changes
-        ), mock.patch(
-            "scripts.triage_power_submission_pr._materialize_package",
-            side_effect=materialize,
+        with mock.patch.object(
+            current_triage.base, "_changes", return_value=changes
+        ), mock.patch.object(
+            current_triage.base, "_materialize_package", side_effect=materialize
         ):
             return classify("base", "head", "ExampleContributor")
 
@@ -96,8 +114,9 @@ class PowerSubmissionPRTriageTests(unittest.TestCase):
         )
 
     def test_non_submission_change_is_not_applicable(self) -> None:
-        with mock.patch(
-            "scripts.triage_power_submission_pr._changes",
+        with mock.patch.object(
+            current_triage.base,
+            "_changes",
             return_value=[("M", "README.md")],
         ):
             report = classify("base", "head", "ExampleContributor")
@@ -109,17 +128,16 @@ class PowerSubmissionPRTriageTests(unittest.TestCase):
             ("A", f"{PREFIX}/{SUBMISSION_ID}/submission.json"),
             ("M", "README.md"),
         ]
-        with mock.patch(
-            "scripts.triage_power_submission_pr._changes", return_value=changes
+        with mock.patch.object(
+            current_triage.base, "_changes", return_value=changes
         ):
             report = classify("base", "head", "ExampleContributor")
         self.assertEqual(report["classification"], "rejected")
         self.assertIn("pull_request_scope_invalid", report["reasonCodes"])
 
     def test_changes_are_measured_from_the_pull_request_merge_base(self) -> None:
-        with mock.patch(
-            "scripts.triage_power_submission_pr._git",
-            return_value=b"A\tREADME.md\n",
+        with mock.patch.object(
+            current_triage.base, "_git", return_value=b"A\tREADME.md\n"
         ) as git:
             self.assertEqual(_changes("base", "head"), [("A", "README.md")])
         git.assert_called_once_with(
@@ -131,8 +149,8 @@ class PowerSubmissionPRTriageTests(unittest.TestCase):
             ("A", f"{PREFIX}/../result.json"),
             ("A", f"{PREFIX}/../submission.json"),
         ]
-        with mock.patch(
-            "scripts.triage_power_submission_pr._changes", return_value=changes
+        with mock.patch.object(
+            current_triage.base, "_changes", return_value=changes
         ):
             report = classify("base", "head", "ExampleContributor")
         self.assertEqual(report["classification"], "rejected")
