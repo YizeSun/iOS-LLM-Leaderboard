@@ -2,6 +2,15 @@ import Foundation
 import XCTest
 @testable import BenchmarkApp
 
+private struct StaticPowerPolicyFetcher: PowerCompatibilityPolicyFetching {
+    let policy: PowerCompatibilityPolicy?
+
+    func fetchCurrentPolicy() async throws -> PowerCompatibilityPolicy {
+        guard let policy else { throw PowerCompatibilityPolicyError.unavailable }
+        return policy
+    }
+}
+
 final class PowerReferenceAppTests: XCTestCase {
     func testBuiltAppEmbedsExactSourceCommit() throws {
         let sourceCommit = try XCTUnwrap(BuildMetadata.sourceCommit)
@@ -72,6 +81,123 @@ final class PowerReferenceAppTests: XCTestCase {
             ),
             result
         )
+    }
+
+    func testCompatibilityPolicyRequiresAnExactRunnerAndRuntimeIdentity() throws {
+        let result = try fixtureResult()
+        let identity = PowerRunnerIdentity(result: result)
+        let approval = PowerCompatibilityPolicy.ApprovedRunner(
+            approvalID: "fixture-runner",
+            kind: "compatible",
+            runnerID: identity.runnerID,
+            runnerVersion: identity.runnerVersion,
+            appVersion: identity.appVersion,
+            appBuild: identity.appBuild,
+            appSourceCommit: identity.appSourceCommit,
+            runtime: identity.runtime
+        )
+        let policy = fixturePolicy(approvedRunners: [approval])
+
+        XCTAssertEqual(policy.approval(for: identity), approval)
+        let mismatched = PowerRunnerIdentity(
+            runnerID: identity.runnerID,
+            runnerVersion: identity.runnerVersion,
+            appVersion: identity.appVersion,
+            appBuild: identity.appBuild,
+            appSourceCommit: identity.appSourceCommit,
+            runtime: PowerRuntimeIdentity(
+                name: identity.runtime.name,
+                version: "unexpected-runtime",
+                resolvedRevision: identity.runtime.resolvedRevision,
+                backend: identity.runtime.backend,
+                dependencyVersions: identity.runtime.dependencyVersions
+            )
+        )
+        XCTAssertNil(policy.approval(for: mismatched))
+        XCTAssertNoThrow(try policy.validateForPowerOneOne())
+    }
+
+    @MainActor
+    func testSavedResultEligibilityIsIndependentFromCurrentAppEligibility() async throws {
+        let documents = FileManager.default.temporaryDirectory.appending(
+            path: UUID().uuidString,
+            directoryHint: .isDirectory
+        )
+        try FileManager.default.createDirectory(
+            at: documents,
+            withIntermediateDirectories: true
+        )
+        defer { try? FileManager.default.removeItem(at: documents) }
+        let store = ResultStore(documentsDirectory: documents)
+        let result = try fixtureResult()
+        _ = try await store.save(result)
+        let identity = PowerRunnerIdentity(result: result)
+        let approval = PowerCompatibilityPolicy.ApprovedRunner(
+            approvalID: "saved-fixture-runner",
+            kind: "compatible",
+            runnerID: identity.runnerID,
+            runnerVersion: identity.runnerVersion,
+            appVersion: identity.appVersion,
+            appBuild: identity.appBuild,
+            appSourceCommit: identity.appSourceCommit,
+            runtime: identity.runtime
+        )
+        let viewModel = BenchmarkViewModel(
+            resultStore: store,
+            compatibilityPolicyFetcher: StaticPowerPolicyFetcher(
+                policy: fixturePolicy(approvedRunners: [approval])
+            )
+        )
+
+        await viewModel.restoreLatestPowerResultIfNeeded()
+        await viewModel.refreshCompatibilityPolicy()
+
+        XCTAssertEqual(
+            viewModel.currentRunnerEligibility,
+            .notApproved(policyVersion: "1.1.2")
+        )
+        XCTAssertEqual(
+            viewModel.selectedResultEligibility,
+            .approved(
+                policyVersion: "1.1.2",
+                approvalID: "saved-fixture-runner"
+            )
+        )
+        XCTAssertFalse(viewModel.canPrepare)
+    }
+
+    @MainActor
+    func testUnavailablePolicyFailsClosedWithoutRemovingSavedResult() async throws {
+        let documents = FileManager.default.temporaryDirectory.appending(
+            path: UUID().uuidString,
+            directoryHint: .isDirectory
+        )
+        try FileManager.default.createDirectory(
+            at: documents,
+            withIntermediateDirectories: true
+        )
+        defer { try? FileManager.default.removeItem(at: documents) }
+        let store = ResultStore(documentsDirectory: documents)
+        let result = try fixtureResult()
+        let resultURL = try await store.save(result)
+        let originalBytes = try Data(contentsOf: resultURL)
+        let viewModel = BenchmarkViewModel(
+            resultStore: store,
+            compatibilityPolicyFetcher: StaticPowerPolicyFetcher(policy: nil)
+        )
+
+        await viewModel.restoreLatestPowerResultIfNeeded()
+        await viewModel.refreshCompatibilityPolicy()
+
+        guard case .unavailable = viewModel.currentRunnerEligibility else {
+            return XCTFail("A failed policy fetch must fail closed")
+        }
+        guard case .unavailable = viewModel.selectedResultEligibility else {
+            return XCTFail("Submission must fail closed when policy is unavailable")
+        }
+        XCTAssertFalse(viewModel.canPrepare)
+        XCTAssertFalse(viewModel.canSubmitLatestPowerResultToGitHub)
+        XCTAssertEqual(try Data(contentsOf: resultURL), originalBytes)
     }
 
     @MainActor
@@ -416,6 +542,26 @@ final class PowerReferenceAppTests: XCTestCase {
             context: context,
             resultID: resultID,
             createdAt: createdAt
+        )
+    }
+
+    private func fixturePolicy(
+        approvedRunners: [PowerCompatibilityPolicy.ApprovedRunner]
+    ) -> PowerCompatibilityPolicy {
+        PowerCompatibilityPolicy(
+            schemaVersion: "suite-b-power-compatible-runners-1.1.2",
+            policyID: "suite-b-power-runner-compatibility",
+            policyVersion: "1.1.2",
+            status: "published",
+            benchmarkRelease: .init(
+                id: "suite-b-power",
+                policyVersion: "1.1.2",
+                sourceRelease: .init(id: "suite-b-power", version: "1.1.0")
+            ),
+            protocolSemanticsChanged: false,
+            resultSchemaChanged: false,
+            rawEvidenceMutationAllowed: false,
+            approvedRunners: approvedRunners
         )
     }
 

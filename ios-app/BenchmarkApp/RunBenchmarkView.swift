@@ -2,340 +2,405 @@ import SwiftUI
 import UIKit
 
 struct RunBenchmarkView: View {
+    private enum Tab: Hashable {
+        case test
+        case results
+    }
+
+    @Environment(\.scenePhase) private var scenePhase
     private let environment = DeviceEnvironment.current
     @Bindable var settings: PowerAppSettings
     @State private var viewModel = BenchmarkViewModel()
     @State private var copiedGitHubCode = false
+    @State private var selectedTab: Tab = .test
 
     var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    Picker("Model profile", selection: $settings.selectedModelProfile) {
-                        ForEach(ProductionModelProfile.allCases) { profile in
-                            Text(profile.title).tag(profile)
-                        }
+        TabView(selection: $selectedTab) {
+            NavigationStack {
+                testForm
+            }
+            .tabItem {
+                Label("Test", systemImage: "play.circle.fill")
+            }
+            .tag(Tab.test)
+
+            NavigationStack {
+                resultsForm
+            }
+            .tabItem {
+                Label("Results", systemImage: "tray.full.fill")
+            }
+            .tag(Tab.results)
+        }
+        .task {
+            viewModel.selectModelProfile(settings.selectedModelProfile)
+            viewModel.selectBenchmarkPlan(settings.selectedManualWorkload)
+            viewModel.refreshThermalState()
+            await viewModel.refreshCompatibilityPolicy()
+            await viewModel.recoverInterruptedSessionIfNeeded()
+            await viewModel.restoreLatestPowerResultIfNeeded()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            Task {
+                await viewModel.refreshCompatibilityPolicy()
+            }
+        }
+    }
+
+    private var testForm: some View {
+        Form {
+            currentRunnerEligibilitySection
+
+            Section {
+                Picker("Model profile", selection: $settings.selectedModelProfile) {
+                    ForEach(ProductionModelProfile.allCases) { profile in
+                        Text(profile.title).tag(profile)
                     }
-                    .disabled(!viewModel.canSelectModelProfile)
-                    .onChange(of: settings.selectedModelProfile) { _, selection in
-                        viewModel.selectModelProfile(selection)
+                }
+                .disabled(!viewModel.canSelectModelProfile)
+                .onChange(of: settings.selectedModelProfile) { _, selection in
+                    viewModel.selectModelProfile(selection)
+                }
+                Picker("Workload", selection: $settings.selectedManualWorkload) {
+                    ForEach(ProductionBenchmarkPlan.allCases) { selection in
+                        Text(selection.title).tag(selection)
                     }
-                    Picker("Workload", selection: $settings.selectedManualWorkload) {
-                        ForEach(ProductionBenchmarkPlan.allCases) { selection in
-                            Text(selection.title).tag(selection)
-                        }
-                    }
-                    .disabled(!viewModel.canSelectBenchmarkPlan)
-                    .onChange(of: settings.selectedManualWorkload) { _, selection in
-                        viewModel.selectBenchmarkPlan(selection)
-                    }
-                    LabeledContent(
-                        "Plan",
-                        value: viewModel.loadedPlan?.plan.planId
-                            ?? "Unavailable"
-                    )
-                    LabeledContent(
-                        "Profile",
-                        value: viewModel.loadedPlan?.plan.workload.v2ProfileMapping
-                            ?? "Unavailable"
-                    )
-                    LabeledContent("Model", value: modelDescription)
-                    LabeledContent(
-                        "Evidence status",
-                        value: viewModel.selectedModelProfile.evidenceStatus.rawValue
-                    )
-                    if viewModel.selectedModelProfile.evidenceStatus
-                        == .communityEvidence {
-                        Text("This artifact has single-contributor community evidence. Another physical-iPhone run adds evidence; reproduction grouping still requires an exact comparison identity.")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                    LabeledContent("Procedure", value: procedureDescription)
-                    Text(timingBoundaryDescription)
+                }
+                .disabled(!viewModel.canSelectBenchmarkPlan)
+                .onChange(of: settings.selectedManualWorkload) { _, selection in
+                    viewModel.selectBenchmarkPlan(selection)
+                }
+                LabeledContent("Plan", value: viewModel.loadedPlan?.plan.planId ?? "Unavailable")
+                LabeledContent("Profile", value: viewModel.loadedPlan?.plan.workload.v2ProfileMapping ?? "Unavailable")
+                LabeledContent("Model", value: modelDescription)
+                LabeledContent("Evidence status", value: viewModel.selectedModelProfile.evidenceStatus.rawValue)
+                if viewModel.selectedModelProfile.evidenceStatus == .communityEvidence {
+                    Text("This artifact has single-contributor community evidence. Another physical-iPhone run adds evidence; reproduction grouping still requires an exact comparison identity.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
-                } header: {
-                    Text("Power Benchmark 1.1")
-                } footer: {
-                    Text("Power 1.1 measurement contract · behavior preview v2 draft · App 0.16.0")
                 }
+                LabeledContent("Procedure", value: procedureDescription)
+                Text(timingBoundaryDescription)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            } header: {
+                Text("Power Benchmark 1.1")
+            } footer: {
+                Text("Power 1.1 measurement contract · behavior preview v2 draft · App 0.17.0")
+            }
 
+            Section {
+                if let evidence = viewModel.modelPreparation {
+                    LabeledContent("Cache before preparation", value: evidence.cacheStateBeforePreparation.rawValue)
+                    LabeledContent("Model load", value: evidence.modelLoadCompleted ? "Completed" : "Not completed")
+                } else {
+                    Text("The pinned model has not been prepared in this App session.")
+                }
+                Button("Prepare Model") {
+                    Task { await viewModel.prepareModel() }
+                }
+                .disabled(!viewModel.canPrepare)
+            } header: {
+                Text("Model Preparation")
+            } footer: {
+                Text(preparationStatusText)
+            }
+
+            Section("This iPhone") {
+                LabeledContent("Device", value: environment.deviceDescription)
+                LabeledContent("System", value: environment.systemDescription)
+                LabeledContent("Thermal state", value: viewModel.currentThermalState)
+                LabeledContent("Build", value: viewModel.buildConfiguration)
+                LabeledContent("Low Power Mode", value: viewModel.lowPowerModeEnabled ? "On" : "Off")
+                LabeledContent("Battery", value: batteryDescription)
+            }
+
+            PowerEnvironmentObservationsSection(
+                settings: settings,
+                resultIDs: viewModel.latestPowerResult.map {
+                    [$0.resultID.uuidString.lowercased()]
+                } ?? []
+            )
+
+            preflightSections
+
+            Section {
+                Button("Run Benchmark") {
+                    Task { await viewModel.run() }
+                }
+                .disabled(!viewModel.canRun)
+                if viewModel.latestPowerResult != nil {
+                    Button("View Saved Result") {
+                        selectedTab = .results
+                    }
+                }
+            } footer: {
+                Text(viewModel.statusText)
+            }
+
+            if let notice = viewModel.recoveryNotice {
+                Section("Recovery") {
+                    Text(notice)
+                }
+            }
+        }
+        .navigationTitle("Test")
+        .scrollDismissesKeyboard(.interactively)
+        .keyboardDismissToolbar(action: dismissKeyboard)
+        .refreshable {
+            viewModel.refreshThermalState()
+            await viewModel.refreshCompatibilityPolicy()
+        }
+    }
+
+    private var resultsForm: some View {
+        Form {
+            if viewModel.storedPowerResults.isEmpty {
                 Section {
-                    if let evidence = viewModel.modelPreparation {
-                        LabeledContent(
-                            "Cache before preparation",
-                            value: evidence.cacheStateBeforePreparation.rawValue
-                        )
-                        LabeledContent(
-                            "Model load",
-                            value: evidence.modelLoadCompleted ? "Completed" : "Not completed"
-                        )
-                    } else {
-                        Text("The pinned model has not been prepared in this App session.")
-                    }
-                    Button("Prepare Model") {
-                        Task {
-                            await viewModel.prepareModel()
-                        }
-                    }
-                    .disabled(!viewModel.canPrepare)
-                } header: {
-                    Text("Model Preparation")
-                } footer: {
-                    Text(preparationStatusText)
-                }
-
-                Section("This iPhone") {
-                    LabeledContent("Device", value: environment.deviceDescription)
-                    LabeledContent("System", value: environment.systemDescription)
-                    LabeledContent("Thermal state", value: viewModel.currentThermalState)
-                    LabeledContent("Build", value: viewModel.buildConfiguration)
-                    LabeledContent(
-                        "Low Power Mode",
-                        value: viewModel.lowPowerModeEnabled ? "On" : "Off"
+                    ContentUnavailableView(
+                        "No Saved Results",
+                        systemImage: "tray",
+                        description: Text("Complete a Power test first. Every completed result will be retained here.")
                     )
-                    LabeledContent("Battery", value: batteryDescription)
                 }
-
-                PowerEnvironmentObservationsSection(
-                    settings: settings,
-                    resultIDs: viewModel.latestPowerResult.map {
-                        [$0.resultID.uuidString.lowercased()]
-                    } ?? []
-                )
-
-                if viewModel.debuggerAttached {
-                    Section("Preflight") {
-                        Label(
-                            "LLDB is attached. Benchmark measurements are disabled.",
-                            systemImage: "exclamationmark.triangle.fill"
-                        )
-                        .foregroundStyle(.orange)
-                        Text("Open Product → Scheme → Edit Scheme → Run → Info and turn off Debug executable, then run the app again.")
-                    }
-                }
-
-                if !viewModel.debuggerAttached
-                    && viewModel.buildConfiguration != "Release" {
-                    Section("Preflight") {
-                        Label(
-                            "Use a Release build before measuring.",
-                            systemImage: "hammer.fill"
-                        )
-                        .foregroundStyle(.orange)
-                    }
-                }
-
-                if !viewModel.debuggerAttached
-                    && viewModel.buildConfiguration == "Release"
-                    && viewModel.lowPowerModeEnabled {
-                    Section("Preflight") {
-                        Label(
-                            "Turn off Low Power Mode before measuring.",
-                            systemImage: "battery.25percent"
-                        )
-                        .foregroundStyle(.orange)
-                    }
-                }
-
-                if !viewModel.debuggerAttached
-                    && viewModel.buildConfiguration == "Release"
-                    && !viewModel.lowPowerModeEnabled
-                    && viewModel.currentThermalState != "nominal" {
-                    Section("Preflight") {
-                        Label(
-                            "Wait for the iPhone to cool to nominal before starting.",
-                            systemImage: "thermometer.high"
-                        )
-                        .foregroundStyle(.orange)
-                        Text("Pull down to refresh the system-reported thermal state.")
-                    }
-                }
-
+            } else {
                 Section {
-                    Button("Run Benchmark") {
-                        Task {
-                            await viewModel.run()
-                        }
-                    }
-                    .disabled(!viewModel.canRun)
-                } footer: {
-                    Text(viewModel.statusText)
-                }
-
-                if let notice = viewModel.recoveryNotice {
-                    Section("Recovery") {
-                        Text(notice)
-                    }
-                }
-
-                if !viewModel.storedPowerResults.isEmpty {
-                    Section {
-                        Picker(
-                            "Selected result",
-                            selection: Binding<UUID?>(
-                                get: { viewModel.selectedPowerResultID },
-                                set: { selectedID in
-                                    if let selectedID {
-                                        viewModel.selectStoredPowerResult(
-                                            id: selectedID
-                                        )
-                                    }
+                    Picker(
+                        "Selected result",
+                        selection: Binding<UUID?>(
+                            get: { viewModel.selectedPowerResultID },
+                            set: { selectedID in
+                                if let selectedID {
+                                    viewModel.selectStoredPowerResult(id: selectedID)
                                 }
-                            )
-                        ) {
-                            ForEach(viewModel.storedPowerResults, id: \.id) { stored in
-                                Text(storedPowerResultLabel(stored))
-                                    .tag(Optional(stored.id))
                             }
-                        }
-                        .disabled(!viewModel.canSelectStoredPowerResult)
-                        if let selected = viewModel.latestPowerResult {
-                            LabeledContent(
-                                "Result ID",
-                                value: selected.resultID.uuidString.lowercased()
-                            )
-                            LabeledContent(
-                                "Runner",
-                                value: "App \(selected.execution.appVersion) (\(selected.execution.appBuild))"
-                            )
-                        }
-                    } header: {
-                        Text("Saved Power Results")
-                    } footer: {
-                        Text("Every completed result remains on this iPhone. Selecting a result changes only what is displayed, shared, or submitted; its frozen JSON is never recalculated or rewritten.")
-                    }
-                }
-
-                if let result = viewModel.latestPowerResult {
-                    let metrics = result.summary.metrics
-                    Section("Selected Power Result · Median") {
-                        LabeledContent("Pipeline TTFT", value: viewModel.metricText(metrics.medianPipelineTTFTMilliseconds, unit: "ms"))
-                        LabeledContent("First-renderable proxy TTFT", value: viewModel.metricText(metrics.medianFirstRenderableProxyTTFTMilliseconds, unit: "ms"))
-                        LabeledContent("Request completion", value: viewModel.metricText(metrics.medianRequestCompletionMilliseconds, unit: "ms"))
-                        LabeledContent("Prefill", value: viewModel.metricText(metrics.medianPrefillTokensPerSecond, unit: "tok/s"))
-                        LabeledContent("Decode", value: viewModel.metricText(metrics.medianDecodeTokensPerSecond, unit: "tok/s"))
-                        LabeledContent("Process footprint", value: viewModel.metricText(metrics.medianProcessPhysicalFootprintMiB, unit: "MiB"))
-                        LabeledContent("Decode first → last", value: viewModel.percentText(metrics.decodeFirstToLastPercentChange))
-                    }
-
-                    Section("Attempt Evidence") {
-                        ForEach(result.attempts, id: \.runIndex) { attempt in
-                            DisclosureGroup("\(attempt.role.capitalized) \(attempt.runIndex) · \(attempt.outcome)") {
-                                powerAttemptDetails(attempt)
-                            }
-                        }
-                    }
-                }
-
-                if let resultFileURL = viewModel.resultFileURL {
-                    Section {
-                        LabeledContent(
-                            "Selected result file",
-                            value: resultFileURL.lastPathComponent
                         )
-                        ShareLink(item: resultFileURL) {
-                            Label("Share Raw Power JSON", systemImage: "square.and.arrow.up")
+                    ) {
+                        ForEach(viewModel.storedPowerResults, id: \.id) { stored in
+                            Text(storedPowerResultLabel(stored)).tag(Optional(stored.id))
                         }
-                    } header: {
-                        Text("Result delivery")
-                    } footer: {
-                        Text("The runner writes this frozen JSON once to Documents/PowerBenchmarkResults. Manual Share and Mac collection deliver the same file; neither path recalculates or rewrites the result.")
                     }
+                    .disabled(!viewModel.canSelectStoredPowerResult)
+                    if let selected = viewModel.latestPowerResult {
+                        LabeledContent("Result ID", value: selected.resultID.uuidString.lowercased())
+                        LabeledContent("Runner", value: "App \(selected.execution.appVersion) (\(selected.execution.appBuild))")
+                    }
+                } header: {
+                    Text("Saved Power Results")
+                } footer: {
+                    Text("Selecting a result changes only what is displayed, shared, or submitted. Frozen JSON is never recalculated or rewritten.")
+                }
+            }
 
-                    Section {
-                        Picker(
-                            "Conflict of interest",
-                            selection: $viewModel.submissionConflictCategory
-                        ) {
-                            ForEach(SubmissionConflictCategory.allCases) { category in
-                                Text(category.title).tag(category)
-                            }
-                        }
-                        if viewModel.submissionConflictCategory != .none {
-                            TextField(
-                                "Disclosure statement",
-                                text: $viewModel.submissionConflictStatement,
-                                axis: .vertical
-                            )
-                        }
-                        Picker(
-                            "Thermal assistance",
-                            selection: $viewModel.submissionThermalAssistance
-                        ) {
-                            ForEach(SubmissionThermalAssistance.allCases) { assistance in
-                                Text(assistance.title).tag(assistance)
-                            }
-                        }
-                        TextField(
-                            "Optional environment notes",
-                            text: $viewModel.submissionEnvironmentNotes,
-                            axis: .vertical
-                        )
-                        Toggle(
-                            "I ran this on a physical device, reviewed the public metadata, confirm the raw result is unmodified and contains no personal data, accept CC BY 4.0, and understand that submission does not guarantee ranking.",
-                            isOn: $viewModel.acceptsPowerSubmissionDeclarations
-                        )
-                        Button {
-                            dismissKeyboard()
-                            Task {
-                                await viewModel.submitLatestPowerResultToGitHub()
-                            }
-                        } label: {
-                            Label("Submit to GitHub", systemImage: "arrow.up.circle.fill")
-                        }
-                        .disabled(!viewModel.canSubmitLatestPowerResultToGitHub)
+            selectedResultEligibilitySection
 
-                        githubSubmissionStatus
+            if let result = viewModel.latestPowerResult {
+                let metrics = result.summary.metrics
+                Section("Selected Power Result · Median") {
+                    LabeledContent("Pipeline TTFT", value: viewModel.metricText(metrics.medianPipelineTTFTMilliseconds, unit: "ms"))
+                    LabeledContent("First-renderable proxy TTFT", value: viewModel.metricText(metrics.medianFirstRenderableProxyTTFTMilliseconds, unit: "ms"))
+                    LabeledContent("Request completion", value: viewModel.metricText(metrics.medianRequestCompletionMilliseconds, unit: "ms"))
+                    LabeledContent("Prefill", value: viewModel.metricText(metrics.medianPrefillTokensPerSecond, unit: "tok/s"))
+                    LabeledContent("Decode", value: viewModel.metricText(metrics.medianDecodeTokensPerSecond, unit: "tok/s"))
+                    LabeledContent("Process footprint", value: viewModel.metricText(metrics.medianProcessPhysicalFootprintMiB, unit: "MiB"))
+                    LabeledContent("Decode first → last", value: viewModel.percentText(metrics.decodeFirstToLastPercentChange))
+                }
 
-                        if let packageURL = viewModel.powerSubmissionPackageURL {
-                            ShareLink(item: packageURL) {
-                                Label(
-                                    "Share Two-file Package",
-                                    systemImage: "square.and.arrow.up"
-                                )
-                            }
+                Section("Attempt Evidence") {
+                    ForEach(result.attempts, id: \.runIndex) { attempt in
+                        DisclosureGroup("\(attempt.role.capitalized) \(attempt.runIndex) · \(attempt.outcome)") {
+                            powerAttemptDetails(attempt)
                         }
-                        if !viewModel.githubSubmissionConfigured {
-                            Label(
-                                "Direct submission is unavailable because this build has no GitHub OAuth Client ID.",
-                                systemImage: "exclamationmark.triangle"
-                            )
-                            .foregroundStyle(.orange)
-                            Link(
-                                "Open contributor guide",
-                                destination: URL(
-                                    string: "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.1-quickstart.md"
-                                )!
-                            )
-                        }
-                    } header: {
-                        Text("GitHub contribution")
-                    } footer: {
-                        Text("The App creates the current Power 1.1 two-file package, preserves result.json byte-for-byte, commits it to your fork, and opens a pull request. Repository CI makes the authoritative accept, manual-review, or reject decision.")
                     }
                 }
             }
-            .navigationTitle("Run Benchmark")
-            .scrollDismissesKeyboard(.interactively)
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button("Done") {
-                        dismissKeyboard()
+
+            if let resultFileURL = viewModel.resultFileURL {
+                Section {
+                    LabeledContent("Selected result file", value: resultFileURL.lastPathComponent)
+                    ShareLink(item: resultFileURL) {
+                        Label("Share Raw Power JSON", systemImage: "square.and.arrow.up")
                     }
+                } header: {
+                    Text("Result delivery")
+                } footer: {
+                    Text("The same frozen file is shared; neither this view nor GitHub submission recalculates or rewrites it.")
+                }
+
+                githubContributionSection
+            }
+        }
+        .navigationTitle("Results")
+        .scrollDismissesKeyboard(.interactively)
+        .keyboardDismissToolbar(action: dismissKeyboard)
+        .refreshable {
+            await viewModel.refreshCompatibilityPolicy()
+        }
+    }
+
+    @ViewBuilder
+    private var currentRunnerEligibilitySection: some View {
+        Section("Runner eligibility") {
+            switch viewModel.currentRunnerEligibility {
+            case .checking:
+                HStack {
+                    ProgressView()
+                    Text("Checking current Power policy…")
+                }
+            case .approved(let policyVersion, let approvalID):
+                Label("Approved for Power \(policyVersion)", systemImage: "checkmark.shield.fill")
+                    .foregroundStyle(.green)
+                Text(approvalID)
+                    .font(.caption.monospaced())
+                    .foregroundStyle(.secondary)
+            case .notApproved(let policyVersion):
+                Label("Update required", systemImage: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                Text("This exact App build is not approved by Power policy \(policyVersion). Model preparation and measurement are disabled.")
+                Link(
+                    "Open iOS App update instructions",
+                    destination: URL(
+                        string: "https://github.com/YizeSun/iOS-LLM-Leaderboard/tree/main/ios-app"
+                    )!
+                )
+            case .unavailable(let message):
+                Label("Unable to verify eligibility", systemImage: "wifi.exclamationmark")
+                    .foregroundStyle(.orange)
+                Text(message)
+                Button("Retry Check") {
+                    Task { await viewModel.refreshCompatibilityPolicy() }
+                }
+            case .noResult:
+                EmptyView()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var selectedResultEligibilitySection: some View {
+        if viewModel.latestPowerResult != nil {
+            Section("Submission eligibility") {
+                switch viewModel.selectedResultEligibility {
+                case .checking:
+                    HStack {
+                        ProgressView()
+                        Text("Checking selected result…")
+                    }
+                case .approved(let policyVersion, let approvalID):
+                    Label("Eligible under Power \(policyVersion)", systemImage: "checkmark.shield.fill")
+                        .foregroundStyle(.green)
+                    Text(approvalID)
+                        .font(.caption.monospaced())
+                        .foregroundStyle(.secondary)
+                case .notApproved(let policyVersion):
+                    Label("Result not eligible", systemImage: "xmark.shield.fill")
+                        .foregroundStyle(.red)
+                    Text("The selected result's exact runner and runtime identity is not approved by Power policy \(policyVersion). It remains available for inspection and raw export, but cannot be submitted.")
+                case .unavailable(let message):
+                    Label("Unable to verify result", systemImage: "wifi.exclamationmark")
+                        .foregroundStyle(.orange)
+                    Text(message)
+                    Button("Retry Check") {
+                        Task { await viewModel.refreshCompatibilityPolicy() }
+                    }
+                case .noResult:
+                    EmptyView()
                 }
             }
-            .refreshable {
-                viewModel.refreshThermalState()
+        }
+    }
+
+    @ViewBuilder
+    private var preflightSections: some View {
+        if viewModel.debuggerAttached {
+            Section("Preflight") {
+                Label("LLDB is attached. Benchmark measurements are disabled.", systemImage: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                Text("Open Product → Scheme → Edit Scheme → Run → Info and turn off Debug executable, then run the app again.")
             }
-            .task {
-                viewModel.selectModelProfile(settings.selectedModelProfile)
-                viewModel.selectBenchmarkPlan(settings.selectedManualWorkload)
-                viewModel.refreshThermalState()
-                await viewModel.recoverInterruptedSessionIfNeeded()
-                await viewModel.restoreLatestPowerResultIfNeeded()
+        }
+
+        if !viewModel.debuggerAttached && viewModel.buildConfiguration != "Release" {
+            Section("Preflight") {
+                Label("Use a Release build before measuring.", systemImage: "hammer.fill")
+                    .foregroundStyle(.orange)
             }
+        }
+
+        if !viewModel.debuggerAttached
+            && viewModel.buildConfiguration == "Release"
+            && viewModel.lowPowerModeEnabled {
+            Section("Preflight") {
+                Label("Turn off Low Power Mode before measuring.", systemImage: "battery.25percent")
+                    .foregroundStyle(.orange)
+            }
+        }
+
+        if !viewModel.debuggerAttached
+            && viewModel.buildConfiguration == "Release"
+            && !viewModel.lowPowerModeEnabled
+            && viewModel.currentThermalState != "nominal" {
+            Section("Preflight") {
+                Label("Wait for the iPhone to cool to nominal before starting.", systemImage: "thermometer.high")
+                    .foregroundStyle(.orange)
+                Text("Pull down to refresh the system-reported thermal state.")
+            }
+        }
+    }
+
+    private var githubContributionSection: some View {
+        Section {
+            Picker("Conflict of interest", selection: $viewModel.submissionConflictCategory) {
+                ForEach(SubmissionConflictCategory.allCases) { category in
+                    Text(category.title).tag(category)
+                }
+            }
+            if viewModel.submissionConflictCategory != .none {
+                TextField("Disclosure statement", text: $viewModel.submissionConflictStatement, axis: .vertical)
+            }
+            Picker("Thermal assistance", selection: $viewModel.submissionThermalAssistance) {
+                ForEach(SubmissionThermalAssistance.allCases) { assistance in
+                    Text(assistance.title).tag(assistance)
+                }
+            }
+            TextField("Optional environment notes", text: $viewModel.submissionEnvironmentNotes, axis: .vertical)
+            Toggle(
+                "I ran this on a physical device, reviewed the public metadata, confirm the raw result is unmodified and contains no personal data, accept CC BY 4.0, and understand that submission does not guarantee ranking.",
+                isOn: $viewModel.acceptsPowerSubmissionDeclarations
+            )
+            Button {
+                dismissKeyboard()
+                Task { await viewModel.submitLatestPowerResultToGitHub() }
+            } label: {
+                Label("Submit to GitHub", systemImage: "arrow.up.circle.fill")
+            }
+            .disabled(!viewModel.canSubmitLatestPowerResultToGitHub)
+
+            githubSubmissionStatus
+
+            if let packageURL = viewModel.powerSubmissionPackageURL {
+                ShareLink(item: packageURL) {
+                    Label("Share Two-file Package", systemImage: "square.and.arrow.up")
+                }
+            }
+            if !viewModel.githubSubmissionConfigured {
+                Label(
+                    "Direct submission is unavailable because this build has no GitHub OAuth Client ID.",
+                    systemImage: "exclamationmark.triangle"
+                )
+                .foregroundStyle(.orange)
+                Link(
+                    "Open contributor guide",
+                    destination: URL(
+                        string: "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.1-quickstart.md"
+                    )!
+                )
+            }
+        } header: {
+            Text("GitHub contribution")
+        } footer: {
+            Text("The App creates the current Power 1.1 two-file package, preserves result.json byte-for-byte, commits it to your fork, and opens a pull request. Repository CI makes the authoritative accept, manual-review, or reject decision.")
         }
     }
 
@@ -570,6 +635,17 @@ struct RunBenchmarkView: View {
         if let error = attempt.errorMessage {
             Text(error)
                 .foregroundStyle(.red)
+        }
+    }
+}
+
+private extension View {
+    func keyboardDismissToolbar(action: @escaping () -> Void) -> some View {
+        toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done", action: action)
+            }
         }
     }
 }
