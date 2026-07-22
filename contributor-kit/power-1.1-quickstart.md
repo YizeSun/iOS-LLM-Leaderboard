@@ -10,16 +10,20 @@ live Power ranking.
 - enough free iPhone storage for the selected model;
 - a GitHub fork of this repository.
 
-The official result contract is tied to Benchmark App 0.13.0 build 16 at
-source commit `f5b863cc0ca4d82d987cd9779f8875939d7bf90c`. Use a separate worktree so
-your contribution branch can remain on current `main`:
+The frozen reference remains Benchmark App 0.13.0 build 16 at source commit
+`f5b863cc0ca4d82d987cd9779f8875939d7bf90c`. Current compatibility policy
+1.1.1 also approves Benchmark App 0.16.0 build 19 at App source commit
+`792d5e2974c3e3f131343071bb2e9d90b3231b32`. The App embeds the latest commit
+that changed `ios-app/`, so repository documentation and ranking updates do not
+silently change its runner identity.
+
+For a new run, build the current `main` checkout and verify the App displays
+version 0.16.0:
 
 ```bash
 git clone https://github.com/YOUR_GITHUB_HANDLE/iOS-LLM-Leaderboard.git
 cd iOS-LLM-Leaderboard
-git worktree add ../ios-llm-power-app \
-  f5b863cc0ca4d82d987cd9779f8875939d7bf90c
-open ../ios-llm-power-app/ios-app/BenchmarkApp/BenchmarkApp.xcodeproj
+open ios-app/BenchmarkApp.xcodeproj
 ```
 
 ## Run one exact cell
@@ -49,11 +53,36 @@ creates the current two-file package without rewriting `result.json`, commits
 it to a contributor-owned fork, and opens the PR. The access token stays in the
 submission session and is not written into the evidence package.
 
-Direct submission does not relax frozen runner identity. In particular, a
-development App whose version, build, or source commit differs from the Power
-1.1 reference App is rejected as `runner_incompatible`; it cannot be made
-eligible by App-side packaging or maintainer review. Use the exact runner
-identity above for current Power 1.1 evidence.
+Direct submission does not relax runner identity. A development App whose
+version, build, source commit, or runtime differs from every entry in the
+versioned compatibility policy is rejected as `runner_incompatible`; it cannot
+be made eligible by App-side packaging, a second contributor, or maintainer
+review.
+
+## Run and submit more than one result
+
+App 0.16.0 saves every completed or safely recovered Power result as a separate
+immutable JSON file in its Documents `PowerBenchmarkResults` directory. An App
+launch validates all saved files, selects the newest one by default, and shows
+the collection under **Saved Power Results**. Selecting an older entry changes
+only the result displayed, shared, or submitted; it does not recalculate or
+rewrite that result.
+
+After a successful upload, the local JSON remains on the iPhone. To run the
+same model/workload again, tap **Prepare Model**, wait for preparation, then tap
+**Run Benchmark**. The new result receives a new result/session identity, is
+saved separately, and becomes the selected result. To change model identity,
+select the model and fully relaunch when the process-isolation notice requires
+it; then prepare and run. Changing workload does not transform any previously
+saved result.
+
+To upload an older result, choose it in **Saved Power Results**, confirm its
+result ID and runner line, accept the declarations again, and tap **Submit to
+GitHub**. The declaration and current submission state reset when selection
+changes. Do not submit the same saved result twice: duplicate raw SHA-256,
+result ID, or session ID is rejected. Use **Share Raw Power JSON** to keep an
+external backup; uninstalling the App removes its iOS sandbox and local
+history.
 
 For builds without GitHub OAuth configuration, use the existing Mac flow:
 

@@ -45,12 +45,19 @@ name, personal prompts, user documents, or unrelated app data.
 ## Validation and publication
 
 CI validates package shape, raw hash binding, contributor declarations, the
-frozen Power contract, duplicate identity, and a live-ranking preview. Clean
+frozen Power contract, the versioned exact-runner allowlist, duplicate
+identity, and a live-ranking preview. Clean
 evidence-only PRs are labeled `power:auto-accept` and may auto-merge after
 required checks. Valid conflict or environmental-assistance disclosures route
 to `power:manual-review`; invalid, incompatible, duplicated, or mixed-scope
 PRs route to `power:rejected`. Validation does not mutate the result, assign
 Maintainer Reference status, or change an immutable release.
+
+The original App 0.13.0 reference remains valid. Current policy 1.1.1 also
+accepts only App 0.16.0 build 19 at its approved App source commit and runtime
+identity. App 0.15.0 evidence remains `runner_incompatible`; a second
+contributor or manual review cannot convert an unapproved runner into valid
+evidence.
 
 Merging a valid package makes it eligible for the live community evidence view
 when its primary metric and ordinary thermal policy are eligible. Deliberate

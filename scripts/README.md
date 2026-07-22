@@ -14,8 +14,10 @@ python3 scripts/power.py preview
 
 - `validate_suite_b_power_1_1_submission.py` validates the current two-file
   contribution package.
+- `validate_suite_b_power_1_1_compatible_result.py` applies the versioned exact
+  runner/runtime allowlist before reusing the frozen Power 1.1 validator.
 - `validate_suite_b_power_1_1_final_result.py` derives final Power 1.1
-  eligibility from adopted RC1 evidence.
+  eligibility from adopted RC1 evidence and remains pinned and immutable.
 - `generate_power_community_ranking.py` builds the live evidence dataset and
   Markdown views.
 - `generate_ship_profiles.py` builds Ship evidence profiles.
