@@ -66,15 +66,36 @@ class PowerOneOneTwoCompatibleRunnerTests(unittest.TestCase):
             for runner in policy["approvedRunners"]
             if runner["approvalID"] == "ios-compatible-app-0.17.0-build-20"
         )
+        self.assertEqual(app_017["appSourceCommit"], APP_SOURCE_COMMIT)
+
+        # actions/checkout uses a depth-1 synthetic merge commit by default.
+        # That checkout cannot inspect either historical App commit. Keep the
+        # exact policy assertion above active there, and perform the stronger
+        # repository-history assertion whenever the approved commit is
+        # actually available (normal development and full-history checkouts).
+        available = subprocess.run(
+            ["git", "cat-file", "-e", f"{APP_SOURCE_COMMIT}^{{commit}}"],
+            cwd=ROOT,
+            capture_output=True,
+        )
+        if available.returncode != 0:
+            return
         latest_ios_commit = subprocess.run(
-            ["git", "log", "-1", "--format=%H", "--", "ios-app"],
+            [
+                "git",
+                "log",
+                "--no-merges",
+                "-1",
+                "--format=%H",
+                "--",
+                "ios-app",
+            ],
             cwd=ROOT,
             check=True,
             capture_output=True,
             text=True,
         ).stdout.strip()
         self.assertEqual(app_017["appSourceCommit"], latest_ios_commit)
-        self.assertEqual(app_017["appSourceCommit"], APP_SOURCE_COMMIT)
 
     def test_reference_app_016_and_exact_app_017_are_accepted(self) -> None:
         app_016 = compatible_result()
