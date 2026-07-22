@@ -331,7 +331,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\ncommit=\"$(git -C \"$SRCROOT/..\" rev-parse HEAD)\"\nresource_directory=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\n/bin/mkdir -p \"$resource_directory\"\n/usr/bin/printf '%s\\n' \"$commit\" > \"$resource_directory/GIT_COMMIT_SHA\"\n";
+			shellScript = "set -e\ncommit=\"$(git -C \"$SRCROOT/..\" log -1 --format=%H -- ios-app)\"\nresource_directory=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\n/bin/mkdir -p \"$resource_directory\"\n/usr/bin/printf '%s\\n' \"$commit\" > \"$resource_directory/GIT_COMMIT_SHA\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
