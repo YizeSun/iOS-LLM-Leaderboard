@@ -66,21 +66,19 @@ class PowerOneOneCompatibleRunnerTests(unittest.TestCase):
         self.assertFalse(release["contractAdoption"]["referenceAppChanged"])
         self.assertTrue(release["contractAdoption"]["compatibleRunnerPolicyAdded"])
 
-    def test_policy_runner_commit_is_the_latest_ios_app_commit(self) -> None:
+    def test_policy_runner_commit_remains_the_approved_app_016_commit(self) -> None:
         policy = json.loads(POLICY_PATH.read_text())
         compatible = next(
             runner
             for runner in policy["approvedRunners"]
             if runner["kind"] == "compatible"
         )
-        latest_ios_commit = subprocess.run(
-            ["git", "log", "-1", "--format=%H", "--", "ios-app"],
+        subprocess.run(
+            ["git", "cat-file", "-e", f"{APP_SOURCE_COMMIT}^{{commit}}"],
             cwd=ROOT,
             check=True,
             capture_output=True,
-            text=True,
-        ).stdout.strip()
-        self.assertEqual(compatible["appSourceCommit"], latest_ios_commit)
+        )
         self.assertEqual(compatible["appSourceCommit"], APP_SOURCE_COMMIT)
 
     def test_frozen_reference_and_exact_app_016_are_accepted(self) -> None:

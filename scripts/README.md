@@ -2,13 +2,19 @@
 
 ## Public entry point
 
-Use one command for current Power contribution work:
+The retained public command is:
 
 ```bash
 python3 scripts/power.py submit RESULT.json --github HANDLE --accept-declarations
 python3 scripts/power.py validate submissions/suite-b/power-1.1.0/draft/ID
 python3 scripts/power.py preview
 ```
+
+This command is SHA-256-pinned by the Power 1.1.1 release and therefore keeps
+that release's App 0.13.0/App 0.16.0 compatibility boundary. App 0.17.0 direct
+submission is handled by the configured App and the trusted Power 1.1.2 CI
+adapters; do not modify `power.py` or advertise a second contributor CLI to
+work around the frozen boundary.
 
 ## Current implementation tools
 
@@ -21,6 +27,11 @@ python3 scripts/power.py preview
 - `generate_power_community_ranking.py` builds the live evidence dataset and
   Markdown views.
 - `generate_ship_profiles.py` builds Ship evidence profiles.
+
+Power 1.1.2 adds isolated, version-suffixed adapters for trusted validation,
+triage, and ranking. They load the frozen implementations without changing
+their module globals or pinned bytes. They are release and CI assets, not a
+parallel public contributor flow.
 
 ## Versioned and historical tools
 

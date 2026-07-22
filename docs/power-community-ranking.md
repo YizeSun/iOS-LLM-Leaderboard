@@ -64,9 +64,10 @@ Changing one field creates a different exact cell. The website may group patch
 releases for a simpler default display, but exact evidence identities remain
 separate in the dataset.
 
-Compatibility policy 1.1.1 preserves the App 0.13.0 reference and adds only
-the exact App 0.16.0 build 19 source/runtime identity. It does not reinterpret
-App 0.14.0 or 0.15.0 evidence and it does not pre-approve later App commits.
+Compatibility policy 1.1.2 preserves the App 0.13.0 reference and exact App
+0.16.0 build 19 approval, then adds only the exact App 0.17.0 build 20
+source/runtime identity. It does not reinterpret App 0.14.0 or 0.15.0 evidence
+and it does not pre-approve later App commits.
 
 ## Contributor counting
 
@@ -107,7 +108,10 @@ Generated files:
 - `results/suite-b-power-community/LEADERBOARD.md`;
 - `results/suite-b-power-community/COVERAGE.md`.
 
-Run the same generator locally with `python3 scripts/power.py preview`.
+Maintainers can request the same current preview through the **Power community
+ranking** workflow. The retained public `scripts/power.py preview` command is
+an immutable Power 1.1.1 asset; trusted CI uses the separately pinned 1.1.2
+adapter without changing that historical command.
 
 The live view does not grant a formal evidence-level transition. Verified and
 Maintainer Reference remain separate review and release decisions.
