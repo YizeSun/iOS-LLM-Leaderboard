@@ -45,7 +45,7 @@
   },
   "appReleaseCandidate": {
     "path": "products/power/app-releases/candidate.json",
-    "sha256": "ebd52c343da9776f703435e63e719e0df48eecbf7984cb90f7cf4f501817a469"
+    "sha256": "e3b9257b889c813a793ec9fcd02f4b277faafe972e17414e33326d5b582fe829"
   },
   "appReleaseRehearsalEvidence": [
     {
@@ -62,13 +62,27 @@
         "path": "products/power/app-releases/evidence/3e8d09fd-d301-4937-b915-fda7e9be3e38/review.json",
         "sha256": "61cb15bfe9a4d96266863b736dcc43d7c657a47ef255744eea11570152443794"
       }
+    },
+    {
+      "sourceCommit": "16cbcb4656ea1ba1f249483e3741f7c31b9908e5",
+      "appComponents": {
+        "path": "products/power/app-releases/evidence/15eb974a-e8de-44e1-80c9-0758ad7fc95b/app-component-manifest.json",
+        "sha256": "18a7961e3616c5108adde624df0083d1137f53d52d92fbb41f69e098eec9ebcb"
+      },
+      "result": {
+        "path": "products/power/app-releases/evidence/15eb974a-e8de-44e1-80c9-0758ad7fc95b/result.json",
+        "sha256": "49e9c7bbaf810b49fbb5380473d3664e2690572cc63534cdb9832751690de6e1"
+      },
+      "review": {
+        "path": "products/power/app-releases/evidence/15eb974a-e8de-44e1-80c9-0758ad7fc95b/review.json",
+        "sha256": "9ddcc8d3daf69d4cf4c9aa813d2f21ac78b9e3877f97d8fe851d92621115ff07"
+      }
     }
   ],
   "appRelease": null,
   "activationBlockers": [
     "issue an immutable App release for the Power 2.0 App shell",
-    "embed this exact stack in a released App build",
-    "validate new physical-device evidence end to end",
+    "rehearse trusted-base Power 2.0 triage from public main",
     "replace this candidate pointer with an immutable released stack",
     "publish products/power/current.json and open intake together"
   ]

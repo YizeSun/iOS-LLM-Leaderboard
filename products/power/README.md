@@ -25,7 +25,10 @@ The automated candidate suite, both generic iOS configurations, Runner
 physical-device smoke, and raw-result review pass for the exact recorded
 digests. The generator contains an identity checkpoint, so any stack, Runner,
 or App digest change automatically returns the affected state to `pending`.
-The exact Official App end-to-end physical rehearsal remains pending.
+The exact Official build 2 end-to-end physical rehearsal also passes and its
+raw result, App component manifest, and non-publishable review are retained.
+The App remains a candidate until the immutable release and public intake are
+activated together.
 
 The candidate is intentionally inactive. `current.json` must not be created
 until the contract, runner certificate, physical-device reruns, trusted intake,

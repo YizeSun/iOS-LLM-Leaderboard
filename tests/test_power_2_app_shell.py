@@ -181,6 +181,7 @@ class Power2AppShellTests(unittest.TestCase):
             '--validator-source-revision "$(git rev-parse HEAD)"',
             workflow,
         )
+        self.assertIn("--app-release-rehearsal", workflow)
 
     def test_signing_is_local_and_build_kinds_are_fail_closed(self) -> None:
         project = (APP_PROJECT / "project.pbxproj").read_text(

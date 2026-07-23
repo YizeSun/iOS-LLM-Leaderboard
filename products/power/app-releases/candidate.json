@@ -12,7 +12,6 @@
   },
   "productID": "power",
   "releaseBlockedBy": [
-    "complete a physical-device end-to-end rehearsal",
     "activate the immutable stack and public intake atomically"
   ],
   "releaseID": "power-app-2.0.0-candidate-18a7961e3616",
@@ -24,7 +23,7 @@
   ],
   "verification": {
     "genericIOSReleaseBuild": "pass",
-    "physicalDeviceEndToEndRehearsal": "pending",
+    "physicalDeviceEndToEndRehearsal": "pass",
     "sourceAndDependencyIntegrity": "pass"
   },
   "version": "2.0.0"

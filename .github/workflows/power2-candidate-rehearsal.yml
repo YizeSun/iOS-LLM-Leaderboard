@@ -116,6 +116,7 @@ jobs:
             --expected-contributor "$(cat /tmp/power2-pr-author.txt)" \
             --evaluated-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             --validator-source-revision "$(git rev-parse HEAD)" \
+            --app-release-rehearsal \
             --output /tmp/power2-triage.json || true
           cat /tmp/power2-triage.json >> "$GITHUB_STEP_SUMMARY"
       - name: Upload rehearsal report

@@ -953,6 +953,7 @@ def _verify_release_candidates(
         raise VerificationError(
             "Power candidate has no retained App release rehearsal evidence"
         )
+    reviewed_app_releases: list[dict[str, Any]] = []
     for index, evidence in enumerate(app_rehearsals):
         if not isinstance(evidence, dict):
             raise VerificationError(
@@ -1039,6 +1040,7 @@ def _verify_release_candidates(
             raise VerificationError(
                 f"App release rehearsal evidence {index} is not audit-safe"
             )
+        reviewed_app_releases.append(result_app_release)
 
     if (
         app_candidate.get("schemaVersion")
@@ -1102,12 +1104,20 @@ def _verify_release_candidates(
             "App release candidate build identity is inconsistent"
         )
     app_verification = app_candidate.get("verification")
+    exact_app_rehearsal_passed = any(
+        app_release.get("version") == app_version
+        and app_release.get("build") == app_build
+        and app_release.get("sourceRevision") == app_digest
+        and app_release.get("embeddedMeasurementStackSHA256")
+        == measurement_stack_reference.get("sha256")
+        for app_release in reviewed_app_releases
+    )
     if (
         not isinstance(app_verification, dict)
         or app_verification.get("sourceAndDependencyIntegrity") != "pass"
         or app_verification.get("genericIOSReleaseBuild") != "pass"
         or app_verification.get("physicalDeviceEndToEndRehearsal")
-        != "pending"
+        != ("pass" if exact_app_rehearsal_passed else "pending")
     ):
         raise VerificationError(
             "App release candidate verification state is unsafe"

@@ -209,7 +209,11 @@ class Power2RunnerComponentTests(unittest.TestCase):
         )
         self.assertEqual(
             app["verification"]["physicalDeviceEndToEndRehearsal"],
-            "pending",
+            "pass",
+        )
+        self.assertEqual(
+            app["releaseBlockedBy"],
+            ["activate the immutable stack and public intake atomically"],
         )
 
 

@@ -116,6 +116,84 @@ def _rendered_reference(
     }
 
 
+def _app_rehearsal_passed(
+    candidate: dict[str, Any],
+    *,
+    app_reference: dict[str, str],
+    measurement_stack_reference: dict[str, str],
+    runner_certificate_id: str,
+    app_version: str,
+    app_build: str,
+) -> bool:
+    rehearsals = candidate.get("appReleaseRehearsalEvidence")
+    if not isinstance(rehearsals, list):
+        raise ValueError("candidate has no App release rehearsal evidence")
+
+    exact_rehearsal_passed = False
+    for index, evidence in enumerate(rehearsals):
+        if not isinstance(evidence, dict):
+            raise ValueError(
+                f"App release rehearsal evidence {index} is invalid"
+            )
+        source_commit = evidence.get("sourceCommit")
+        if (
+            not isinstance(source_commit, str)
+            or len(source_commit) != 40
+            or any(
+                character not in "0123456789abcdef"
+                for character in source_commit
+            )
+        ):
+            raise ValueError(
+                f"App release rehearsal evidence {index} has no source commit"
+            )
+        _, historical_app_reference = _reference(
+            evidence.get("appComponents"),
+            f"App release rehearsal {index} component manifest",
+        )
+        result_path, result_reference = _reference(
+            evidence.get("result"),
+            f"App release rehearsal {index} result",
+        )
+        review_path, _ = _reference(
+            evidence.get("review"),
+            f"App release rehearsal {index} review",
+        )
+        result = _load_json(result_path)
+        review = _load_json(review_path)
+        result_app_release = result.get("appRelease")
+        review_validator = review.get("validator")
+        if (
+            historical_app_reference["sha256"]
+            == app_reference["sha256"]
+            and isinstance(result_app_release, dict)
+            and result_app_release.get("version") == app_version
+            and result_app_release.get("build") == app_build
+            and result_app_release.get("sourceRevision")
+            == app_reference["sha256"]
+            and result_app_release.get(
+                "embeddedMeasurementStackSHA256"
+            )
+            == measurement_stack_reference["sha256"]
+            and result.get("runnerCertificateID")
+            == runner_certificate_id
+            and review.get("appRelease") == result_app_release
+            and review.get("runnerCertificateID")
+            == runner_certificate_id
+            and isinstance(review_validator, dict)
+            and review_validator.get("sourceRevision") == source_commit
+            and review.get("sourceResultSHA256")
+            == result_reference["sha256"]
+            and review.get("status") == "pass"
+            and review.get("physicalDeviceEndToEndRehearsal") == "pass"
+            and review.get("classification") == "auto-accept"
+            and review.get("publishable") is False
+            and review.get("rankingEligible") is False
+        ):
+            exact_rehearsal_passed = True
+    return exact_rehearsal_passed
+
+
 def render_candidates() -> tuple[str, str, str, str]:
     candidate = _load_json(CANDIDATE_PATH)
     if (
@@ -320,6 +398,14 @@ def render_candidates() -> tuple[str, str, str, str]:
     app_automated_state = (
         "pass" if app_automated_verification_passed else "pending"
     )
+    app_physical_rehearsal_passed = _app_rehearsal_passed(
+        candidate,
+        app_reference=app_reference,
+        measurement_stack_reference=release_stack_reference,
+        runner_certificate_id=active_runner_id,
+        app_version=app_version,
+        app_build=app_build,
+    )
 
     runner_candidate = {
         "schemaVersion":
@@ -397,10 +483,15 @@ def render_candidates() -> tuple[str, str, str, str]:
         "verification": {
             "sourceAndDependencyIntegrity": "pass",
             "genericIOSReleaseBuild": app_automated_state,
-            "physicalDeviceEndToEndRehearsal": "pending",
+            "physicalDeviceEndToEndRehearsal": (
+                "pass" if app_physical_rehearsal_passed else "pending"
+            ),
         },
-        "releaseBlockedBy": [
-            "complete a physical-device end-to-end rehearsal",
+        "releaseBlockedBy": (
+            []
+            if app_physical_rehearsal_passed
+            else ["complete a physical-device end-to-end rehearsal"]
+        ) + [
             "activate the immutable stack and public intake atomically",
         ] + (
             []

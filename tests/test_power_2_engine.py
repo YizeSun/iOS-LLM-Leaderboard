@@ -310,6 +310,28 @@ class Power2EngineTests(unittest.TestCase):
             )
         )
 
+    def test_submission_uuid_case_does_not_change_identity(self) -> None:
+        result = self.make_result()
+        result_bytes = (
+            json.dumps(result, indent=2, sort_keys=True) + "\n"
+        ).encode()
+        submission = self.make_submission(result_bytes)
+        submission["submissionID"] = SUBMISSION_ID.upper()
+
+        with tempfile.TemporaryDirectory() as directory:
+            package = self.write_package(
+                Path(directory),
+                result,
+                submission_override=submission,
+            )
+            report = self.validate(package)
+
+        self.assertEqual(report["classification"], "auto-accept")
+        self.assertNotIn(
+            "submission-directory-identity-mismatch",
+            report["reasonCodes"],
+        )
+
     def test_failed_oom_and_cancelled_attempts_remain_accepted_evidence(self) -> None:
         result = self.make_result()
         outcomes = ["failed", "oom", "cancelled", "not-run", "failed"]

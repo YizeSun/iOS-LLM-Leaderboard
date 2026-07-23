@@ -98,8 +98,8 @@ python3 scripts/repoctl.py validate-power-package PACKAGE \
 A successful result means only that the draft contract stack is internally
 complete and independent from Power 1.1. It reports four exact rerun-candidate
 models, an active source- and physical-evidence-bound Runner certificate, and
-a closed App-release candidate, but deliberately no supported App release or
-open intake.
+a closed App-release candidate whose exact build 2 physical rehearsal passes,
+but deliberately no supported App release or open intake.
 The certification catalog check additionally proves that the App's closed
 smoke-test catalog is a deterministic projection of those pinned assets; it
 does not certify a run.

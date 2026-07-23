@@ -94,6 +94,37 @@ class Power2CandidateTests(unittest.TestCase):
             (ROOT / "products" / "power" / "current.json").exists()
         )
 
+    def test_exact_official_app_rehearsal_is_retained_and_passes(self) -> None:
+        candidate = load_json(ROOT / "products" / "power" / "candidate.json")
+        app_candidate = load_json(
+            ROOT / candidate["appReleaseCandidate"]["path"]
+        )
+
+        self.assertEqual(
+            app_candidate["verification"][
+                "physicalDeviceEndToEndRehearsal"
+            ],
+            "pass",
+        )
+        self.assertNotIn(
+            "complete a physical-device end-to-end rehearsal",
+            app_candidate["releaseBlockedBy"],
+        )
+        exact_evidence = [
+            evidence
+            for evidence in candidate["appReleaseRehearsalEvidence"]
+            if evidence["appComponents"]["sha256"]
+            == candidate["appCandidate"]["sha256"]
+        ]
+        self.assertEqual(len(exact_evidence), 1)
+        result = load_json(ROOT / exact_evidence[0]["result"]["path"])
+        review = load_json(ROOT / exact_evidence[0]["review"]["path"])
+        self.assertEqual(result["appRelease"]["build"], "2")
+        self.assertEqual(review["status"], "pass")
+        self.assertEqual(review["classification"], "auto-accept")
+        self.assertFalse(review["publishable"])
+        self.assertFalse(review["rankingEligible"])
+
     def test_active_candidate_json_has_no_power_1_dispatch(self) -> None:
         active_json = [
             ROOT / "products" / "power" / "registry.json",

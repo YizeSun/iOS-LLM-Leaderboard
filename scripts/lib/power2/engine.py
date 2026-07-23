@@ -21,6 +21,16 @@ VALIDATOR_NAME = "power-intake-engine"
 VALIDATOR_VERSION = "2.0.0-draft.2"
 
 
+def _canonical_uuid_text(value: Any) -> str | None:
+    if not isinstance(value, str):
+        return None
+    try:
+        canonical = str(uuid.UUID(value))
+    except ValueError:
+        return None
+    return canonical if value.casefold() == canonical else None
+
+
 class Power2ValidationError(ValueError):
     """Raised when trusted repository configuration is inconsistent."""
 
@@ -1275,7 +1285,15 @@ def validate_package(
             digest_reasons.append("result-digest-mismatch")
         if source_reference.get("schemaVersion") != result.get("schemaVersion"):
             digest_reasons.append("result-reference-mismatch")
-    if submission.get("submissionID") != package.name:
+    submission_identifier = _canonical_uuid_text(
+        submission.get("submissionID")
+    )
+    directory_identifier = _canonical_uuid_text(package.name)
+    if (
+        submission_identifier is None
+        or directory_identifier is None
+        or submission_identifier != directory_identifier
+    ):
         digest_reasons.append("submission-directory-identity-mismatch")
     if result_digest in (accepted_result_digests or set()):
         digest_reasons.append("duplicate-result-sha256")

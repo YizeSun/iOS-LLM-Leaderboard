@@ -17,6 +17,7 @@ try:
     from scripts.lib.power2.engine import (
         ROOT,
         ValidationContext,
+        load_candidate_app_release_review_context,
         load_candidate_context,
         validate_package,
     )
@@ -24,6 +25,7 @@ except ModuleNotFoundError:
     from lib.power2.engine import (
         ROOT,
         ValidationContext,
+        load_candidate_app_release_review_context,
         load_candidate_context,
         validate_package,
     )
@@ -251,15 +253,29 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--expected-contributor", required=True)
     parser.add_argument("--evaluated-at", required=True)
     parser.add_argument("--validator-source-revision", required=True)
+    parser.add_argument(
+        "--app-release-rehearsal",
+        action="store_true",
+        help=(
+            "classify against the exact closed Official App candidate "
+            "without opening public intake"
+        ),
+    )
     parser.add_argument("--output", type=Path)
     args = parser.parse_args(argv)
     try:
+        context = (
+            load_candidate_app_release_review_context()
+            if args.app_release_rehearsal
+            else None
+        )
         report = classify(
             args.base,
             args.head,
             args.expected_contributor,
             evaluated_at=args.evaluated_at,
             validator_source_revision=args.validator_source_revision,
+            context=context,
         )
     except (
         OSError,
