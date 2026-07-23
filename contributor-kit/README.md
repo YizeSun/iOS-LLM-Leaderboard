@@ -2,9 +2,9 @@
 
 There is one current benchmark-result path:
 
-## Contribute Power 1.1 evidence
+## Contribute Power evidence
 
-Use the [Power 1.1 quickstart](power-1.1-quickstart.md) to:
+Use the [current Power quickstart](power.md) to:
 
 1. build the exact official Benchmark App source;
 2. run one model and one workload on a physical iPhone;
@@ -13,14 +13,14 @@ Use the [Power 1.1 quickstart](power-1.1-quickstart.md) to:
 5. open a pull request from your own GitHub account.
 
 ```bash
-python3 scripts/power.py submit /path/to/result.json \
+python3 scripts/power submit /path/to/result.json \
   --github YOUR_GITHUB_HANDLE \
   --accept-declarations
 ```
 
-See [live coverage gaps](../results/suite-b-power-community/COVERAGE.md) and the
-[App-ready model catalog](../models/power-test-catalog.json) when choosing what
-to test.
+The Power 2 public intake remains fail-closed during its final build 3
+physical-device checkpoint. The same guide becomes the public contribution
+path when the immutable App release and active pointer are issued.
 
 ## Other contributions
 
@@ -32,7 +32,8 @@ to test.
 ## Historical paths
 
 The following guides remain available only to reproduce or audit their frozen
-contracts. Do not use them for a new Power 1.1 submission:
+contracts. Do not use them for a new submission:
 
+- [Power 1.1 quickstart](power-1.1-quickstart.md)
 - [Power 1.0 quickstart](power-1.0-quickstart.md)
 - [Historical recommended-model workflow](test-recommended-model.md)

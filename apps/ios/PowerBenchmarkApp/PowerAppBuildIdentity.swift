@@ -75,14 +75,13 @@ enum PowerAppBuildIdentity {
     static var certificationMeasurementAvailable: Bool {
         isCertificationBuild
             && isValidSourceRevision(sourceRevision)
-            && !Power2CandidateIdentity.publicIntakeOpen
-            && !Power2CandidateIdentity.appReleaseAvailable
+            && !Power2ProductIdentity.appReleaseAvailable
     }
 
     static var officialReleaseAvailable: Bool {
         isOfficialBuild
             && isValidSourceRevision(sourceRevision)
-            && Power2CandidateIdentity.appReleaseAvailable
+            && Power2ProductIdentity.appReleaseAvailable
     }
 
     private static var marketingVersion: String {
@@ -105,7 +104,7 @@ enum PowerAppBuildIdentity {
             build: buildVersion,
             sourceRevision: sourceRevision,
             embeddedMeasurementStackSHA256:
-                Power2CandidateIdentity.measurementStackSHA256
+                Power2ProductIdentity.measurementStackSHA256
         )
     }
 

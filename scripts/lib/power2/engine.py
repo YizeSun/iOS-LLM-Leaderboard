@@ -16,6 +16,7 @@ from . import json_schema
 
 ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_CANDIDATE_PATH = ROOT / "products" / "power" / "candidate.json"
+DEFAULT_CURRENT_PATH = ROOT / "products" / "power" / "current.json"
 ALLOWED_PACKAGE_FILES = {"submission.json", "result.json"}
 VALIDATOR_NAME = "power-intake-engine"
 VALIDATOR_VERSION = "2.0.0-draft.2"
@@ -120,11 +121,11 @@ def _load_optional_reference(
     return document
 
 
-def load_candidate_context(
-    candidate_path: Path = DEFAULT_CANDIDATE_PATH,
+def _load_pointer_context(
+    pointer_path: Path,
 ) -> ValidationContext:
-    candidate = _load_json(candidate_path)
-    measurement_reference = candidate.get("measurementStack")
+    pointer = _load_json(pointer_path)
+    measurement_reference = pointer.get("measurementStack")
     if not isinstance(measurement_reference, dict):
         raise Power2ValidationError("candidate has no measurement stack")
     _, measurement_stack = _load_reference(
@@ -227,7 +228,7 @@ def load_candidate_context(
         model_entries[entry_id] = (manifest, entry["sha256"])
 
     return ValidationContext(
-        public_intake_open=candidate.get("publicIntakeOpen") is True,
+        public_intake_open=pointer.get("publicIntakeOpen") is True,
         measurement_stack_sha256=measurement_reference["sha256"],
         program_reference=program_reference,
         target_reference=target_reference,
@@ -243,10 +244,55 @@ def load_candidate_context(
             "runner certificate",
         ),
         app_release=_load_optional_reference(
-            candidate.get("appRelease"), "App release"
+            pointer.get("appRelease"), "App release"
         ),
         schema_paths=schema_paths,
     )
+
+
+def load_candidate_context(
+    candidate_path: Path = DEFAULT_CANDIDATE_PATH,
+) -> ValidationContext:
+    """Load the closed migration candidate for certification and tests."""
+
+    pointer = _load_json(candidate_path)
+    if (
+        pointer.get("schemaVersion")
+        != "power-stack-pointer-1.0.0-draft.1"
+        or pointer.get("status") != "migration-draft"
+        or pointer.get("publicIntakeOpen") is not False
+        or pointer.get("appRelease") is not None
+    ):
+        raise Power2ValidationError(
+            "Power migration candidate is not fail-closed"
+        )
+    return _load_pointer_context(candidate_path)
+
+
+def load_product_context(
+    current_path: Path = DEFAULT_CURRENT_PATH,
+) -> ValidationContext:
+    """Load the public Power pointer, failing closed before activation.
+
+    During the migration window, the candidate remains the only trusted
+    configuration and carries ``publicIntakeOpen: false``. Once
+    ``current.json`` is issued, public tools resolve only that immutable
+    pointer without requiring a second CLI or workflow.
+    """
+
+    if not current_path.is_file():
+        return load_candidate_context(DEFAULT_CANDIDATE_PATH)
+    pointer = _load_json(current_path)
+    if (
+        pointer.get("schemaVersion") != "power-stack-pointer-1.0.0"
+        or pointer.get("status") != "active"
+        or pointer.get("publicIntakeOpen") is not True
+        or not isinstance(pointer.get("appRelease"), dict)
+    ):
+        raise Power2ValidationError(
+            "active Power pointer is incomplete or fail-closed"
+        )
+    return _load_pointer_context(current_path)
 
 
 def load_candidate_certification_review_context(
@@ -1200,7 +1246,7 @@ def validate_package(
     pr_author: str | None,
     accepted_result_digests: set[str] | None = None,
 ) -> dict[str, Any]:
-    context = context or load_candidate_context()
+    context = context or load_product_context()
     package = Path(package)
     diagnostics: list[str] = []
     structural_reasons: list[str] = []

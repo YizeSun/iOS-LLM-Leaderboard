@@ -150,15 +150,14 @@ class PowerModelCatalogTests(unittest.TestCase):
         self.assertTrue(app_ready_ids.issubset(community_ids))
         self.assertTrue(watchlist_ids.isdisjoint(official_ids | community_ids))
 
-    def test_site_exposes_a_separate_non_ranking_catalog(self) -> None:
+    def test_site_does_not_mix_the_historical_watchlist_into_power_2_ranking(self) -> None:
         index = (ROOT / "index.html").read_text()
         app = (ROOT / "site" / "app.js").read_text()
-        self.assertIn('data-mode="catalog"', index)
-        self.assertIn("models/power-test-catalog.json", app)
-        self.assertIn("These are not rankings", app)
-        self.assertIn("No performance claims", app)
-        self.assertIn("Not App-ready", app)
-        self.assertIn("openModelWatchlist", app)
+        self.assertNotIn('data-mode="catalog"', index)
+        self.assertNotIn("models/power-test-catalog.json", app)
+        self.assertNotIn("openModelWatchlist", app)
+        self.assertIn("comparisonIdentity.modelArtifactID", app)
+        self.assertIn("modelArtifactRevision", app)
 
     def test_candidate_source_and_contributor_guide_are_pinned(self) -> None:
         source_commit = "9ad1e4507bdc8e5d2a3f75387f3af86675bf69ab"

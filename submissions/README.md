@@ -13,10 +13,10 @@ submissions/suite-b/power-1.1.0/draft/<submission-id>/
 Create and validate one with:
 
 ```bash
-python3 scripts/power.py submit /path/to/result.json \
+python3 scripts/power submit /path/to/result.json \
   --github YOUR_GITHUB_HANDLE \
   --accept-declarations
-python3 scripts/power.py validate \
+python3 scripts/power validate \
   submissions/suite-b/power-1.1.0/draft/<submission-id>
 ```
 

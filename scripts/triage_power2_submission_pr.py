@@ -18,7 +18,7 @@ try:
         ROOT,
         ValidationContext,
         load_candidate_app_release_review_context,
-        load_candidate_context,
+        load_product_context,
         validate_package,
     )
 except ModuleNotFoundError:
@@ -26,7 +26,7 @@ except ModuleNotFoundError:
         ROOT,
         ValidationContext,
         load_candidate_app_release_review_context,
-        load_candidate_context,
+        load_product_context,
         validate_package,
     )
 
@@ -186,7 +186,7 @@ def classify(
         report["reasonCodes"].append("pull-request-scope-invalid")
         return report
 
-    context = context or load_candidate_context()
+    context = context or load_product_context()
     accepted_digests = _accepted_result_digests(base_ref)
     classifications: list[str] = []
     with tempfile.TemporaryDirectory() as temporary:

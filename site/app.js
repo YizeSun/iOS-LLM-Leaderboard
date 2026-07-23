@@ -1,158 +1,21 @@
-const POWER_DATA_URL = "results/suite-b-power-community/normalized-results.json";
-const OFFICIAL_POWER_DATA_URL = "results/suite-b-power-1.1/normalized-results.json";
+const POWER_DATA_URL = "results/power/text-generation-performance/2.0.0/ranking.json";
+const POWER_CURRENT_URL = "products/power/current.json";
 const SHIP_DATA_URL = "results/ship-1.0/deployment-profiles.json";
-const MODEL_CATALOG_URL = "models/power-test-catalog.json";
-const CONTRIBUTOR_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.1-quickstart.md";
-const MODEL_TEST_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.1-quickstart.md";
+const CONTRIBUTOR_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power.md";
 const THEME_STORAGE_KEY = "ios-llm-leaderboard-theme";
 
 const state = {
   power: null,
   ship: null,
-  catalog: null,
+  active: false,
   mode: "ux",
-  sortKey: "response",
+  sortKey: "value",
   sortDirection: "asc",
   query: "",
   device: "all",
   runtime: "all",
   size: "all",
 };
-
-const COLUMN_HELP = Object.freeze({
-  rank: "Position within the active sort. Rank changes when you sort by a different metric; unranked rows have no metric-eligible result.",
-  model: "Model name. The evidence keeps the exact artifact, revision, format, App version, and iOS version behind this row.",
-  quantization: "Weight precision used by the artifact, such as 4-bit. Lower precision usually reduces download size and memory use, but can affect quality.",
-  response: "Time from request acceptance to the first renderable decoded output at the adapter boundary. Lower is better; this is not screen-render latency.",
-  pipeline: "Time from the prepared inference request to the first raw token returned by the runtime. Lower is better.",
-  prefill: "Input tokens processed per second before output generation begins. Higher is better, especially for longer prompts.",
-  decode: "Output tokens generated per second after the first token. Higher is better.",
-  memory: "Peak memory observed in the retained measurements. Lower values leave more headroom for the app and operating system.",
-  thermal: "Device thermal state at the end of the workload: Nominal, Fair, Serious, or Critical. Lower thermal pressure is better.",
-  contributors: "Independent GitHub contributors represented in this comparison. Two metric-eligible contributors mark a result as reproduced.",
-  variation: "Spread of the primary metric across independent contributors. Lower values mean closer agreement; shown only when comparable results exist.",
-  details: "Open the exact configuration, retained evidence, source files, and related runs or deployment profile.",
-  degradation: "Percentage change in decode speed from the first to the last measured generation. Values near zero are more stable; negative values indicate slowdown.",
-  artifact: "Repository size of the exact model artifact used by this profile. Smaller downloads are generally easier to distribute.",
-  device: "Physical Apple device on which this configuration was measured.",
-  runtime: "Inference runtime and version used to execute the model.",
-  verified: "Number of deployment claims directly supported by retained evidence.",
-  unknown: "Number of deployment questions not established by current evidence. Unknowns remain explicit rather than being guessed.",
-  "coverage-ux": "Eligible contributor coverage for the Responsiveness workload. Two independent contributors mark the cell as reproduced.",
-  "coverage-pipe": "Eligible contributor coverage for Sustained generation. Two independent contributors mark the cell as reproduced.",
-  gaps: "Additional independent contributor results needed to reproduce both Power workloads for this configuration.",
-  contribute: "Open the contribution guide to submit another physical-device result.",
-  priority: "Recommended testing order for App-ready models. This is not a performance rank.",
-  size: "Artifact download size reported by the model repository.",
-  license: "Published model license identifier. Developers should review the complete license before shipping.",
-  support: "Whether the locked benchmark App can currently load and run this artifact.",
-  status: "Current physical-device evidence status. Watchlist entries are not yet App-testable.",
-  reason: "Why this model is included in the App-ready catalog or public-weight watchlist.",
-  "catalog-action": "Available next step: test the model, open its source, or wait for a compatible artifact.",
-});
-
-const modeConfig = {
-  ux: {
-    kind: "power",
-    workload: "b-ux-001-short-interaction",
-    label: "First-renderable proxy TTFT",
-    description: "Latest App baseline per iOS minor family. Adapter boundary, not screen-render latency.",
-    defaultSort: "response",
-    defaultDirection: "asc",
-    columns: [
-      column("rank", "#", () => 0, value => value, false),
-      column("model", "Model", row => row.configuration.model.displayName, value => value),
-      column("quantization", "Quant", row => row.configuration.model.quantization, value => value),
-      column("response", "Proxy TTFT", row => row.summary.medianFirstRenderableProxyTTFTMilliseconds, value => formatMs(value), true, true),
-      column("pipeline", "Pipeline TTFT", row => row.summary.medianPipelineTTFTMilliseconds, value => formatMs(value), true),
-      column("prefill", "Prefill", row => row.summary.medianPrefillTokensPerSecond, value => formatRate(value), true),
-      column("decode", "Decode", row => row.summary.medianDecodeTokensPerSecond, value => formatRate(value), true),
-      column("memory", "Peak memory", row => row.summary.medianPeakMemoryMiB, value => formatMemory(value), true),
-      column("thermal", "Thermal", row => thermalOrder(row.summary.finalThermalState), (_, row) => thermalMarkup(row.summary.finalThermalState), true),
-      column("contributors", "Contributors", row => row.community.contributorCount, (_, row) => communityCount(row), true),
-      column("variation", "Variation", row => row.community.primaryMetricVariation.value, (_, row) => communityVariation(row), true),
-      column("details", "Evidence", () => 0, () => "", false),
-    ],
-  },
-  pipe: {
-    kind: "power",
-    workload: "b-pipe-001-sustained-generation",
-    label: "Sustained decode throughput",
-    description: "Latest App baseline per iOS minor family. Five measured generations without a rest interval.",
-    defaultSort: "decode",
-    defaultDirection: "desc",
-    columns: [
-      column("rank", "#", () => 0, value => value, false),
-      column("model", "Model", row => row.configuration.model.displayName, value => value),
-      column("quantization", "Quant", row => row.configuration.model.quantization, value => value),
-      column("decode", "Decode", row => row.summary.medianDecodeTokensPerSecond, value => formatRate(value), true, true),
-      column("pipeline", "Pipeline TTFT", row => row.summary.medianPipelineTTFTMilliseconds, value => formatMs(value), true),
-      column("prefill", "Prefill", row => row.summary.medianPrefillTokensPerSecond, value => formatRate(value), true),
-      column("memory", "Peak memory", row => row.summary.medianPeakMemoryMiB, value => formatMemory(value), true),
-      column("degradation", "Decode change", row => row.summary.decodeFirstToLastPercentChange, value => formatPercent(value), true),
-      column("thermal", "Thermal", row => thermalOrder(row.summary.finalThermalState), (_, row) => thermalMarkup(row.summary.finalThermalState), true),
-      column("contributors", "Contributors", row => row.community.contributorCount, (_, row) => communityCount(row), true),
-      column("variation", "Variation", row => row.community.primaryMetricVariation.value, (_, row) => communityVariation(row), true),
-      column("details", "Evidence", () => 0, () => "", false),
-    ],
-  },
-  ship: {
-    kind: "ship",
-    label: "Deployment profiles",
-    description: "Evidence-backed guidance for the exact tested configurations. No Ship score.",
-    defaultSort: "artifact",
-    defaultDirection: "asc",
-    columns: [
-      column("model", "Model", row => row.configuration.model.displayName, value => escapeHtml(value)),
-      column("quantization", "Quant", row => row.configuration.model.quantization, value => escapeHtml(value)),
-      column("artifact", "Artifact size", row => row.observedConstraints.artifactRepositorySizeBytes, value => formatBytes(value), true, true),
-      column("memory", "Observed median peak", row => row.observedConstraints.maximumReportedMedianPeakMemoryMiB, value => formatMemory(value), true),
-      column("device", "Tested device", row => row.configuration.device.displayName, value => escapeHtml(value), true),
-      column("runtime", "Runtime", row => `${row.configuration.runtime.name} ${row.configuration.runtime.version}`, value => escapeHtml(value), true),
-      column("verified", "Verified", row => claimCount(row, "verified"), value => `${value} claims`, true),
-      column("unknown", "Unknown", row => claimCount(row, "unknown"), value => `${value} claims`, true),
-      column("details", "Profile", () => 0, () => "", false),
-    ],
-  },
-  coverage: {
-    kind: "coverage",
-    label: "Community evidence coverage",
-    description: "Each exact workload cell needs two independent metric-eligible GitHub contributors to display as Reproduced.",
-    defaultSort: "gaps",
-    defaultDirection: "desc",
-    columns: [
-      column("model", "Model", row => row.configuration.model.displayName, value => value),
-      column("quantization", "Quant", row => row.configuration.model.quantization, value => escapeHtml(value)),
-      column("device", "Device", row => row.configuration.device.displayName, value => escapeHtml(value), true),
-      column("coverage-ux", "Responsiveness", row => row.coverage.ux?.eligibleContributorCount ?? -1, (_, row) => coverageCell(row.coverage.ux), true),
-      column("coverage-pipe", "Sustained generation", row => row.coverage.pipe?.eligibleContributorCount ?? -1, (_, row) => coverageCell(row.coverage.pipe), true),
-      column("gaps", "Open contributor slots", row => row.openContributorSlots, value => String(value), true, true),
-      column("contribute", "Action", () => 0, () => `<a class="details-button" href="${CONTRIBUTOR_GUIDE_URL}" target="_blank" rel="noreferrer">Contribute result</a>`, false),
-    ],
-  },
-  catalog: {
-    kind: "catalog",
-    label: "Model catalog",
-    description: "App-ready tested artifacts and requested public-weight models awaiting compatible Apple-device artifacts. These are not rankings.",
-    defaultSort: "priority",
-    defaultDirection: "asc",
-    columns: [
-      column("priority", "Priority", row => row.catalogEntryType === "app-ready" ? row.recommendedPriority : null, value => value == null ? "—" : `#${value}`, true, true),
-      column("model", "Model", row => row.configuration.model.displayName, value => value),
-      column("quantization", "Quant", row => row.configuration.model.quantization, value => value == null ? "—" : escapeHtml(value)),
-      column("size", "Download", row => row.configuration.model.artifactRepositorySizeBytes, value => value == null ? "—" : formatBytes(value), true),
-      column("license", "License", row => row.configuration.model.licenseIdentifier, value => escapeHtml(value), true),
-      column("support", "App status", row => row.runtimeRegistryStatus, (_, row) => catalogSupportMarkup(row), true),
-      column("status", "Evidence", row => row.physicalDeviceEvidenceStatus, (_, row) => catalogEvidenceMarkup(row), true),
-      column("reason", "Why listed", row => row.recommendationReason ?? row.appEligibilityReason, value => escapeHtml(value), false),
-      column("catalog-action", "Action", () => 0, (_, row) => catalogActionMarkup(row), false),
-    ],
-  },
-};
-
-function column(key, label, accessor, formatter, sortable = true, primary = false) {
-  return { key, label, accessor, formatter, sortable, primary, help: COLUMN_HELP[key] };
-}
 
 const elements = {
   head: document.querySelector("#ranking-head"),
@@ -173,45 +36,78 @@ const elements = {
   footerStatus: document.querySelector("#footer-status"),
   footerChecksums: document.querySelector("#footer-checksums"),
   footerTable: document.querySelector("#footer-table"),
-  columnTooltip: document.querySelector("#column-tooltip"),
 };
 
-let activeColumnHelp = null;
+const powerModes = {
+  ux: {
+    viewID: "interactive-responsiveness",
+    label: "First-renderable time",
+    description: "Decoded renderable output at the certified adapter boundary. Lower is better; this is not screen-render latency.",
+    direction: "asc",
+    unit: "ms",
+  },
+  pipe: {
+    viewID: "sustained-generation",
+    label: "Sustained decode throughput",
+    description: "Output token generation after the first token. Higher is better.",
+    direction: "desc",
+    unit: "tok/s",
+  },
+};
+
+const COLUMN_HELP = Object.freeze({
+  rank: "Position after sorting this exact Power comparison view.",
+  model: "Exact model artifact and immutable source revision.",
+  quantization: "Quantization recorded by the registered model artifact.",
+  device: "Physical Apple device identity used by this evidence.",
+  runtime: "Exact inference runtime version recorded by the result.",
+  value: "Primary metric for the selected workload. The arrow shows ranking direction.",
+  contributors: "Distinct GitHub contributors; one account counts once per exact cell.",
+  state: "Accepted at one contributor, reproduced at two, contributor-weighted at three.",
+  details: "Complete comparison identity and immutable source-result hashes.",
+});
 
 function applyTheme(theme, persist = false) {
   const selected = theme === "light" ? "light" : "dark";
   document.documentElement.dataset.theme = selected;
   elements.theme.value = selected;
-  document.querySelector('meta[name="theme-color"]').setAttribute("content", selected === "dark" ? "#131210" : "#ffffff");
+  document.querySelector('meta[name="theme-color"]').setAttribute(
+    "content",
+    selected === "dark" ? "#131210" : "#ffffff",
+  );
   if (persist) {
     try {
       localStorage.setItem(THEME_STORAGE_KEY, selected);
     } catch (_) {
-      // The visible theme still changes when persistent storage is unavailable.
+      // Theme selection remains useful when persistence is unavailable.
     }
   }
 }
 
 async function loadEvidence() {
   try {
-    const [powerResponse, shipResponse, catalogResponse] = await Promise.all([
+    const [powerResponse, shipResponse, currentResponse] = await Promise.all([
       fetch(POWER_DATA_URL, { cache: "no-store" }),
       fetch(SHIP_DATA_URL, { cache: "no-store" }),
-      fetch(MODEL_CATALOG_URL, { cache: "no-store" }),
+      fetch(POWER_CURRENT_URL, { cache: "no-store" }),
     ]);
-    if (!powerResponse.ok) throw new Error(`Power evidence request failed: ${powerResponse.status}`);
-    if (!shipResponse.ok) throw new Error(`Ship evidence request failed: ${shipResponse.status}`);
-    if (!catalogResponse.ok) throw new Error(`Model catalog request failed: ${catalogResponse.status}`);
-    const [power, ship, catalog] = await Promise.all([powerResponse.json(), shipResponse.json(), catalogResponse.json()]);
-    if (!Array.isArray(power.results) || power.results.length === 0) throw new Error("Power evidence is empty");
-    if (!Array.isArray(ship.profiles) || ship.profiles.length === 0) throw new Error("Ship profiles are empty");
-    if (!Array.isArray(catalog.models) || catalog.models.length === 0) throw new Error("Model test catalog is empty");
-    if (!Array.isArray(catalog.openModelWatchlist)) throw new Error("Public-weight model watchlist is unavailable");
-    state.power = power;
-    state.ship = ship;
-    state.catalog = catalog;
-    populateFilters([...power.results, ...ship.profiles]);
-    renderReleaseSummary(power);
+    if (!powerResponse.ok) {
+      throw new Error(`Power evidence request failed: ${powerResponse.status}`);
+    }
+    if (!shipResponse.ok) {
+      throw new Error(`Ship evidence request failed: ${shipResponse.status}`);
+    }
+    state.power = await powerResponse.json();
+    state.ship = await shipResponse.json();
+    state.active = currentResponse.ok;
+    if (!Array.isArray(state.power.views)) {
+      throw new Error("Power ranking views are unavailable");
+    }
+    if (!Array.isArray(state.ship.profiles)) {
+      throw new Error("Ship profiles are unavailable");
+    }
+    populateFilters();
+    renderSummary();
     renderBoard();
   } catch (error) {
     console.error(error);
@@ -220,764 +116,374 @@ async function loadEvidence() {
   }
 }
 
-function populateFilters(rows) {
-  const devices = uniqueBy(rows.map(row => row.configuration.device), item => item.machineIdentifier);
-  const runtimes = uniqueBy(rows.map(row => row.configuration.runtime), item => `${item.name}@${item.version}`);
-  devices.forEach(device => elements.device.add(new Option(device.displayName, device.machineIdentifier)));
-  runtimes.forEach(runtime => elements.runtime.add(new Option(`${runtime.name} ${runtime.version}`, `${runtime.name}@${runtime.version}`)));
+function powerRows() {
+  const mode = powerModes[state.mode] ?? powerModes.ux;
+  return state.power.views.filter(row => row.viewID === mode.viewID);
 }
 
-function uniqueBy(items, key) {
-  return [...new Map(items.map(item => [key(item), item])).values()];
+function allFilterRows() {
+  return [
+    ...state.power.views.map(row => ({
+      device: row.comparisonIdentity.machineIdentifier,
+      runtime: runtimeLabel(row.comparisonIdentity.runtimeIdentity),
+    })),
+    ...state.ship.profiles.map(row => ({
+      device: row.configuration.device.machineIdentifier,
+      runtime: runtimeLabel(row.configuration.runtime),
+    })),
+  ];
 }
 
-function renderReleaseSummary(data) {
-  const eligibleRows = data.results.filter(row => row.rankingEligibility.candidateEligible);
-  const configurations = new Set(eligibleRows.map(row => row.configuration.model.artifactID));
-  const devices = uniqueBy(data.results.map(row => row.configuration.device), item => item.machineIdentifier);
-  document.querySelector("#summary-configurations").textContent = String(configurations.size);
-  document.querySelector("#summary-results").textContent = String(data.resultCount);
-  document.querySelector("#summary-device").textContent = devices.map(device => device.displayName).join(", ");
-  elements.releaseLabel.textContent = "Power 1.1 + Community";
-  elements.releaseLabel.title = `Live community view derived from ${OFFICIAL_POWER_DATA_URL}`;
-  elements.footerStatus.textContent = "Power 1.1 reference · Live merged community evidence";
+function populateFilters() {
+  const rows = allFilterRows();
+  const devices = [...new Set(rows.map(row => row.device))].sort();
+  const runtimes = [...new Set(rows.map(row => row.runtime))].sort();
+  devices.forEach(value => elements.device.add(new Option(value, value)));
+  runtimes.forEach(value => elements.runtime.add(new Option(value, value)));
 }
 
-function workloadRows(rows, workload) {
-  const groups = new Map();
-  rows.filter(row => row.workload.id === workload).forEach(row => {
-    const key = currentDisplayKey(row);
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(row);
-  });
-  return [...groups.values()].map(group => {
-    const selected = [...group].sort(compareDisplayPreference).at(-1);
-    return { ...selected, displayHistoryCount: group.length - 1 };
-  });
-}
-
-function currentDisplayKey(row) {
-  const identity = row.comparisonIdentity;
-  return JSON.stringify([
-    identity.workload.id,
-    identity.generation,
-    identity.model.artifactID,
-    identity.model.artifactRevision,
-    identity.model.artifactContentHash,
-    identity.model.quantization,
-    identity.model.tokenizerIdentity,
-    identity.runtime.name,
-    identity.runtime.backend,
-    identity.device.machineIdentifier,
-    identity.device.physicalMemoryBytes,
-    osMinorFamily(identity.device.systemVersion),
-  ]);
-}
-
-function osMinorFamily(version) {
-  const parts = String(version ?? "").match(/\d+/g) ?? [];
-  return parts.length >= 2 ? `${parts[0]}.${parts[1]}` : String(version ?? "unknown");
-}
-
-function numericVersion(value) {
-  return (String(value ?? "").match(/\d+/g) ?? ["0"]).map(Number);
-}
-
-function compareNumericVersions(left, right) {
-  const length = Math.max(left.length, right.length);
-  for (let index = 0; index < length; index += 1) {
-    const difference = (left[index] ?? 0) - (right[index] ?? 0);
-    if (difference !== 0) return difference;
-  }
-  return 0;
-}
-
-function latestEvidenceAt(row) {
-  return row.evidence.reduce((latest, item) => item.createdAt > latest ? item.createdAt : latest, "");
-}
-
-function compareDisplayPreference(left, right) {
-  const leftRunner = left.comparisonIdentity.runner;
-  const rightRunner = right.comparisonIdentity.runner;
-  const leftDevice = left.comparisonIdentity.device;
-  const rightDevice = right.comparisonIdentity.device;
-  return compareNumericVersions(numericVersion(leftRunner.appVersion), numericVersion(rightRunner.appVersion))
-    || compareNumericVersions(numericVersion(leftRunner.appBuild), numericVersion(rightRunner.appBuild))
-    || compareNumericVersions(numericVersion(leftDevice.systemVersion), numericVersion(rightDevice.systemVersion))
-    || String(leftDevice.systemBuild).localeCompare(String(rightDevice.systemBuild), undefined, { numeric: true })
-    || latestEvidenceAt(left).localeCompare(latestEvidenceAt(right))
-    || left.comparisonID.localeCompare(right.comparisonID);
-}
-
-function historicalDisplayCells(row) {
-  const key = currentDisplayKey(row);
-  return state.power.results
-    .filter(candidate => candidate.comparisonID !== row.comparisonID && currentDisplayKey(candidate) === key)
-    .sort((left, right) => compareDisplayPreference(right, left));
-}
-
-function buildCoverageRows(rows) {
-  const profiles = new Map();
-  rows.forEach(row => {
-    const identity = row.comparisonIdentity;
-    const key = JSON.stringify({
-      sourceEvidenceRelease: identity.sourceEvidenceRelease,
-      runner: identity.runner,
-      model: identity.model,
-      runtime: identity.runtime,
-      device: identity.device,
-    });
-    if (!profiles.has(key)) {
-      profiles.set(key, {
-        configuration: row.configuration,
-        coverage: { ux: null, pipe: null },
-        openContributorSlots: 4,
-      });
-    }
-    const profile = profiles.get(key);
-    const slot = row.workload.id === "b-ux-001-short-interaction" ? "ux" : "pipe";
-    profile.coverage[slot] = {
-      comparisonID: row.comparisonID,
-      eligibleContributorCount: row.community.eligibleContributorCount,
-      contributorCount: row.community.contributorCount,
-      runCount: row.community.runCount,
-      status: row.community.status,
-    };
-  });
-  return [...profiles.values()].map(profile => {
-    profile.openContributorSlots = [profile.coverage.ux, profile.coverage.pipe]
-      .reduce((total, evidence) => total + Math.max(0, 2 - (evidence?.eligibleContributorCount ?? 0)), 0);
-    return profile;
-  });
-}
-
-function buildCatalogRows(catalog) {
-  const appReady = catalog.models.map(model => ({
-    ...model,
-    catalogEntryType: "app-ready",
-    configuration: { model, runtime: catalog.runtime },
-  }));
-  const watchlist = catalog.openModelWatchlist.map(model => ({
-    ...model,
-    catalogEntryType: "open-model-watchlist",
-    runtimeRegistryStatus: "unsupported-in-locked-runtime",
-    physicalDeviceEvidenceStatus: "not-app-testable",
-    configuration: {
-      model: {
-        ...model,
-        artifactID: model.officialModelID,
-        quantization: null,
-        artifactRepositorySizeBytes: null,
-      },
-      runtime: catalog.runtime,
-    },
-  }));
-  return [...appReady, ...watchlist];
-}
-
-function catalogSupportMarkup(row) {
-  return row.catalogEntryType === "app-ready"
-    ? '<span class="catalog-support">Ready in App</span>'
-    : '<span class="catalog-watchlist">Not App-ready</span>';
-}
-
-function catalogEvidenceMarkup(row) {
-  if (row.catalogEntryType !== "app-ready") {
-    return '<span class="catalog-watchlist">Watchlist</span>';
-  }
-  return row.physicalDeviceEvidenceStatus === "community-submitted-single-contributor"
-    ? '<span class="catalog-status">Community tested</span>'
-    : '<span class="catalog-status">Evidence pending</span>';
-}
-
-function catalogActionMarkup(row) {
-  const source = `<a class="catalog-source" href="${escapeAttribute(row.configuration.model.sourceURL)}" target="_blank" rel="noreferrer">Source</a>`;
-  if (row.catalogEntryType !== "app-ready") {
-    return `<span class="catalog-unavailable">Await compatible artifact</span>${source}`;
-  }
-  return `<a class="details-button" href="${MODEL_TEST_GUIDE_URL}" target="_blank" rel="noreferrer">Test this model</a>${source}`;
+function renderSummary() {
+  const identities = state.power.views.map(row => row.comparisonIdentity);
+  const configurations = new Set(
+    identities.map(identity => identity.modelArtifactID),
+  );
+  const devices = [...new Set(
+    identities.map(identity => identity.machineIdentifier),
+  )];
+  document.querySelector("#summary-configurations").textContent = String(
+    configurations.size,
+  );
+  document.querySelector("#summary-results").textContent = String(
+    state.power.acceptedContributionCount,
+  );
+  document.querySelector("#summary-device").textContent = devices.length
+    ? devices.join(", ")
+    : "Physical iPhone";
+  elements.releaseLabel.textContent = state.active
+    ? "Power 2"
+    : "Power 2 · activation checkpoint";
+  elements.footerStatus.textContent = state.active
+    ? "Power 2 · Accepted community evidence"
+    : "Power 2 · Public intake remains fail-closed";
 }
 
 function renderBoard() {
-  if (!state.power || !state.ship || !state.catalog) return;
-  const config = modeConfig[state.mode];
-  let rows;
-  if (config.kind === "ship") rows = state.ship.profiles;
-  else if (config.kind === "coverage") rows = buildCoverageRows(state.power.results);
-  else if (config.kind === "catalog") rows = buildCatalogRows(state.catalog);
-  else rows = workloadRows(state.power.results, config.workload);
-  rows = filterRows(rows, config);
-  rows = sortRows(rows, config);
-  rows = withDisplayRanks(rows, config);
-  elements.device.disabled = config.kind === "catalog";
-  elements.runtime.disabled = config.kind === "catalog";
-  elements.contextLabel.textContent = config.label;
-  elements.contextDescription.textContent = config.kind === "power"
-    ? `${config.description} ${activeSortDescription(config)}`
-    : config.description;
-  const openSlots = rows.reduce((total, row) => total + (row.openContributorSlots ?? 0), 0);
-  const rankedCount = rows.filter(row => row.rankingEligibility?.candidateEligible).length;
-  elements.rowCount.textContent = config.kind === "coverage"
-    ? `${rows.length} tested profile${rows.length === 1 ? "" : "s"} · ${openSlots} open contributor slot${openSlots === 1 ? "" : "s"}`
-    : config.kind === "catalog"
-      ? `${rows.filter(row => row.catalogEntryType === "app-ready").length} App-ready · ${rows.filter(row => row.catalogEntryType === "open-model-watchlist").length} watchlist`
-      : config.kind === "power"
-        ? `${rows.length} current model configuration${rows.length === 1 ? "" : "s"} · ${rankedCount} ranked · ${rows.length - rankedCount} unranked`
-        : `${rows.length} tested configuration${rows.length === 1 ? "" : "s"}`;
-  elements.footerStatus.textContent = config.kind === "ship"
-    ? "Ship 1.0 · Published evidence profiles · No deployment score"
-    : config.kind === "coverage"
-      ? "Coverage derived from live Power evidence · No placeholder devices"
-      : config.kind === "catalog"
-        ? "Model catalog · App-ready and public-weight watchlist entries are explicitly separated · No performance claims"
-      : "Power 1.1 reference · Live merged community evidence";
-  elements.footerChecksums.href = config.kind === "ship"
-    ? "results/ship-1.0/SHA256SUMS"
-    : config.kind === "catalog"
-      ? MODEL_CATALOG_URL
-    : "results/suite-b-power-1.1/SHA256SUMS";
-  elements.footerTable.href = config.kind === "ship"
-    ? "results/ship-1.0/PROFILES.md"
-    : config.kind === "catalog"
-      ? MODEL_TEST_GUIDE_URL
-    : config.kind === "coverage"
-      ? "results/suite-b-power-community/COVERAGE.md"
-      : "results/suite-b-power-community/LEADERBOARD.md";
-  elements.footerChecksums.textContent = config.kind === "catalog" ? "Catalog JSON" : "Checksums";
-  elements.footerTable.textContent = config.kind === "ship"
-    ? "Profile table"
-    : config.kind === "catalog" ? "Testing guide"
-      : config.kind === "coverage" ? "Coverage report" : "Evidence table";
-  elements.empty.hidden = rows.length !== 0;
-  renderHead(config.columns);
-  renderRows(rows, config.columns);
+  const tabs = document.querySelectorAll(".mode-tab");
+  tabs.forEach(tab => {
+    const selected = tab.dataset.mode === state.mode;
+    tab.classList.toggle("is-active", selected);
+    tab.setAttribute("aria-selected", String(selected));
+  });
+
+  if (state.mode === "ship") {
+    renderShip();
+    return;
+  }
+  renderPower();
 }
 
-function filterRows(rows, config) {
-  const query = state.query.trim().toLowerCase();
-  return rows.filter(row => {
-    const model = row.configuration.model;
-    const runtime = row.configuration.runtime;
-    const device = row.configuration.device;
-    const searchable = `${model.displayName} ${model.artifactID} ${model.quantization} ${runtime.name}`.toLowerCase();
-    const runtimeKey = `${runtime.name}@${runtime.version}`;
-    return (!query || searchable.includes(query))
-      && (state.size === "all" || modelSizeBucket(model) === state.size)
-      && (config.kind === "catalog" || state.device === "all" || device.machineIdentifier === state.device)
-      && (config.kind === "catalog" || state.runtime === "all" || runtimeKey === state.runtime);
+function renderPower() {
+  const mode = powerModes[state.mode];
+  elements.contextLabel.textContent = mode.label;
+  elements.contextDescription.textContent = mode.description;
+  state.sortDirection = state.sortKey === "value"
+    ? mode.direction
+    : state.sortDirection;
+  const rows = sortRows(filterPowerRows(powerRows()));
+  elements.rowCount.textContent = `${rows.length} exact comparison cell${rows.length === 1 ? "" : "s"}`;
+  elements.empty.hidden = rows.length !== 0;
+  elements.empty.querySelector("strong").textContent = state.active
+    ? "No accepted evidence in this view yet"
+    : "Power 2 activation is not complete";
+  elements.empty.querySelector("span").textContent = state.active
+    ? "Run the Official App and contribute the first exact result."
+    : "The exact Official build 3 physical-device checkpoint must pass before public intake opens.";
+  elements.footerChecksums.href = POWER_DATA_URL;
+  elements.footerChecksums.textContent = "Ranking JSON";
+  elements.footerTable.href = CONTRIBUTOR_GUIDE_URL;
+  elements.footerTable.textContent = "Contribution guide";
+
+  const columns = [
+    ["rank", "#"],
+    ["model", "Model artifact"],
+    ["quantization", "Quant"],
+    ["device", "Device"],
+    ["runtime", "Runtime"],
+    ["value", mode.unit],
+    ["contributors", "Contributors"],
+    ["state", "Evidence state"],
+    ["details", "Evidence"],
+  ];
+  renderHead(columns);
+  elements.body.innerHTML = rows.map((row, index) => {
+    const identity = row.comparisonIdentity;
+    return `<tr>
+      <td class="rank-cell">${index + 1}</td>
+      <td class="model-cell"><span class="model-name">${escapeHtml(identity.modelArtifactID)}</span><span class="model-meta">${escapeHtml(identity.modelArtifactRevision.slice(0, 12))} · iOS ${escapeHtml(identity.osVersion)} (${escapeHtml(identity.osBuild)})</span></td>
+      <td>${escapeHtml(identity.quantization)}</td>
+      <td>${escapeHtml(identity.machineIdentifier)}</td>
+      <td>${escapeHtml(runtimeLabel(identity.runtimeIdentity))}</td>
+      <td class="metric-value primary-value">${formatMetric(row.value, mode.unit)}</td>
+      <td class="metric-value">${row.contributorCount}</td>
+      <td>${evidenceState(row.evidenceState)}</td>
+      <td><button class="details-button" type="button" data-comparison="${escapeAttribute(row.comparisonID)}">Evidence</button></td>
+    </tr>`;
+  }).join("");
+  elements.body.querySelectorAll("[data-comparison]").forEach(button => {
+    button.addEventListener("click", () => openPowerDetails(button.dataset.comparison));
   });
 }
 
-function modelParameterBillions(model) {
-  const candidates = [
-    model.parameterSizeClass,
-    model.baseModelID,
-    model.displayName,
-    model.artifactID,
-  ];
-  for (const candidate of candidates) {
-    const match = String(candidate ?? "").match(/(?:^|[-_/\s])(\d+(?:\.\d+)?)\s*[bB](?=$|[-_/\s])/);
-    if (match) return Number(match[1]);
-  }
-  return null;
+function filterPowerRows(rows) {
+  const query = state.query.trim().toLowerCase();
+  return rows.filter(row => {
+    const identity = row.comparisonIdentity;
+    const runtime = runtimeLabel(identity.runtimeIdentity);
+    const text = `${identity.modelArtifactID} ${identity.quantization} ${runtime}`.toLowerCase();
+    return (!query || text.includes(query))
+      && (state.device === "all" || identity.machineIdentifier === state.device)
+      && (state.runtime === "all" || runtime === state.runtime)
+      && (state.size === "all" || modelSizeBucket(identity.modelArtifactID) === state.size);
+  });
 }
 
-function modelSizeBucket(model) {
-  const billions = modelParameterBillions(model);
-  if (billions == null || !Number.isFinite(billions)) return "unknown";
-  if (billions <= 1) return "up-to-1b";
-  if (billions <= 2) return "1b-to-2b";
-  if (billions <= 4) return "2b-to-4b";
-  return "over-4b";
-}
-
-function sortRows(rows, config) {
-  const selected = config.columns.find(item => item.key === state.sortKey) ?? config.columns[1];
+function sortRows(rows) {
   const direction = state.sortDirection === "asc" ? 1 : -1;
   return [...rows].sort((left, right) => {
-    if (config.kind === "power") {
-      const leftEligible = left.rankingEligibility.candidateEligible;
-      const rightEligible = right.rankingEligibility.candidateEligible;
-      if (leftEligible !== rightEligible) return leftEligible ? -1 : 1;
+    let leftValue;
+    let rightValue;
+    if (state.sortKey === "model") {
+      leftValue = left.comparisonIdentity.modelArtifactID;
+      rightValue = right.comparisonIdentity.modelArtifactID;
+    } else if (state.sortKey === "contributors") {
+      leftValue = left.contributorCount;
+      rightValue = right.contributorCount;
+    } else {
+      leftValue = left.value;
+      rightValue = right.value;
     }
-    const leftValue = selected.accessor(left);
-    const rightValue = selected.accessor(right);
-    if (leftValue == null && rightValue == null) return compare(left.configuration.model.displayName, right.configuration.model.displayName);
-    if (leftValue == null) return 1;
-    if (rightValue == null) return -1;
     return compare(leftValue, rightValue) * direction;
   });
 }
 
-function withDisplayRanks(rows, config) {
-  if (config.kind !== "power") return rows;
-  let displayRank = 0;
-  return rows.map(row => ({
-    ...row,
-    displayRank: row.rankingEligibility.candidateEligible ? ++displayRank : null,
-  }));
-}
-
-function activeSortDescription(config) {
-  const selected = config.columns.find(item => item.key === state.sortKey) ?? config.columns[1];
-  const order = sortOrderLabel(selected.key, state.sortDirection);
-  const preference = sortPreference(selected.key);
-  return `Sorted by ${selected.label} · ${order}${preference ? ` · ${preference}` : ""}.`;
-}
-
-function sortOrderLabel(key, direction) {
-  if (key === "model") return direction === "asc" ? "A to Z" : "Z to A";
-  return direction === "asc" ? "low to high" : "high to low";
-}
-
-function sortPreference(key) {
-  if (["response", "pipeline", "memory", "thermal", "variation"].includes(key)) return "lower is better";
-  if (["decode", "prefill", "degradation"].includes(key)) return "higher is better";
-  return "";
-}
-
-function compare(left, right) {
-  if (left == null && right == null) return 0;
-  if (left == null) return 1;
-  if (right == null) return -1;
-  if (typeof left === "number" && typeof right === "number") return left - right;
-  return String(left).localeCompare(String(right), undefined, { numeric: true, sensitivity: "base" });
+function renderShip() {
+  elements.contextLabel.textContent = "Ship deployment profiles";
+  elements.contextDescription.textContent = "Published separately from Power. Ship may cite accepted Power evidence but is not produced by a benchmark run.";
+  const query = state.query.trim().toLowerCase();
+  const rows = state.ship.profiles.filter(row => {
+    const model = row.configuration.model;
+    const runtime = runtimeLabel(row.configuration.runtime);
+    const text = `${model.displayName} ${model.artifactID} ${runtime}`.toLowerCase();
+    return (!query || text.includes(query))
+      && (state.device === "all" || row.configuration.device.machineIdentifier === state.device)
+      && (state.runtime === "all" || runtime === state.runtime)
+      && (state.size === "all" || modelSizeBucket(model.displayName) === state.size);
+  });
+  elements.rowCount.textContent = `${rows.length} deployment profile${rows.length === 1 ? "" : "s"}`;
+  elements.empty.hidden = rows.length !== 0;
+  elements.footerStatus.textContent = "Ship 1.0 · Separate deployment guidance · No Ship score";
+  elements.footerChecksums.href = "results/ship-1.0/SHA256SUMS";
+  elements.footerChecksums.textContent = "Checksums";
+  elements.footerTable.href = "results/ship-1.0/PROFILES.md";
+  elements.footerTable.textContent = "Profiles";
+  renderHead([
+    ["model", "Model"],
+    ["quantization", "Quant"],
+    ["device", "Device"],
+    ["runtime", "Runtime"],
+    ["details", "Profile"],
+  ]);
+  elements.body.innerHTML = rows.map(row => {
+    const model = row.configuration.model;
+    const device = row.configuration.device;
+    return `<tr>
+      <td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(model.artifactID)}</span></td>
+      <td>${escapeHtml(model.quantization)}</td>
+      <td>${escapeHtml(device.displayName)}</td>
+      <td>${escapeHtml(runtimeLabel(row.configuration.runtime))}</td>
+      <td><a class="details-button" href="results/ship-1.0/PROFILES.md">Profile</a></td>
+    </tr>`;
+  }).join("");
 }
 
 function renderHead(columns) {
-  hideColumnHelp();
-  elements.head.innerHTML = `<tr>${columns.map(item => {
-    const active = state.sortKey === item.key;
-    const ariaSort = active ? (state.sortDirection === "asc" ? "ascending" : "descending") : "none";
-    const arrow = state.sortDirection === "asc" ? "↑" : "↓";
-    const label = item.sortable
-      ? `<button class="sort-control${active ? " is-active" : ""}" data-sort="${item.key}" data-arrow="${arrow}">${escapeHtml(item.label)}</button>`
-      : `<span class="column-label">${escapeHtml(item.label)}</span>`;
-    const help = `<button class="column-help" type="button" data-column-help="${escapeAttribute(item.help)}" aria-label="Explain ${escapeAttribute(item.label)}" aria-describedby="column-tooltip" aria-expanded="false">?</button>`;
-    return `<th scope="col"${item.sortable ? ` aria-sort="${ariaSort}"` : ""}><span class="column-heading">${label}${help}</span></th>`;
-  }).join("")}</tr>`;
-  elements.head.querySelectorAll("[data-sort]").forEach(button => button.addEventListener("click", () => changeSort(button.dataset.sort)));
-  bindColumnHelp();
-}
-
-function bindColumnHelp() {
-  elements.head.querySelectorAll("[data-column-help]").forEach(button => {
+  elements.head.innerHTML = `<tr>${columns.map(([key, label]) => column(key, label)).join("")}</tr>`;
+  elements.head.querySelectorAll("[data-sort]").forEach(button => {
+    button.addEventListener("click", () => {
+      if (state.sortKey === button.dataset.sort) {
+        state.sortDirection = state.sortDirection === "asc" ? "desc" : "asc";
+      } else {
+        state.sortKey = button.dataset.sort;
+        state.sortDirection = button.dataset.sort === "contributors" ? "desc" : "asc";
+      }
+      renderBoard();
+    });
+  });
+  elements.head.querySelectorAll(".column-help").forEach(button => {
     button.addEventListener("mouseenter", () => showColumnHelp(button));
-    button.addEventListener("mouseleave", () => {
-      if (document.activeElement !== button) hideColumnHelp(button);
-    });
     button.addEventListener("focus", () => showColumnHelp(button));
-    button.addEventListener("blur", () => hideColumnHelp(button));
-    button.addEventListener("click", event => {
-      event.stopPropagation();
-      showColumnHelp(button);
-    });
+    button.addEventListener("mouseleave", hideColumnHelp);
+    button.addEventListener("blur", hideColumnHelp);
   });
 }
 
+function column(key, label) {
+  const sortable = ["model", "value", "contributors"].includes(key);
+  const active = state.sortKey === key;
+  const heading = sortable
+    ? `<button class="sort-control${active ? " is-active" : ""}" data-sort="${key}" data-arrow="${state.sortDirection === "asc" ? "↑" : "↓"}">${escapeHtml(label)}</button>`
+    : `<span class="column-label">${escapeHtml(label)}</span>`;
+  return `<th scope="col"><span class="column-heading">${heading}<button class="column-help" type="button" data-column-help="${key}" aria-label="Explain ${escapeAttribute(label)}" aria-describedby="column-tooltip" aria-expanded="false">?</button></span></th>`;
+}
+
 function showColumnHelp(button) {
-  if (!elements.columnTooltip) return;
-  if (activeColumnHelp && activeColumnHelp !== button) activeColumnHelp.setAttribute("aria-expanded", "false");
-  activeColumnHelp = button;
-  button.setAttribute("aria-expanded", "true");
-  elements.columnTooltip.textContent = button.dataset.columnHelp;
-  elements.columnTooltip.hidden = false;
-
-  const anchor = button.getBoundingClientRect();
-  const tooltip = elements.columnTooltip.getBoundingClientRect();
-  const edge = 12;
-  let left = anchor.left + (anchor.width / 2) - (tooltip.width / 2);
-  left = Math.min(window.innerWidth - tooltip.width - edge, Math.max(edge, left));
-  let top = anchor.bottom + 8;
-  if (top + tooltip.height > window.innerHeight - edge) top = anchor.top - tooltip.height - 8;
-  elements.columnTooltip.style.left = `${Math.round(left)}px`;
-  elements.columnTooltip.style.top = `${Math.max(edge, Math.round(top))}px`;
-}
-
-function hideColumnHelp(button = activeColumnHelp) {
-  if (!activeColumnHelp || (button && button !== activeColumnHelp)) return;
-  activeColumnHelp.setAttribute("aria-expanded", "false");
-  activeColumnHelp = null;
-  if (elements.columnTooltip) elements.columnTooltip.hidden = true;
-}
-
-function renderRows(rows, columns) {
-  elements.body.innerHTML = rows.map((row, index) => {
-    const className = row.rankingEligibility && !row.rankingEligibility.candidateEligible ? ' class="is-unranked"' : "";
-    return `<tr${className}>${columns.map(item => renderCell(item, row, index)).join("")}</tr>`;
-  }).join("");
-  elements.body.querySelectorAll("[data-result]").forEach(button => button.addEventListener("click", () => openDetails(button.dataset.result)));
-}
-
-function renderCell(columnConfig, row, index) {
-  if (columnConfig.key === "rank") {
-    return row.displayRank == null
-      ? '<td class="rank-cell"><span class="unranked-rank">Unranked</span></td>'
-      : `<td class="rank-cell">${row.displayRank}</td>`;
-  }
-  if (columnConfig.key === "model") {
-    const model = row.configuration.model;
-    const metadata = row.catalogEntryType === "open-model-watchlist"
-      ? `${model.licenseIdentifier} · Public-weight watchlist`
-      : `${model.parameterSizeClass} · ${model.modelFormat}`;
-    const device = row.configuration.device;
-    const environment = row.rankingEligibility && device
-      ? `<span class="model-meta model-environment">App ${escapeHtml(device.appVersion)} · iOS ${escapeHtml(device.systemVersion)}${row.displayHistoryCount ? ` · ${row.displayHistoryCount} previous` : ""}</span>`
-      : "";
-    const explanation = eligibilityExplanation(row);
-    const eligibility = explanation
-      ? `<span class="model-meta unranked-meta" tabindex="0" title="${escapeAttribute(explanation)}" aria-label="No metric-eligible result. ${escapeAttribute(explanation)}">No metric-eligible result</span>`
-      : "";
-    const useModel = row.comparisonID
-      ? `<button class="model-use-link" type="button" data-result="${escapeAttribute(row.comparisonID)}">Use model</button>`
-      : "";
-    return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(metadata)}</span>${environment}${eligibility}${useModel}</td>`;
-  }
-  if (columnConfig.key === "details") {
-    const identity = row.comparisonID ?? row.profileID;
-    return `<td><button class="details-button" type="button" data-result="${escapeHtml(identity)}">${row.profileID ? "Profile" : "Evidence"}</button></td>`;
-  }
-  if (columnConfig.key === "reason") {
-    return `<td class="catalog-reason">${columnConfig.formatter(columnConfig.accessor(row), row)}</td>`;
-  }
-  if (columnConfig.key === "catalog-action") {
-    return `<td class="catalog-actions">${columnConfig.formatter(0, row)}</td>`;
-  }
-  const value = columnConfig.accessor(row);
-  const formatted = columnConfig.formatter(value, row);
-  return `<td class="metric-value${columnConfig.primary ? " primary-value" : ""}">${formatted}</td>`;
-}
-
-function eligibilityExplanation(row) {
-  if (!row.rankingEligibility || row.rankingEligibility.candidateEligible) return "";
-  const reasons = new Set(row.rankingEligibility.reasonCodes ?? []);
-  if (reasons.has("response_conformance_failed") || reasons.has("response_conformance_not_passed")) {
-    return "The frozen word-based check could not verify this response; this is not a semantic-failure claim. This legacy export contains no rankable metrics.";
-  }
-  if (reasons.has("ordinary_live_ranking_not_allowed")) {
-    return "The result is retained as evidence, but its test conditions are not eligible for the live ranking.";
-  }
-  if (reasons.has("insufficient_metric_eligible_attempts")) {
-    return "Not enough measured attempts passed this workload's metric checks to produce a ranked result.";
-  }
-  return "A result exists, but none of its measurements met this workload's ranking requirements.";
-}
-
-function changeSort(key) {
-  if (state.sortKey === key) state.sortDirection = state.sortDirection === "asc" ? "desc" : "asc";
-  else {
-    state.sortKey = key;
-    state.sortDirection = defaultDirection(key);
-  }
-  renderBoard();
-}
-
-function defaultDirection(key) {
-  return ["decode", "prefill", "degradation", "contributors"].includes(key) ? "desc" : "asc";
-}
-
-function openDetails(resultID) {
-  const row = state.power.results.find(item => item.comparisonID === resultID);
-  if (!row) return openShipDetails(resultID);
-  const model = row.configuration.model;
-  const runtime = row.configuration.runtime;
-  const device = row.configuration.device;
-  const workload = row.workload.id;
-  const profile = matchingShipProfile(model);
-  const snippet = swiftLoadSnippet(model);
-  const exactModelURL = modelRevisionURL(model);
-  const interpretationCount = row.evidence.filter(item => item.metricInterpretation).length;
-  const metricSource = interpretationCount > 0
-    ? `Power 1.1 raw-evidence recalculation · ${interpretationCount} hash-bound result${interpretationCount === 1 ? "" : "s"}`
-    : "Recorded by the source result";
-  const history = historicalDisplayCells(row);
-  const historyMarkup = history.length === 0 ? "" : `
-    <h3 class="claim-heading">Related exact cells</h3>
-    <p class="dialog-note">Exact patch builds and App baselines kept as reproducible evidence; only the current baseline appears in the default model-centered ranking.</p>
-    <div class="history-list">${history.map(item => {
-      const historicalDevice = item.configuration.device;
-      const sourceKinds = [...new Set(item.evidence.map(evidence => evidence.sourceKind))]
-        .map(value => value === "maintainer-reference" ? "Maintainer Reference" : "Community evidence")
-        .join(" · ");
-      return `<div class="history-item">
-        <div><strong>App ${escapeHtml(historicalDevice.appVersion)} · iOS ${escapeHtml(historicalDevice.systemVersion)} (${escapeHtml(historicalDevice.systemBuild)})</strong><span>${escapeHtml(sourceKinds)} · ${escapeHtml(primaryMetricText(item))}</span></div>
-        <div class="history-links">${rawLinks(item)}</div>
-      </div>`;
-    }).join("")}</div>`;
-  elements.dialogContent.innerHTML = `
-    <p class="dialog-kicker">Exact tested configuration</p>
-    <h2 class="dialog-title">${escapeHtml(model.displayName)} · ${escapeHtml(model.quantization)}</h2>
-    <section class="use-model-panel" aria-labelledby="use-model-title">
-      <div class="use-model-heading">
-        <div>
-          <h3 id="use-model-title">Use this exact model</h3>
-          <p>Load the artifact revision behind this result. Power measurements are evidence, not a guarantee that every deployment concern is resolved.</p>
-        </div>
-        <a class="button button-primary" href="${escapeAttribute(exactModelURL)}" target="_blank" rel="noreferrer">Open exact revision</a>
-      </div>
-      <pre class="swift-snippet"><code>${escapeHtml(snippet)}</code></pre>
-      <div class="use-model-actions">
-        <button class="button button-secondary" type="button" data-copy-swift>Copy Swift code</button>
-        <a class="button button-secondary" href="examples/mlx-swift-power/ExactPowerModel.swift">Open Swift recipe</a>
-        ${profile ? `<button class="button button-secondary" type="button" data-ship-profile="${escapeAttribute(profile.profileID)}">Open Ship profile</button>` : '<span class="power-only-note">Power evidence only · no published Ship profile</span>'}
-      </div>
-    </section>
-    <div class="detail-grid">
-      ${detailItem("Artifact", `${model.artifactID}@${model.artifactRevision}`)}
-      ${detailItem("Workload", workload)}
-      ${detailItem("Runtime", `${runtime.name} ${runtime.version} · ${runtime.backend}`)}
-      ${detailItem("Device", `${device.displayName} · iOS ${device.systemVersion} (${device.systemBuild})`)}
-      ${detailItem("Display OS family", `iOS ${osMinorFamily(device.systemVersion)}.x; exact build retained`)}
-      ${detailItem("Model format", model.modelFormat)}
-      ${detailItem("Repository size", formatBytes(model.artifactRepositorySizeBytes))}
-      ${detailItem("License metadata", model.licenseIdentifier)}
-      ${detailItem("App identity", `${device.appVersion} build ${device.appBuild}`)}
-      ${detailItem("Community evidence", `${eligibleContributorLabel(row)} · ${row.community.runCount} run${row.community.runCount === 1 ? "" : "s"}`)}
-      ${detailItem("Reproduction", row.community.status === "reproduced" ? "Reproduced" : "Single contributor")}
-      ${detailItem("Primary variation", variationText(row))}
-      ${detailItem("Source release", row.sourceEvidenceRelease.version)}
-      ${detailItem("Metric source", metricSource)}
-    </div>
-    <div class="dialog-links">
-      <a class="button button-primary" href="${escapeAttribute(model.sourceURL)}" target="_blank" rel="noreferrer">Model source</a>
-      <a class="button button-secondary" href="${escapeAttribute(model.licenseSourceURL)}" target="_blank" rel="noreferrer">License source</a>
-      ${rawLinks(row)}
-    </div>
-    ${historyMarkup}`;
-  const copyButton = elements.dialogContent.querySelector("[data-copy-swift]");
-  if (copyButton) copyButton.addEventListener("click", () => copySwiftSnippet(snippet, copyButton));
-  const profileButton = elements.dialogContent.querySelector("[data-ship-profile]");
-  if (profileButton) profileButton.addEventListener("click", () => openShipDetails(profileButton.dataset.shipProfile));
-  showDetailDialog();
-}
-
-function matchingShipProfile(model) {
-  return state.ship.profiles.find(profile =>
-    profile.configuration.model.artifactID === model.artifactID
-    && profile.configuration.model.artifactRevision === model.artifactRevision
+  const description = COLUMN_HELP[button.dataset.columnHelp];
+  if (!description) return;
+  elements.head.querySelectorAll(".column-help").forEach(item => {
+    item.setAttribute("aria-expanded", String(item === button));
+  });
+  const bounds = button.getBoundingClientRect();
+  const tooltip = document.querySelector("#column-tooltip");
+  tooltip.textContent = description;
+  tooltip.hidden = false;
+  const tooltipBounds = tooltip.getBoundingClientRect();
+  const left = Math.min(
+    window.innerWidth - tooltipBounds.width - 12,
+    Math.max(12, bounds.left + bounds.width / 2 - tooltipBounds.width / 2),
   );
+  const top = Math.max(12, bounds.top - tooltipBounds.height - 8);
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${top}px`;
 }
 
-function modelRevisionURL(model) {
-  try {
-    const url = new URL(model.sourceURL);
-    if (url.hostname === "huggingface.co" && model.artifactRevision) {
-      const existingTree = url.pathname.indexOf("/tree/");
-      if (existingTree >= 0) url.pathname = url.pathname.slice(0, existingTree);
-      url.pathname = `${url.pathname.replace(/\/$/, "")}/tree/${encodeURIComponent(model.artifactRevision)}`;
-      return url.toString();
-    }
-  } catch (error) {
-    console.warn("Invalid model source URL", error);
-  }
-  return model.sourceURL;
+function hideColumnHelp() {
+  document.querySelector("#column-tooltip").hidden = true;
+  elements.head.querySelectorAll(".column-help").forEach(item => {
+    item.setAttribute("aria-expanded", "false");
+  });
 }
 
-function swiftLoadSnippet(model) {
-  return `let model = try await ExactPowerModel.load(
-    artifactID: "${model.artifactID}",
-    revision: "${model.artifactRevision}"
-)
-
-let completion = try await model.stream(
-    prompt: "Explain this feature briefly"
-) { index, tokenID in
-    print(index, tokenID)
-}`;
-}
-
-async function copySwiftSnippet(snippet, button) {
-  const original = button.textContent;
-  try {
-    await navigator.clipboard.writeText(snippet);
-    button.textContent = "Copied";
-  } catch (error) {
-    console.warn("Clipboard unavailable", error);
-    window.prompt("Copy this Swift code", snippet);
-  }
-  window.setTimeout(() => { button.textContent = original; }, 1800);
-}
-
-function showDetailDialog() {
-  if (!elements.dialog.open) elements.dialog.showModal();
-}
-
-function primaryMetricText(row) {
-  if (!row.rankingEligibility.candidateEligible) return "Unranked · no metric-eligible result";
-  return row.workload.id === "b-ux-001-short-interaction"
-    ? `Proxy TTFT ${formatMs(row.summary.medianFirstRenderableProxyTTFTMilliseconds)}`
-    : `Decode ${formatRate(row.summary.medianDecodeTokensPerSecond)}`;
-}
-
-function openShipDetails(profileID) {
-  const profile = state.ship.profiles.find(item => item.profileID === profileID);
-  if (!profile) return;
-  const model = profile.configuration.model;
-  const runtime = profile.configuration.runtime;
-  const device = profile.configuration.device;
-  const claims = profile.deploymentClaims.map(item => `
-    <div class="claim-item">
-      <span class="claim-status ${escapeHtml(item.status)}">${escapeHtml(item.status)}</span>
-      <div><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.statement)}</p></div>
-    </div>`).join("");
+function openPowerDetails(comparisonID) {
+  const row = state.power.views.find(item => item.comparisonID === comparisonID);
+  if (!row) return;
+  const identity = row.comparisonIdentity;
   elements.dialogContent.innerHTML = `
-    <p class="dialog-kicker">Exact tested deployment profile · No Ship score</p>
-    <h2 class="dialog-title">${escapeHtml(model.displayName)} · ${escapeHtml(model.quantization)}</h2>
+    <p class="dialog-kicker">Exact Power 2 comparison identity</p>
+    <h2 class="dialog-title">${escapeHtml(identity.modelArtifactID)}</h2>
     <div class="detail-grid">
-      ${detailItem("Artifact", `${model.artifactID}@${model.artifactRevision}`)}
-      ${detailItem("Runtime", `${runtime.name} ${runtime.version} · ${runtime.backend}`)}
-      ${detailItem("Tested device", `${device.displayName} · iOS ${device.systemVersion} (${device.systemBuild})`)}
-      ${detailItem("Observed median peak", formatMemory(profile.observedConstraints.maximumReportedMedianPeakMemoryMiB))}
-      ${detailItem("Artifact size", formatBytes(model.artifactRepositorySizeBytes))}
-      ${detailItem("Minimum supported device", "Unknown")}
-      ${detailItem("Evidence", `${profile.evidence.level} · ${profile.evidence.sourceResultCount} Power results`)}
-      ${detailItem("License metadata", `${model.licenseIdentifier} · developer review required`)}
+      ${detailItem("Artifact revision", identity.modelArtifactRevision)}
+      ${detailItem("Program", `${identity.programID}@${identity.programVersion}`)}
+      ${detailItem("Target", `${identity.targetID}@${identity.targetVersion}`)}
+      ${detailItem("Workload", `${identity.workloadID}@${identity.workloadVersion}`)}
+      ${detailItem("Measurement mode", identity.measurementMode)}
+      ${detailItem("Runner certificate", identity.runnerCertificateID)}
+      ${detailItem("Runtime", runtimeLabel(identity.runtimeIdentity))}
+      ${detailItem("Device", `${identity.machineIdentifier} · ${identity.osVersion} (${identity.osBuild})`)}
+      ${detailItem("Primary metric", `${row.metricID}: ${row.value}`)}
+      ${detailItem("Evidence state", row.evidenceState)}
     </div>
-    <h3 class="claim-heading">Deployment evidence</h3>
-    <div class="claim-list">${claims}</div>
-    <div class="dialog-links">
-      <a class="button button-primary" href="${escapeAttribute(profile.integrationRecipe.path)}">Swift recipe</a>
-      <a class="button button-secondary" href="results/ship-1.0/deployment-profiles.json">Profile data</a>
-      <a class="button button-secondary" href="docs/ship-deployment-profiles.md">Evidence method</a>
-      <a class="button button-secondary" href="${escapeAttribute(model.licenseSourceURL)}" target="_blank" rel="noreferrer">License source</a>
-    </div>`;
-  showDetailDialog();
-}
-
-function claimCount(row, status) {
-  return row.deploymentClaims.filter(item => item.status === status).length;
-}
-
-function rawLinks(row) {
-  return row.evidence.map(item => `<a class="button button-secondary" href="${escapeAttribute(item.rawPath)}">${escapeHtml(item.contributor)} · ${escapeHtml(shortWorkload(row.workload.id))}</a>`).join("");
+    <h3 class="claim-heading">Source result SHA-256</h3>
+    <div class="history-list">${row.sourceResultSHA256s.map(digest => `<code>${escapeHtml(digest)}</code>`).join("")}</div>
+    <p><a href="${escapeAttribute(modelRevisionURL(identity))}" target="_blank" rel="noreferrer">Open exact model revision ↗</a></p>`;
+  if (!elements.dialog.open) elements.dialog.showModal();
 }
 
 function detailItem(label, value) {
   return `<div class="detail-item"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`;
 }
 
-function formatMs(value) {
-  return value == null ? "—" : `${value.toFixed(2)} ms`;
+function runtimeLabel(runtime) {
+  return `${runtime.name ?? "Unknown runtime"} ${runtime.version ?? ""}`.trim();
 }
 
-function formatRate(value) {
-  return value == null ? "—" : `${value.toFixed(2)} tok/s`;
+function evidenceState(value) {
+  const labels = {
+    accepted: "Accepted",
+    reproduced: "Reproduced",
+    "contributor-weighted": "Contributor weighted",
+  };
+  return `<span class="status-pill">${escapeHtml(labels[value] ?? value)}</span>`;
 }
 
-function formatMemory(value) {
-  return value == null ? "—" : `${Math.round(value)} MiB`;
+function formatMetric(value, unit) {
+  if (!Number.isFinite(value)) return "—";
+  return `${value.toFixed(unit === "ms" ? 1 : 2)} ${unit}`;
 }
 
-function formatBytes(value) {
-  return value == null ? "—" : `${(value / 1_000_000_000).toFixed(2)} GB`;
+function modelParameterBillions(value) {
+  const match = String(value).match(/(?:^|[-_/\s])(\d+(?:\.\d+)?)\s*[bB](?=$|[-_/\s])/);
+  return match ? Number(match[1]) : null;
 }
 
-function formatPercent(value) {
-  if (value == null) return "—";
-  return `${value > 0 ? "+" : ""}${value.toFixed(1)}%`;
+function modelSizeBucket(value) {
+  const billions = modelParameterBillions(value);
+  if (!Number.isFinite(billions)) return "unknown";
+  if (billions <= 1) return "up-to-1b";
+  if (billions <= 2) return "1b-to-2b";
+  if (billions <= 4) return "2b-to-4b";
+  return "over-4b";
 }
 
-function communityCount(row) {
-  const eligible = row.community.eligibleContributorCount;
-  const total = row.community.contributorCount;
-  const label = eligible === total
-    ? `${eligible} contributor${eligible === 1 ? "" : "s"}`
-    : `${eligible} eligible · ${total} total`;
-  return row.community.status === "reproduced"
-    ? `<span class="evidence-status reproduced">${label}</span>`
-    : `<span class="evidence-status">${label}</span>`;
+function modelRevisionURL(identity) {
+  return `https://huggingface.co/${encodeURI(identity.modelArtifactID)}/tree/${encodeURIComponent(identity.modelArtifactRevision)}`;
 }
 
-function eligibleContributorLabel(row) {
-  const eligible = row.community.eligibleContributorCount;
-  const total = row.community.contributorCount;
-  const base = `${eligible} metric-eligible contributor${eligible === 1 ? "" : "s"}`;
-  return eligible === total ? base : `${base} · ${total} total`;
-}
-
-function communityVariation(row) {
-  const variation = row.community.primaryMetricVariation;
-  if (variation.value == null) return "—";
-  const value = `${variation.value.toFixed(2)}%`;
-  return variation.high
-    ? `<span class="variation-warning">${value} · High</span>`
-    : value;
-}
-
-function variationText(row) {
-  const variation = row.community.primaryMetricVariation;
-  if (variation.value == null) return "Not available with one contributor";
-  return `${variation.value.toFixed(2)}%${variation.high ? " · High variation" : ""}`;
-}
-
-function coverageCell(evidence) {
-  if (!evidence) return '<span class="coverage-status missing">No evidence</span>';
-  const eligible = evidence.eligibleContributorCount;
-  const remaining = Math.max(0, 2 - eligible);
-  const label = remaining === 0 ? "Reproduced" : `${eligible} eligible · needs ${remaining}`;
-  const className = remaining === 0 ? "reproduced" : "needed";
-  return `<button class="coverage-status ${className}" type="button" data-result="${escapeAttribute(evidence.comparisonID)}">${escapeHtml(label)}</button>`;
-}
-
-function thermalMarkup(value) {
-  const safe = escapeHtml(value ?? "unknown");
-  return `<span class="thermal ${safe.toLowerCase()}">${safe}</span>`;
-}
-
-function thermalOrder(value) {
-  return ({ nominal: 0, fair: 1, serious: 2, critical: 3 })[value] ?? 4;
-}
-
-function shortWorkload(value) {
-  if (value.includes("b-ux")) return "B-UX-001";
-  if (value.includes("b-pipe")) return "B-PIPE-001";
-  return value;
+function compare(left, right) {
+  if (typeof left === "number" && typeof right === "number") return left - right;
+  return String(left).localeCompare(String(right), undefined, {
+    numeric: true,
+    sensitivity: "base",
+  });
 }
 
 function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 function escapeAttribute(value) {
   return escapeHtml(value);
 }
 
-document.querySelectorAll(".mode-tab").forEach(button => button.addEventListener("click", () => {
-  document.querySelectorAll(".mode-tab").forEach(tab => {
-    const active = tab === button;
-    tab.classList.toggle("is-active", active);
-    tab.setAttribute("aria-selected", String(active));
+document.querySelectorAll(".mode-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    state.mode = tab.dataset.mode;
+    state.sortKey = state.mode === "ship" ? "model" : "value";
+    state.sortDirection = powerModes[state.mode]?.direction ?? "asc";
+    renderBoard();
   });
-  state.mode = button.dataset.mode;
-  state.sortKey = modeConfig[state.mode].defaultSort;
-  state.sortDirection = modeConfig[state.mode].defaultDirection;
-  const tabStrip = button.parentElement;
-  if (tabStrip && tabStrip.scrollWidth > tabStrip.clientWidth) {
-    tabStrip.scrollTo({
-      left: button.offsetLeft - (tabStrip.clientWidth - button.offsetWidth) / 2,
-      behavior: "smooth",
-    });
-  }
+});
+elements.search.addEventListener("input", event => {
+  state.query = event.target.value;
   renderBoard();
-}));
-
-elements.search.addEventListener("input", event => { state.query = event.target.value; renderBoard(); });
-elements.device.addEventListener("change", event => { state.device = event.target.value; renderBoard(); });
-elements.runtime.addEventListener("change", event => { state.runtime = event.target.value; renderBoard(); });
-elements.size.addEventListener("change", event => { state.size = event.target.value; renderBoard(); });
+});
+elements.device.addEventListener("change", event => {
+  state.device = event.target.value;
+  renderBoard();
+});
+elements.runtime.addEventListener("change", event => {
+  state.runtime = event.target.value;
+  renderBoard();
+});
+elements.size.addEventListener("change", event => {
+  state.size = event.target.value;
+  renderBoard();
+});
 elements.theme.addEventListener("change", event => applyTheme(event.target.value, true));
 document.querySelector(".dialog-close").addEventListener("click", () => elements.dialog.close());
 elements.dialog.addEventListener("click", event => {
   if (event.target === elements.dialog) elements.dialog.close();
 });
-document.addEventListener("pointerdown", event => {
-  if (!event.target.closest(".column-help")) hideColumnHelp();
-});
-document.addEventListener("keydown", event => {
-  if (event.key === "Escape") hideColumnHelp();
-});
-window.addEventListener("resize", () => hideColumnHelp());
-window.addEventListener("scroll", () => hideColumnHelp(), true);
 
-applyTheme(document.documentElement.dataset.theme);
+let initialTheme = document.documentElement.dataset.theme;
+try {
+  initialTheme = localStorage.getItem(THEME_STORAGE_KEY) || initialTheme;
+} catch (_) {
+  // Use the document default.
+}
+applyTheme(initialTheme);
 loadEvidence();

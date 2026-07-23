@@ -18,32 +18,27 @@ deployment-guidance product. They may reference the same exact configuration,
 but Power does not contain Ship and a Power test does not produce a Ship
 profile.
 
-The current Power release is
-[Power Benchmark 1.1](power-benchmark-1.1-finalization.md). It adopts the
-frozen Power 1.1 RC1 execution contract and six immutable physical-device
-results under a final ranking policy without rewriting their source identity.
-The completed historical
-[Phase 1 Evidence Pilot v0.1](power-ship-pilot-v0.1.md) remains non-official
-evidence and will not be tagged or published as a release.
-B-UX-001 and B-PIPE-001 are
-the only active Power 1.1 workloads; the protocol, schema, validator, App,
-physical-device evidence, and governance contracts are complete. All six
-adopted results are Maintainer Reference evidence and measured-performance
-eligible; five are also recommendation eligible.
+Power 2 is the implemented clean-break architecture and is in its final
+activation checkpoint. Its first benchmark cell combines the text-generation
+performance Program with the physical-iPhone Target. The exact Runner is
+certified; App build 3 automated and generic Release checks pass; the exact
+Official build 3 physical-device end-to-end result remains required before
+the immutable App release and active public pointer are issued together.
+
+[Power Benchmark 1.1](power-benchmark-1.1-finalization.md) and the completed
+[Phase 1 Evidence Pilot v0.1](power-ship-pilot-v0.1.md) remain historical
+evidence. Their contracts, Apps, validators, and rankings are not
+compatibility inputs to Power 2.
 
 **Build is a Phase 2 Research Track.** It remains part of the long-term vision,
 but it is not part of the Phase 1 product, benchmark release, public
 leaderboard, or success criteria.
 
-This architecture is a strategic positioning decision. It does not activate a
-new benchmark framework, change a protocol or stable suite ID, or make any
-draft result eligible for official ranking.
-
-The [repository architecture blueprint](repository-architecture.md) translates
-this product separation into proposed Program and Target extension slots,
-runner certificates, policy families, evidence relationships, and a staged
-clean-break Power 2.0 migration. It is a target design, not a statement that
-those modules are already implemented.
+The [repository architecture](repository-architecture.md) implements this
+separation through Program and Target extension slots, runner certificates,
+policy families, immutable evidence relationships, and one atomic Power
+pointer. Empty image, 3D, iPad, and macOS slots are design capacity, not
+implemented benchmarks.
 
 ## Phase 1 Products
 

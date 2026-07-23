@@ -1,22 +1,21 @@
 ## Contribution type
 
-- [ ] Power 1.1 result package
+- [ ] Power result package
 - [ ] Integration or documentation improvement
 - [ ] Validator, generator, App, or website change
 - [ ] Build Research proposal (no implementation)
 - [ ] Historical or release-maintenance change
 
-## Power 1.1 result checklist
+## Power result checklist
 
 - [ ] The App export is from a physical device and was not manually edited.
 - [ ] The package contains exactly `submission.json` and `result.json`.
-- [ ] `contributor.githubHandle` matches the account opening this pull request.
+- [ ] `contributor.githubLogin` matches the account opening this pull request.
 - [ ] I reviewed the public model, runtime, device, and environment metadata.
-- [ ] I accepted all declarations in the Power 1.1 quickstart.
+- [ ] I accepted all declarations in the current Power quickstart.
 - [ ] I disclosed any model, runtime, or hardware affiliation.
-- [ ] I disclosed deliberate cooling/heating or unknown thermal assistance.
-- [ ] `python3 scripts/power.py validate PATH` passes locally.
-- [ ] I understand merge does not modify the frozen release or grant Verified status.
+- [ ] `python3 scripts/power validate PATH` passes locally.
+- [ ] I understand acceptance, ranking eligibility, and reproduction are separate decisions.
 
 ## Other changes
 

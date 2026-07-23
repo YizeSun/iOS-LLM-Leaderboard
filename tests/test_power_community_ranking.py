@@ -290,13 +290,19 @@ class CommunityRankingTests(unittest.TestCase):
             self.assertEqual(validate_contributor([path], "alice"), [])
             self.assertTrue(validate_contributor([path], "bob"))
 
-    def test_site_reads_live_community_dataset(self) -> None:
+    def test_site_reads_current_power_2_dataset_without_legacy_fallback(self) -> None:
         app = (ROOT / "site/app.js").read_text()
-        self.assertIn("results/suite-b-power-community/normalized-results.json", app)
-        self.assertIn("results/suite-b-power-1.1/normalized-results.json", app)
-        self.assertIn("currentDisplayKey", app)
-        self.assertIn("osMinorFamily", app)
-        self.assertIn("No metric-eligible result", app)
+        self.assertIn(
+            "results/power/text-generation-performance/2.0.0/ranking.json",
+            app,
+        )
+        self.assertIn("products/power/current.json", app)
+        self.assertNotIn(
+            "results/suite-b-power-community/normalized-results.json",
+            app,
+        )
+        self.assertNotIn("results/suite-b-power-1.1/normalized-results.json", app)
+        self.assertIn("sourceResultSHA256s", app)
 
     def test_generated_leaderboard_uses_current_display_without_deleting_history(self) -> None:
         dataset = build_dataset()

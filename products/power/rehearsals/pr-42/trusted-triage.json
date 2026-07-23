@@ -1,0 +1,60 @@
+{
+  "classification": "auto_accept",
+  "errors": [],
+  "expectedContributor": "Sunnyone1234",
+  "packageCount": 1,
+  "packages": [
+    {
+      "behaviorConformance": {
+        "reasonCodes": [
+          "behavior-not-verified"
+        ],
+        "status": "manual-review"
+      },
+      "classification": "auto-accept",
+      "metricEligibility": {
+        "decode_first_to_last_percent_change": {
+          "reasonCodes": [
+            "metric-not-defined-for-workload"
+          ],
+          "status": "not-applicable"
+        },
+        "decode_tokens_per_second": {
+          "reasonCodes": [],
+          "status": "pass"
+        },
+        "first_renderable_ms": {
+          "reasonCodes": [],
+          "status": "pass"
+        },
+        "peak_physical_footprint_mib": {
+          "reasonCodes": [],
+          "status": "pass"
+        },
+        "pipeline_ttft_ms": {
+          "reasonCodes": [],
+          "status": "pass"
+        },
+        "prefill_tokens_per_second": {
+          "reasonCodes": [],
+          "status": "pass"
+        },
+        "request_completion_ms": {
+          "reasonCodes": [],
+          "status": "pass"
+        }
+      },
+      "reasonCodes": [],
+      "recommendationEligibility": {
+        "reasonCodes": [
+          "behavior-not-verified"
+        ],
+        "status": "manual-review"
+      },
+      "sourceResultSHA256": "49e9c7bbaf810b49fbb5380473d3664e2690572cc63534cdb9832751690de6e1",
+      "submissionID": "1913e0fe-050a-4cf6-b74e-8397a20db886"
+    }
+  ],
+  "reasonCodes": [],
+  "schemaVersion": "power-2-submission-pr-triage-1.0.0-draft.1"
+}

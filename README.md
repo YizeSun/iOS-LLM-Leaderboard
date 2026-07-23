@@ -7,13 +7,13 @@
 </p>
 
 <p align="center">
-  <a href="contributor-kit/power-1.1-quickstart.md">Run the benchmark</a>
+  <a href="contributor-kit/power.md">Run the benchmark</a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
   <a href="docs/power.md">Read the methodology</a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/1.1.0"><img alt="Power 1.1" src="https://img.shields.io/badge/Power-1.1-a94747?style=flat-square"></a>
+  <img alt="Power 2 activation candidate" src="https://img.shields.io/badge/Power_2-activation_candidate-bf8700?style=flat-square">
   <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/ship-1.0.0"><img alt="Ship 1.0" src="https://img.shields.io/badge/Ship-1.0-a94747?style=flat-square"></a>
   <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/actions/workflows/power-community-ranking.yml"><img alt="Power community ranking checks" src="https://github.com/YizeSun/iOS-LLM-Leaderboard/actions/workflows/power-community-ranking.yml/badge.svg?branch=main"></a>
   <a href="https://yizesun.github.io/iOS-LLM-Leaderboard/"><img alt="Leaderboard live" src="https://img.shields.io/badge/leaderboard-live-238636?style=flat-square"></a>
@@ -46,15 +46,17 @@ packaging, licensing, limitations, and unknowns.
 
 | Product | Status | What is public |
 | --- | --- | --- |
-| Power 1.1 | Active | Two frozen workloads, six Maintainer Reference results, and a live community view |
+| Power 2 | Activation candidate | Text performance × physical iPhone cell; automated checks pass and exact Official build 3 physical validation is pending |
 | Ship 1.0 | Published separately | Deployment profiles and a focused MLX Swift recipe derived separately from accepted Power 1.0 evidence |
 | Build | Research | Long-term complete-software-delivery research; no protocols or ranking yet |
 
-Power 1.1 retains six immutable physical-device results. All six are eligible
-for measured-performance ranking and five are also recommendation eligible.
-See the [`1.1.0` release](https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/1.1.0),
-[release notes](results/suite-b-power-1.1/RELEASE-NOTES.md), and
-[checksums](results/suite-b-power-1.1/SHA256SUMS).
+Power 2 is a clean replacement rather than a compatibility release. Its
+Program, physical-iPhone Target, exact models, Runner certificate, App
+identity, intake policy, and ranking policy form one hash-pinned stack.
+Public intake stays closed until the immutable Official App release and
+`products/power/current.json` are issued together. Power 1.1 evidence and
+release manifests remain a read-only historical archive and are never input
+to the Power 2 App, validator, workflow, or ranking.
 
 Ship 1.0 is not part of Power 1.1 and is not produced by a benchmark run. Its
 separate publication uses accepted Power 1.0 measurements as cited source
@@ -71,21 +73,21 @@ to locate. They are not five equal product priorities.
 | Suite | Scope | Product role now |
 | --- | --- | --- |
 | [Suite A](benchmarks/suite-a-swift-codegen/) | Swift Code Generation | Build Research; retained, not active in Phase 1 ranking |
-| [Suite B](benchmarks/suite-b-on-device-performance/) | On-device Performance | Active Power measurement foundation |
+| [Suite B](benchmarks/suite-b-on-device-performance/) | On-device Performance | Historical foundation; current Power contracts live under `products/power/` |
 | [Suite C](benchmarks/suite-c-xcode-integration/) | Xcode Integration | Build Research; retained, not active in Phase 1 ranking |
 | [Suite D](benchmarks/suite-d-app-feature-intelligence/) | App Feature Intelligence | Future Power quality evidence; no active release |
 | [Suite E](benchmarks/suite-e-runtime-evaluation/) | Runtime Evaluation | Future Ship evidence; no active release |
 
 ## Contribute a real-device result
 
-1. Follow the [Power 1.1 quickstart](contributor-kit/power-1.1-quickstart.md)
+1. Follow the [current Power quickstart](contributor-kit/power.md)
    and run one model on one physical device.
 2. Export the untouched JSON result from the Benchmark App.
 3. Use **Submit to GitHub** in a configured App build, or create the same
    two-file pull-request package on a Mac:
 
 ```bash
-python3 scripts/power.py submit /path/to/result.json \
+python3 scripts/power submit /path/to/result.json \
   --github YOUR_GITHUB_HANDLE \
   --accept-declarations
 ```
@@ -93,12 +95,14 @@ python3 scripts/power.py submit /path/to/result.json \
 4. For the CLI path, commit the generated directory and open a pull request
    from the same GitHub account named in the manifest.
 
-CI validates the package, frozen result contract, contributor identity,
+CI validates the package, current stack, contributor identity,
 duplicates, and ranking eligibility, then labels it for automatic acceptance,
 manual review, or rejection. Merging adds evidence to the live community view; it does
-not rewrite an immutable release or automatically grant Verified status.
-Deliberately cooled, heated, or unknown thermal-assistance runs may be retained
-as evidence but are excluded from the ordinary live ranking.
+not rewrite an immutable release or automatically establish reproduction.
+
+During the final activation checkpoint, the same path remains fail-closed for
+public evidence. The quickstart clearly identifies the required Official App
+release; Developer and Certification builds cannot submit ranking evidence.
 
 Other useful contributions include focused Swift integration recipes,
 documentation corrections, validators, and clearly scoped Build Research
@@ -123,7 +127,7 @@ explanation and the frozen release assets for normative details.
 | Path | Purpose |
 | --- | --- |
 | `benchmarks/` | Normative suite and release specifications |
-| `ios-app/` | Official physical-device benchmark runner |
+| `apps/ios/` + `apps/PowerRunnerKit/` | Power App shell and certified runner components |
 | `schemas/` | Machine-readable contracts |
 | `submissions/` | Contributor-owned evidence packages |
 | `results/` | Immutable raw evidence and generated views |
@@ -141,7 +145,7 @@ creating another parallel public workflow.
 
 ```bash
 python3 -m unittest discover -s tests -v
-python3 scripts/power.py preview
+python3 scripts/power preview
 python3 -m http.server 4173
 ```
 

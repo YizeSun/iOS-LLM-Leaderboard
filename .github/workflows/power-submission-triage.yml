@@ -4,10 +4,10 @@ on:
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
 
-# This workflow intentionally checks out and executes only the trusted base
-# branch. Candidate evidence is read from the pull-request git object.
+# Security boundary: execute only the trusted base revision. Candidate result
+# bytes are read from the fetched PR object and are never executed.
 permissions:
-  contents: write
+  contents: read
   issues: write
   pull-requests: write
 
@@ -21,39 +21,38 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Test trusted intake and ranking rules
+      - name: Test trusted Power 2 intake and ranking rules
         run: >-
           python3 -m unittest
-          tests.test_power_1_1_compatible_runners
-          tests.test_power_1_1_2_compatible_runners
-          tests.test_power_1_1_3_compatible_runners
-          tests.test_power_1_1_4_compatible_runners
-          tests.test_power_submission_1_1
-          tests.test_power_submission_pr_triage
-          tests.test_power_community_ranking
-          tests.test_community_onboarding
-          tests.test_ios_app_release_identity
-          tests.test_power_model_catalog
-          tests.test_public_surface
+          tests.test_power_2_candidate
+          tests.test_power_2_engine
+          tests.test_power_2_runner_components
+          tests.test_power_2_app_shell
           -v
       - name: Fetch candidate evidence without checking it out
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: git fetch --no-tags origin "pull/${PR_NUMBER}/head:refs/remotes/origin/power-intake-${PR_NUMBER}"
-      - name: Classify submission packages
+        run: >-
+          git fetch --no-tags origin
+          "pull/${PR_NUMBER}/head:refs/remotes/origin/power-intake-${PR_NUMBER}"
+      - name: Classify result-only packages
         id: triage
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          EVALUATED_AT: ${{ github.event.pull_request.updated_at }}
         run: |
-          python3 -m scripts.triage_power_submission_pr_1_1_4 \
+          python3 scripts/triage_power2_submission_pr.py \
             --base "$BASE_SHA" \
             --head "refs/remotes/origin/power-intake-${PR_NUMBER}" \
             --expected-contributor "$PR_AUTHOR" \
+            --evaluated-at "$EVALUATED_AT" \
+            --validator-source-revision "$BASE_SHA" \
             --output /tmp/power-submission-triage.json || true
           classification="$(python3 -c 'import json; print(json.load(open("/tmp/power-submission-triage.json"))["classification"])')"
           echo "classification=$classification" >> "$GITHUB_OUTPUT"
@@ -69,7 +68,7 @@ jobs:
         with:
           name: power-submission-triage
           path: /tmp/power-submission-triage.json
-      - name: Apply triage label
+      - name: Apply authoritative triage label
         if: steps.triage.outputs.classification != 'not_applicable'
         env:
           GH_TOKEN: ${{ github.token }}

@@ -26,12 +26,11 @@ Current public status and navigation are defined by:
 - `docs/project-vision.md`
 - `docs/product-architecture.md`
 - `docs/project-structure.md`
-- `docs/repository-architecture.md` for the proposed target architecture and
-  migration gates, not current implemented behavior
+- `docs/repository-architecture.md` for the implemented target architecture,
+  current migration state, and activation gates
 - `docs/power.md`
 
-The proposed Power 2.0 migration is a clean break. When that migration is
-explicitly implemented, do not add active Power 1.1 compatibility readers,
+The Power 2 migration is a clean break. Do not add active Power 1.1 readers,
 schema adapters, policy adapters, dual-version dispatch, or old-result
 promotion. Preserve Power 1.1 pinned assets and raw evidence only as a
 read-only historical plane.
@@ -51,11 +50,13 @@ exclude them from official leaderboard logic.
 
 ## Current Power rules
 
-Power 1.1 is the active release. It adopts the frozen Power 1.1 RC1 execution
-contract and source-result schema, then applies the final Power 1.1 ranking
-policy. Source exports therefore retain their RC1 identities.
+Power 2 is a clean-break activation candidate. Its public intake remains
+fail-closed until the exact Official build 3 physical-device checkpoint,
+immutable App release, and `products/power/current.json` are complete.
+Power 1.0 and 1.1 are historical audit assets and must not be referenced by an
+active App, pointer, validator, workflow, package, or ranking.
 
-For current Suite B work:
+For current Power work:
 
 - use versioned workloads and measurement modes;
 - collect TTFT, prefill, decode, memory, and thermal as metrics from compatible
@@ -68,9 +69,10 @@ For current Suite B work:
 - keep exact comparison identity even when the UI groups patch releases; and
 - do not add a global Power score.
 
-Current community submissions use `scripts/power.py` and the two-file
-`submissions/suite-b/power-1.1.0/draft/<id>/` package. Historical Power 1.0 and
-Framework v1 tools remain compatibility assets, not alternate public flows.
+The only community command is `scripts/power`. Power 2 uses the two-file
+`submissions/power/text-generation-performance/2.0.0/draft/<id>/` package.
+Historical Power and Framework v1 tools remain audit assets, not compatibility
+or alternate public flows.
 
 ## Suite organization
 
@@ -107,7 +109,7 @@ release file, inspect the release manifests under `benchmarks/**/releases/`.
 Follow `docs/project-structure.md`.
 
 - Keep one current public guide per subject.
-- Keep one public command per product; Power uses `scripts/power.py`.
+- Keep one public command per product; Power uses `scripts/power`.
 - Update the current guide instead of adding `new`, `latest`, `final`, or `v2`
   copies.
 - Keep drafts labeled and out of homepage methodology links.
@@ -167,7 +169,7 @@ Run checks proportional to the change. For repository-wide changes, run:
 
 ```bash
 python3 -m unittest discover -s tests -v
-python3 scripts/power.py preview --output /tmp/power-preview
+python3 scripts/power preview --output /tmp/power-preview
 git diff --check
 ```
 

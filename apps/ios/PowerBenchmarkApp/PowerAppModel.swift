@@ -103,17 +103,7 @@ final class PowerAppModel {
 
     var submissionAvailable: Bool {
         PowerAppBuildIdentity.officialReleaseAvailable
-            && Power2CandidateIdentity.appReleaseAvailable
-            && (
-                Power2CandidateIdentity.publicIntakeOpen
-                    || Power2CandidateIdentity.submissionRehearsalAvailable
-            )
-    }
-
-    var submissionIsClosedRehearsal: Bool {
-        submissionAvailable
-            && !Power2CandidateIdentity.publicIntakeOpen
-            && Power2CandidateIdentity.submissionRehearsalAvailable
+            && Power2ProductIdentity.appReleaseAvailable
     }
 
     var selectedResultMatchesCurrentRelease: Bool {

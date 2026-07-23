@@ -40,7 +40,7 @@ AUTOMATED_VERIFICATION_CHECKPOINT = {
     "runnerComponentsSHA256":
         "87f62feecc2b3fca994cc4f40214aed9876f1477c51fdb7c56c6945eb6b03ee2",
     "appComponentsSHA256":
-        "18a7961e3616c5108adde624df0083d1137f53d52d92fbb41f69e098eec9ebcb",
+        "e0e704f8bc6e22cb743952e7a02e3dfbd80fdb95f2618b7f495b9d6b1bac0db6",
 }
 
 

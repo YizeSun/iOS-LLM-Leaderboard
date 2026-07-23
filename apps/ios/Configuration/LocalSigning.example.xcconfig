@@ -1,3 +1,6 @@
 // Copy this file to LocalSigning.xcconfig and replace the placeholder.
 // Never commit the local copy.
 DEVELOPMENT_TEAM = YOUR_TEAM_ID
+// Required when running PowerOfficial or PowerCertification from Xcode.
+// Set this to: shasum -a 256 apps/ios/component-manifest.json
+POWER_SOURCE_REVISION = CURRENT_APP_COMPONENT_MANIFEST_SHA256

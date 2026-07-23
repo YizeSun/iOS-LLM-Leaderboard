@@ -1,0 +1,25 @@
+{
+  "classification": "auto_accept",
+  "closedPublicIntake": true,
+  "expectedContributor": "Sunnyone1234",
+  "physicalDeviceResult": {
+    "path": "products/power/app-releases/evidence/15eb974a-e8de-44e1-80c9-0758ad7fc95b/result.json",
+    "sha256": "49e9c7bbaf810b49fbb5380473d3664e2690572cc63534cdb9832751690de6e1"
+  },
+  "pullRequest": {
+    "headCommit": "14a1b5bedf3dffbd15b8c9ba3741ca4d0fbfa302",
+    "number": 42,
+    "url": "https://github.com/YizeSun/iOS-LLM-Leaderboard/pull/42"
+  },
+  "schemaVersion": "power-contributor-rehearsal-record-1.0.0-draft.1",
+  "state": "pass",
+  "trustedBaseCommit": "4407a3776636e6c1a3a5892f78a3f4a841cecac7",
+  "trustedTriageReport": {
+    "path": "products/power/rehearsals/pr-42/trusted-triage.json",
+    "sha256": "d79c1b5ea5ccf654eaed8b5bde5eba115a9b82fccad13cd3a71a81e270cb626d"
+  },
+  "workflowRun": {
+    "id": 30050658986,
+    "url": "https://github.com/YizeSun/iOS-LLM-Leaderboard/actions/runs/30050658986"
+  }
+}

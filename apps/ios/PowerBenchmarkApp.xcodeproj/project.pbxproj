@@ -12,7 +12,7 @@
 		A10000000000000000000003 /* PowerRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* PowerRootView.swift */; };
 		A10000000000000000000004 /* PowerTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* PowerTestView.swift */; };
 		A10000000000000000000005 /* PowerResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* PowerResultsView.swift */; };
-		A10000000000000000000006 /* Power2CandidateIdentity.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* Power2CandidateIdentity.generated.swift */; };
+		A10000000000000000000006 /* Power2ProductIdentity.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* Power2ProductIdentity.generated.swift */; };
 		A10000000000000000000007 /* Power2CandidateCatalog.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* Power2CandidateCatalog.generated.swift */; };
 		A10000000000000000000008 /* PowerAppBuildIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* PowerAppBuildIdentity.swift */; };
 		C10000000000000000000001 /* PowerEvidence in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000001 /* PowerEvidence */; };
@@ -31,7 +31,7 @@
 		A20000000000000000000003 /* PowerRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerRootView.swift; sourceTree = "<group>"; };
 		A20000000000000000000004 /* PowerTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerTestView.swift; sourceTree = "<group>"; };
 		A20000000000000000000005 /* PowerResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerResultsView.swift; sourceTree = "<group>"; };
-		A20000000000000000000006 /* Power2CandidateIdentity.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Power2CandidateIdentity.generated.swift; sourceTree = "<group>"; };
+		A20000000000000000000006 /* Power2ProductIdentity.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Power2ProductIdentity.generated.swift; sourceTree = "<group>"; };
 		A20000000000000000000007 /* PowerBenchmarkApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = PowerBenchmarkApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000000000000000008 /* Power2CandidateCatalog.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Power2CandidateCatalog.generated.swift; sourceTree = "<group>"; };
 		A20000000000000000000009 /* PowerAppBuildIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerAppBuildIdentity.swift; sourceTree = "<group>"; };
@@ -66,7 +66,7 @@
 			children = (
 				A70000000000000000000002 /* PowerBenchmarkApp */,
 				A70000000000000000000004 /* Configuration */,
-				A20000000000000000000006 /* Power2CandidateIdentity.generated.swift */,
+				A20000000000000000000006 /* Power2ProductIdentity.generated.swift */,
 				A20000000000000000000008 /* Power2CandidateCatalog.generated.swift */,
 				A70000000000000000000003 /* Products */,
 			);
@@ -192,7 +192,7 @@
 				A10000000000000000000003 /* PowerRootView.swift in Sources */,
 				A10000000000000000000004 /* PowerTestView.swift in Sources */,
 				A10000000000000000000005 /* PowerResultsView.swift in Sources */,
-				A10000000000000000000006 /* Power2CandidateIdentity.generated.swift in Sources */,
+				A10000000000000000000006 /* Power2ProductIdentity.generated.swift in Sources */,
 				A10000000000000000000007 /* Power2CandidateCatalog.generated.swift in Sources */,
 				A10000000000000000000008 /* PowerAppBuildIdentity.swift in Sources */,
 			);

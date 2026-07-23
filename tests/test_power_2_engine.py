@@ -22,6 +22,7 @@ from scripts.lib.power2.engine import (
     load_candidate_app_release_review_context,
     load_candidate_certification_review_context,
     load_candidate_context,
+    load_product_context,
     validate_package,
 )
 from scripts.lib.power2.package import create_package
@@ -67,6 +68,26 @@ class Power2EngineTests(unittest.TestCase):
                 ],
             },
         )
+
+    def test_public_loader_rejects_an_incomplete_active_pointer(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            pointer = Path(directory) / "current.json"
+            pointer.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": "power-stack-pointer-1.0.0",
+                        "status": "active",
+                        "publicIntakeOpen": False,
+                        "appRelease": None,
+                    }
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(
+                ValueError,
+                "active Power pointer is incomplete",
+            ):
+                load_product_context(pointer)
 
     def make_result(self) -> dict:
         context = self.trusted_context

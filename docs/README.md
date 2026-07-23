@@ -5,7 +5,7 @@ Start here rather than reading every historical decision record.
 ## Current public guides
 
 - [Power benchmark](power.md)
-- [Power 1.1 contributor quickstart](../contributor-kit/power-1.1-quickstart.md)
+- [Power contributor quickstart](../contributor-kit/power.md)
 - [Ship deployment profiles](ship-deployment-profiles.md)
 - [Project vision](project-vision.md)
 - [Product architecture](product-architecture.md)
@@ -15,13 +15,13 @@ Start here rather than reading every historical decision record.
 ## Architecture planning
 
 - [Repository architecture and migration](repository-architecture.md) —
-  approved target modules, invariants, audit, implemented inactive candidate,
-  and remaining clean-break Power 2.0 cutover gates
+  approved modules, invariants, audit, implemented activation candidate, and
+  the remaining exact Official build 3 physical-device gate
 
 ## Normative and audit records
 
-- [Power 1.1 finalization](power-benchmark-1.1-finalization.md)
-- [Power 1.1 RC freeze](power-benchmark-1.1-rc1-freeze.md)
+- [Historical Power 1.1 finalization](power-benchmark-1.1-finalization.md)
+- [Historical Power 1.1 RC freeze](power-benchmark-1.1-rc1-freeze.md)
 - [Benchmark methodology](../methodology/)
 - [Suite B release assets](../benchmarks/suite-b-on-device-performance/)
 - [Schemas](../schemas/README.md)

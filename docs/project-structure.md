@@ -5,9 +5,9 @@ or contribute to.
 
 This file describes the current repository structure. The
 [repository architecture and migration](repository-architecture.md) defines
-the approved target and staged cutover. The new `products/power/` tree is an
-inactive, hash-pinned migration candidate; proposed paths and candidate
-contracts must not be treated as public merely because they exist.
+the approved target and final activation gate. The `products/power/` tree is
+hash-pinned; while `current.json` is absent, its candidate contracts must not
+be treated as open public intake.
 
 ## Four layers
 
@@ -37,8 +37,8 @@ Do not add a new top-level directory unless none of these owns the content:
 - `methodology/` — cross-suite benchmark conventions;
 - `models/` — model catalogs and compatibility metadata;
 - `products/` — versioned Product, Program, Target, and policy contracts;
-  currently contains only the inactive Power 2.0 migration state, including
-  its active Runner certificate and closed App release candidate; owned by
+  currently contains the Power 2 activation state, including its active
+  Runner certificate and closed App build 3 release candidate; owned by
   product and methodology maintainers, CC BY 4.0, and immutable once released;
 - `results/` — raw and generated evidence by release;
 - `schemas/` — machine-readable contracts;
@@ -55,11 +55,12 @@ migration.
 Existing `benchmarks/` remains the Power 1.1 archive and Suite-history plane;
 it cannot own a product-neutral Program × Target registry, runner
 certificates, and atomic product pointers without preserving the coupling this
-migration is removing. The candidate remains non-public until
-`products/power/current.json` is deliberately released at cutover.
+migration is removing. The candidate remains fail-closed until
+`products/power/current.json` and its immutable App release are issued
+together.
 
-The existing `ios-app/` remains the public Power 1.1 application during
-migration. `apps/` is needed because the approved Target model extends beyond
+The existing `ios-app/` is a historical Power 1.1 application. `apps/` is
+needed because the approved Target model extends beyond
 one iPhone project and requires the App shell, Runner Core, Program Modules,
 Target Adapters, Runtime Adapters, and evidence serialization to be separately
 testable and digestible. Candidate code under `apps/` is not certified or
@@ -71,7 +72,7 @@ public merely because it exists.
    `v2`, or `latest` copies. Versioned historical records may remain, but they
    are de-indexed from the public path.
 2. **One public command per product.** Power contributors use
-   `scripts/power.py`. Release-specific tools may remain internal and are
+   `scripts/power`. Release-specific tools may remain internal and are
    indexed in `scripts/README.md`.
 3. **No duplicate deploy pipelines.** Only one workflow may deploy GitHub
    Pages.

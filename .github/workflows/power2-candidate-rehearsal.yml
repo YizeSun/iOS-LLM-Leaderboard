@@ -49,7 +49,7 @@ jobs:
           python3 scripts/generate_power_mlx_dependency_identity.py --check
           python3 scripts/generate_power_runner_component_manifest.py --check
           python3 scripts/generate_power2_app_catalog.py --check
-          python3 scripts/generate_power2_candidate_identity.py --check
+          python3 scripts/generate_power2_product_identity.py --check
           python3 scripts/generate_power_app_component_manifest.py --check
           python3 scripts/generate_power_release_candidates.py --check
           python3 scripts/repoctl.py verify-power-candidate

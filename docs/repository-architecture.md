@@ -1,15 +1,14 @@
 # Repository architecture and migration
 
-> **Status: approved target architecture; migration in progress.** The
-> `products/power/` Power 2.0 candidate described here now exists on disk, but
-> it is deliberately inactive. Four exact model artifacts are registered only
-> as rerun candidates; an active source- and physical-evidence-bound Runner
-> certificate and a closed App release candidate now exist, but there is no
-> `current.json`, supported App release, public intake, or leaderboard. A
-> read-only rehearsal workflow remains in place. Power 1.1
-> remains the current public behavior until the atomic cutover in this
-> document is completed. This migration does not activate Build or make image,
-> 3D, iPad, or macOS programs available.
+> **Status: architecture implemented; final activation checkpoint.** The
+> `products/power/` Power 2 candidate, four exact model artifacts, active
+> source- and physical-evidence-bound Runner certificate, build 3 Official App
+> candidate, trusted intake, and ranking engine exist. Automated checks and
+> generic Official/Certification Release builds pass. The exact Official
+> build 3 physical-device end-to-end result, immutable App release, and atomic
+> `current.json` issuance remain. Public intake is fail-closed until then.
+> Power 1.1 is a historical archive, not a compatibility path. This migration
+> does not activate Build or make image, 3D, iPad, or macOS Programs available.
 
 ## Decision summary
 
@@ -68,12 +67,12 @@ design capacity, not implemented products.
 | Exact model artifacts | Four revision- and content-pinned rerun candidates; no old rank imported | `models/registry.json` and `models/artifacts/` |
 | New validation engine | Structural, digest, contract, model, trust, contributor, behavior, recommendation, and per-metric gates implemented behind the inactive candidate | `scripts/lib/power2/` |
 | Runner implementation | Runner Core, Program Module, iPhone Target Adapter, evidence layer, and fixed-dependency MLX Runtime Adapter implemented; automated checks, generic iOS Certification build, physical Certification run, and raw review pass for the exact certified digest | `apps/PowerRunnerKit/` and `products/power/runner-certificates/power2-runner-87f62feecc2b.json` |
-| App implementation | Buildable, fail-closed iOS App Shell plus Results Store, Submission Kit, direct GitHub contributor client, saved-result selection, Certification path, and closed Official rehearsal path implemented; both generic iOS configurations and the exact build 2 physical-device rehearsal pass; submission remains closed and an App release is not issued | `apps/ios/` and `apps/PowerAppKit/` |
+| App implementation | Buildable, fail-closed iOS App Shell plus Results Store, Submission Kit, direct GitHub contributor client, saved-result selection, Certification path, and Official path implemented; generic Official/Certification build 3 Release checks pass; the exact build 3 physical rehearsal remains pending | `apps/ios/` and `apps/PowerAppKit/` |
 | Two-file package, trusted PR routing, and ranking derivation | Implemented and tested; not public while candidate gates remain closed | `scripts/lib/power2/`, `scripts/triage_power2_submission_pr.py` |
-| Runner certificate and App release | Active immutable Runner certificate issued from retained physical evidence; exact Official build 2 end-to-end evidence passes and is retained; immutable App release issuance remains part of cutover | `products/power/runner-certificates/power2-runner-87f62feecc2b.json`, `products/power/app-releases/candidate.json` |
-| CI intake rehearsal | Read-only candidate verification and closed-App trusted-main PR classification implemented; the real-fork PR exists, but main must first receive the inactive trusted workflow before that PR can be classified by Power 2 | `.github/workflows/power2-candidate-rehearsal.yml` |
+| Runner certificate and App release | Active immutable Runner certificate issued from retained physical evidence; prior Official build 2 rehearsals remain audit evidence; build 3 immutable App release waits only for its exact physical run | `products/power/runner-certificates/power2-runner-87f62feecc2b.json`, `products/power/app-releases/candidate.json` |
+| CI intake rehearsal | Trusted-main PR #42 was classified `auto_accept` by the base-repository Power 2 workflow; its build 2 evidence remains non-publishable and non-ranking | `products/power/rehearsals/pr-42/` |
 | Physical evidence and public ranking | Runner Certification and exact Official App rehearsal evidence retained; public experiment reruns, accepted evidence, and ranking remain pending | Candidate blockers remain explicit |
-| Public Power flow | Still Power 1.1 until cutover | Current public guides and released manifests |
+| Public Power flow | One Power 2 CLI and contribution guide; intake remains closed until final atomic activation | `scripts/power`, `contributor-kit/power.md` |
 
 The candidate is a contract review surface, not an invitation to submit
 results. Publishing `products/power/current.json` before the model, runner,
@@ -263,7 +262,7 @@ the Power test or changing the source result.
 | Review record | Preserve accountable human decisions | Reviewer identity, source and validation hashes, disposition, reason, and supersession link | Manual review is append-only and cannot silently override automation |
 | Ranking generator | Produce derived, reproducible views | Accepted-evidence selector, cohort policy, ranking policy, deterministic output, and source manifest | Every published row can be traced back to exact evidence and policy versions |
 | Ship Program | Keep deployment guidance evidence-based but independent | Ship contract, integration facts, packaging, licensing, limitations, sources, and optional Power citations | A Ship profile can evolve without changing a Power result or leaderboard |
-| Contributor command | Hide repository layout from contributors | One stable `scripts/power.py` façade for preview, validate, package, and submit preparation | Internal reorganizations do not create a new public workflow |
+| Contributor command | Hide repository layout from contributors | One stable `scripts/power` façade for preview, validate, package, and submit preparation | Internal reorganizations do not create a new public workflow |
 | Maintainer command | Centralize release and migration operations | `scripts/repoctl.py` for manifests, pointers, certificates, reports, views, and integrity checks | CI and maintainers call the same deterministic implementation |
 | CI orchestration | Keep GitHub Actions free of business logic | Path routing, permissions, trusted checkout, command invocation, artifacts, labels, and merge request | Code PRs and result PRs get appropriate checks without accepting PR-owned validators |
 | Public site | Treat presentation as a derived consumer | Product navigation, Program and Target selectors, cohort views, evidence links, and Ship pages | Adding a Program or Target changes registry data and views, not the whole site architecture |
@@ -582,7 +581,7 @@ submission PR must not be allowed to change App code, workflow code, validator
 code, policy, or the active pointer.
 
 GitHub Actions should contain orchestration only. The trusted base revision
-selects the current pointer and calls `scripts/power.py` or
+selects the current pointer and calls `scripts/power` or
 `scripts/repoctl.py`; a fork cannot replace the validator it is being judged
 by. Workflows receive the minimum permissions needed for checks, labels,
 branches, and merge. There remains exactly one site deployment workflow.
@@ -660,7 +659,7 @@ should be updated as phases close.
 | Suite B carries the active Power meaning, while Program and Target are mostly implicit fields | Explicit Power 2.0 Product, Program, and Target identities | Author a new self-contained contract; do not reference frozen Suite B assets |
 | Apps are approved through successive 1.1.1–1.1.4 compatible-runner policies | One runner-certification policy plus Power 2.0 certificates | Do not translate the old policies; issue new certificates only after the new runner passes |
 | Validator, submission, triage, and ranking files have version-suffixed copies | One Power 2.0 engine | Replace the active implementation; do not create historical adapters |
-| `scripts/power.py` and authoritative workflows currently select different 1.1.x paths | One Power 2.0 pointer used by the command, CI, App generator, and maintainer command | Close old intake, then replace the façade and workflows instead of repairing old selection for migration |
+| The SHA-256-pinned historical `scripts/power.py` and authoritative 1.1 workflows selected different paths | One Power 2.0 pointer used by the extensionless current command, CI, App generator, and maintainer command | Preserve the pinned historical file and move the only current façade to `scripts/power` |
 | App shell, Runner Core, Program behavior, Target capture, and runtime integration live in one iOS project | Separately digestible shell and runner components | Reuse audited code where useful, but emit a new schema and certify it as a new runner |
 | The model test catalog exists, but cohort boundaries and runtime compatibility are not independent versioned policies | New immutable artifact catalog plus cohort and compatibility records | Re-audit exact artifacts selected for reruns; do not carry old ranking status forward |
 | Submission, validation, review, and ranking artifacts use release-specific paths and shapes | One Power 2.0 envelope with hash-bound reports | Start empty new paths; never convert an old result into a new result |
@@ -668,7 +667,7 @@ should be updated as phases close.
 | `ios-app/` expresses the current platform but not the approved future Target model | `apps/` owns shared code plus independently approved Apple app targets | Move audited source into the new module boundaries; do not preserve old result support |
 | Power and Ship are now conceptually separate, but there is no common product registry | Separate `products/power/` and `products/ship/` roots with independent pointers | Add one product-neutral normative root; never make Ship a Power payload |
 
-The current `scripts/power.py preview` 1.1.1/1.1.4 mismatch demonstrates why
+The historical `scripts/power.py preview` 1.1.1/1.1.4 mismatch demonstrates why
 the old active stack should not be migrated layer by layer. It is not a
 Power 2.0 backward-compatibility requirement. Once old intake is closed, the
 new public command replaces that stack in full.
@@ -734,8 +733,8 @@ integrity verifier passes while public intake remains closed.
 
 ### Phase 2 — build one new engine
 
-- replace the active internals of `scripts/power.py` with a Power 2.0
-  implementation;
+- add the extensionless `scripts/power` Power 2.0 implementation while
+  preserving the SHA-256-pinned historical `scripts/power.py`;
 - add shared contract, certificate, intake, review, and ranking libraries;
 - add `scripts/repoctl.py` as the maintainer-only release command;
 - validate only the new envelope and new submission paths;

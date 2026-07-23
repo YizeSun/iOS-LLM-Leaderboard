@@ -15,14 +15,19 @@ class PublicSurfaceTests(unittest.TestCase):
         for suite in ("Suite A", "Suite B", "Suite C", "Suite D", "Suite E"):
             self.assertIn(suite, readme)
         self.assertIn("Build Research", readme)
-        self.assertIn("contributor-kit/power-1.1-quickstart.md", readme)
+        self.assertIn("contributor-kit/power.md", readme)
+        self.assertIn("Power 1.1 evidence", readme)
 
     def test_website_points_to_current_public_method_and_contribution(self) -> None:
         index = (ROOT / "index.html").read_text()
         app = (ROOT / "site/app.js").read_text()
         self.assertIn('href="docs/power.md"', index)
-        self.assertIn("contributor-kit/power-1.1-quickstart.md", index)
-        self.assertIn("contributor-kit/power-1.1-quickstart.md", app)
+        self.assertIn("contributor-kit/power.md", index)
+        self.assertIn("contributor-kit/power.md", app)
+        self.assertIn(
+            "results/power/text-generation-performance/2.0.0/ranking.json",
+            app,
+        )
         self.assertNotIn("contributor-kit/power-1.0-quickstart.md", index)
         self.assertNotIn("contributor-kit/power-1.0-quickstart.md", app)
 
@@ -32,11 +37,12 @@ class PublicSurfaceTests(unittest.TestCase):
             ROOT / "CONTRIBUTING.md",
             ROOT / "contributor-kit/README.md",
             ROOT / "submissions/README.md",
-            ROOT / "docs/community-contribution-model.md",
+            ROOT / "docs/power.md",
         )
         combined = "\n".join(path.read_text() for path in paths)
         self.assertNotIn("Power 1.0 public intake is open", combined)
-        self.assertIn("scripts/power.py", combined)
+        self.assertIn("scripts/power", combined)
+        self.assertNotIn("python3 scripts/power.py", combined)
 
     def test_power_and_ship_are_separate_public_products(self) -> None:
         paths = (
@@ -72,18 +78,12 @@ class PublicSurfaceTests(unittest.TestCase):
         structure = (ROOT / "docs/project-structure.md").read_text()
 
         self.assertIn("repository-architecture.md", docs_index)
-        self.assertIn(
-            "Status: approved target architecture; migration in progress",
-            blueprint,
-        )
+        self.assertIn("Status: architecture implemented", blueprint)
         self.assertIn(
             "Benchmark Cell = Program Version × Target Profile Version",
             blueprint,
         )
-        self.assertIn(
-            "Power 2.0 candidate described here now exists on disk",
-            blueprint,
-        )
+        self.assertIn("final activation checkpoint", blueprint)
         self.assertIn("No backward-compatibility layer", blueprint)
         self.assertIn(
             "There are no compatibility readers, schema adapters, policy adapters",
@@ -93,7 +93,7 @@ class PublicSurfaceTests(unittest.TestCase):
             "Every active result was newly generated under Power 2.0",
             blueprint,
         )
-        self.assertIn("must not be treated as public", structure)
+        self.assertIn("treated as open public intake", structure)
 
     def test_only_one_workflow_deploys_github_pages(self) -> None:
         workflows = (ROOT / ".github/workflows").glob("*.yml")
@@ -111,29 +111,26 @@ class PublicSurfaceTests(unittest.TestCase):
 
     def test_power_table_numbers_follow_the_active_sort(self) -> None:
         app = (ROOT / "site/app.js").read_text()
-        self.assertIn('column("rank", "#"', app)
-        self.assertIn("rows = withDisplayRanks(rows, config);", app)
-        self.assertLess(
-            app.index("rows = sortRows(rows, config);"),
-            app.index("rows = withDisplayRanks(rows, config);"),
-        )
-        self.assertIn("Sorted by ${selected.label}", app)
-        self.assertNotIn("withPrimaryRanks", app)
+        self.assertIn('["rank", "#"]', app)
+        self.assertIn("const rows = sortRows(filterPowerRows(powerRows()));", app)
+        self.assertIn("rows.map((row, index)", app)
+        self.assertIn("${index + 1}", app)
 
-    def test_unranked_result_explains_metric_ineligibility(self) -> None:
+    def test_non_ranked_contributions_remain_machine_visible(self) -> None:
         app = (ROOT / "site/app.js").read_text()
-        styles = (ROOT / "site/styles.css").read_text()
-        self.assertIn("function eligibilityExplanation(row)", app)
-        self.assertIn('title="${escapeAttribute(explanation)}"', app)
-        self.assertIn('tabindex="0"', app)
-        self.assertIn("not a semantic-failure claim", app)
-        self.assertIn(".unranked-meta:focus-visible", styles)
+        ranking = (
+            ROOT
+            / "results/power/text-generation-performance/2.0.0/ranking.json"
+        ).read_text()
+        self.assertIn('"excluded"', ranking)
+        self.assertIn('"excludedContributionCount"', ranking)
+        self.assertIn("Ranking JSON", app)
 
     def test_every_leaderboard_column_has_accessible_help(self) -> None:
         index = (ROOT / "index.html").read_text()
         app = (ROOT / "site/app.js").read_text()
         styles = (ROOT / "site/styles.css").read_text()
-        column_keys = set(re.findall(r'column\("([^"]+)"', app))
+        column_keys = set(re.findall(r'\["([^"]+)",\s*(?:"[^"]+"|mode\.unit)\]', app))
         help_start = app.index("const COLUMN_HELP")
         help_end = app.index("\n});", help_start)
         help_block = app[help_start:help_end]
@@ -156,12 +153,10 @@ class PublicSurfaceTests(unittest.TestCase):
     def test_power_rows_expose_exact_model_usage(self) -> None:
         app = (ROOT / "site/app.js").read_text()
         recipe = (ROOT / "examples/mlx-swift-power/ExactPowerModel.swift").read_text()
-        self.assertIn("Use this exact model", app)
-        self.assertIn("Copy Swift code", app)
-        self.assertIn("Open exact revision", app)
+        self.assertIn("Open exact model revision", app)
         self.assertIn("modelRevisionURL", app)
-        self.assertIn("Open Ship profile", app)
-        self.assertIn("metricInterpretation", app)
+        self.assertIn("Source result SHA-256", app)
+        self.assertIn("Runner certificate", app)
         self.assertIn("artifactID: String", recipe)
         self.assertIn("revision: String", recipe)
 
@@ -174,8 +169,8 @@ class PublicSurfaceTests(unittest.TestCase):
         self.assertIn('value="2b-to-4b"', index)
         self.assertIn('value="over-4b"', index)
         self.assertIn('value="unknown"', index)
-        self.assertIn("function modelParameterBillions(model)", app)
-        self.assertIn("function modelSizeBucket(model)", app)
+        self.assertIn("function modelParameterBillions(value)", app)
+        self.assertIn("function modelSizeBucket(value)", app)
         self.assertIn('state.size === "all"', app)
         self.assertIn('elements.size.addEventListener("change"', app)
 

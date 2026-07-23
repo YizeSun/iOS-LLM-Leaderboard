@@ -41,11 +41,11 @@
   },
   "appCandidate": {
     "path": "apps/ios/component-manifest.json",
-    "sha256": "18a7961e3616c5108adde624df0083d1137f53d52d92fbb41f69e098eec9ebcb"
+    "sha256": "e0e704f8bc6e22cb743952e7a02e3dfbd80fdb95f2618b7f495b9d6b1bac0db6"
   },
   "appReleaseCandidate": {
     "path": "products/power/app-releases/candidate.json",
-    "sha256": "e3b9257b889c813a793ec9fcd02f4b277faafe972e17414e33326d5b582fe829"
+    "sha256": "c3f4e22df42cb78c2f78cca0c82f163477c93288e832fe193d6b6a173f45a009"
   },
   "appReleaseRehearsalEvidence": [
     {
@@ -79,10 +79,14 @@
       }
     }
   ],
+  "trustedSubmissionRehearsal": {
+    "path": "products/power/rehearsals/pr-42/record.json",
+    "sha256": "2f20ef8b02c9598d836db9979b5e2a8ddf5948fd4385a0e2f818e5d5178f2ac1"
+  },
   "appRelease": null,
   "activationBlockers": [
-    "issue an immutable App release for the Power 2.0 App shell",
-    "rehearse trusted-base Power 2.0 triage from public main",
+    "complete automated verification and a physical-device rehearsal for Official build 3",
+    "issue an immutable App release for Official build 3",
     "replace this candidate pointer with an immutable released stack",
     "publish products/power/current.json and open intake together"
   ]

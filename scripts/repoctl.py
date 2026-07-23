@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Repository control plane for versioned benchmark products.
 
-The first supported operation verifies the inactive Power 2.0 candidate stack.
-It is intentionally read-only: activation requires a separately reviewed
-released stack and is not a side effect of verification.
+Verification is always read-only. The explicit ``activate-power`` operation
+reviews one exact Official result and stages the complete activation file set;
+it writes only when ``--write`` is supplied.
 """
 
 from __future__ import annotations
@@ -499,14 +499,11 @@ def _verify_app_candidate(
     documents.append((str(manifest_path.relative_to(ROOT)), manifest))
     if (
         manifest.get("schemaVersion")
-        != "power-app-component-manifest-1.0.0-draft.1"
+        != "power-app-component-manifest-1.0.0"
     ):
         raise VerificationError(
             "candidate App has an unsupported component manifest"
         )
-    if manifest.get("status") != "migration-draft":
-        raise VerificationError("candidate App is not a migration draft")
-
     required_pins = {
         "xcodeProject": "apps/ios/PowerBenchmarkApp.xcodeproj/project.pbxproj",
         "infoPlist": "apps/ios/PowerBenchmarkApp/Info.plist",
@@ -548,7 +545,7 @@ def _verify_app_candidate(
                 ROOT
                 / "apps"
                 / "ios"
-                / "Power2CandidateIdentity.generated.swift"
+                / "Power2ProductIdentity.generated.swift"
             ).resolve(),
             (
                 ROOT
@@ -662,10 +659,6 @@ def _verify_app_candidate(
                 f"candidate App {name} aggregate digest mismatch"
             )
 
-    if manifest.get("completeForRelease") is not False:
-        raise VerificationError(
-            "candidate App must remain unreleased before cutover"
-        )
     return len(expected_paths)
 
 
@@ -1122,6 +1115,88 @@ def _verify_release_candidates(
         raise VerificationError(
             "App release candidate verification state is unsafe"
         )
+
+    rehearsal_reference = candidate.get("trustedSubmissionRehearsal")
+    if not isinstance(rehearsal_reference, dict):
+        raise VerificationError(
+            "Power candidate has no trusted-main contributor rehearsal"
+        )
+    rehearsal_path = _verify_pinned_asset(
+        rehearsal_reference,
+        "trusted-main contributor rehearsal",
+    )
+    rehearsal = _load_json(rehearsal_path)
+    triage_reference = rehearsal.get("trustedTriageReport")
+    result_reference = rehearsal.get("physicalDeviceResult")
+    pull_request = rehearsal.get("pullRequest")
+    workflow_run = rehearsal.get("workflowRun")
+    if not all(
+        isinstance(value, dict)
+        for value in (
+            triage_reference,
+            result_reference,
+            pull_request,
+            workflow_run,
+        )
+    ):
+        raise VerificationError(
+            "trusted-main contributor rehearsal is incomplete"
+        )
+    triage_path = _verify_pinned_asset(
+        triage_reference,
+        "trusted-main triage report",
+    )
+    rehearsed_result_path = _verify_pinned_asset(
+        result_reference,
+        "trusted-main physical-device result",
+    )
+    triage = _load_json(triage_path)
+    trusted_base = rehearsal.get("trustedBaseCommit")
+    pull_number = pull_request.get("number")
+    if (
+        rehearsal.get("schemaVersion")
+        != "power-contributor-rehearsal-record-1.0.0-draft.1"
+        or rehearsal.get("state") != "pass"
+        or rehearsal.get("closedPublicIntake") is not True
+        or rehearsal.get("classification") != "auto_accept"
+        or triage.get("classification") != "auto_accept"
+        or triage.get("errors") != []
+        or triage.get("reasonCodes") != []
+        or triage.get("packageCount") != 1
+        or triage.get("expectedContributor")
+        != rehearsal.get("expectedContributor")
+        or result_reference.get("sha256")
+        != triage.get("packages", [{}])[0].get("sourceResultSHA256")
+        or not isinstance(trusted_base, str)
+        or len(trusted_base) != 40
+        or any(
+            character not in "0123456789abcdef"
+            for character in trusted_base
+        )
+        or not isinstance(pull_number, int)
+        or pull_number < 1
+        or pull_request.get("url")
+        != (
+            "https://github.com/YizeSun/iOS-LLM-Leaderboard/pull/"
+            + str(pull_number)
+        )
+        or not isinstance(pull_request.get("headCommit"), str)
+        or len(pull_request["headCommit"]) != 40
+        or not isinstance(workflow_run.get("id"), int)
+    ):
+        raise VerificationError(
+            "trusted-main contributor rehearsal is not audit-safe"
+        )
+    documents.extend(
+        (
+            (str(rehearsal_path.relative_to(ROOT)), rehearsal),
+            (str(triage_path.relative_to(ROOT)), triage),
+            (
+                str(rehearsed_result_path.relative_to(ROOT)),
+                _load_json(rehearsed_result_path),
+            ),
+        )
+    )
 
     return runner_id, str(app_candidate.get("releaseID"))
 
@@ -1595,6 +1670,25 @@ def _build_parser() -> argparse.ArgumentParser:
         "--validator-source-revision",
         required=True,
     )
+    activation_parser = subparsers.add_parser(
+        "activate-power",
+        help=(
+            "review one Official result and stage the App release, active "
+            "pointer, and registry together"
+        ),
+    )
+    activation_parser.add_argument("result", type=Path)
+    activation_parser.add_argument("--reviewed-at", required=True)
+    activation_parser.add_argument("--activated-at", required=True)
+    activation_parser.add_argument(
+        "--validator-source-revision",
+        required=True,
+    )
+    activation_parser.add_argument(
+        "--write",
+        action="store_true",
+        help="write the verified activation set; omit for a dry run",
+    )
     return parser
 
 
@@ -1661,6 +1755,33 @@ def main() -> int:
                     args.validator_source_revision
                 ),
             )
+        elif args.command == "activate-power":
+            try:
+                from scripts.lib.power2.activation import (
+                    render_activation,
+                    write_activation,
+                )
+            except ModuleNotFoundError:
+                from lib.power2.activation import (
+                    render_activation,
+                    write_activation,
+                )
+
+            rendered = render_activation(
+                args.result,
+                reviewed_at=args.reviewed_at,
+                validator_source_revision=(
+                    args.validator_source_revision
+                ),
+                activated_at=args.activated_at,
+            )
+            if args.write:
+                write_activation(rendered)
+            summary = {
+                **rendered.summary,
+                "writeRequested": args.write,
+                "written": args.write,
+            }
         else:  # pragma: no cover - argparse prevents this branch.
             raise VerificationError(f"unsupported command: {args.command}")
     except (VerificationError, ValueError) as error:

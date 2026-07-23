@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "apps/PowerRunnerKit/component-manifest.json"
 CANDIDATE_PATH = ROOT / "products/power/candidate.json"
-IDENTITY_PATH = ROOT / "apps/ios/Power2CandidateIdentity.generated.swift"
+IDENTITY_PATH = ROOT / "apps/ios/Power2ProductIdentity.generated.swift"
 RUNNER_CERTIFICATE_CANDIDATE_PATH = (
     ROOT / "products/power/runner-certificates/candidate.json"
 )
@@ -101,11 +101,11 @@ class Power2RunnerComponentTests(unittest.TestCase):
             ).hexdigest(),
         )
 
-    def test_candidate_swift_identity_is_generated_and_inactive(self) -> None:
+    def test_product_swift_identity_excludes_intake_lifecycle(self) -> None:
         completed = subprocess.run(
             [
                 "python3",
-                "scripts/generate_power2_candidate_identity.py",
+                "scripts/generate_power2_product_identity.py",
                 "--check",
             ],
             cwd=ROOT,
@@ -120,12 +120,9 @@ class Power2RunnerComponentTests(unittest.TestCase):
         self.assertIsNone(candidate["appRelease"])
         self.assertIn(candidate["measurementStack"]["sha256"], swift)
         self.assertIn(candidate["runnerCandidate"]["sha256"], swift)
-        self.assertIn("static let publicIntakeOpen = false", swift)
         self.assertIn("static let appReleaseAvailable = true", swift)
-        self.assertIn(
-            "static let submissionRehearsalAvailable = true",
-            swift,
-        )
+        self.assertNotIn("publicIntakeOpen", swift)
+        self.assertNotIn("submissionRehearsalAvailable", swift)
 
     def test_release_candidates_are_generated_and_source_bound(self) -> None:
         completed = subprocess.run(
@@ -209,11 +206,14 @@ class Power2RunnerComponentTests(unittest.TestCase):
         )
         self.assertEqual(
             app["verification"]["physicalDeviceEndToEndRehearsal"],
-            "pass",
+            "pending",
         )
         self.assertEqual(
             app["releaseBlockedBy"],
-            ["activate the immutable stack and public intake atomically"],
+            [
+                "complete a physical-device end-to-end rehearsal",
+                "activate the immutable stack and public intake atomically",
+            ],
         )
 
 

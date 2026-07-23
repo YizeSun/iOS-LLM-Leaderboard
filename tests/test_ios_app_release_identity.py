@@ -184,7 +184,7 @@ class IOSAppReleaseIdentityTests(unittest.TestCase):
             release["contractAdoption"]["resultSchemaChanged"]
         )
 
-    def test_current_compatibility_policy_and_ci_adapters_are_coherent(
+    def test_historical_compatibility_assets_are_retained_but_not_current_ci(
         self,
     ) -> None:
         index = json.loads(CURRENT_POLICY_INDEX.read_text())
@@ -222,8 +222,11 @@ class IOSAppReleaseIdentityTests(unittest.TestCase):
             ROOT / ".github/workflows/power-submission-triage.yml"
         ).read_text()
         for name in adapters[:3]:
-            self.assertIn(name, ranking_workflow)
-        self.assertIn(Path(adapters[3]).stem, triage_workflow)
+            self.assertNotIn(name, ranking_workflow)
+        self.assertNotIn(Path(adapters[3]).stem, triage_workflow)
+        self.assertIn("scripts/power validate", ranking_workflow)
+        self.assertIn("scripts/power preview", ranking_workflow)
+        self.assertIn("scripts/triage_power2_submission_pr.py", triage_workflow)
 
     def test_current_app_version_is_never_silently_reused(self) -> None:
         index = json.loads(CURRENT_POLICY_INDEX.read_text())

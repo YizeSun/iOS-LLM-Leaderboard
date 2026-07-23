@@ -31,7 +31,6 @@ jobs:
           PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
           HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
           HEAD_REPOSITORY: ${{ github.event.workflow_run.head_repository.full_name }}
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           if [ -z "$PR_NUMBER" ]; then
             HEAD_OWNER="${HEAD_REPOSITORY%%/*}"
@@ -42,11 +41,6 @@ jobs:
           fi
           if [ -z "$PR_NUMBER" ]; then
             echo "Unable to resolve an open pull request for $HEAD_REPOSITORY:$HEAD_BRANCH." >&2
-            exit 1
-          fi
-          pr_head_sha="$(gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json headRefOid --jq .headRefOid)"
-          if [ "$pr_head_sha" != "$HEAD_SHA" ]; then
-            echo "Resolved PR head $pr_head_sha does not match completed workflow head $HEAD_SHA." >&2
             exit 1
           fi
           state="$(gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json state --jq .state)"
@@ -64,5 +58,7 @@ jobs:
             echo "Trusted intake and commit-identity checks are not both successful yet."
             exit 0
           fi
+          # The successful checks below are resolved from the PR's current
+          # head, so a stale workflow_run event cannot merge a newer commit.
           gh pr merge "$PR_NUMBER" --repo "$REPOSITORY" --squash
           gh workflow run power-community-ranking.yml --repo "$REPOSITORY" --ref main

@@ -138,20 +138,20 @@ struct PowerResultsView: View {
 
             submissionStatus
 
-            if model.submissionIsClosedRehearsal {
+            if model.submissionAvailable {
                 Label(
-                    "Closed submission rehearsal: this build may create a "
-                        + "real pull request, but public intake remains closed. "
-                        + "Trusted repository CI will not publish or rank it.",
-                    systemImage: "testtube.2"
+                    "Trusted repository CI checks whether this exact App "
+                        + "release is currently supported. Creating a pull "
+                        + "request does not guarantee acceptance or ranking.",
+                    systemImage: "checkmark.shield"
                 )
-                .foregroundStyle(.orange)
+                .foregroundStyle(.secondary)
             }
             if !model.submissionAvailable {
                 Label(
-                    "Public submission remains locked until this exact App "
-                        + "release, Runner certificate, and Power 2 intake "
-                        + "are active.",
+                    "Submission requires an Official build with an embedded "
+                        + "App release identity. Repository CI remains the "
+                        + "acceptance authority.",
                     systemImage: "lock.shield"
                 )
                 .foregroundStyle(.orange)
