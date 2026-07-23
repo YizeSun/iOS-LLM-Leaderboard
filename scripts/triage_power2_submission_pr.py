@@ -13,12 +13,20 @@ import tempfile
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from scripts.lib.power2.engine import (
-    ROOT,
-    ValidationContext,
-    load_candidate_context,
-    validate_package,
-)
+try:
+    from scripts.lib.power2.engine import (
+        ROOT,
+        ValidationContext,
+        load_candidate_context,
+        validate_package,
+    )
+except ModuleNotFoundError:
+    from lib.power2.engine import (
+        ROOT,
+        ValidationContext,
+        load_candidate_context,
+        validate_package,
+    )
 
 
 INTAKE = PurePosixPath(

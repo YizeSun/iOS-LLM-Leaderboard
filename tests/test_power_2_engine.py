@@ -3,6 +3,8 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from dataclasses import replace
@@ -572,6 +574,29 @@ class Power2EngineTests(unittest.TestCase):
             report["checks"]["appRelease"]["status"],
             "pass",
         )
+
+    def test_power2_command_line_entries_run_directly(self) -> None:
+        for relative_path in (
+            "scripts/review_power2_certification_result.py",
+            "scripts/triage_power2_submission_pr.py",
+        ):
+            with self.subTest(script=relative_path):
+                completed = subprocess.run(
+                    [
+                        sys.executable,
+                        str(ROOT / relative_path),
+                        "--help",
+                    ],
+                    cwd=ROOT,
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertEqual(
+                    completed.returncode,
+                    0,
+                    completed.stderr,
+                )
 
     def test_registered_model_snapshot_cannot_be_changed(self) -> None:
         result = self.make_result()

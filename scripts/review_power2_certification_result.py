@@ -11,11 +11,18 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from scripts.lib.power2.engine import (
-    Power2ValidationError,
-    load_candidate_certification_review_context,
-    validate_package,
-)
+try:
+    from scripts.lib.power2.engine import (
+        Power2ValidationError,
+        load_candidate_certification_review_context,
+        validate_package,
+    )
+except ModuleNotFoundError:
+    from lib.power2.engine import (
+        Power2ValidationError,
+        load_candidate_certification_review_context,
+        validate_package,
+    )
 
 
 REVIEW_LOGIN = "power-certification-review"
