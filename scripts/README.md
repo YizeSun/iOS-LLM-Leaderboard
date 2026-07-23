@@ -24,9 +24,9 @@ work around the frozen boundary.
   dependencies. It is a maintainer migration command and does not open intake.
 - `repoctl.py validate-power-package` invokes the new dependency-free trusted
   validation engine with explicit PR author, evaluation timestamp, trusted
-  source revision, and optional accepted-result digests. While the candidate
-  has no runner certificate, App release, or open intake, real packages
-  correctly stop at those gates.
+  source revision, and optional accepted-result digests. The candidate now has
+  an active Runner certificate, but no App release or open intake, so public
+  packages still correctly stop at those later gates.
 - `generate_ios_app_release_identity.py` generates the App version/build
   xcconfig and Swift Power identity constants from
   `ios-app/Config/release-identity.json`; CI uses `--check` to reject drift.
@@ -39,8 +39,9 @@ work around the frozen boundary.
   Runtime Adapter sources.
 - `generate_power_release_candidates.py` binds those exact Runner components
   and the complete App component manifest into separate closed certification
-  and release candidates. It never issues an active certificate or App
-  release.
+  and release identities. It deterministically materializes the active Runner
+  certificate only from the pinned passing Certification review; it never
+  issues an App release or opens intake.
 - `generate_power2_candidate_identity.py` generates candidate-only Swift
   identity from `products/power/candidate.json`. It is not compiled into the
   current Power 1.1 App and cannot open intake.
@@ -51,6 +52,9 @@ work around the frozen boundary.
 - `review_power2_certification_result.py` applies the trusted Power 2 engine
   to one physical-iPhone Certification result using only the closed candidate
   identities. Its report is always non-publishable and non-ranking.
+- `review_power2_app_release_result.py` applies the trusted engine to one exact
+  Official App release-candidate result during the closed end-to-end
+  rehearsal. Its report is also always non-publishable and non-ranking.
 - `validate_suite_b_power_1_1_submission.py` validates the current two-file
   contribution package.
 - `validate_suite_b_power_1_1_compatible_result.py` applies the versioned exact
@@ -93,8 +97,9 @@ python3 scripts/repoctl.py validate-power-package PACKAGE \
 
 A successful result means only that the draft contract stack is internally
 complete and independent from Power 1.1. It reports four exact rerun-candidate
-models plus source-bound Runner-certification and App-release candidates, but
-deliberately no active runner certificate or supported App release.
+models, an active source- and physical-evidence-bound Runner certificate, and
+a closed App-release candidate, but deliberately no supported App release or
+open intake.
 The certification catalog check additionally proves that the App's closed
 smoke-test catalog is a deterministic projection of those pinned assets; it
 does not certify a run.

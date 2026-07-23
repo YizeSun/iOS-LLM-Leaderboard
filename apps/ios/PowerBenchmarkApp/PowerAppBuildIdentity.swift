@@ -82,7 +82,6 @@ enum PowerAppBuildIdentity {
     static var officialReleaseAvailable: Bool {
         isOfficialBuild
             && isValidSourceRevision(sourceRevision)
-            && Power2CandidateIdentity.publicIntakeOpen
             && Power2CandidateIdentity.appReleaseAvailable
     }
 

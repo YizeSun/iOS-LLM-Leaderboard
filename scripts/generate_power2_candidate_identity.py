@@ -48,7 +48,9 @@ def load_candidate() -> dict[str, Any]:
     _string(value.get("stackID"), "stackID")
     _reference(value.get("measurementStack"), "measurementStack")
     _reference(value.get("runnerCandidate"), "runnerCandidate")
+    _reference(value.get("runnerCertificate"), "runnerCertificate")
     _reference(value.get("appCandidate"), "appCandidate")
+    _reference(value.get("appReleaseCandidate"), "appReleaseCandidate")
     return value
 
 
@@ -66,7 +68,9 @@ enum Power2CandidateIdentity {{
     static let runnerCandidateManifestPath = "{runner['path']}"
     static let runnerCandidateManifestSHA256 = "{runner['sha256']}"
     static let publicIntakeOpen = false
-    static let appReleaseAvailable = false
+    // Enables the closed Official end-to-end rehearsal. GitHub submission
+    // remains locked independently by publicIntakeOpen.
+    static let appReleaseAvailable = true
 }}
 """
 

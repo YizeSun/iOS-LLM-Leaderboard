@@ -3,11 +3,13 @@
 // candidate identity into a public App release.
 
 enum Power2CandidateIdentity {
-    static let stackID = "power-text-iphone-2.0.0-draft.2"
-    static let measurementStackPath = "products/power/stacks/power-text-iphone-2.0.0-draft.2/manifest.json"
-    static let measurementStackSHA256 = "43e5d8899f660c557e3a7dad0c7e54de8e440aab5be6d46096306c6e43b385a0"
+    static let stackID = "power-text-iphone-2.0.0-rc.1"
+    static let measurementStackPath = "products/power/stacks/power-text-iphone-2.0.0-rc.1/manifest.json"
+    static let measurementStackSHA256 = "a92a208324af0ea85c092e1cf04248c669f01c588c9f0d0b724e4c40a1014642"
     static let runnerCandidateManifestPath = "apps/PowerRunnerKit/component-manifest.json"
     static let runnerCandidateManifestSHA256 = "87f62feecc2b3fca994cc4f40214aed9876f1477c51fdb7c56c6945eb6b03ee2"
     static let publicIntakeOpen = false
-    static let appReleaseAvailable = false
+    // Enables the closed Official end-to-end rehearsal. GitHub submission
+    // remains locked independently by publicIntakeOpen.
+    static let appReleaseAvailable = true
 }

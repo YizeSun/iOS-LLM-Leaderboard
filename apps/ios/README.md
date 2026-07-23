@@ -12,9 +12,11 @@ The project has three explicit build kinds:
   the App and local UI but cannot measure or submit ranking evidence.
 - **Certification** — the maintainer-only physical-device smoke-test
   configuration. It can write candidate evidence but cannot submit or rank it.
-- **Official** — the distribution configuration. It remains measurement- and
-  submission-locked until an immutable App release, active runner certificate,
-  active Power pointer, and open public intake are generated together.
+- **Official** — the distribution configuration. The exact generated App
+  release candidate may measure during a closed physical rehearsal after its
+  Runner certificate is active. Submission remains locked until an immutable
+  App release, active Power pointer, and open public intake are generated
+  together.
 
 The compiled kind and the `PowerBuildKind` value embedded in `Info.plist` must
 agree. Overriding one build setting cannot turn a Developer build into an
@@ -82,11 +84,42 @@ This review is closed candidate evidence. A passing report is still
 non-publishable and non-ranking; it authorizes the later certificate and App
 release steps only after the raw evidence and physical run have been reviewed.
 
-`PowerOfficial` is a separately shared scheme and Bundle ID. Its presence does
-not authorize a release: the generated release identity and repository intake
-state remain authoritative. Community testers should eventually install the
-maintainer-signed TestFlight/App Store build; source-built Apps remain
-Developer builds even when signed by another Apple team.
+The reviewed Certification evidence has now issued the active Runner
+certificate. `PowerOfficial` is a separately shared scheme and Bundle ID for
+the next closed gate. Build the exact Official candidate with its generated
+App component-manifest digest:
+
+```bash
+APP_SOURCE_REVISION="$(
+  shasum -a 256 apps/ios/component-manifest.json | awk '{print $1}'
+)"
+xcodebuild \
+  -project apps/ios/PowerBenchmarkApp.xcodeproj \
+  -scheme PowerOfficial \
+  -configuration Official \
+  -destination 'platform=iOS,name=YOUR_IPHONE' \
+  POWER_SOURCE_REVISION="$APP_SOURCE_REVISION" \
+  build
+```
+
+This exact candidate can run a benchmark while intake remains closed. Export
+the newly completed raw JSON without editing it and review it with:
+
+```bash
+python3 scripts/review_power2_app_release_result.py \
+  /path/to/raw-result.json \
+  --evaluated-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  --validator-source-revision "$(git rev-parse HEAD)"
+```
+
+The report is always non-publishable and non-ranking. A pass authorizes the
+later immutable App release step; it does not open intake by itself.
+
+The scheme's presence and local signing do not authorize a release: the
+generated release identity and repository intake state remain authoritative.
+Community testers should eventually install the maintainer-signed
+TestFlight/App Store build; source-built Apps remain Developer builds even when
+signed by another Apple team.
 
 The Results tab stores every completed Power 2 envelope independently and lets
 the user select the exact saved result to share or submit. Direct GitHub

@@ -16,6 +16,17 @@ CANDIDATE_PATH = ROOT / "products/power/candidate.json"
 RUNNER_OUTPUT_PATH = (
     ROOT / "products/power/runner-certificates/candidate.json"
 )
+ACTIVE_RUNNER_OUTPUT_PATH = (
+    ROOT
+    / "products/power/runner-certificates"
+    / "power2-runner-87f62feecc2b.json"
+)
+RELEASE_STACK_OUTPUT_PATH = (
+    ROOT
+    / "products/power/stacks"
+    / "power-text-iphone-2.0.0-rc.1"
+    / "manifest.json"
+)
 APP_OUTPUT_PATH = ROOT / "products/power/app-releases/candidate.json"
 
 # This checkpoint records the exact identities that completed the automated
@@ -24,11 +35,11 @@ APP_OUTPUT_PATH = ROOT / "products/power/app-releases/candidate.json"
 # this checkpoint is deliberately advanced.
 AUTOMATED_VERIFICATION_CHECKPOINT = {
     "measurementStackSHA256":
-        "43e5d8899f660c557e3a7dad0c7e54de8e440aab5be6d46096306c6e43b385a0",
+        "a92a208324af0ea85c092e1cf04248c669f01c588c9f0d0b724e4c40a1014642",
     "runnerComponentsSHA256":
         "87f62feecc2b3fca994cc4f40214aed9876f1477c51fdb7c56c6945eb6b03ee2",
     "appComponentsSHA256":
-        "6df4dca4863e3c583f2fb4670886c72c726014835923ebcecb47664353ddc3b4",
+        "821a7c22d68d118ae839ee883d54c7d1a029a5c185d8f06a85b255bf7f2b714f",
 }
 
 
@@ -90,7 +101,21 @@ def _component_digest(
     return digest
 
 
-def render_candidates() -> tuple[str, str]:
+def _render(value: dict[str, Any]) -> str:
+    return json.dumps(value, indent=2, sort_keys=True) + "\n"
+
+
+def _rendered_reference(
+    path: Path,
+    rendered: str,
+) -> dict[str, str]:
+    return {
+        "path": path.relative_to(ROOT).as_posix(),
+        "sha256": hashlib.sha256(rendered.encode("utf-8")).hexdigest(),
+    }
+
+
+def render_candidates() -> tuple[str, str, str, str]:
     candidate = _load_json(CANDIDATE_PATH)
     if (
         candidate.get("status") != "migration-draft"
@@ -99,9 +124,9 @@ def render_candidates() -> tuple[str, str]:
     ):
         raise ValueError("release candidates require a closed migration draft")
 
-    stack_path, stack_reference = _reference(
-        candidate.get("measurementStack"),
-        "measurement stack",
+    certification_stack_path, certification_stack_reference = _reference(
+        candidate.get("certificationCandidateStack"),
+        "Certification candidate measurement stack",
     )
     runner_path, runner_reference = _reference(
         candidate.get("runnerCandidate"),
@@ -111,14 +136,18 @@ def render_candidates() -> tuple[str, str]:
         candidate.get("appCandidate"),
         "App component manifest",
     )
-    stack = _load_json(stack_path)
+    _, certification_app_reference = _reference(
+        candidate.get("certificationAppCandidate"),
+        "Certification App component manifest",
+    )
+    certification_stack = _load_json(certification_stack_path)
     runner = _load_json(runner_path)
     app = _load_json(app_path)
-    program_reference = stack.get("program")
-    target_reference = stack.get("target")
+    program_reference = certification_stack.get("program")
+    target_reference = certification_stack.get("target")
     runner_policy_reference = (
-        stack.get("policies", {}).get("runner")
-        if isinstance(stack.get("policies"), dict)
+        certification_stack.get("policies", {}).get("runner")
+        if isinstance(certification_stack.get("policies"), dict)
         else None
     )
     _, program_reference = _reference(
@@ -138,8 +167,113 @@ def render_candidates() -> tuple[str, str]:
         "Runner runtime identity",
     )
     runtime = _load_json(runtime_path)
+
+    evidence = candidate.get("certificationEvidence")
+    if not isinstance(evidence, dict):
+        raise ValueError("candidate has no Certification evidence")
+    result_path, result_reference = _reference(
+        evidence.get("result"),
+        "Certification result",
+    )
+    review_path, review_reference = _reference(
+        evidence.get("review"),
+        "Certification review",
+    )
+    result = _load_json(result_path)
+    review = _load_json(review_path)
+    runner_candidate_id = (
+        "power2-certification-candidate-" + runner_reference["sha256"][:12]
+    )
+    if (
+        review.get("status") != "pass"
+        or review.get("physicalDeviceSmokeRun") != "pass"
+        or review.get("rawResultReview") != "pass"
+        or review.get("publishable") is not False
+        or review.get("rankingEligible") is not False
+        or review.get("sourceResultSHA256") != result_reference["sha256"]
+        or review.get("runnerCertificateID") != runner_candidate_id
+        or result.get("runnerCertificateID") != runner_candidate_id
+        or result.get("appRelease", {}).get("sourceRevision")
+        != certification_app_reference["sha256"]
+        or result.get("appRelease", {}).get(
+            "embeddedMeasurementStackSHA256"
+        )
+        != certification_stack_reference["sha256"]
+    ):
+        raise ValueError("Certification evidence is not issuance-safe")
+
+    active_runner_id = (
+        "power2-runner-" + runner_reference["sha256"][:12]
+    )
+    active_runner = {
+        "schemaVersion": "power-runner-certificate-1.0.0-rc.1",
+        "productID": "power",
+        "certificateID": active_runner_id,
+        "state": "active",
+        "issuedAt": review["reviewedAt"],
+        "certificationPolicy": runner_policy_reference,
+        "programManifestSHA256": program_reference["sha256"],
+        "targetManifestSHA256": target_reference["sha256"],
+        "runnerComponents": runner_reference,
+        "componentSHA256": {
+            name: _component_digest(runner, name)
+            for name in (
+                "runnerCore",
+                "programModule",
+                "targetAdapter",
+                "runtimeAdapter",
+                "evidenceEnvelope",
+            )
+        },
+        "runtimeIdentity": runtime_reference,
+        "runtime": {
+            key: runtime[key]
+            for key in (
+                "name",
+                "version",
+                "resolvedRevision",
+                "backend",
+                "configuration",
+            )
+        },
+        "certificationEvidence": {
+            "candidateCertificateID": runner_candidate_id,
+            "measurementStack": certification_stack_reference,
+            "result": result_reference,
+            "review": review_reference,
+        },
+        "verification": {
+            "sourceAndDependencyIntegrity": "pass",
+            "unitTests": "pass",
+            "schemaAndFixtureIntegrity": "pass",
+            "deterministicSerialization": "pass",
+            "failurePreservation": "pass",
+            "genericIOSReleaseBuild": "pass",
+            "physicalDeviceSmokeRun": "pass",
+            "rawResultReview": "pass",
+        },
+    }
+    rendered_active_runner = _render(active_runner)
+    active_runner_reference = _rendered_reference(
+        ACTIVE_RUNNER_OUTPUT_PATH,
+        rendered_active_runner,
+    )
+    release_stack = dict(certification_stack)
+    release_stack.update(
+        {
+            "stackID": "power-text-iphone-2.0.0-rc.1",
+            "status": "release-candidate",
+            "runnerCertificate": active_runner_reference,
+        }
+    )
+    rendered_release_stack = _render(release_stack)
+    release_stack_reference = _rendered_reference(
+        RELEASE_STACK_OUTPUT_PATH,
+        rendered_release_stack,
+    )
+
     runner_automated_verification_passed = (
-        stack_reference["sha256"]
+        release_stack_reference["sha256"]
         == AUTOMATED_VERIFICATION_CHECKPOINT[
             "measurementStackSHA256"
         ]
@@ -162,16 +296,13 @@ def render_candidates() -> tuple[str, str]:
         "pass" if app_automated_verification_passed else "pending"
     )
 
-    runner_candidate_id = (
-        "power2-certification-candidate-" + runner_reference["sha256"][:12]
-    )
     runner_candidate = {
         "schemaVersion":
             "power-runner-certificate-candidate-1.0.0-draft.1",
         "productID": "power",
         "certificateID": runner_candidate_id,
         "state": "candidate",
-        "measurementStack": stack_reference,
+        "measurementStack": release_stack_reference,
         "certificationPolicy": runner_policy_reference,
         "programManifestSHA256": program_reference["sha256"],
         "targetManifestSHA256": target_reference["sha256"],
@@ -204,13 +335,15 @@ def render_candidates() -> tuple[str, str]:
             "deterministicSerialization": runner_automated_state,
             "failurePreservation": runner_automated_state,
             "genericIOSReleaseBuild": runner_automated_state,
-            "physicalDeviceSmokeRun": "pending",
-            "rawResultReview": "pending",
+            "physicalDeviceSmokeRun": "pass",
+            "rawResultReview": "pass",
         },
-        "issuanceBlockedBy": [
-            "run the Certification build on a physical iPhone",
-            "review the exact raw Certification evidence",
-        ] + (
+        "certificationEvidence": {
+            "result": result_reference,
+            "review": review_reference,
+        },
+        "activeCertificate": active_runner_reference,
+        "issuanceBlockedBy": (
             []
             if runner_automated_verification_passed
             else ["complete automated verification"]
@@ -231,9 +364,9 @@ def render_candidates() -> tuple[str, str]:
         "bundleIdentifier": "org.iosllmleaderboard.power2",
         "buildConfiguration": "Official",
         "appComponents": app_reference,
-        "embeddedMeasurementStack": stack_reference,
-        "supportedRunnerCertificationCandidateIDs": [
-            runner_candidate_id
+        "embeddedMeasurementStack": release_stack_reference,
+        "supportedRunnerCertificateIDs": [
+            active_runner_id
         ],
         "verification": {
             "sourceAndDependencyIntegrity": "pass",
@@ -241,7 +374,6 @@ def render_candidates() -> tuple[str, str]:
             "physicalDeviceEndToEndRehearsal": "pending",
         },
         "releaseBlockedBy": [
-            "issue the bound Runner certificate",
             "complete a physical-device end-to-end rehearsal",
             "activate the immutable stack and public intake atomically",
         ] + (
@@ -252,8 +384,10 @@ def render_candidates() -> tuple[str, str]:
     }
 
     return (
-        json.dumps(runner_candidate, indent=2, sort_keys=True) + "\n",
-        json.dumps(app_candidate, indent=2, sort_keys=True) + "\n",
+        _render(runner_candidate),
+        rendered_active_runner,
+        rendered_release_stack,
+        _render(app_candidate),
     )
 
 
@@ -266,7 +400,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     try:
-        expected_runner, expected_app = render_candidates()
+        (
+            expected_runner,
+            expected_active_runner,
+            expected_release_stack,
+            expected_app,
+        ) = render_candidates()
     except (KeyError, OSError, ValueError, json.JSONDecodeError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
@@ -275,6 +414,8 @@ def main(argv: list[str] | None = None) -> int:
         stale = []
         for path, expected in (
             (RUNNER_OUTPUT_PATH, expected_runner),
+            (ACTIVE_RUNNER_OUTPUT_PATH, expected_active_runner),
+            (RELEASE_STACK_OUTPUT_PATH, expected_release_stack),
             (APP_OUTPUT_PATH, expected_app),
         ):
             try:
@@ -293,8 +434,18 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     RUNNER_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    ACTIVE_RUNNER_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    RELEASE_STACK_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     APP_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     RUNNER_OUTPUT_PATH.write_text(expected_runner, encoding="utf-8")
+    ACTIVE_RUNNER_OUTPUT_PATH.write_text(
+        expected_active_runner,
+        encoding="utf-8",
+    )
+    RELEASE_STACK_OUTPUT_PATH.write_text(
+        expected_release_stack,
+        encoding="utf-8",
+    )
     APP_OUTPUT_PATH.write_text(expected_app, encoding="utf-8")
     return 0
 

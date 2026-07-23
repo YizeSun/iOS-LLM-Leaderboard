@@ -12,10 +12,14 @@ from pathlib import Path
 from unittest import mock
 
 from scripts import triage_power2_submission_pr as triage
+from scripts.review_power2_app_release_result import (
+    review_result as review_app_release_result,
+)
 from scripts.review_power2_certification_result import review_result
 from scripts.lib.power2 import json_schema
 from scripts.lib.power2.engine import (
     ROOT,
+    load_candidate_app_release_review_context,
     load_candidate_certification_review_context,
     load_candidate_context,
     validate_package,
@@ -521,8 +525,16 @@ class Power2EngineTests(unittest.TestCase):
         self.assertIn("unsupported-major-version", report["reasonCodes"])
         self.assertNotIn("translated", " ".join(report["diagnostics"]).lower())
 
-    def test_real_candidate_stays_closed_until_runner_and_app_exist(self) -> None:
+    def test_real_candidate_stays_closed_until_app_release_and_intake(
+        self,
+    ) -> None:
         result = self.make_result()
+        result["runnerCertificateID"] = (
+            self.candidate_context.runner_certificate["certificateID"]
+        )
+        result["runtime"] = self.candidate_context.runner_certificate[
+            "runtime"
+        ]
         with tempfile.TemporaryDirectory() as directory:
             package = self.write_package(Path(directory), result)
             report = self.validate(
@@ -530,7 +542,10 @@ class Power2EngineTests(unittest.TestCase):
             )
 
         self.assertEqual(report["classification"], "reject")
-        self.assertIn("runner-certificate-not-active", report["reasonCodes"])
+        self.assertEqual(
+            report["checks"]["runnerCertificate"]["status"],
+            "pass",
+        )
         self.assertIn("app-release-not-supported", report["reasonCodes"])
         self.assertIn("public-intake-closed", report["reasonCodes"])
 
@@ -581,8 +596,54 @@ class Power2EngineTests(unittest.TestCase):
             "pass",
         )
 
+    def test_app_release_review_opens_only_official_review_gates(
+        self,
+    ) -> None:
+        review_context = load_candidate_app_release_review_context()
+        result = self.make_result()
+        result["runnerCertificateID"] = (
+            review_context.runner_certificate["certificateID"]
+        )
+        result["appRelease"] = {
+            "version": review_context.app_release["version"],
+            "build": review_context.app_release["build"],
+            "sourceRevision":
+                review_context.app_release["sourceRevision"],
+            "embeddedMeasurementStackSHA256":
+                review_context.measurement_stack_sha256,
+        }
+        result["runtime"] = review_context.runner_certificate["runtime"]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "official-result.json"
+            path.write_text(
+                json.dumps(result, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            report = review_app_release_result(
+                path,
+                evaluated_at=EVALUATED_AT,
+                validator_source_revision=VALIDATOR_SOURCE_REVISION,
+            )
+
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(
+            report["physicalDeviceEndToEndRehearsal"],
+            "pass",
+        )
+        self.assertFalse(report["publishable"])
+        self.assertFalse(report["rankingEligible"])
+        self.assertEqual(
+            report["checks"]["runnerCertificate"]["status"],
+            "pass",
+        )
+        self.assertEqual(
+            report["checks"]["appRelease"]["status"],
+            "pass",
+        )
+
     def test_power2_command_line_entries_run_directly(self) -> None:
         for relative_path in (
+            "scripts/review_power2_app_release_result.py",
             "scripts/review_power2_certification_result.py",
             "scripts/triage_power2_submission_pr.py",
         ):

@@ -30,7 +30,9 @@ def load_json(path: Path) -> dict:
 
 
 class Power2AppShellTests(unittest.TestCase):
-    def test_candidate_identity_is_generated_and_fail_closed(self) -> None:
+    def test_candidate_identity_opens_only_closed_official_rehearsal(
+        self,
+    ) -> None:
         app_manifest = subprocess.run(
             [
                 "python3",
@@ -67,7 +69,7 @@ class Power2AppShellTests(unittest.TestCase):
             / "PowerAppModel.swift"
         ).read_text(encoding="utf-8")
         self.assertIn("static let publicIntakeOpen = false", identity)
-        self.assertIn("static let appReleaseAvailable = false", identity)
+        self.assertIn("static let appReleaseAvailable = true", identity)
         self.assertIn(
             "Power2CandidateIdentity.appReleaseAvailable",
             model,
@@ -100,7 +102,7 @@ class Power2AppShellTests(unittest.TestCase):
                 f'id: "{model["registryEntryID"]}"',
                 catalog,
             )
-        self.assertIn("power2-certification-candidate-", catalog)
+        self.assertIn("power2-runner-", catalog)
 
     def test_certification_build_is_isolated_and_source_bound(self) -> None:
         project = (APP_PROJECT / "project.pbxproj").read_text(

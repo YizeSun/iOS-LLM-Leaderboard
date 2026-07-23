@@ -656,6 +656,7 @@ def _verify_release_candidates(
     *,
     measurement_stack_reference: dict[str, Any],
     runner_reference: dict[str, Any],
+    runner_certificate_reference: dict[str, Any],
     app_reference: dict[str, Any],
     program_reference: dict[str, Any],
     target_reference: dict[str, Any],
@@ -683,7 +684,12 @@ def _verify_release_candidates(
         app_candidate_reference,
         "App release candidate",
     )
+    runner_certificate_path = _verify_pinned_asset(
+        runner_certificate_reference,
+        "active Runner certificate",
+    )
     runner_candidate = _load_json(runner_candidate_path)
+    runner_certificate = _load_json(runner_certificate_path)
     app_candidate = _load_json(app_candidate_path)
     documents.extend(
         (
@@ -694,6 +700,10 @@ def _verify_release_candidates(
             (
                 str(app_candidate_path.relative_to(ROOT)),
                 app_candidate,
+            ),
+            (
+                str(runner_certificate_path.relative_to(ROOT)),
+                runner_certificate,
             ),
         )
     )
@@ -710,6 +720,10 @@ def _verify_release_candidates(
         "power2-certification-candidate-"
         + str(runner_reference.get("sha256", ""))[:12]
     )
+    active_runner_id = (
+        "power2-runner-"
+        + str(runner_reference.get("sha256", ""))[:12]
+    )
     if runner_candidate.get("certificateID") != runner_id:
         raise VerificationError(
             "Runner certification candidate ID is not component-bound"
@@ -721,6 +735,7 @@ def _verify_release_candidates(
             "sha256": runner_policy_reference.get("sha256"),
         },
         "runnerComponents": runner_reference,
+        "activeCertificate": runner_certificate_reference,
     }
     for field, expected in expected_runner_references.items():
         if runner_candidate.get(field) != expected:
@@ -801,11 +816,118 @@ def _verify_release_candidates(
             runner_verification.get(check) != "pass"
             for check in required_runner_automated_checks
         )
-        or runner_verification.get("physicalDeviceSmokeRun") != "pending"
-        or runner_verification.get("rawResultReview") != "pending"
+        or runner_verification.get("physicalDeviceSmokeRun") != "pass"
+        or runner_verification.get("rawResultReview") != "pass"
     ):
         raise VerificationError(
             "Runner certification candidate verification state is unsafe"
+        )
+    if runner_candidate.get("issuanceBlockedBy") != []:
+        raise VerificationError(
+            "Runner certification candidate still reports issuance blockers"
+        )
+
+    if (
+        runner_certificate.get("schemaVersion")
+        != "power-runner-certificate-1.0.0-rc.1"
+        or runner_certificate.get("state") != "active"
+        or runner_certificate.get("certificateID") != active_runner_id
+        or runner_certificate.get("certificationPolicy")
+        != expected_runner_references["certificationPolicy"]
+        or runner_certificate.get("runnerComponents") != runner_reference
+        or runner_certificate.get("programManifestSHA256")
+        != program_reference.get("sha256")
+        or runner_certificate.get("targetManifestSHA256")
+        != target_reference.get("sha256")
+        or runner_certificate.get("runtimeIdentity") != runtime_reference
+        or runner_certificate.get("runtime") != expected_runtime
+        or runner_certificate.get("componentSHA256")
+        != expected_component_digests
+    ):
+        raise VerificationError(
+            "active Runner certificate identity is not source-bound"
+        )
+    active_verification = runner_certificate.get("verification")
+    required_active_checks = (
+        *required_runner_automated_checks,
+        "physicalDeviceSmokeRun",
+        "rawResultReview",
+    )
+    if (
+        not isinstance(active_verification, dict)
+        or any(
+            active_verification.get(check) != "pass"
+            for check in required_active_checks
+        )
+    ):
+        raise VerificationError(
+            "active Runner certificate has incomplete verification"
+        )
+    certification_evidence = runner_certificate.get(
+        "certificationEvidence"
+    )
+    candidate_evidence = runner_candidate.get("certificationEvidence")
+    if (
+        not isinstance(certification_evidence, dict)
+        or not isinstance(candidate_evidence, dict)
+        or certification_evidence.get("candidateCertificateID")
+        != runner_id
+        or {
+            "result": certification_evidence.get("result"),
+            "review": certification_evidence.get("review"),
+        }
+        != candidate_evidence
+    ):
+        raise VerificationError(
+            "Runner certification evidence references are inconsistent"
+        )
+    certification_result_path = _verify_pinned_asset(
+        certification_evidence.get("result"),
+        "Runner certification result",
+    )
+    certification_review_path = _verify_pinned_asset(
+        certification_evidence.get("review"),
+        "Runner certification review",
+    )
+    certification_stack_path = _verify_pinned_asset(
+        certification_evidence.get("measurementStack"),
+        "Runner certification measurement stack",
+    )
+    certification_result = _load_json(certification_result_path)
+    certification_review = _load_json(certification_review_path)
+    certification_stack = _load_json(certification_stack_path)
+    documents.extend(
+        (
+            (
+                str(certification_result_path.relative_to(ROOT)),
+                certification_result,
+            ),
+            (
+                str(certification_review_path.relative_to(ROOT)),
+                certification_review,
+            ),
+            (
+                str(certification_stack_path.relative_to(ROOT)),
+                certification_stack,
+            ),
+        )
+    )
+    if (
+        certification_result.get("runnerCertificateID") != runner_id
+        or certification_review.get("runnerCertificateID") != runner_id
+        or certification_review.get("status") != "pass"
+        or certification_review.get("physicalDeviceSmokeRun") != "pass"
+        or certification_review.get("rawResultReview") != "pass"
+        or certification_review.get("publishable") is not False
+        or certification_review.get("rankingEligible") is not False
+        or certification_review.get("sourceResultSHA256")
+        != certification_evidence["result"].get("sha256")
+        or runner_certificate.get("issuedAt")
+        != certification_review.get("reviewedAt")
+        or certification_stack.get("runnerCertificate") is not None
+    ):
+        raise VerificationError(
+            "Runner certification evidence is not issuance-safe"
         )
 
     if (
@@ -824,9 +946,8 @@ def _verify_release_candidates(
         or app_candidate.get("appComponents") != app_reference
         or app_candidate.get("embeddedMeasurementStack")
         != measurement_stack_reference
-        or app_candidate.get(
-            "supportedRunnerCertificationCandidateIDs"
-        ) != [runner_id]
+        or app_candidate.get("supportedRunnerCertificateIDs")
+        != [active_runner_id]
     ):
         raise VerificationError(
             "App release candidate identity is not source-bound"
@@ -1099,12 +1220,24 @@ def verify_power_candidate() -> dict[str, Any]:
     documents.append(
         (str(measurement_stack_path.relative_to(ROOT)), measurement_stack)
     )
-    if measurement_stack.get("status") != "migration-draft":
-        raise VerificationError("measurement stack is not a migration draft")
+    if measurement_stack.get("status") != "release-candidate":
+        raise VerificationError(
+            "measurement stack is not a closed release candidate"
+        )
     if measurement_stack.get("stackID") != candidate.get("stackID"):
         raise VerificationError("candidate and measurement stack IDs differ")
-    if measurement_stack.get("runnerCertificate") is not None:
-        raise VerificationError("uncertified runner must not be activated")
+    runner_certificate_reference = candidate.get("runnerCertificate")
+    if not isinstance(runner_certificate_reference, dict):
+        raise VerificationError(
+            "candidate has no active Runner certificate"
+        )
+    if (
+        measurement_stack.get("runnerCertificate")
+        != runner_certificate_reference
+    ):
+        raise VerificationError(
+            "measurement stack Runner certificate mismatch"
+        )
 
     program_reference = measurement_stack.get("program")
     target_reference = measurement_stack.get("target")
@@ -1166,6 +1299,7 @@ def verify_power_candidate() -> dict[str, Any]:
             candidate,
             measurement_stack_reference=measurement_stack_reference,
             runner_reference=runner_candidate_reference,
+            runner_certificate_reference=runner_certificate_reference,
             app_reference=app_candidate_reference,
             program_reference=program_reference,
             target_reference=target_reference,
@@ -1249,7 +1383,7 @@ def verify_power_candidate() -> dict[str, Any]:
         "runnerCertificationCandidate":
             runner_certification_candidate_id,
         "appReleaseCandidate": app_release_candidate_id,
-        "runnerCertified": False,
+        "runnerCertified": True,
         "appReleased": False,
     }
 

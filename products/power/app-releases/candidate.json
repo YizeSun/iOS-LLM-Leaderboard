@@ -1,27 +1,26 @@
 {
   "appComponents": {
     "path": "apps/ios/component-manifest.json",
-    "sha256": "6df4dca4863e3c583f2fb4670886c72c726014835923ebcecb47664353ddc3b4"
+    "sha256": "821a7c22d68d118ae839ee883d54c7d1a029a5c185d8f06a85b255bf7f2b714f"
   },
   "build": "1",
   "buildConfiguration": "Official",
   "bundleIdentifier": "org.iosllmleaderboard.power2",
   "embeddedMeasurementStack": {
-    "path": "products/power/stacks/power-text-iphone-2.0.0-draft.2/manifest.json",
-    "sha256": "43e5d8899f660c557e3a7dad0c7e54de8e440aab5be6d46096306c6e43b385a0"
+    "path": "products/power/stacks/power-text-iphone-2.0.0-rc.1/manifest.json",
+    "sha256": "a92a208324af0ea85c092e1cf04248c669f01c588c9f0d0b724e4c40a1014642"
   },
   "productID": "power",
   "releaseBlockedBy": [
-    "issue the bound Runner certificate",
     "complete a physical-device end-to-end rehearsal",
     "activate the immutable stack and public intake atomically"
   ],
-  "releaseID": "power-app-2.0.0-candidate-6df4dca4863e",
+  "releaseID": "power-app-2.0.0-candidate-821a7c22d68d",
   "schemaVersion": "power-app-release-candidate-1.0.0-draft.1",
-  "sourceRevision": "6df4dca4863e3c583f2fb4670886c72c726014835923ebcecb47664353ddc3b4",
+  "sourceRevision": "821a7c22d68d118ae839ee883d54c7d1a029a5c185d8f06a85b255bf7f2b714f",
   "state": "candidate",
-  "supportedRunnerCertificationCandidateIDs": [
-    "power2-certification-candidate-87f62feecc2b"
+  "supportedRunnerCertificateIDs": [
+    "power2-runner-87f62feecc2b"
   ],
   "verification": {
     "genericIOSReleaseBuild": "pass",

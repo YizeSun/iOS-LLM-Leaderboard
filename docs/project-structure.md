@@ -37,7 +37,8 @@ Do not add a new top-level directory unless none of these owns the content:
 - `methodology/` — cross-suite benchmark conventions;
 - `models/` — model catalogs and compatibility metadata;
 - `products/` — versioned Product, Program, Target, and policy contracts;
-  currently contains only the inactive Power 2.0 migration candidate, owned by
+  currently contains only the inactive Power 2.0 migration state, including
+  its active Runner certificate and closed App release candidate; owned by
   product and methodology maintainers, CC BY 4.0, and immutable once released;
 - `results/` — raw and generated evidence by release;
 - `schemas/` — machine-readable contracts;

@@ -43,11 +43,11 @@ class Power2CandidateTests(unittest.TestCase):
         self.assertTrue(summary["runtimeAdapterImplemented"])
         self.assertEqual(summary["appComponents"], 4)
         self.assertTrue(summary["appShellImplemented"])
-        self.assertFalse(summary["runnerCertified"])
+        self.assertTrue(summary["runnerCertified"])
         self.assertFalse(summary["appReleased"])
         self.assertFalse(summary["publicIntakeOpen"])
 
-    def test_no_current_pointer_exists_before_cutover(self) -> None:
+    def test_certified_runner_remains_in_closed_candidate_stack(self) -> None:
         registry = load_json(ROOT / "products" / "power" / "registry.json")
         candidate = load_json(ROOT / registry["candidateStack"])
         measurement_stack = load_json(
@@ -57,7 +57,36 @@ class Power2CandidateTests(unittest.TestCase):
         self.assertIsNone(registry["currentStack"])
         self.assertFalse(registry["publicIntakeOpen"])
         self.assertFalse(candidate["publicIntakeOpen"])
-        self.assertIsNone(measurement_stack["runnerCertificate"])
+        self.assertEqual(
+            measurement_stack["runnerCertificate"],
+            candidate["runnerCertificate"],
+        )
+        runner_certificate = load_json(
+            ROOT / candidate["runnerCertificate"]["path"]
+        )
+        self.assertEqual(runner_certificate["state"], "active")
+        self.assertEqual(
+            runner_certificate["certificateID"],
+            "power2-runner-"
+            + candidate["runnerCandidate"]["sha256"][:12],
+        )
+        self.assertEqual(
+            runner_certificate["verification"][
+                "physicalDeviceSmokeRun"
+            ],
+            "pass",
+        )
+        self.assertEqual(
+            runner_certificate["verification"]["rawResultReview"],
+            "pass",
+        )
+        evidence = runner_certificate["certificationEvidence"]
+        for key in ("result", "review", "measurementStack"):
+            reference = evidence[key]
+            self.assertEqual(
+                reference["sha256"],
+                repoctl._sha256(ROOT / reference["path"]),
+            )
         self.assertIsNone(candidate["appRelease"])
         self.assertIsNotNone(candidate["runnerCandidate"])
         self.assertIsNotNone(candidate["appCandidate"])

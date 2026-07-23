@@ -14,6 +14,11 @@ IDENTITY_PATH = ROOT / "apps/ios/Power2CandidateIdentity.generated.swift"
 RUNNER_CERTIFICATE_CANDIDATE_PATH = (
     ROOT / "products/power/runner-certificates/candidate.json"
 )
+ACTIVE_RUNNER_CERTIFICATE_PATH = (
+    ROOT
+    / "products/power/runner-certificates"
+    / "power2-runner-87f62feecc2b.json"
+)
 APP_RELEASE_CANDIDATE_PATH = (
     ROOT / "products/power/app-releases/candidate.json"
 )
@@ -116,7 +121,7 @@ class Power2RunnerComponentTests(unittest.TestCase):
         self.assertIn(candidate["measurementStack"]["sha256"], swift)
         self.assertIn(candidate["runnerCandidate"]["sha256"], swift)
         self.assertIn("static let publicIntakeOpen = false", swift)
-        self.assertIn("static let appReleaseAvailable = false", swift)
+        self.assertIn("static let appReleaseAvailable = true", swift)
 
     def test_release_candidates_are_generated_and_source_bound(self) -> None:
         completed = subprocess.run(
@@ -135,8 +140,12 @@ class Power2RunnerComponentTests(unittest.TestCase):
         runner = json.loads(
             RUNNER_CERTIFICATE_CANDIDATE_PATH.read_text()
         )
+        active_runner = json.loads(
+            ACTIVE_RUNNER_CERTIFICATE_PATH.read_text()
+        )
         app = json.loads(APP_RELEASE_CANDIDATE_PATH.read_text())
         self.assertEqual(runner["state"], "candidate")
+        self.assertEqual(active_runner["state"], "active")
         self.assertEqual(app["state"], "candidate")
         self.assertEqual(
             runner["runnerComponents"],
@@ -151,8 +160,12 @@ class Power2RunnerComponentTests(unittest.TestCase):
             candidate["appCandidate"]["sha256"],
         )
         self.assertEqual(
-            app["supportedRunnerCertificationCandidateIDs"],
-            [runner["certificateID"]],
+            app["supportedRunnerCertificateIDs"],
+            [active_runner["certificateID"]],
+        )
+        self.assertEqual(
+            runner["activeCertificate"],
+            candidate["runnerCertificate"],
         )
         self.assertEqual(
             {
@@ -165,11 +178,11 @@ class Power2RunnerComponentTests(unittest.TestCase):
         )
         self.assertEqual(
             runner["verification"]["physicalDeviceSmokeRun"],
-            "pending",
+            "pass",
         )
         self.assertEqual(
             runner["verification"]["rawResultReview"],
-            "pending",
+            "pass",
         )
         self.assertEqual(
             app["verification"]["genericIOSReleaseBuild"],

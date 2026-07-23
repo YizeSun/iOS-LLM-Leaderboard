@@ -1,12 +1,30 @@
 {
   "schemaVersion": "power-stack-pointer-1.0.0-draft.1",
   "productID": "power",
-  "stackID": "power-text-iphone-2.0.0-draft.2",
+  "stackID": "power-text-iphone-2.0.0-rc.1",
   "status": "migration-draft",
   "publicIntakeOpen": false,
-  "measurementStack": {
+  "certificationCandidateStack": {
     "path": "products/power/stacks/power-text-iphone-2.0.0-draft.2/manifest.json",
     "sha256": "43e5d8899f660c557e3a7dad0c7e54de8e440aab5be6d46096306c6e43b385a0"
+  },
+  "certificationAppCandidate": {
+    "path": "products/power/runner-certificates/evidence/b5d3c2cf-b2b8-4060-b00d-048102e6cfb9/app-component-manifest.json",
+    "sha256": "6df4dca4863e3c583f2fb4670886c72c726014835923ebcecb47664353ddc3b4"
+  },
+  "certificationEvidence": {
+    "result": {
+      "path": "products/power/runner-certificates/evidence/b5d3c2cf-b2b8-4060-b00d-048102e6cfb9/result.json",
+      "sha256": "c2b189124f83622fa24cb18e9dc4eb7c14c024fda10eccf6e4404e1b4bc05d86"
+    },
+    "review": {
+      "path": "products/power/runner-certificates/evidence/b5d3c2cf-b2b8-4060-b00d-048102e6cfb9/review.json",
+      "sha256": "359b30019dd493df8b8692f2c68d94553102a8eb4f7ce9a0754c4020a6ca2172"
+    }
+  },
+  "measurementStack": {
+    "path": "products/power/stacks/power-text-iphone-2.0.0-rc.1/manifest.json",
+    "sha256": "a92a208324af0ea85c092e1cf04248c669f01c588c9f0d0b724e4c40a1014642"
   },
   "runnerCandidate": {
     "path": "apps/PowerRunnerKit/component-manifest.json",
@@ -14,19 +32,22 @@
   },
   "runnerCertificationCandidate": {
     "path": "products/power/runner-certificates/candidate.json",
-    "sha256": "cb43e7218523b7a184b7cdefa6e16770c076462588b9b65c5cb216a8e3da2d2a"
+    "sha256": "644d05903481813c0f59a734f3495b687a07d684e49c8efe3eea730672c6aa35"
+  },
+  "runnerCertificate": {
+    "path": "products/power/runner-certificates/power2-runner-87f62feecc2b.json",
+    "sha256": "5d4827d658d65766f8a68ff823f26f3dc2634be8c21dec95d6ea105183aabfc9"
   },
   "appCandidate": {
     "path": "apps/ios/component-manifest.json",
-    "sha256": "6df4dca4863e3c583f2fb4670886c72c726014835923ebcecb47664353ddc3b4"
+    "sha256": "821a7c22d68d118ae839ee883d54c7d1a029a5c185d8f06a85b255bf7f2b714f"
   },
   "appReleaseCandidate": {
     "path": "products/power/app-releases/candidate.json",
-    "sha256": "2bc6c2df207aaeff92249c986456532d785c176837c6b049e36965e5b3cc3e27"
+    "sha256": "fada1ad60c70d5dd6e81cfdb81be3f27a9f937e288e5916cf9089f2687fe77a8"
   },
   "appRelease": null,
   "activationBlockers": [
-    "complete certification evidence and certify the Power 2.0 runner candidate",
     "issue an immutable App release for the Power 2.0 App shell",
     "embed this exact stack in a released App build",
     "validate new physical-device evidence end to end",

@@ -16,6 +16,7 @@ on:
       - "scripts/generate_power_runner_component_manifest.py"
       - "scripts/lib/power2/**"
       - "scripts/repoctl.py"
+      - "scripts/review_power2_app_release_result.py"
       - "scripts/review_power2_certification_result.py"
       - "scripts/triage_power2_submission_pr.py"
       - "tests/test_power_2_*.py"

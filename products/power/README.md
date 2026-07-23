@@ -14,18 +14,18 @@ The first migration candidate contains:
 embeds that manifest digest, not the digest of a pointer that contains the App
 itself.
 
-The same pointer pins generated, closed Runner-certification and App-release
-candidates. The Runner candidate binds every measurement-affecting Swift
-component plus the canonical runtime identity. The App candidate binds the
-complete App component manifest, exact stack, future Official bundle identity,
-and the one Runner candidate it may support. Neither candidate is a
-certificate or release.
+The same pointer pins the active Runner certificate and the closed App-release
+candidate. The Runner certificate binds every measurement-affecting Swift
+component plus the canonical runtime identity and retained physical
+Certification evidence. The App candidate binds the complete App component
+manifest, exact release-candidate stack, future Official bundle identity, and
+the active Runner certificate it may support. No App release has been issued.
 
-The automated candidate suite and both generic iOS configurations pass for the
-exact digests currently recorded in those files. The generator contains an
-identity checkpoint, so any stack, Runner, or App digest change automatically
-returns the affected automated state to `pending`. Physical-device smoke,
-raw-result review, and end-to-end rehearsal remain pending.
+The automated candidate suite, both generic iOS configurations, Runner
+physical-device smoke, and raw-result review pass for the exact recorded
+digests. The generator contains an identity checkpoint, so any stack, Runner,
+or App digest change automatically returns the affected state to `pending`.
+The exact Official App end-to-end physical rehearsal remains pending.
 
 The candidate is intentionally inactive. `current.json` must not be created
 until the contract, runner certificate, physical-device reruns, trusted intake,

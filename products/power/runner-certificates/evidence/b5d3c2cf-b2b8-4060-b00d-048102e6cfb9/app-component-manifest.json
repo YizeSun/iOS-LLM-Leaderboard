@@ -13,11 +13,11 @@
         },
         {
           "path": "apps/ios/Power2CandidateCatalog.generated.swift",
-          "sha256": "2336e5b281bc46207bdaa1e1d6e74986b0f5af47fb38e528b7c2ab30612fc51f"
+          "sha256": "fa03a83c2e7f4651f963ce56d078e2ead6e6109b3938f7c5567137fcfcd84f79"
         },
         {
           "path": "apps/ios/Power2CandidateIdentity.generated.swift",
-          "sha256": "5f7abe3e8ace8a7a112774dc2565b53c8971012fa54d7de615d679e1f2ecf31c"
+          "sha256": "56efef27a53dcec0dd0b57536bef167d49640918c1382c578fd7ad7f0ae40a8f"
         },
         {
           "path": "apps/ios/PowerBenchmarkApp/Info.plist",
@@ -25,7 +25,7 @@
         },
         {
           "path": "apps/ios/PowerBenchmarkApp/PowerAppBuildIdentity.swift",
-          "sha256": "a78940400cc7158d84fa24995351e72d64c0e2f9a77062862962cafae3b5955e"
+          "sha256": "b69d2b6fd48a3e4d9fcd7654c056cb3e4532c13df2df979dce41341615f9e5e2"
         },
         {
           "path": "apps/ios/PowerBenchmarkApp/PowerAppModel.swift",
@@ -45,10 +45,10 @@
         },
         {
           "path": "apps/ios/PowerBenchmarkApp/PowerTestView.swift",
-          "sha256": "9abccdb01e6a97a47fc83444746fc84e6e8f5c1fe0d4f5b0e212105a722c7aec"
+          "sha256": "d7d30bf27560cbfcd3389bc213aa2f8c96c9be62e7d9203fb8a4acbd125585ad"
         }
       ],
-      "sha256": "564e6a2be3816d6be14d7cca281fdcafc3a557614470465cad6392a10c592e3f",
+      "sha256": "6ee461b09c7db3919a5cada3f22156a05d49f549780cc67ba1c7f4202a659954",
       "sourceRoot": "apps/ios"
     },
     "githubSubmission": {

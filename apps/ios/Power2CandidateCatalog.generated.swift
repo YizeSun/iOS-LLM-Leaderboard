@@ -61,7 +61,7 @@ enum Power2CandidateCatalog {
         version: "1.0.0-draft.1",
         manifestSHA256: "d3229e3738ab848b39748d1ee08d1eae3fc68f645bd8f8fa6eef5f52f78f66c4"
     )
-    static let runnerCertificateID = "power2-certification-candidate-87f62feecc2b"
+    static let runnerCertificateID = "power2-runner-87f62feecc2b"
 
     static let models: [Power2CandidateModelDefinition] = [
         .init(

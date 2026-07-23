@@ -134,8 +134,8 @@ struct PowerTestView: View {
             return "Developer builds can inspect the App but cannot produce "
                 + "or submit ranking evidence."
         case .official:
-            return "This Official build remains locked until an immutable "
-                + "App Release and public Power intake are activated."
+            return "This Official build remains locked until its generated "
+                + "App release candidate and active Runner certificate agree."
         case .invalid:
             return "The compiled build kind does not match the embedded "
                 + "PowerBuildKind declaration."
