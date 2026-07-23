@@ -1,0 +1,42 @@
+{
+  "benchmarkRelease" : {
+    "id" : "suite-b-power",
+    "version" : "1.1.0"
+  },
+  "conflictOfInterest" : {
+    "category" : "none",
+    "statement" : "No conflict of interest disclosed."
+  },
+  "contributor" : {
+    "githubHandle" : "Sunnyone1234"
+  },
+  "createdAt" : "2026-07-23T07:58:37Z",
+  "declarations" : {
+    "acceptsCCBY40" : true,
+    "authorizedToSubmit" : true,
+    "containsNoPersonalData" : true,
+    "ranOnPhysicalDevice" : true,
+    "rawResultUnmodified" : true,
+    "reviewedPublicMetadata" : true,
+    "understandsNoRankingGuarantee" : true
+  },
+  "environmentalDisclosure" : {
+    "thermalAssistance" : "none"
+  },
+  "requestedEvidenceLevel" : "community-submitted",
+  "result" : {
+    "artifactID" : "mlx-community/Qwen3-0.6B-4bit",
+    "artifactRevision" : "73e3e38d981303bc594367cd910ea6eb48349da8",
+    "machineIdentifier" : "iPhone15,3",
+    "path" : "result.json",
+    "resultID" : "9B29E979-AC64-43C7-ACED-8753863CE13A",
+    "runtimeName" : "MLX Swift LM",
+    "runtimeVersion" : "3.31.4",
+    "schemaVersion" : "suite-b-power-result-1.1.0-rc.1",
+    "sha256" : "42ad24960fbffade06f9ae83a23db5d47999ec262c8c1c6305db1d9acefa12fb",
+    "workloadID" : "b-ux-001-short-interaction"
+  },
+  "schemaVersion" : "suite-b-power-submission-1.1.0",
+  "state" : "draft",
+  "submissionID" : "c7562b8a-22c8-468d-afc2-ae7a1f3f197b"
+}
