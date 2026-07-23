@@ -10,11 +10,11 @@
   },
   "runnerCandidate": {
     "path": "apps/PowerRunnerKit/component-manifest.json",
-    "sha256": "a64f46d5ac30bae1c68efd377f8c3e0fd20462d7c9c20036a8193ac1082f88d4"
+    "sha256": "f3d31cd68985f898691449529676cad7dbb6671da105bb4f752adce2bc15274b"
   },
   "appCandidate": {
     "path": "apps/ios/component-manifest.json",
-    "sha256": "20383f705d10a399c14630b0cf9954185365c5491ac6d0a1615f145abeb5a06e"
+    "sha256": "0e9a885b55e7df0d8765dd7c77d27d4b12a6b0325e868b9bb78127bb6b428d6d"
   },
   "appRelease": null,
   "activationBlockers": [

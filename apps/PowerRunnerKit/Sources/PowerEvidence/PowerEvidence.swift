@@ -336,6 +336,33 @@ public struct PowerTokenEvent: Codable, Sendable, Equatable {
         self.isSpecial = isSpecial
         self.isRenderable = isRenderable
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case index
+        case tokenID
+        case receivedNanoseconds
+        case decodedAtNanoseconds
+        case decodedPrefix
+        case isSpecial
+        case isRenderable
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(index, forKey: .index)
+        try container.encode(tokenID, forKey: .tokenID)
+        try container.encode(
+            receivedNanoseconds,
+            forKey: .receivedNanoseconds
+        )
+        try container.encode(
+            decodedAtNanoseconds,
+            forKey: .decodedAtNanoseconds
+        )
+        try container.encode(decodedPrefix, forKey: .decodedPrefix)
+        try container.encode(isSpecial, forKey: .isSpecial)
+        try container.encode(isRenderable, forKey: .isRenderable)
+    }
 }
 
 public struct PowerMemorySample: Codable, Sendable, Equatable {

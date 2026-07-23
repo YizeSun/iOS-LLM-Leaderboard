@@ -9,11 +9,11 @@
       "files": [
         {
           "path": "apps/ios/Power2CandidateCatalog.generated.swift",
-          "sha256": "a88ee2dcda66cfc786a1c49b2ad551f45c602c5e4bd4f3e07080c7ea98d99e6c"
+          "sha256": "794b20588699d4737bf97b16c0444bcb5878db87390a7894f66ba39ac362e864"
         },
         {
           "path": "apps/ios/Power2CandidateIdentity.generated.swift",
-          "sha256": "a620d9f1eeb68285c1a91b3ed7303f95c9fe2aa0bea6fca65babb76b61822287"
+          "sha256": "d9250608c5965cb87450956161df03efd18be09961fc01eae481af922561d2a6"
         },
         {
           "path": "apps/ios/PowerBenchmarkApp/Info.plist",
@@ -44,7 +44,7 @@
           "sha256": "0c2a4321127bb648825abf09232915adf85cd938ed2aa050cfef38f6f4c54ed5"
         }
       ],
-      "sha256": "a584b9241af53325e92fea631c784be6b58fc73d780fb85d10c8f65e00786194",
+      "sha256": "527128cdd0c7d1017614e98d03f82b9ccc8295693c318d80ce9eea847421a616",
       "sourceRoot": "apps/ios"
     },
     "githubSubmission": {

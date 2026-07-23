@@ -7,7 +7,7 @@ enum Power2CandidateIdentity {
     static let measurementStackPath = "products/power/stacks/power-text-iphone-2.0.0-draft.1/manifest.json"
     static let measurementStackSHA256 = "da80a2aaa6e645efd2d8bb45848360e3fa0d5312e07c87bd6805a2cc1910cf19"
     static let runnerCandidateManifestPath = "apps/PowerRunnerKit/component-manifest.json"
-    static let runnerCandidateManifestSHA256 = "a64f46d5ac30bae1c68efd377f8c3e0fd20462d7c9c20036a8193ac1082f88d4"
+    static let runnerCandidateManifestSHA256 = "f3d31cd68985f898691449529676cad7dbb6671da105bb4f752adce2bc15274b"
     static let publicIntakeOpen = false
     static let appReleaseAvailable = false
 }

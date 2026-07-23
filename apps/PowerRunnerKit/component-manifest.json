@@ -13,14 +13,14 @@
         },
         {
           "path": "apps/PowerRunnerKit/Sources/PowerEvidence/PowerEvidence.swift",
-          "sha256": "7eab824422fe16d7523414f1c6840d833ac7095c092b4898344f8b035721e8e0"
+          "sha256": "5a86d20fa931c3e96e55f0fa14334ace83705220e49dc5b751c069cdb41d5fa3"
         },
         {
           "path": "apps/PowerRunnerKit/Sources/PowerEvidence/PowerEvidenceEncoder.swift",
           "sha256": "7a4dc164918049c027f7ade2ca84755e113c6425f2faeef9e1f30c32f6115066"
         }
       ],
-      "sha256": "0b506c6a47cfe70c39d40345ddb1a7b7150e8c97f6a74512907a4311a8719884",
+      "sha256": "db68f0776696adf3d43d285fcd1ef77812828ccc1ec11c8f0c7d238f9c4a7622",
       "sourceRoot": "apps/PowerRunnerKit/Sources/PowerEvidence"
     },
     "programModule": {

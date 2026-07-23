@@ -26,6 +26,19 @@ final class PowerEvidenceTests: XCTestCase {
         )
         XCTAssertTrue(monotonic.keys.contains("firstRenderableNanoseconds"))
         XCTAssertTrue(monotonic["firstRenderableNanoseconds"] is NSNull)
+        let tokenEvents = try XCTUnwrap(
+            attempts[0]["tokenEvents"] as? [[String: Any]]
+        )
+        XCTAssertEqual(tokenEvents.count, 2)
+        for key in [
+            "decodedAtNanoseconds",
+            "decodedPrefix",
+            "isSpecial",
+            "isRenderable"
+        ] {
+            XCTAssertTrue(tokenEvents[1].keys.contains(key))
+            XCTAssertTrue(tokenEvents[1][key] is NSNull)
+        }
     }
 
     func testJSONValueRejectsNonFiniteNumbers() {
