@@ -12,16 +12,20 @@ The long-term product vision is organized around three developer questions:
 
 These areas are not equal implementation priorities.
 
-The Phase 1 public product is **Power + Ship**. Its purpose is to establish a
-trustworthy, reproducible, developer-oriented evaluation standard for
-deploying on-device AI on Apple platforms.
+Phase 1 has two separate public products: **Power** and **Ship**. Power is the
+benchmark and evidence-comparison product. Ship is a downstream
+deployment-guidance product. They may reference the same exact configuration,
+but Power does not contain Ship and a Power test does not produce a Ship
+profile.
 
 The current Power release is
 [Power Benchmark 1.1](power-benchmark-1.1-finalization.md). It adopts the
 frozen Power 1.1 RC1 execution contract and six immutable physical-device
 results under a final ranking policy without rewriting their source identity.
-The completed Power + Ship Pilot v0.1 remains non-official historical evidence
-and will not be tagged or published as a release. B-UX-001 and B-PIPE-001 are
+The completed historical
+[Phase 1 Evidence Pilot v0.1](power-ship-pilot-v0.1.md) remains non-official
+evidence and will not be tagged or published as a release.
+B-UX-001 and B-PIPE-001 are
 the only active Power 1.1 workloads; the protocol, schema, validator, App,
 physical-device evidence, and governance contracts are complete. All six
 adopted results are Maintainer Reference evidence and measured-performance
@@ -35,7 +39,13 @@ This architecture is a strategic positioning decision. It does not activate a
 new benchmark framework, change a protocol or stable suite ID, or make any
 draft result eligible for official ranking.
 
-## Phase 1 Product: Power + Ship
+The [repository architecture blueprint](repository-architecture.md) translates
+this product separation into proposed Program and Target extension slots,
+runner certificates, policy families, evidence relationships, and a staged
+clean-break Power 2.0 migration. It is a target design, not a statement that
+those modules are already implemented.
+
+## Phase 1 Products
 
 ### Power
 
@@ -71,8 +81,10 @@ Ship asks:
 > Can this tested configuration be integrated, distributed, and maintained in
 > a real iOS application?
 
-Ship turns Power evidence into practical deployment guidance. It covers facts
-and tested capabilities such as:
+Ship is published separately from Power. It may cite accepted Power
+measurements for the same exact configuration, then combine those citations
+with independently reviewed deployment sources. A Benchmark App run does not
+create or verify a Ship profile. Ship covers facts and capabilities such as:
 
 - supported devices and measured resource limits;
 - runtime and model-format compatibility;
@@ -81,16 +93,17 @@ and tested capabilities such as:
 - integration recipes and known limitations;
 - model and runtime license metadata and attribution requirements.
 
-Ship must reuse canonical Power measurements rather than redefining latency,
-memory, or thermal metrics. It should present verified capabilities, measured
-constraints, warnings, and unknowns rather than a false-precision deployment
-score. License and privacy information is evidence for developer review, not a
-legal conclusion.
+When Ship cites a Power measurement, it must reuse the canonical value rather
+than redefining latency, memory, or thermal metrics. Ship should present
+verified capabilities, measured constraints, warnings, and unknowns rather
+than a false-precision deployment score. License and privacy information is
+evidence for developer review, not a legal conclusion.
 
 ### Phase 1 Success Criteria
 
-Phase 1 succeeds only when Power + Ship provide credible deployment evidence.
-Success requires:
+Power succeeds when it provides credible benchmark evidence. Ship succeeds
+when it provides credible deployment guidance whose claims have explicit
+sources. Across the two separate products, Phase 1 requires:
 
 - versioned on-device workloads with unambiguous measurement boundaries;
 - execution on physical Apple devices through a reviewable reference runner;
@@ -108,7 +121,7 @@ for Phase 1 success.
 
 ## Phase 1 Evidence Architecture
 
-The project is organized as a closed evidence loop:
+The project is organized as an evidence pipeline with two separate outputs:
 
 1. a benchmark release freezes tasks, workloads, metrics, and schemas;
 2. the official benchmark app executes that release on a physical device;
@@ -116,9 +129,9 @@ The project is organized as a closed evidence loop:
 4. repository automation validates the bundle;
 5. community reproduction increases evidence confidence;
 6. leaderboard views aggregate compatible results;
-7. Power views compare only compatible embedded configurations;
-8. Ship profiles provide deployment facts and short integration recipes backed
-   by those tested configurations.
+7. Power views compare only compatible embedded configurations; and
+8. a separate Ship publication may cite accepted Power facts alongside its own
+   deployment sources, integration recipes, limitations, and unknowns.
 
 ## Layer 1: Benchmark Specification
 
@@ -257,10 +270,11 @@ Deferring Build:
 - gives the project time to learn from real Xcode automation, simulator,
   accessibility, privacy, and release-readiness workflows.
 
-Build may move from research framing to an implementation plan only after the
-Power + Ship standard has a credible release and the project can define a
-stable, end-to-end iOS delivery problem. It is not scheduled merely because a
-particular coding model or agent becomes popular.
+Build may move from research framing to an implementation plan only after both
+Power evidence and Ship deployment guidance are credible in their separate
+roles and the project can define a stable, end-to-end iOS delivery problem. It
+is not scheduled merely because a particular coding model or agent becomes
+popular.
 
 ## Suite Relationships
 

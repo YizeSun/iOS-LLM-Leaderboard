@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "power-target-profile-1.0.0-draft.1",
+  "productID": "power",
+  "targetID": "apple-iphone-physical",
+  "targetVersion": "1.0.0-draft.1",
+  "status": "migration-draft",
+  "platform": "iOS",
+  "deviceFamily": "iPhone",
+  "physicalDeviceRequired": true,
+  "simulatorAllowed": false,
+  "environmentCapture": {
+    "required": [
+      "machineIdentifier",
+      "osVersion",
+      "osBuild",
+      "batteryLevelAtStart",
+      "batteryStateAtStart",
+      "lowPowerModeAtStart",
+      "thermalStateAtStart",
+      "thermalStateAtEnd",
+      "thermalAssistance"
+    ]
+  },
+  "ordinaryRankingAdmission": {
+    "batteryStateAtStart": "unplugged",
+    "minimumBatteryPercentAtStart": 30,
+    "lowPowerModeAtStart": false,
+    "allowedThermalStatesAtStart": [
+      "nominal"
+    ],
+    "thermalAssistance": "none"
+  },
+  "retainedButOrdinaryRankingIneligible": [
+    "charging",
+    "low-battery",
+    "low-power-mode",
+    "non-nominal-start-thermal-state",
+    "deliberate-cooling",
+    "deliberate-heating",
+    "other-assisted",
+    "unknown-assistance"
+  ],
+  "clockRequirements": {
+    "monotonicClockRequired": true,
+    "wallClockMayNotMeasureDurations": true
+  },
+  "memoryRequirements": {
+    "processPhysicalFootprintBytesRequired": true
+  }
+}

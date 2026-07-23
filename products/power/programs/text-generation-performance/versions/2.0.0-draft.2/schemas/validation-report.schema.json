@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ios-llm-leaderboard.org/schemas/power/validation-report/1.0.0-draft.2",
+  "title": "Power Validation Report",
+  "description": "Machine-generated validation record. It never replaces or rewrites source evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "reportID",
+    "createdAt",
+    "validator",
+    "sourceResultSHA256",
+    "submissionSHA256",
+    "checks",
+    "classification",
+    "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "power-validation-report-1.0.0-draft.2"
+    },
+    "reportID": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "validator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "sourceRevision",
+        "policySHA256"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceRevision": {
+          "$ref": "#/$defs/sourceRevision"
+        },
+        "policySHA256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "sourceResultSHA256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "submissionSHA256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "structuralValidity",
+        "contractConformance",
+        "digestIntegrity",
+        "runnerCertificate",
+        "appRelease",
+        "intakeState",
+        "contributor",
+        "behaviorConformance",
+        "recommendationEligibility",
+        "metricEligibility"
+      ],
+      "properties": {
+        "structuralValidity": {
+          "$ref": "#/$defs/check"
+        },
+        "contractConformance": {
+          "$ref": "#/$defs/check"
+        },
+        "digestIntegrity": {
+          "$ref": "#/$defs/check"
+        },
+        "runnerCertificate": {
+          "$ref": "#/$defs/check"
+        },
+        "appRelease": {
+          "$ref": "#/$defs/check"
+        },
+        "intakeState": {
+          "$ref": "#/$defs/check"
+        },
+        "contributor": {
+          "$ref": "#/$defs/check"
+        },
+        "behaviorConformance": {
+          "$ref": "#/$defs/check"
+        },
+        "recommendationEligibility": {
+          "$ref": "#/$defs/check"
+        },
+        "metricEligibility": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/check"
+          }
+        }
+      }
+    },
+    "classification": {
+      "enum": [
+        "auto-accept",
+        "manual-review",
+        "reject"
+      ]
+    },
+    "reasonCodes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sourceRevision": {
+      "type": "string",
+      "oneOf": [
+        {
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        {
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      ]
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reasonCodes"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "manual-review",
+            "not-applicable"
+          ]
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

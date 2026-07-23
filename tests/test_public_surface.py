@@ -38,6 +38,63 @@ class PublicSurfaceTests(unittest.TestCase):
         self.assertNotIn("Power 1.0 public intake is open", combined)
         self.assertIn("scripts/power.py", combined)
 
+    def test_power_and_ship_are_separate_public_products(self) -> None:
+        paths = (
+            ROOT / "README.md",
+            ROOT / "docs/project-vision.md",
+            ROOT / "docs/product-architecture.md",
+            ROOT / "docs/project-structure.md",
+            ROOT / "methodology/overview.md",
+            ROOT / "methodology/benchmark-suites.md",
+        )
+        combined = "\n".join(path.read_text() for path in paths)
+        self.assertNotIn("Phase 1 public product is **Power + Ship**", combined)
+        self.assertNotIn("Product Phase 1 is Power + Ship", combined)
+        self.assertIn("Power does not contain Ship", combined)
+        self.assertIn(
+            "A Power run does not produce a Ship result",
+            combined,
+        )
+        self.assertNotIn("Power + Ship", combined)
+
+        diagram = (
+            ROOT / "docs/assets/readme/power-ship-flow-v2.svg"
+        ).read_text()
+        self.assertIn(
+            "One Benchmark App run produces one Power result",
+            diagram,
+        )
+        self.assertIn("stroke-dasharray", diagram)
+
+    def test_repository_architecture_migration_is_indexed_but_not_active(self) -> None:
+        docs_index = (ROOT / "docs/README.md").read_text()
+        blueprint = (ROOT / "docs/repository-architecture.md").read_text()
+        structure = (ROOT / "docs/project-structure.md").read_text()
+
+        self.assertIn("repository-architecture.md", docs_index)
+        self.assertIn(
+            "Status: approved target architecture; migration in progress",
+            blueprint,
+        )
+        self.assertIn(
+            "Benchmark Cell = Program Version × Target Profile Version",
+            blueprint,
+        )
+        self.assertIn(
+            "Power 2.0 candidate described here now exists on disk",
+            blueprint,
+        )
+        self.assertIn("No backward-compatibility layer", blueprint)
+        self.assertIn(
+            "There are no compatibility readers, schema adapters, policy adapters",
+            blueprint,
+        )
+        self.assertIn(
+            "Every active result was newly generated under Power 2.0",
+            blueprint,
+        )
+        self.assertIn("must not be treated as public", structure)
+
     def test_only_one_workflow_deploys_github_pages(self) -> None:
         workflows = (ROOT / ".github/workflows").glob("*.yml")
         deployers = [

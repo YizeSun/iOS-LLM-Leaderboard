@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "model-cohort-policy-1.0.0-draft.1",
+  "cohortID": "small-language-models",
+  "cohortVersion": "1.0.0-draft.1",
+  "status": "migration-draft",
+  "title": "Small Language Models",
+  "predicate": {
+    "field": "parameterCount",
+    "operator": "less-than-or-equal",
+    "value": 4000000000
+  },
+  "unknownParameterCountEligible": false,
+  "brandRestricted": false,
+  "rankingStatusImportedFromOlderMajor": false
+}

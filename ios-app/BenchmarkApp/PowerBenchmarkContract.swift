@@ -1,11 +1,13 @@
 import Foundation
 
 enum PowerBenchmarkRelease {
-    static let releaseID = "suite-b-power"
-    static let releaseVersion = "1.1.0-rc.1"
-    static let resultSchemaVersion = "suite-b-power-result-1.1.0-rc.1"
-    static let runnerID = "ios-reference-benchmark-app"
-    static let minimumRunnerVersion = "0.8.0"
+    static let releaseID = AppReleaseIdentity.powerReleaseID
+    static let releaseVersion = AppReleaseIdentity.powerSourceProtocolVersion
+    static let resultSchemaVersion =
+        AppReleaseIdentity.powerResultSchemaVersion
+    static let runnerID = AppReleaseIdentity.powerRunnerID
+    static let minimumRunnerVersion =
+        AppReleaseIdentity.minimumPowerRunnerVersion
 
     struct Workload: Sendable, Equatable {
         let id: String
@@ -25,6 +27,7 @@ enum PowerBenchmarkRelease {
         case missingSourceCommit
         case nonPhysicalDevice(String)
         case incompatibleRunnerVersion(String)
+        case incompatibleAppIdentity(version: String, build: String)
 
         var errorDescription: String? {
             switch self {
@@ -36,6 +39,11 @@ enum PowerBenchmarkRelease {
                 "Power evidence requires a physical iPhone; found \(identifier)."
             case .incompatibleRunnerVersion(let version):
                 "Reference App \(version) is older than \(minimumRunnerVersion)."
+            case .incompatibleAppIdentity(let version, let build):
+                "The built App identity \(version) (\(build)) does not match "
+                    + "the generated release identity "
+                    + "\(AppReleaseIdentity.appVersion) "
+                    + "(\(AppReleaseIdentity.appBuild))."
             }
         }
     }
@@ -120,6 +128,13 @@ enum PowerBenchmarkRelease {
         guard let sourceCommit = environment.appSourceCommit,
               isSourceCommit(sourceCommit) else {
             throw ContractError.missingSourceCommit
+        }
+        guard environment.appVersion == AppReleaseIdentity.appVersion,
+              environment.appBuild == AppReleaseIdentity.appBuild else {
+            throw ContractError.incompatibleAppIdentity(
+                version: environment.appVersion,
+                build: environment.appBuild
+            )
         }
         guard version(environment.appVersion, isAtLeast: minimumRunnerVersion) else {
             throw ContractError.incompatibleRunnerVersion(environment.appVersion)

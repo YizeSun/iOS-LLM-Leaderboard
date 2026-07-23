@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ios-llm-leaderboard.org/schemas/power/submission/1.0.0-draft.1",
+  "title": "Power Submission Declaration",
+  "description": "Contributor-signed metadata paired with one immutable source evidence file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "submissionID",
+    "createdAt",
+    "contributor",
+    "sourceResult",
+    "declarations"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "power-submission-1.0.0-draft.1"
+    },
+    "submissionID": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "contributor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "githubLogin",
+        "conflictOfInterest"
+      ],
+      "properties": {
+        "githubLogin": {
+          "type": "string",
+          "minLength": 1
+        },
+        "conflictOfInterest": {
+          "enum": [
+            "none",
+            "disclosed"
+          ]
+        },
+        "disclosure": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "sourceResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "schemaVersion"
+      ],
+      "properties": {
+        "path": {
+          "const": "result.json"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "schemaVersion": {
+          "const": "power-evidence-envelope-1.0.0-draft.1"
+        }
+      }
+    },
+    "declarations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "physicalDevice",
+        "publicMetadataReviewed",
+        "rawEvidenceUnmodified",
+        "containsNoPersonalData",
+        "licenseAccepted",
+        "rankingNotGuaranteed"
+      ],
+      "properties": {
+        "physicalDevice": {
+          "const": true
+        },
+        "publicMetadataReviewed": {
+          "const": true
+        },
+        "rawEvidenceUnmodified": {
+          "const": true
+        },
+        "containsNoPersonalData": {
+          "const": true
+        },
+        "licenseAccepted": {
+          "const": "CC-BY-4.0"
+        },
+        "rankingNotGuaranteed": {
+          "const": true
+        }
+      }
+    },
+    "environmentNotes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

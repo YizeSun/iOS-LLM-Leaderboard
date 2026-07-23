@@ -48,6 +48,7 @@
 		A10000000000000000000039 /* PowerSubmissionPackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000041 /* PowerSubmissionPackage.swift */; };
 		A10000000000000000000040 /* GitHubSubmissionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000042 /* GitHubSubmissionClient.swift */; };
 		A10000000000000000000041 /* PowerCompatibilityPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000044 /* PowerCompatibilityPolicy.swift */; };
+		A10000000000000000000042 /* AppReleaseIdentity.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000045 /* AppReleaseIdentity.generated.swift */; };
 		C10000000000000000000001 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000001 /* MLXLLM */; };
 		C10000000000000000000002 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000002 /* MLXLMCommon */; };
 		C10000000000000000000004 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000004 /* HuggingFace */; };
@@ -109,6 +110,11 @@
 		A20000000000000000000042 /* GitHubSubmissionClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubSubmissionClient.swift; sourceTree = "<group>"; };
 		A20000000000000000000043 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000000000000000000044 /* PowerCompatibilityPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerCompatibilityPolicy.swift; sourceTree = "<group>"; };
+		A20000000000000000000045 /* AppReleaseIdentity.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReleaseIdentity.generated.swift; sourceTree = "<group>"; };
+		A20000000000000000000046 /* AppVersion.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppVersion.xcconfig; sourceTree = "<group>"; };
+		A20000000000000000000047 /* release-identity.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "release-identity.json"; sourceTree = "<group>"; };
+		A20000000000000000000048 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		A20000000000000000000049 /* LocalSigning.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LocalSigning.example.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +145,7 @@
 			children = (
 				A70000000000000000000002 /* BenchmarkApp */,
 				A70000000000000000000003 /* BenchmarkAppTests */,
+				A70000000000000000000005 /* Config */,
 				A70000000000000000000004 /* Products */,
 				A20000000000000000000012 /* workloads/suite-b-pilot-001-prompt.txt */,
 				A20000000000000000000021 /* benchmark-plans/suite-b-pilot-001.json */,
@@ -175,6 +182,7 @@
 				A20000000000000000000033 /* SuiteBResultBundle.swift */,
 				A20000000000000000000034 /* CommunitySubmissionBundle.swift */,
 				A20000000000000000000035 /* PowerBenchmarkContract.swift */,
+				A20000000000000000000045 /* AppReleaseIdentity.generated.swift */,
 				A20000000000000000000036 /* PowerResultBundle.swift */,
 				A20000000000000000000041 /* PowerSubmissionPackage.swift */,
 				A20000000000000000000042 /* GitHubSubmissionClient.swift */,
@@ -196,6 +204,17 @@
 				A20000000000000000000039 /* PowerAppSettingsTests.swift */,
 			);
 			path = BenchmarkAppTests;
+			sourceTree = "<group>";
+		};
+		A70000000000000000000005 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000047 /* release-identity.json */,
+				A20000000000000000000046 /* AppVersion.xcconfig */,
+				A20000000000000000000048 /* Signing.xcconfig */,
+				A20000000000000000000049 /* LocalSigning.example.xcconfig */,
+			);
+			path = Config;
 			sourceTree = "<group>";
 		};
 		A70000000000000000000004 /* Products */ = {
@@ -345,6 +364,7 @@
 			files = (
 				A10000000000000000000001 /* BenchmarkApp.swift in Sources */,
 				A10000000000000000000036 /* PowerAppSettings.swift in Sources */,
+				A10000000000000000000042 /* AppReleaseIdentity.generated.swift in Sources */,
 				A10000000000000000000002 /* RunBenchmarkView.swift in Sources */,
 				A10000000000000000000003 /* DeviceEnvironment.swift in Sources */,
 				A10000000000000000000011 /* DeviceModelCatalog.swift in Sources */,
@@ -420,16 +440,14 @@
 		};
 		B10000000000000000000003 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A20000000000000000000048 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 21;
-				DEVELOPMENT_TEAM = ZMN7LG4SD9;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				GITHUB_OAUTH_CLIENT_ID = Ov23lidyeZdONyrU4Pvy;
 				INFOPLIST_FILE = BenchmarkApp/Info.plist;
-				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.benchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -443,15 +461,13 @@
 		};
 		B10000000000000000000004 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A20000000000000000000048 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 21;
-				DEVELOPMENT_TEAM = ZMN7LG4SD9;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				GITHUB_OAUTH_CLIENT_ID = Ov23lidyeZdONyrU4Pvy;
 				INFOPLIST_FILE = BenchmarkApp/Info.plist;
-				MARKETING_VERSION = 0.18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.benchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

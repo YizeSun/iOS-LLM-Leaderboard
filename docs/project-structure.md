@@ -3,6 +3,12 @@
 This policy keeps a rigorous benchmark from becoming difficult to understand
 or contribute to.
 
+This file describes the current repository structure. The
+[repository architecture and migration](repository-architecture.md) defines
+the approved target and staged cutover. The new `products/power/` tree is an
+inactive, hash-pinned migration candidate; proposed paths and candidate
+contracts must not be treated as public merely because they exist.
+
 ## Four layers
 
 | Layer | Audience | Canonical paths | Rule |
@@ -20,6 +26,9 @@ reproducibility. It must not leak into the contributor entry path.
 Do not add a new top-level directory unless none of these owns the content:
 
 - `benchmarks/` — suite specifications and release contracts;
+- `apps/` — candidate App shell and independently digestible runner modules;
+  owned by App and runner maintainers, MIT licensed, source-evolving with
+  released identities and component digests retained;
 - `contributor-kit/` — the current short contribution path plus clearly
   labeled historical guides;
 - `docs/` — product, governance, current methods, and retained decisions;
@@ -27,6 +36,10 @@ Do not add a new top-level directory unless none of these owns the content:
 - `ios-app/` — official benchmark runner;
 - `methodology/` — cross-suite benchmark conventions;
 - `models/` — model catalogs and compatibility metadata;
+- `products/` — versioned Product, Program, Target, and policy contracts;
+  currently contains only the inactive Power 2.0 migration state, including
+  its active Runner certificate and closed App release candidate; owned by
+  product and methodology maintainers, CC BY 4.0, and immutable once released;
 - `results/` — raw and generated evidence by release;
 - `schemas/` — machine-readable contracts;
 - `scripts/` — validators and deterministic generators;
@@ -36,6 +49,21 @@ Do not add a new top-level directory unless none of these owns the content:
 
 A pull request proposing a new top-level directory must document its owner,
 lifecycle, license, and why an existing path is insufficient.
+
+`products/` and `apps/` are the two approved additions during the clean-break
+migration.
+Existing `benchmarks/` remains the Power 1.1 archive and Suite-history plane;
+it cannot own a product-neutral Program × Target registry, runner
+certificates, and atomic product pointers without preserving the coupling this
+migration is removing. The candidate remains non-public until
+`products/power/current.json` is deliberately released at cutover.
+
+The existing `ios-app/` remains the public Power 1.1 application during
+migration. `apps/` is needed because the approved Target model extends beyond
+one iPhone project and requires the App shell, Runner Core, Program Modules,
+Target Adapters, Runtime Adapters, and evidence serialization to be separately
+testable and digestible. Candidate code under `apps/` is not certified or
+public merely because it exists.
 
 ## Rules that prevent growth from becoming bloat
 
@@ -62,6 +90,10 @@ lifecycle, license, and why an existing path is insufficient.
    or website view for an unapproved benchmark category.
 10. **Every new public file removes ambiguity.** If it creates a second answer
     to “what is current?” it must replace or explicitly archive the old answer.
+11. **Power and Ship stay separate.** A Benchmark App run produces Power
+    evidence. Ship may cite accepted Power measurements, but its deployment
+    profile is generated and reviewed separately; never describe Ship as part
+    of a Power result or release.
 
 ## Review checklist for structural changes
 

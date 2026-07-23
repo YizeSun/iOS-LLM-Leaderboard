@@ -1,0 +1,1 @@
+Answer in no more than two short sentences. A private note is stored safely on this device while it is offline. Tell the user what happens now and when connectivity returns. Do not claim that synchronization already happened.

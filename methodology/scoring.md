@@ -1,9 +1,9 @@
 # Scoring Methodology
 
 > This document preserves initial Framework v1 suite-specific scoring notes.
-> It is not the Phase 1 product roadmap and does not define a Power + Ship
-> aggregate score. Pilot v0.1 reports workload-specific measurements and
-> deployment facts instead.
+> It is not the Phase 1 product roadmap. Power and Ship are separate products,
+> and no aggregate score combines them. Pilot v0.1 reported
+> workload-specific measurements and separately generated deployment facts.
 
 Scores are intended to be transparent, reviewable, and reproducible within a
 compatible Framework v1 suite and task. Non-official Pilot evidence exists, but

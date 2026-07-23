@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "model-artifact-manifest-1.0.0-draft.1",
+  "registryEntryID": "mlx-community--granite-3.3-2b-instruct-4bit--58246c54",
+  "status": "rerun-candidate",
+  "reviewedAt": "2026-07-23",
+  "publisher": "mlx-community",
+  "family": "Granite 3.3",
+  "displayName": "Granite 3.3 2B Instruct",
+  "baseModel": {
+    "artifactID": "ibm-granite/granite-3.3-2b-instruct",
+    "artifactRevision": "707f574c62054322f6b5b04b6d075f0a8f05e0f0",
+    "parameterCount": 2533539840,
+    "sourceURL": "https://huggingface.co/ibm-granite/granite-3.3-2b-instruct/tree/707f574c62054322f6b5b04b6d075f0a8f05e0f0"
+  },
+  "artifactID": "mlx-community/granite-3.3-2b-instruct-4bit",
+  "artifactRevision": "58246c5498495c14599525c852cfadb66c9f3084",
+  "parameterCount": 2533539840,
+  "quantization": "4-bit-group-size-64",
+  "format": "MLX Safetensors",
+  "repositorySizeBytes": 1430233125,
+  "weights": [
+    {
+      "path": "model.safetensors",
+      "byteCount": 1425458043,
+      "sha256": "f37ff14b14f2db07b4fc476e57e619b038b264fcc9f0681bc13274772698ac93"
+    }
+  ],
+  "tokenizer": {
+    "primaryPath": "tokenizer.json",
+    "sha256": "91168e938f05796aa6dcca7e485e4b30ab52785320c7a6391ecef86e6c84681e",
+    "files": [
+      {
+        "path": "tokenizer.json",
+        "byteCount": 3476578,
+        "sha256": "91168e938f05796aa6dcca7e485e4b30ab52785320c7a6391ecef86e6c84681e"
+      }
+    ]
+  },
+  "licenseIdentifier": "apache-2.0",
+  "licenseSourceURL": "https://huggingface.co/ibm-granite/granite-3.3-2b-instruct/blob/707f574c62054322f6b5b04b6d075f0a8f05e0f0/README.md",
+  "sourceURL": "https://huggingface.co/mlx-community/granite-3.3-2b-instruct-4bit/tree/58246c5498495c14599525c852cfadb66c9f3084",
+  "runtimeCompatibility": {
+    "runtime": "MLX Swift LM",
+    "status": "requires-power-2-runner-certification",
+    "extraEndOfSequenceTokens": []
+  },
+  "oldRankingStatusImported": false,
+  "performanceClaimsRequireNewAcceptedEvidence": true
+}

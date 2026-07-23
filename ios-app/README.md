@@ -6,8 +6,14 @@ an inference framework.
 
 ## Current status
 
-App `0.18.0` build `21` separates measurement from result review and upload in
-native Test and Results tabs. It checks the repository's SHA-256-bound current
+App `0.19.0` build `22` makes the App version, build, and active Power
+identities derive from `Config/release-identity.json`. Generated Xcode and
+Swift files are checked in and verified by CI, so changing that identity
+without regenerating every consumer fails before merge. It retains the native
+Test and Results separation, contributor-owned GitHub submission, and
+exact-runner checks introduced by App 0.18.0.
+
+App 0.19.0 checks the repository's SHA-256-bound current
 compatibility policy at launch, foreground entry, and immediately before model
 preparation, measurement, or submission. An unavailable policy or unapproved
 current runner fails closed for new measurement; an unapproved selected result
@@ -37,7 +43,7 @@ substituted when an exact Power 1.0 reproduction is intended.
 
 Apps 0.8.0 through 0.11.0 emit the adopted Power 1.0 source result contract
 `suite-b-power-result-1.0.0-rc.1`. App 0.12.0 remains the historical Power 1.1
-draft runner. Apps 0.13.0 through 0.18.0 emit
+draft runner. Apps 0.13.0 through 0.19.0 emit
 `suite-b-power-result-1.1.0-rc.1`. Every raw App export sets
 `officialResultEligible` to `false`; no App export assigns its own publication,
 trust, or ranking status. Repository validation and release policy do. A
@@ -52,7 +58,7 @@ The production control surface exposes exactly two workload identities:
 
 The loader rejects any other plan identity or version. Experimental
 `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` resources are
-retained for repository history and compatibility, but App 0.18.0 cannot
+retained for repository history and compatibility, but App 0.19.0 cannot
 execute them through its production controls.
 
 The three pinned Qwen3 profiles have Maintainer Reference evidence:
@@ -61,7 +67,7 @@ The three pinned Qwen3 profiles have Maintainer Reference evidence:
 - `mlx-community/Qwen3-1.7B-4bit`;
 - `mlx-community/Qwen3-4B-3bit`.
 
-App 0.18.0 also exposes eight pinned artifacts with accepted single-contributor
+App 0.19.0 also exposes eight pinned artifacts with accepted single-contributor
 physical-iPhone community evidence:
 
 - `mlx-community/Llama-3.2-1B-Instruct-4bit`;
@@ -190,6 +196,34 @@ The source checkout commit is embedded automatically as a read-only resource
 in the built App bundle. A valid 40-character lowercase commit is required
 before the App will measure. This prevents an export from claiming an unknown
 App revision.
+
+## Release identity maintenance
+
+`Config/release-identity.json` is the only editable source for the current App
+version, build, Power source protocol, result schema, public submission
+release, submission schema, and intake path. Regenerate its derived files with:
+
+```sh
+python3 scripts/generate_ios_app_release_identity.py
+python3 scripts/generate_ios_app_release_identity.py --check
+```
+
+The generated `Config/AppVersion.xcconfig` supplies the version and build
+through the tracked `Config/Signing.xcconfig` used by both Debug and Release.
+Apple signing is deliberately local: copy
+`Config/LocalSigning.example.xcconfig` to the ignored
+`Config/LocalSigning.xcconfig` and set your own `DEVELOPMENT_TEAM`. A
+contributor's Team ID affects only installation and code signing; it is not a
+benchmark, protocol, or result identity. `BenchmarkApp/AppReleaseIdentity.generated.swift`
+supplies the App's Power result and submission constants. Do not edit generated
+files directly.
+
+Every change under `ios-app/` creates a new exact source identity. Bump the App
+version and build in the identity file, merge the App change, then publish a
+new immutable compatible-runner policy for the resulting protected-main
+commit. The new build intentionally remains unable to prepare, measure, or
+submit between those two steps. Historical results and policies are never
+retagged as the current App.
 
 Validate an exported file from the repository root with:
 

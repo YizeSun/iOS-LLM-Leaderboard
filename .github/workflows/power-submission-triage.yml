@@ -35,6 +35,7 @@ jobs:
           tests.test_power_submission_pr_triage
           tests.test_power_community_ranking
           tests.test_community_onboarding
+          tests.test_ios_app_release_identity
           tests.test_power_model_catalog
           tests.test_public_surface
           -v

@@ -1,0 +1,5 @@
+// Shared legacy App configuration. Personal Team IDs belong only in the
+// optional ignored include.
+#include "AppVersion.xcconfig"
+DEVELOPMENT_TEAM =
+#include? "LocalSigning.xcconfig"

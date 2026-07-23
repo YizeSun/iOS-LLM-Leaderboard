@@ -33,8 +33,13 @@ The leaderboard never ranks a model name in isolation. Evidence always keeps
 the model artifact and revision, quantization, runtime, device, OS, settings,
 workload, and App version together.
 
+Running the Benchmark App produces one **Power result**. It does not create or
+verify a Ship profile. Ship is a separate downstream product: it may cite
+accepted Power measurements, then adds independently reviewed integration,
+packaging, licensing, limitations, and unknowns.
+
 <p align="center">
-  <img src="docs/assets/readme/power-ship-flow-v2.svg" width="100%" alt="Exact model configuration becomes Power evidence and an evidence-backed Ship profile">
+  <img src="docs/assets/readme/power-ship-flow-v2.svg" width="100%" alt="A Benchmark App test produces Power evidence; a separate Ship process may cite accepted Power facts in deployment guidance">
 </p>
 
 ## Current releases
@@ -42,7 +47,7 @@ workload, and App version together.
 | Product | Status | What is public |
 | --- | --- | --- |
 | Power 1.1 | Active | Two frozen workloads, six Maintainer Reference results, and a live community view |
-| Ship 1.0 | Active | Evidence-backed deployment profiles and a focused MLX Swift recipe, based on Power 1.0 evidence |
+| Ship 1.0 | Published separately | Deployment profiles and a focused MLX Swift recipe derived separately from accepted Power 1.0 evidence |
 | Build | Research | Long-term complete-software-delivery research; no protocols or ranking yet |
 
 Power 1.1 retains six immutable physical-device results. All six are eligible
@@ -51,8 +56,10 @@ See the [`1.1.0` release](https://github.com/YizeSun/iOS-LLM-Leaderboard/release
 [release notes](results/suite-b-power-1.1/RELEASE-NOTES.md), and
 [checksums](results/suite-b-power-1.1/SHA256SUMS).
 
-Ship 1.0 does not invent a deployment score. It shows verified facts,
-implementation evidence, limitations, and unknowns. See the
+Ship 1.0 is not part of Power 1.1 and is not produced by a benchmark run. Its
+separate publication uses accepted Power 1.0 measurements as cited source
+evidence and combines them with reviewed integration facts, limitations, and
+unknowns. See the
 [profiles](results/ship-1.0/PROFILES.md) and
 [integration recipe](examples/mlx-swift/README.md).
 
@@ -149,7 +156,8 @@ Then open `http://localhost:4173/`.
 - Label unknowns as unknown instead of turning them into scores.
 
 See [documentation index](docs/README.md), [project vision](docs/project-vision.md),
-and [product architecture](docs/product-architecture.md).
+[product architecture](docs/product-architecture.md), and the proposed
+[repository architecture blueprint](docs/repository-architecture.md).
 
 ## License
 

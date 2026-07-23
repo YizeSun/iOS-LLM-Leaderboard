@@ -118,10 +118,12 @@ struct PowerCompatibilityPolicy: Codable, Sendable, Equatable {
     func validateForPowerOneOne() throws {
         guard policyID == "suite-b-power-runner-compatibility",
               status == "published",
-              benchmarkRelease.id == "suite-b-power",
+              benchmarkRelease.id == AppReleaseIdentity.powerReleaseID,
               benchmarkRelease.policyVersion == policyVersion,
-              benchmarkRelease.sourceRelease.id == "suite-b-power",
-              benchmarkRelease.sourceRelease.version == "1.1.0",
+              benchmarkRelease.sourceRelease.id
+                == AppReleaseIdentity.powerReleaseID,
+              benchmarkRelease.sourceRelease.version
+                == AppReleaseIdentity.powerPublishedReleaseVersion,
               !protocolSemanticsChanged,
               !resultSchemaChanged,
               !rawEvidenceMutationAllowed,

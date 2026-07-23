@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "power-stack-pointer-1.0.0-draft.1",
+  "productID": "power",
+  "stackID": "power-text-iphone-2.0.0-rc.1",
+  "status": "migration-draft",
+  "publicIntakeOpen": false,
+  "submissionRehearsalAvailable": true,
+  "certificationCandidateStack": {
+    "path": "products/power/stacks/power-text-iphone-2.0.0-draft.2/manifest.json",
+    "sha256": "43e5d8899f660c557e3a7dad0c7e54de8e440aab5be6d46096306c6e43b385a0"
+  },
+  "certificationAppCandidate": {
+    "path": "products/power/runner-certificates/evidence/b5d3c2cf-b2b8-4060-b00d-048102e6cfb9/app-component-manifest.json",
+    "sha256": "6df4dca4863e3c583f2fb4670886c72c726014835923ebcecb47664353ddc3b4"
+  },
+  "certificationEvidence": {
+    "result": {
+      "path": "products/power/runner-certificates/evidence/b5d3c2cf-b2b8-4060-b00d-048102e6cfb9/result.json",
+      "sha256": "c2b189124f83622fa24cb18e9dc4eb7c14c024fda10eccf6e4404e1b4bc05d86"
+    },
+    "review": {
+      "path": "products/power/runner-certificates/evidence/b5d3c2cf-b2b8-4060-b00d-048102e6cfb9/review.json",
+      "sha256": "359b30019dd493df8b8692f2c68d94553102a8eb4f7ce9a0754c4020a6ca2172"
+    }
+  },
+  "measurementStack": {
+    "path": "products/power/stacks/power-text-iphone-2.0.0-rc.1/manifest.json",
+    "sha256": "a92a208324af0ea85c092e1cf04248c669f01c588c9f0d0b724e4c40a1014642"
+  },
+  "runnerCandidate": {
+    "path": "apps/PowerRunnerKit/component-manifest.json",
+    "sha256": "87f62feecc2b3fca994cc4f40214aed9876f1477c51fdb7c56c6945eb6b03ee2"
+  },
+  "runnerCertificationCandidate": {
+    "path": "products/power/runner-certificates/candidate.json",
+    "sha256": "644d05903481813c0f59a734f3495b687a07d684e49c8efe3eea730672c6aa35"
+  },
+  "runnerCertificate": {
+    "path": "products/power/runner-certificates/power2-runner-87f62feecc2b.json",
+    "sha256": "5d4827d658d65766f8a68ff823f26f3dc2634be8c21dec95d6ea105183aabfc9"
+  },
+  "appCandidate": {
+    "path": "apps/ios/component-manifest.json",
+    "sha256": "18a7961e3616c5108adde624df0083d1137f53d52d92fbb41f69e098eec9ebcb"
+  },
+  "appReleaseCandidate": {
+    "path": "products/power/app-releases/candidate.json",
+    "sha256": "e3b9257b889c813a793ec9fcd02f4b277faafe972e17414e33326d5b582fe829"
+  },
+  "appReleaseRehearsalEvidence": [
+    {
+      "sourceCommit": "06f9cef32a2c312bbfc460a937410688519f72d3",
+      "appComponents": {
+        "path": "products/power/app-releases/evidence/3e8d09fd-d301-4937-b915-fda7e9be3e38/app-component-manifest.json",
+        "sha256": "821a7c22d68d118ae839ee883d54c7d1a029a5c185d8f06a85b255bf7f2b714f"
+      },
+      "result": {
+        "path": "products/power/app-releases/evidence/3e8d09fd-d301-4937-b915-fda7e9be3e38/result.json",
+        "sha256": "1e3489a42fd35eabdb311983da953a5cd36dcccb2e998e4af9cc9d85cbac91af"
+      },
+      "review": {
+        "path": "products/power/app-releases/evidence/3e8d09fd-d301-4937-b915-fda7e9be3e38/review.json",
+        "sha256": "61cb15bfe9a4d96266863b736dcc43d7c657a47ef255744eea11570152443794"
+      }
+    },
+    {
+      "sourceCommit": "16cbcb4656ea1ba1f249483e3741f7c31b9908e5",
+      "appComponents": {
+        "path": "products/power/app-releases/evidence/15eb974a-e8de-44e1-80c9-0758ad7fc95b/app-component-manifest.json",
+        "sha256": "18a7961e3616c5108adde624df0083d1137f53d52d92fbb41f69e098eec9ebcb"
+      },
+      "result": {
+        "path": "products/power/app-releases/evidence/15eb974a-e8de-44e1-80c9-0758ad7fc95b/result.json",
+        "sha256": "49e9c7bbaf810b49fbb5380473d3664e2690572cc63534cdb9832751690de6e1"
+      },
+      "review": {
+        "path": "products/power/app-releases/evidence/15eb974a-e8de-44e1-80c9-0758ad7fc95b/review.json",
+        "sha256": "9ddcc8d3daf69d4cf4c9aa813d2f21ac78b9e3877f97d8fe851d92621115ff07"
+      }
+    }
+  ],
+  "appRelease": null,
+  "activationBlockers": [
+    "issue an immutable App release for the Power 2.0 App shell",
+    "rehearse trusted-base Power 2.0 triage from public main",
+    "replace this candidate pointer with an immutable released stack",
+    "publish products/power/current.json and open intake together"
+  ]
+}

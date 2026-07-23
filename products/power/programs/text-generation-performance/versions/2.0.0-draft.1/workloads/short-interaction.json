@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "power-workload-1.0.0-draft.1",
+  "programID": "text-generation-performance",
+  "programVersion": "2.0.0-draft.1",
+  "workloadID": "power.text.short-interaction",
+  "workloadVersion": "1.0.0-draft.1",
+  "status": "migration-draft",
+  "title": "Short Interaction",
+  "category": "interactive",
+  "fixture": {
+    "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/fixtures/short-interaction.txt",
+    "sha256": "80f43b69ed38ece69e6014d65ca20197d13eee488f452bc6ce25ab9e44acbc26"
+  },
+  "measurementMode": "warm-resident-interactive-v1",
+  "generation": {
+    "sampling": false,
+    "temperature": 0,
+    "topP": 1,
+    "topK": 0,
+    "seed": 0,
+    "maximumOutputTokens": 128,
+    "reasoningMode": "disabled",
+    "newContextPerAttempt": true,
+    "newKVCachePerAttempt": true
+  },
+  "procedure": {
+    "warmupAttempts": 1,
+    "measuredAttempts": 5,
+    "restIntervalSeconds": 0
+  },
+  "responseContract": {
+    "maximumSentences": 2,
+    "requiredMeaning": [
+      "the note is stored locally and safely",
+      "synchronization resumes when connectivity returns"
+    ],
+    "decisionAuthority": "trusted-validator",
+    "affectsMetricEligibility": false,
+    "affectsRecommendationEligibility": true
+  },
+  "primaryMetric": "first_renderable_ms",
+  "metrics": [
+    "first_renderable_ms",
+    "pipeline_ttft_ms",
+    "request_completion_ms",
+    "prefill_tokens_per_second",
+    "decode_tokens_per_second",
+    "peak_physical_footprint_mib"
+  ]
+}

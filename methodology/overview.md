@@ -1,9 +1,11 @@
 # Methodology Overview
 
 iOS-LLM-Leaderboard's public product architecture is Build, Power, and Ship.
-Product Phase 1 is Power + Ship; Build is a Phase 2 Research Track. See the
-[Product Architecture](../docs/product-architecture.md) for the authoritative
-product mapping and priorities.
+Phase 1 has separate Power and Ship products; Build is a Phase 2 Research
+Track. A Benchmark App run creates Power evidence only. Ship may cite accepted
+Power measurements in a separately reviewed deployment profile, but Power does
+not contain Ship. See the [Product Architecture](../docs/product-architecture.md)
+for the authoritative product mapping and priorities.
 
 The methodology layer still retains five Framework v1 suite namespaces. These
 are independent benchmark and evidence boundaries, not public product tracks
@@ -15,8 +17,8 @@ or equal implementation priorities:
 - Suite D may contribute a later Power quality gate, but Pilot v0.1 executes no
   Suite D task.
 - Suite E may contribute later Ship integration evidence, but Pilot v0.1
-  executes no Suite E task or score. Its Ship view reuses the tested Suite B
-  configuration.
+  executes no Suite E task or score. Its historical Ship view was generated
+  separately and cited the tested Suite B configuration.
 
 The public leaderboard may emphasize model names for readability, while the
 underlying evidence must retain the full evaluation-unit configuration.

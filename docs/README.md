@@ -12,6 +12,12 @@ Start here rather than reading every historical decision record.
 - [Community contribution model](community-contribution-model.md)
 - [Project structure and growth policy](project-structure.md)
 
+## Architecture planning
+
+- [Repository architecture and migration](repository-architecture.md) —
+  approved target modules, invariants, audit, implemented inactive candidate,
+  and remaining clean-break Power 2.0 cutover gates
+
 ## Normative and audit records
 
 - [Power 1.1 finalization](power-benchmark-1.1-finalization.md)

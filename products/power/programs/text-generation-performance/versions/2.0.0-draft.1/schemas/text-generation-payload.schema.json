@@ -1,0 +1,525 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ios-llm-leaderboard.org/schemas/power/text-generation-payload/1.0.0-draft.1",
+  "title": "Power Text Generation Payload",
+  "description": "Program-specific immutable measurements for one Power text-generation workload.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "workload",
+    "measurementMode",
+    "inferenceConfiguration",
+    "attempts"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "power-text-generation-payload-1.0.0-draft.1"
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "power.text.short-interaction",
+            "power.text.sustained-generation"
+          ]
+        },
+        "version": {
+          "const": "1.0.0-draft.1"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "measurementMode": {
+      "enum": [
+        "warm-resident-interactive-v1",
+        "warm-resident-sustained-v1"
+      ]
+    },
+    "inferenceConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sampling",
+        "temperature",
+        "topP",
+        "topK",
+        "seed",
+        "maximumOutputTokens",
+        "reasoningMode",
+        "newContextPerAttempt",
+        "newKVCachePerAttempt"
+      ],
+      "properties": {
+        "sampling": {
+          "type": "boolean"
+        },
+        "temperature": {
+          "type": "number"
+        },
+        "topP": {
+          "type": "number"
+        },
+        "topK": {
+          "type": "integer"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "maximumOutputTokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "reasoningMode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "newContextPerAttempt": {
+          "type": "boolean"
+        },
+        "newKVCachePerAttempt": {
+          "type": "boolean"
+        }
+      }
+    },
+    "attempts": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/attempt"
+            },
+            {
+              "properties": {
+                "index": {
+                  "const": 0
+                },
+                "phase": {
+                  "const": "warmup"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/attempt"
+            },
+            {
+              "properties": {
+                "index": {
+                  "const": 1
+                },
+                "phase": {
+                  "const": "measured"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/attempt"
+            },
+            {
+              "properties": {
+                "index": {
+                  "const": 2
+                },
+                "phase": {
+                  "const": "measured"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/attempt"
+            },
+            {
+              "properties": {
+                "index": {
+                  "const": 3
+                },
+                "phase": {
+                  "const": "measured"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/attempt"
+            },
+            {
+              "properties": {
+                "index": {
+                  "const": 4
+                },
+                "phase": {
+                  "const": "measured"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/attempt"
+            },
+            {
+              "properties": {
+                "index": {
+                  "const": 5
+                },
+                "phase": {
+                  "const": "measured"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "items": false
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "attempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index",
+        "phase",
+        "outcome",
+        "startedAt",
+        "endedAt",
+        "monotonic",
+        "tokenCounts",
+        "tokenEvents",
+        "generatedText",
+        "memory",
+        "thermal"
+      ],
+      "properties": {
+        "index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "phase": {
+          "enum": [
+            "warmup",
+            "measured"
+          ]
+        },
+        "outcome": {
+          "enum": [
+            "succeeded",
+            "failed",
+            "cancelled",
+            "oom",
+            "not-run"
+          ]
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "endedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "monotonic": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "clock",
+            "requestAcceptedNanoseconds"
+          ],
+          "properties": {
+            "clock": {
+              "const": "continuous-clock"
+            },
+            "requestAcceptedNanoseconds": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "firstTokenNanoseconds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "firstRenderableNanoseconds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "completedNanoseconds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "promptEvaluationNanoseconds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "decodeNanoseconds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            }
+          }
+        },
+        "tokenCounts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "input",
+            "output"
+          ],
+          "properties": {
+            "input": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "output": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "tokenEvents": {
+          "type": "array",
+          "maxItems": 512,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "index",
+              "tokenID",
+              "receivedNanoseconds",
+              "decodedAtNanoseconds",
+              "decodedPrefix",
+              "isSpecial",
+              "isRenderable"
+            ],
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "tokenID": {
+                "type": "integer"
+              },
+              "receivedNanoseconds": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "decodedAtNanoseconds": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "decodedPrefix": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "isSpecial": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "isRenderable": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "generatedText": {
+          "type": "string"
+        },
+        "memory": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "peakPhysicalFootprintBytes",
+            "samples"
+          ],
+          "properties": {
+            "peakPhysicalFootprintBytes": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "samples": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "elapsedNanoseconds",
+                  "physicalFootprintBytes"
+                ],
+                "properties": {
+                  "elapsedNanoseconds": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "physicalFootprintBytes": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "thermal": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "start",
+            "end",
+            "transitions"
+          ],
+          "properties": {
+            "start": {
+              "$ref": "#/$defs/thermalState"
+            },
+            "end": {
+              "$ref": "#/$defs/thermalState"
+            },
+            "transitions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "elapsedNanoseconds",
+                  "state"
+                ],
+                "properties": {
+                  "elapsedNanoseconds": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "state": {
+                    "$ref": "#/$defs/thermalState"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "failure": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "succeeded"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "failure": {
+                "type": "null"
+              },
+              "monotonic": {
+                "required": [
+                  "firstTokenNanoseconds",
+                  "completedNanoseconds",
+                  "promptEvaluationNanoseconds",
+                  "decodeNanoseconds"
+                ]
+              }
+            }
+          },
+          "else": {
+            "required": [
+              "failure"
+            ]
+          }
+        }
+      ]
+    },
+    "thermalState": {
+      "enum": [
+        "nominal",
+        "fair",
+        "serious",
+        "critical",
+        "unknown"
+      ]
+    }
+  }
+}

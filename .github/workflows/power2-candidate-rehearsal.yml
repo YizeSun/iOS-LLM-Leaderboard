@@ -1,0 +1,126 @@
+name: Power 2 candidate rehearsal
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/power2-candidate-rehearsal.yml"
+      - "apps/PowerAppKit/**"
+      - "apps/PowerRunnerKit/**"
+      - "apps/ios/**"
+      - "models/**"
+      - "products/power/**"
+      - "scripts/generate_power2_*.py"
+      - "scripts/generate_power_app_component_manifest.py"
+      - "scripts/generate_power_app_release_identity.py"
+      - "scripts/generate_power_mlx_dependency_identity.py"
+      - "scripts/generate_power_release_candidates.py"
+      - "scripts/generate_power_runner_component_manifest.py"
+      - "scripts/lib/power2/**"
+      - "scripts/repoctl.py"
+      - "scripts/review_power2_app_release_result.py"
+      - "scripts/review_power2_certification_result.py"
+      - "scripts/triage_power2_submission_pr.py"
+      - "tests/test_power_2_*.py"
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Optional result-only PR to classify from trusted main
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  verify:
+    name: Verify closed Power 2 candidate
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify generated identity chain
+        run: |
+          python3 scripts/generate_power_app_release_identity.py --check
+          python3 scripts/generate_power_mlx_dependency_identity.py --check
+          python3 scripts/generate_power_runner_component_manifest.py --check
+          python3 scripts/generate_power2_app_catalog.py --check
+          python3 scripts/generate_power2_candidate_identity.py --check
+          python3 scripts/generate_power_app_component_manifest.py --check
+          python3 scripts/generate_power_release_candidates.py --check
+          python3 scripts/repoctl.py verify-power-candidate
+      - name: Test Power 2 control plane
+        run: >-
+          python3 -m unittest
+          tests.test_power_2_candidate
+          tests.test_power_2_engine
+          tests.test_power_2_runner_components
+          tests.test_power_2_app_shell
+          -v
+      - name: Test Swift packages
+        run: |
+          swift test --package-path apps/PowerRunnerKit
+          swift test --package-path apps/PowerAppKit
+      - name: Build Certification and Official configurations
+        run: |
+          xcodebuild \
+            -project apps/ios/PowerBenchmarkApp.xcodeproj \
+            -scheme PowerCertification \
+            -configuration Certification \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            POWER_SOURCE_REVISION="$(shasum -a 256 apps/ios/component-manifest.json | awk '{print $1}')" \
+            build
+          xcodebuild \
+            -project apps/ios/PowerBenchmarkApp.xcodeproj \
+            -scheme PowerOfficial \
+            -configuration Official \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            POWER_SOURCE_REVISION="$(shasum -a 256 apps/ios/component-manifest.json | awk '{print $1}')" \
+            build
+
+  classify:
+    name: Rehearse trusted result-only routing
+    if: github.event_name == 'workflow_dispatch' && inputs.pr_number != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out trusted migration validator
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch PR object without checking it out
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          git fetch --no-tags origin \
+            "pull/${PR_NUMBER}/head:refs/remotes/origin/power2-rehearsal-${PR_NUMBER}"
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" \
+            --jq .user.login > /tmp/power2-pr-author.txt
+      - name: Classify against the public main baseline
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+        run: |
+          python3 scripts/triage_power2_submission_pr.py \
+            --base refs/remotes/origin/main \
+            --head "refs/remotes/origin/power2-rehearsal-${PR_NUMBER}" \
+            --expected-contributor "$(cat /tmp/power2-pr-author.txt)" \
+            --evaluated-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --validator-source-revision "$(git rev-parse HEAD)" \
+            --app-release-rehearsal \
+            --output /tmp/power2-triage.json || true
+          cat /tmp/power2-triage.json >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload rehearsal report
+        uses: actions/upload-artifact@v4
+        with:
+          name: power2-candidate-triage
+          path: /tmp/power2-triage.json

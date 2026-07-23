@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "power-intake-policy-1.0.0-draft.1",
+  "policyID": "power-intake",
+  "policyVersion": "1.0.0-draft.1",
+  "status": "migration-draft",
+  "trustedBaseExecutionRequired": true,
+  "submissionMayChangeOnlyItsOwnPackage": true,
+  "hardRejectChecks": [
+    "structuralValidity",
+    "contractConformance",
+    "digestIntegrity",
+    "runnerCertificate",
+    "appRelease",
+    "intakeState",
+    "contributor"
+  ],
+  "manualReviewChecks": [
+    "contributor"
+  ],
+  "manualReviewWhen": [
+    "declared-conflict-of-interest",
+    "thermal-assistance-not-none",
+    "unknown-environment-field",
+    "validator-warning",
+    "policy-specific-review-trigger"
+  ],
+  "autoAcceptWhen": [
+    "all-hard-gates-pass",
+    "no-manual-review-trigger",
+    "package-is-result-only"
+  ],
+  "classifications": [
+    "auto-accept",
+    "manual-review",
+    "reject",
+    "not-applicable"
+  ]
+}

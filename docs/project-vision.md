@@ -5,15 +5,16 @@
 iOS-LLM-Leaderboard is a community-maintained, reproducible benchmark and
 integration reference for deploying on-device AI on Apple platforms.
 
-The Phase 1 product helps developers answer two connected questions:
+Phase 1 has two separate product tracks that answer connected questions:
 
 - **Power**: which model, runtime, and device configurations can provide useful
   intelligence inside an application?
 - **Ship**: which tested configurations are practical to integrate,
   distribute, and operate?
 
-The project turns credible benchmark evidence into understandable model
-comparisons and focused Swift integration guidance.
+Power turns benchmark evidence into model comparisons. Ship is a separate
+downstream product that may cite accepted Power measurements while adding
+independently reviewed Swift integration and deployment guidance.
 
 The long-term vision also includes **Build**: whether an AI system can deliver
 a complete iOS application. Build is explicitly a Phase 2 Research Track, not
@@ -51,7 +52,10 @@ device, OS, inference settings, workload, and measurement mode.
 
 ### Phase 1: Ship
 
-Ship translates tested Power evidence into deployment guidance.
+Ship publishes deployment guidance separately from Power. A Power run does not
+create or verify a Ship profile. Ship may cite accepted Power measurements,
+but its integration, packaging, distribution, and license claims require their
+own reviewable sources.
 
 - Suite E can contribute runtime compatibility and integration evidence.
 - Developer recipes link deployment claims to tested reference profiles.
