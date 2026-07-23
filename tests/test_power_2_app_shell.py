@@ -106,6 +106,9 @@ class Power2AppShellTests(unittest.TestCase):
             / "PowerBenchmarkApp"
             / "PowerCertificationBuildIdentity.swift"
         ).read_text(encoding="utf-8")
+        info_plist = (
+            APP_ROOT / "PowerBenchmarkApp" / "Info.plist"
+        ).read_text(encoding="utf-8")
         model = (
             APP_ROOT
             / "PowerBenchmarkApp"
@@ -118,6 +121,11 @@ class Power2AppShellTests(unittest.TestCase):
         self.assertIn('SUPPORTED_PLATFORMS = "iphoneos";', project)
         self.assertIn("PowerSourceRevision", identity)
         self.assertIn("isValidSourceRevision", identity)
+        self.assertIn("<key>PowerSourceRevision</key>", info_plist)
+        self.assertIn(
+            "<string>$(POWER_SOURCE_REVISION)</string>",
+            info_plist,
+        )
         self.assertIn("AppleIPhoneTargetAdapter()", model)
         self.assertIn("PowerRunner(runtime: runtime, target: target)", model)
         self.assertIn("PowerEvidenceEnvelope(", model)

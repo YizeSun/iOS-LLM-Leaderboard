@@ -35,6 +35,7 @@
 		A20000000000000000000007 /* PowerBenchmarkApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = PowerBenchmarkApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000000000000000008 /* Power2CandidateCatalog.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Power2CandidateCatalog.generated.swift; sourceTree = "<group>"; };
 		A20000000000000000000009 /* PowerCertificationBuildIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerCertificationBuildIdentity.swift; sourceTree = "<group>"; };
+		A20000000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +76,7 @@
 				A20000000000000000000004 /* PowerTestView.swift */,
 				A20000000000000000000005 /* PowerResultsView.swift */,
 				A20000000000000000000009 /* PowerCertificationBuildIdentity.swift */,
+				A20000000000000000000010 /* Info.plist */,
 			);
 			path = PowerBenchmarkApp;
 			sourceTree = "<group>";
@@ -222,12 +224,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Power Benchmark";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				INFOPLIST_KEY_PowerSourceRevision = "$(POWER_SOURCE_REVISION)";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
 				MARKETING_VERSION = 2.0.0;
+				POWER_APP_DISPLAY_NAME = "Power Benchmark";
 				POWER_SOURCE_REVISION = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.candidate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -245,12 +245,10 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Power Benchmark";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				INFOPLIST_KEY_PowerSourceRevision = "$(POWER_SOURCE_REVISION)";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
 				MARKETING_VERSION = 2.0.0;
+				POWER_APP_DISPLAY_NAME = "Power Benchmark";
 				POWER_SOURCE_REVISION = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.candidate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -268,12 +266,10 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Power Benchmark Certification";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				INFOPLIST_KEY_PowerSourceRevision = "$(POWER_SOURCE_REVISION)";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
 				MARKETING_VERSION = 2.0.0;
+				POWER_APP_DISPLAY_NAME = "Power Benchmark Certification";
 				POWER_SOURCE_REVISION = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.certification;
 				PRODUCT_NAME = "$(TARGET_NAME)";

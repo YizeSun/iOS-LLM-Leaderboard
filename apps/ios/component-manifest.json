@@ -16,6 +16,10 @@
           "sha256": "a620d9f1eeb68285c1a91b3ed7303f95c9fe2aa0bea6fca65babb76b61822287"
         },
         {
+          "path": "apps/ios/PowerBenchmarkApp/Info.plist",
+          "sha256": "053e8ee9b2072f13b4a3c4f3bdd191a7f4da3e52be8f7ccd62a129b479cc12be"
+        },
+        {
           "path": "apps/ios/PowerBenchmarkApp/PowerAppModel.swift",
           "sha256": "4ef8ac447015fd5fb3fded8556f3954bd59e66c2c0e379219b30d58e465d3e42"
         },
@@ -40,7 +44,7 @@
           "sha256": "0c2a4321127bb648825abf09232915adf85cd938ed2aa050cfef38f6f4c54ed5"
         }
       ],
-      "sha256": "c5aa2ee425af0814b3e4f5a5e50f3c391883ab19c92da5cf4d968fc2ebf62657",
+      "sha256": "a584b9241af53325e92fea631c784be6b58fc73d780fb85d10c8f65e00786194",
       "sourceRoot": "apps/ios"
     },
     "githubSubmission": {
@@ -74,6 +78,10 @@
       "sourceRoot": "apps/PowerAppKit/Sources/PowerSubmissionKit"
     }
   },
+  "infoPlist": {
+    "path": "apps/ios/PowerBenchmarkApp/Info.plist",
+    "sha256": "053e8ee9b2072f13b4a3c4f3bdd191a7f4da3e52be8f7ccd62a129b479cc12be"
+  },
   "productID": "power",
   "releaseBlockers": [
     "issue a runner certificate after physical-device review",
@@ -97,6 +105,6 @@
   },
   "xcodeProject": {
     "path": "apps/ios/PowerBenchmarkApp.xcodeproj/project.pbxproj",
-    "sha256": "e24fdd5482ed4cf23582ab1b4f3b5b971a6a8283862c902437eecdfd67ecc203"
+    "sha256": "c7bac658a2c061d0dc1fbdee72ae0fbcc6e86459e6d8b913e08eb003330cfe89"
   }
 }

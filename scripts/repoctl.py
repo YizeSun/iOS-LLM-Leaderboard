@@ -409,6 +409,7 @@ def _verify_app_candidate(
 
     required_pins = {
         "xcodeProject": "apps/ios/PowerBenchmarkApp.xcodeproj/project.pbxproj",
+        "infoPlist": "apps/ios/PowerBenchmarkApp/Info.plist",
         "certificationScheme":
             "apps/ios/PowerBenchmarkApp.xcodeproj/xcshareddata/"
             "xcschemes/PowerCertification.xcscheme",
@@ -445,6 +446,13 @@ def _verify_app_candidate(
                 / "apps"
                 / "ios"
                 / "Power2CandidateCatalog.generated.swift"
+            ).resolve(),
+            (
+                ROOT
+                / "apps"
+                / "ios"
+                / "PowerBenchmarkApp"
+                / "Info.plist"
             ).resolve(),
         },
         "resultsStore": {
