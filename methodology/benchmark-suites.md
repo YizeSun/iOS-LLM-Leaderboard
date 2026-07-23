@@ -4,9 +4,10 @@ iOS-LLM-Leaderboard retains five independent suite namespaces in Benchmark
 Framework v1. They organize stable IDs, historical tasks, methodology, and
 evidence ownership during migration.
 
-These namespaces are not the public product architecture. Product Phase 1 is
-Power + Ship, while Build is a Phase 2 Research Track. The authoritative mapping
-is documented in [Product Architecture](../docs/product-architecture.md#suite-relationships).
+These namespaces are not the public product architecture. Phase 1 has
+independent Power and Ship products, while Build is a Phase 2 Research Track.
+A Power run does not produce a Ship result. The authoritative mapping is
+documented in [Product Architecture](../docs/product-architecture.md#suite-relationships).
 
 - Suite A and Suite C are retained for compatibility and Phase 2 Build research.
 - Suite B is the active measurement foundation for Phase 1 Power.

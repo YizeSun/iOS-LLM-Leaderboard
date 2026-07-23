@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "power-ranking-policy-1.0.0-draft.1",
+  "policyID": "power-ranking",
+  "policyVersion": "1.0.0-draft.1",
+  "status": "migration-draft",
+  "globalScoreDefined": false,
+  "sourceEvidenceState": "accepted",
+  "exactComparisonKey": [
+    "programID",
+    "programVersion",
+    "targetID",
+    "targetVersion",
+    "workloadID",
+    "workloadVersion",
+    "measurementMode",
+    "modelArtifactID",
+    "modelArtifactRevision",
+    "quantization",
+    "runtimeIdentity",
+    "machineIdentifier",
+    "osVersion",
+    "osBuild",
+    "inferenceConfiguration"
+  ],
+  "distinctContributorThresholds": {
+    "acceptedEvidence": 1,
+    "reproduced": 2,
+    "contributorWeightedAggregation": 3
+  },
+  "sameContributorCountsOncePerExactCell": true,
+  "failedCancelledOOMAndIneligibleAttemptsRemainEvidence": true,
+  "ordinaryRankingRequiresTargetAdmission": true,
+  "metricEligibilityIsIndependentPerMetric": true,
+  "views": [
+    {
+      "id": "interactive-responsiveness",
+      "workloadID": "power.text.short-interaction",
+      "primaryMetric": "first_renderable_ms"
+    },
+    {
+      "id": "sustained-generation",
+      "workloadID": "power.text.sustained-generation",
+      "primaryMetric": "decode_tokens_per_second"
+    }
+  ]
+}

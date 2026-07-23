@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "model-artifact-registry-1.0.0-draft.1",
+  "status": "migration-draft",
+  "purpose": "Exact artifact identities selected for Power 2.0 runner certification and new physical-device reruns",
+  "entries": [
+    {
+      "registryEntryID": "mlx-community--llama-3.2-1b-instruct-4bit--08231374",
+      "path": "models/artifacts/mlx-community/llama-3.2-1b-instruct-4bit/08231374eeacb049a0eade7922910865b8fce912/manifest.json",
+      "sha256": "282b2b5890529c2281888cbc6f432bd846bc0d2874a692fc0cedd71d458f2020"
+    },
+    {
+      "registryEntryID": "mlx-community--gemma-3-1b-it-qat-4bit--15fed4ea",
+      "path": "models/artifacts/mlx-community/gemma-3-1b-it-qat-4bit/15fed4eafb456c6fcb2a1165f19ac609670ed14b/manifest.json",
+      "sha256": "4691ff05e87da5f5ef6da36450fa7df55b97f7ce2a09f95742081c5261d59a65"
+    },
+    {
+      "registryEntryID": "mlx-community--granite-3.3-2b-instruct-4bit--58246c54",
+      "path": "models/artifacts/mlx-community/granite-3.3-2b-instruct-4bit/58246c5498495c14599525c852cfadb66c9f3084/manifest.json",
+      "sha256": "951ef84fb2249be291cb22699617058e3dfe411401081cb3d93db30c74feaef7"
+    },
+    {
+      "registryEntryID": "mlx-community--smollm3-3b-4bit--d3a7e059",
+      "path": "models/artifacts/mlx-community/smollm3-3b-4bit/d3a7e0594d6642dbcfb7d149bed8b0bdf49f95ce/manifest.json",
+      "sha256": "0d6092cbcf7dc3824a6e9293ec452ded1ca4ecc5dfff0fc5fa9c5b4ea5078402"
+    }
+  ],
+  "entryRequirements": [
+    "registryEntryID",
+    "path",
+    "sha256"
+  ],
+  "manifestRequirements": [
+    "publisher",
+    "family",
+    "artifactID",
+    "artifactRevision",
+    "parameterCount",
+    "quantization",
+    "format",
+    "repositorySizeBytes",
+    "tokenizer.sha256",
+    "runtimeCompatibility.extraEndOfSequenceTokens",
+    "licenseIdentifier",
+    "licenseSourceURL",
+    "sourceURL"
+  ],
+  "oldRankingStatusImported": false,
+  "performanceClaimsRequireNewAcceptedEvidence": true
+}

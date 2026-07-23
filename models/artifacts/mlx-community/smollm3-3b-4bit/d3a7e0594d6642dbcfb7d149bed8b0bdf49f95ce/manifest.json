@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "model-artifact-manifest-1.0.0-draft.1",
+  "registryEntryID": "mlx-community--smollm3-3b-4bit--d3a7e059",
+  "status": "rerun-candidate",
+  "reviewedAt": "2026-07-23",
+  "publisher": "mlx-community",
+  "family": "SmolLM3",
+  "displayName": "SmolLM3 3B",
+  "baseModel": {
+    "artifactID": "HuggingFaceTB/SmolLM3-3B",
+    "artifactRevision": "a07cc9a04f16550a088caea529712d1d335b0ac1",
+    "parameterCount": 3075098624,
+    "sourceURL": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B/tree/a07cc9a04f16550a088caea529712d1d335b0ac1"
+  },
+  "artifactID": "mlx-community/SmolLM3-3B-4bit",
+  "artifactRevision": "d3a7e0594d6642dbcfb7d149bed8b0bdf49f95ce",
+  "parameterCount": 3075098624,
+  "quantization": "4-bit-group-size-64",
+  "format": "MLX Safetensors",
+  "repositorySizeBytes": 1747380812,
+  "weights": [
+    {
+      "path": "model.safetensors",
+      "byteCount": 1730051993,
+      "sha256": "d501e6193d7eb84e10d3c377007d1fc4b4b2fa08799dd10fa4f6a75033334a70"
+    }
+  ],
+  "tokenizer": {
+    "primaryPath": "tokenizer.json",
+    "sha256": "7b6a500b662a34eb3f0374db856ba4ad7de4c81040571d78dc0d357238930005",
+    "files": [
+      {
+        "path": "tokenizer.json",
+        "byteCount": 17208819,
+        "sha256": "7b6a500b662a34eb3f0374db856ba4ad7de4c81040571d78dc0d357238930005"
+      }
+    ]
+  },
+  "licenseIdentifier": "apache-2.0",
+  "licenseSourceURL": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B/blob/a07cc9a04f16550a088caea529712d1d335b0ac1/README.md",
+  "sourceURL": "https://huggingface.co/mlx-community/SmolLM3-3B-4bit/tree/d3a7e0594d6642dbcfb7d149bed8b0bdf49f95ce",
+  "runtimeCompatibility": {
+    "runtime": "MLX Swift LM",
+    "status": "requires-power-2-runner-certification",
+    "extraEndOfSequenceTokens": []
+  },
+  "oldRankingStatusImported": false,
+  "performanceClaimsRequireNewAcceptedEvidence": true
+}

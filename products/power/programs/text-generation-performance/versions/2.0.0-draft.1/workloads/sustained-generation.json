@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "power-workload-1.0.0-draft.1",
+  "programID": "text-generation-performance",
+  "programVersion": "2.0.0-draft.1",
+  "workloadID": "power.text.sustained-generation",
+  "workloadVersion": "1.0.0-draft.1",
+  "status": "migration-draft",
+  "title": "Sustained Generation",
+  "category": "pipeline",
+  "fixture": {
+    "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/fixtures/sustained-generation.txt",
+    "sha256": "c375cc54156fccdc0f2d6803fe2e2226126854f7ffbc0ee9bc304681a923e921"
+  },
+  "measurementMode": "warm-resident-sustained-v1",
+  "generation": {
+    "sampling": false,
+    "temperature": 0,
+    "topP": 1,
+    "topK": 0,
+    "seed": 0,
+    "maximumOutputTokens": 512,
+    "reasoningMode": "disabled",
+    "newContextPerAttempt": true,
+    "newKVCachePerAttempt": true
+  },
+  "procedure": {
+    "warmupAttempts": 1,
+    "measuredAttempts": 5,
+    "restIntervalSeconds": 0
+  },
+  "primaryMetric": "decode_tokens_per_second",
+  "metrics": [
+    "pipeline_ttft_ms",
+    "prefill_tokens_per_second",
+    "decode_tokens_per_second",
+    "peak_physical_footprint_mib",
+    "decode_first_to_last_percent_change"
+  ]
+}

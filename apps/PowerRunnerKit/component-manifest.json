@@ -1,0 +1,110 @@
+{
+  "certificationBlockers": [
+    "run a physical-device smoke test",
+    "review raw physical-device evidence"
+  ],
+  "completeForCertification": false,
+  "components": {
+    "evidenceEnvelope": {
+      "files": [
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerEvidence/JSONValue.swift",
+          "sha256": "ce5f2b3d9f16984eb2427488a7a075f0272420e1a4ccb48c67fa55c5eea66fbb"
+        },
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerEvidence/PowerEvidence.swift",
+          "sha256": "7eab824422fe16d7523414f1c6840d833ac7095c092b4898344f8b035721e8e0"
+        },
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerEvidence/PowerEvidenceEncoder.swift",
+          "sha256": "7a4dc164918049c027f7ade2ca84755e113c6425f2faeef9e1f30c32f6115066"
+        }
+      ],
+      "sha256": "0b506c6a47cfe70c39d40345ddb1a7b7150e8c97f6a74512907a4311a8719884",
+      "sourceRoot": "apps/PowerRunnerKit/Sources/PowerEvidence"
+    },
+    "programModule": {
+      "files": [
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerTextProgram/PowerTextProgramModule.swift",
+          "sha256": "b6f6533af0b4e0f53cfa0ccb89a863f59da58f80770da0beb23f40bd6e651a2a"
+        },
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerTextProgram/PowerTextWorkload.swift",
+          "sha256": "79543d187807c6c8511c98fc97fe3d140c5bd58e640131f16e55c9ea22b39001"
+        }
+      ],
+      "sha256": "c0fe599f3723bc0d3d1c7ac3f03e225e0c4b7d47721cb09b9db0ab65e1a38349",
+      "sourceRoot": "apps/PowerRunnerKit/Sources/PowerTextProgram"
+    },
+    "runnerCore": {
+      "files": [
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerRunnerCore/PowerMonotonicClock.swift",
+          "sha256": "0572aa5d8c74f1253f4d7db18cb425331a04aca0ec5990cc8269e2dda120ca45"
+        },
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerRunnerCore/PowerRunner.swift",
+          "sha256": "1d364148fdc0498c4903292b7a29bbcc62d0d50ebf8ddfb63581ea55b78cb34b"
+        },
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerRunnerCore/PowerRunnerTypes.swift",
+          "sha256": "fade14b1c40c949509595bb8873f9e3f874b9745a85a8e350a2ba1cbb6177e23"
+        }
+      ],
+      "sha256": "feedfcf17df9bbc03cbf3b3c7a3bfb2072ff46842604979127c5b46ce7c9c09c",
+      "sourceRoot": "apps/PowerRunnerKit/Sources/PowerRunnerCore"
+    },
+    "runtimeAdapter": {
+      "files": [
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerMLXRuntime/PowerMLXDependencyLock.generated.swift",
+          "sha256": "5807afceddae26661c40b5f23415bcf7f6f62095be679da03433c8e52f603399"
+        },
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerMLXRuntime/PowerMLXModelLoader.swift",
+          "sha256": "2652c0277031ec826eecf49242bd8c37cea658b5c03f9e3feb66c76cfc89452f"
+        },
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerMLXRuntime/PowerMLXRuntimeAdapter.swift",
+          "sha256": "decace4b05aa0c1adeba3585da2b650ece78d4d1d27cf0645cb4d92b6a4253f6"
+        },
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerMLXRuntime/PowerMLXRuntimeIdentity.swift",
+          "sha256": "97f4a5bcbb26794a8256e54e502b159b214f1b5a675bf15cf42dbab937533ea0"
+        },
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerMLXRuntime/PowerMLXTokenizer.swift",
+          "sha256": "ae4b67c8b08642162e7a07774354b0748ea6f9e0441b15308e1342a2dc6e8025"
+        }
+      ],
+      "sha256": "2651243b0771249553cc65ee1b975456eb00020e8563f02ccf41c1d36e0ad7c2",
+      "sourceRoot": "apps/PowerRunnerKit/Sources/PowerMLXRuntime"
+    },
+    "targetAdapter": {
+      "files": [
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerAppleTarget/AppleIPhoneAdmission.swift",
+          "sha256": "b72bb0f48205befbc37799d078f1bcd66841a8ca633c6a2731142338851f9eaa"
+        },
+        {
+          "path": "apps/PowerRunnerKit/Sources/PowerAppleTarget/AppleIPhoneTargetAdapter.swift",
+          "sha256": "3deaa6467a4ec263c7c5a82380bcaa3077a81c04e778b5f26c536ecfd40bf698"
+        }
+      ],
+      "sha256": "85c71405017e1bf78cdedd84965bcdfe93f967a1cb5364d408bb751c6fea370a",
+      "sourceRoot": "apps/PowerRunnerKit/Sources/PowerAppleTarget"
+    }
+  },
+  "packageManifest": {
+    "path": "apps/PowerRunnerKit/Package.swift",
+    "sha256": "827bf6dde799c6fed648bd2f57dfb5b1ee3e2b7e05ad5c3017e26eb6f08ab9bc"
+  },
+  "productID": "power",
+  "resolvedDependencies": {
+    "path": "apps/PowerRunnerKit/Package.resolved",
+    "sha256": "6dc7774e01f6cd7449d42a1d36655fe61802c832689369e76f0e603ee218e1ef"
+  },
+  "schemaVersion": "power-runner-component-manifest-1.0.0-draft.1",
+  "status": "migration-draft"
+}

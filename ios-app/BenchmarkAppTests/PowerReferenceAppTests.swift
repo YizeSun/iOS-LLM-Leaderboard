@@ -17,12 +17,20 @@ final class PowerReferenceAppTests: XCTestCase {
         XCTAssertTrue(PowerBenchmarkRelease.isSourceCommit(sourceCommit))
     }
 
+    func testBuiltAppUsesGeneratedReleaseIdentity() {
+        XCTAssertEqual(BuildMetadata.appVersion, AppReleaseIdentity.appVersion)
+        XCTAssertEqual(BuildMetadata.appBuild, AppReleaseIdentity.appBuild)
+    }
+
     func testBundledPlansMatchFrozenPowerRelease() throws {
         for selection in ProductionBenchmarkPlan.allCases {
             let loaded = try PilotPlanLoader.load(resource: selection.rawValue)
             let workload = try PowerBenchmarkRelease.workload(for: loaded.plan)
             XCTAssertEqual(workload.id, selection.workloadID)
-            XCTAssertEqual(loaded.plan.workload.workloadVersion, "1.1.0-rc.1")
+            XCTAssertEqual(
+                loaded.plan.workload.workloadVersion,
+                AppReleaseIdentity.powerSourceProtocolVersion
+            )
         }
     }
 
@@ -590,8 +598,8 @@ final class PowerReferenceAppTests: XCTestCase {
                     thermalState: "nominal",
                     debuggerAttached: false,
                     buildConfiguration: "Release",
-                    appVersion: "0.8.0",
-                    appBuild: "10",
+                    appVersion: AppReleaseIdentity.appVersion,
+                    appBuild: AppReleaseIdentity.appBuild,
                     appSourceCommit: String(repeating: "a", count: 40),
                     lowPowerModeEnabled: false,
                     batteryLevelPercent: 80,

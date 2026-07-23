@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "power-program-release-manifest-1.0.0-draft.1",
+  "productID": "power",
+  "programID": "text-generation-performance",
+  "programVersion": "2.0.0-draft.1",
+  "status": "migration-draft",
+  "publicIntakeOpen": false,
+  "noLegacyDependencies": true,
+  "assets": [
+    {
+      "role": "program-contract",
+      "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/contract.json",
+      "sha256": "851d1f0ec4f38ef4d6cc2d66fd31e71b84961eed951d4ca6a7504f6335691f18"
+    },
+    {
+      "role": "workload",
+      "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/workloads/short-interaction.json",
+      "sha256": "c412c6c0e28abce839ad9b57ecb1628f28f1e1c14130a5bc2da9e3024d5b1dda"
+    },
+    {
+      "role": "workload",
+      "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/workloads/sustained-generation.json",
+      "sha256": "ca83b0068b2bff09ec756b70446012063fe53ea1e5d1f78997ca83b62ddac970"
+    },
+    {
+      "role": "fixture",
+      "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/fixtures/short-interaction.txt",
+      "sha256": "80f43b69ed38ece69e6014d65ca20197d13eee488f452bc6ce25ab9e44acbc26"
+    },
+    {
+      "role": "fixture",
+      "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/fixtures/sustained-generation.txt",
+      "sha256": "c375cc54156fccdc0f2d6803fe2e2226126854f7ffbc0ee9bc304681a923e921"
+    },
+    {
+      "role": "evidence-envelope-schema",
+      "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/schemas/evidence-envelope.schema.json",
+      "sha256": "3750895527aa8d49e1eac1cc058fd2776e3886690eccbf61aedaafc1a2598beb"
+    },
+    {
+      "role": "program-payload-schema",
+      "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/schemas/text-generation-payload.schema.json",
+      "sha256": "8a686223ce842314befd72725e2ad42c25bf31e49662742546f2ee83883a8d35"
+    },
+    {
+      "role": "submission-schema",
+      "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/schemas/submission.schema.json",
+      "sha256": "63a4d8fbabf17d68a3c03e408f6bc42a845060ea0591f352f760a0b679ceaa09"
+    },
+    {
+      "role": "validation-report-schema",
+      "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/schemas/validation-report.schema.json",
+      "sha256": "81f8c97f1c7b936dd1d32ffefef46be4b6720c94209a16099fd287bbe9944bc7"
+    },
+    {
+      "role": "review-record-schema",
+      "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/schemas/review-record.schema.json",
+      "sha256": "65e9ea73922fce3749800ee9d756b3b3485d80659a3e3c1b90df363bd9c1997a"
+    }
+  ]
+}

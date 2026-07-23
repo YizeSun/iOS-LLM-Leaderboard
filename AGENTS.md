@@ -7,7 +7,10 @@ iOS-LLM-Leaderboard.
 
 The long-term architecture is **Build, Power, Ship**.
 
-- Phase 1 product: **Power + Ship**.
+- Phase 1 has two separate product tracks: **Power** and **Ship**.
+- A Benchmark App run produces Power evidence only.
+- Ship may cite accepted Power measurements, but it is a separate downstream
+  deployment-guidance product and is not contained in Power.
 - Phase 2 Research Track: **Build**.
 - Do not implement Build protocols, runners, schemas, or rankings unless a
   later task explicitly approves them.
@@ -23,7 +26,15 @@ Current public status and navigation are defined by:
 - `docs/project-vision.md`
 - `docs/product-architecture.md`
 - `docs/project-structure.md`
+- `docs/repository-architecture.md` for the proposed target architecture and
+  migration gates, not current implemented behavior
 - `docs/power.md`
+
+The proposed Power 2.0 migration is a clean break. When that migration is
+explicitly implemented, do not add active Power 1.1 compatibility readers,
+schema adapters, policy adapters, dual-version dispatch, or old-result
+promotion. Preserve Power 1.1 pinned assets and raw evidence only as a
+read-only historical plane.
 
 ## Non-negotiable evidence rules
 

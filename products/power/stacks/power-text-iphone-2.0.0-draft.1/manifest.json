@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "power-measurement-stack-manifest-1.0.0-draft.1",
+  "productID": "power",
+  "stackID": "power-text-iphone-2.0.0-draft.1",
+  "status": "migration-draft",
+  "program": {
+    "id": "text-generation-performance",
+    "version": "2.0.0-draft.1",
+    "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/manifest.json",
+    "sha256": "b7f0136c7f84710727b5f085a0d2ef37428a339defbed2ac1320b4f2f45dc9a1"
+  },
+  "target": {
+    "id": "apple-iphone-physical",
+    "version": "1.0.0-draft.1",
+    "path": "products/power/targets/apple-iphone-physical/versions/1.0.0-draft.1/manifest.json",
+    "sha256": "d3229e3738ab848b39748d1ee08d1eae3fc68f645bd8f8fa6eef5f52f78f66c4"
+  },
+  "policies": {
+    "runner": {
+      "version": "1.0.0-draft.1",
+      "path": "products/power/policies/runner/1.0.0-draft.1.json",
+      "sha256": "e27e6e9c01479c016d4428153d3a168217b7ea0a858bf34b722deb26d2e08535"
+    },
+    "intake": {
+      "version": "1.0.0-draft.1",
+      "path": "products/power/policies/intake/1.0.0-draft.1.json",
+      "sha256": "1f456d4340eed94e2054660c70d8ea8d45b32e65bf902f56c55e16efef96e18d"
+    },
+    "ranking": {
+      "version": "1.0.0-draft.1",
+      "path": "products/power/policies/ranking/1.0.0-draft.1.json",
+      "sha256": "ef31c085ce85a4bda17bf03d9d721da9af6aded03301ac51d172158d3e861b3e"
+    }
+  },
+  "models": {
+    "registry": {
+      "path": "models/registry.json",
+      "sha256": "fccd13b02d064640b729f93f0c28c6ab56219237d4d0ccb0c27eb55737b3c280"
+    },
+    "cohort": {
+      "id": "small-language-models",
+      "version": "1.0.0-draft.1",
+      "path": "models/cohorts/small-language-models/1.0.0-draft.1.json",
+      "sha256": "07506e59f27ba4d2067fdd808d4556f304df8619e54e3ebedec16ed680f2db21"
+    }
+  },
+  "runnerCertificate": null
+}

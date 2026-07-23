@@ -47,7 +47,8 @@ struct PowerSubmissionPackage: Sendable {
     let resultData: Data
 
     var repositoryDirectory: String {
-        "submissions/suite-b/power-1.1.0/draft/\(submissionID.uuidString.lowercased())"
+        "\(AppReleaseIdentity.powerSubmissionDirectory)/"
+            + submissionID.uuidString.lowercased()
     }
 
     enum PackageError: LocalizedError {
@@ -68,7 +69,8 @@ struct PowerSubmissionPackage: Sendable {
     }
 
     private struct Manifest: Encodable {
-        let schemaVersion = "suite-b-power-submission-1.1.0"
+        let schemaVersion =
+            AppReleaseIdentity.powerSubmissionSchemaVersion
         let submissionID: String
         let createdAt: Date
         let benchmarkRelease = BenchmarkRelease()
@@ -81,8 +83,9 @@ struct PowerSubmissionPackage: Sendable {
         let result: ResultReference
 
         struct BenchmarkRelease: Encodable {
-            let id = "suite-b-power"
-            let version = "1.1.0"
+            let id = AppReleaseIdentity.powerReleaseID
+            let version =
+                AppReleaseIdentity.powerPublishedReleaseVersion
         }
 
         struct Contributor: Encodable {

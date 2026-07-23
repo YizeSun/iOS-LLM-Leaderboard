@@ -1,0 +1,317 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 71;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* PowerBenchmarkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* PowerBenchmarkApp.swift */; };
+		A10000000000000000000002 /* PowerAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* PowerAppModel.swift */; };
+		A10000000000000000000003 /* PowerRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* PowerRootView.swift */; };
+		A10000000000000000000004 /* PowerTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* PowerTestView.swift */; };
+		A10000000000000000000005 /* PowerResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* PowerResultsView.swift */; };
+		A10000000000000000000006 /* Power2CandidateIdentity.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* Power2CandidateIdentity.generated.swift */; };
+		C10000000000000000000001 /* PowerEvidence in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000001 /* PowerEvidence */; };
+		C10000000000000000000002 /* PowerRunnerCore in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000002 /* PowerRunnerCore */; };
+		C10000000000000000000003 /* PowerTextProgram in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000003 /* PowerTextProgram */; };
+		C10000000000000000000004 /* PowerAppleTarget in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000004 /* PowerAppleTarget */; };
+		C10000000000000000000005 /* PowerMLXRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000005 /* PowerMLXRuntime */; };
+		C10000000000000000000006 /* PowerResultsStore in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000006 /* PowerResultsStore */; };
+		C10000000000000000000007 /* PowerSubmissionKit in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000007 /* PowerSubmissionKit */; };
+		C10000000000000000000008 /* PowerGitHubSubmission in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000008 /* PowerGitHubSubmission */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000000000000000000001 /* PowerBenchmarkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerBenchmarkApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* PowerAppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerAppModel.swift; sourceTree = "<group>"; };
+		A20000000000000000000003 /* PowerRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerRootView.swift; sourceTree = "<group>"; };
+		A20000000000000000000004 /* PowerTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerTestView.swift; sourceTree = "<group>"; };
+		A20000000000000000000005 /* PowerResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerResultsView.swift; sourceTree = "<group>"; };
+		A20000000000000000000006 /* Power2CandidateIdentity.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Power2CandidateIdentity.generated.swift; sourceTree = "<group>"; };
+		A20000000000000000000007 /* PowerBenchmarkApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = PowerBenchmarkApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A60000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C10000000000000000000001 /* PowerEvidence in Frameworks */,
+				C10000000000000000000002 /* PowerRunnerCore in Frameworks */,
+				C10000000000000000000003 /* PowerTextProgram in Frameworks */,
+				C10000000000000000000004 /* PowerAppleTarget in Frameworks */,
+				C10000000000000000000005 /* PowerMLXRuntime in Frameworks */,
+				C10000000000000000000006 /* PowerResultsStore in Frameworks */,
+				C10000000000000000000007 /* PowerSubmissionKit in Frameworks */,
+				C10000000000000000000008 /* PowerGitHubSubmission in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A70000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A70000000000000000000002 /* PowerBenchmarkApp */,
+				A20000000000000000000006 /* Power2CandidateIdentity.generated.swift */,
+				A70000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A70000000000000000000002 /* PowerBenchmarkApp */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000001 /* PowerBenchmarkApp.swift */,
+				A20000000000000000000002 /* PowerAppModel.swift */,
+				A20000000000000000000003 /* PowerRootView.swift */,
+				A20000000000000000000004 /* PowerTestView.swift */,
+				A20000000000000000000005 /* PowerResultsView.swift */,
+			);
+			path = PowerBenchmarkApp;
+			sourceTree = "<group>";
+		};
+		A70000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000007 /* PowerBenchmarkApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A50000000000000000000001 /* PowerBenchmarkApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000000000000000000001 /* Build configuration list for PBXNativeTarget "PowerBenchmarkApp" */;
+			buildPhases = (
+				A90000000000000000000001 /* Sources */,
+				A60000000000000000000001 /* Frameworks */,
+				A90000000000000000000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PowerBenchmarkApp;
+			packageProductDependencies = (
+				C20000000000000000000001 /* PowerEvidence */,
+				C20000000000000000000002 /* PowerRunnerCore */,
+				C20000000000000000000003 /* PowerTextProgram */,
+				C20000000000000000000004 /* PowerAppleTarget */,
+				C20000000000000000000005 /* PowerMLXRuntime */,
+				C20000000000000000000006 /* PowerResultsStore */,
+				C20000000000000000000007 /* PowerSubmissionKit */,
+				C20000000000000000000008 /* PowerGitHubSubmission */,
+			);
+			productName = PowerBenchmarkApp;
+			productReference = A20000000000000000000007 /* PowerBenchmarkApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A40000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2650;
+				LastUpgradeCheck = 2650;
+				TargetAttributes = {
+					A50000000000000000000001 = {
+						CreatedOnToolsVersion = 26.5;
+					};
+				};
+			};
+			buildConfigurationList = A80000000000000000000002 /* Build configuration list for PBXProject "PowerBenchmarkApp" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A70000000000000000000001;
+			packageReferences = (
+				C30000000000000000000001 /* XCLocalSwiftPackageReference "../PowerRunnerKit" */,
+				C30000000000000000000002 /* XCLocalSwiftPackageReference "../PowerAppKit" */,
+			);
+			productRefGroup = A70000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A50000000000000000000001 /* PowerBenchmarkApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A90000000000000000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A90000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001 /* PowerBenchmarkApp.swift in Sources */,
+				A10000000000000000000002 /* PowerAppModel.swift in Sources */,
+				A10000000000000000000003 /* PowerRootView.swift in Sources */,
+				A10000000000000000000004 /* PowerTestView.swift in Sources */,
+				A10000000000000000000005 /* PowerResultsView.swift in Sources */,
+				A10000000000000000000006 /* Power2CandidateIdentity.generated.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		B10000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		B10000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		B10000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Power Benchmark";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.candidate;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		B10000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Power Benchmark";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.candidate;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A80000000000000000000001 /* Build configuration list for PBXNativeTarget "PowerBenchmarkApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000000000000000000003 /* Debug */,
+				B10000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A80000000000000000000002 /* Build configuration list for PBXProject "PowerBenchmarkApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000000000000000000001 /* Debug */,
+				B10000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		C30000000000000000000001 /* XCLocalSwiftPackageReference "../PowerRunnerKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PowerRunnerKit;
+		};
+		C30000000000000000000002 /* XCLocalSwiftPackageReference "../PowerAppKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PowerAppKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C20000000000000000000001 /* PowerEvidence */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C30000000000000000000001 /* XCLocalSwiftPackageReference "../PowerRunnerKit" */;
+			productName = PowerEvidence;
+		};
+		C20000000000000000000002 /* PowerRunnerCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C30000000000000000000001 /* XCLocalSwiftPackageReference "../PowerRunnerKit" */;
+			productName = PowerRunnerCore;
+		};
+		C20000000000000000000003 /* PowerTextProgram */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C30000000000000000000001 /* XCLocalSwiftPackageReference "../PowerRunnerKit" */;
+			productName = PowerTextProgram;
+		};
+		C20000000000000000000004 /* PowerAppleTarget */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C30000000000000000000001 /* XCLocalSwiftPackageReference "../PowerRunnerKit" */;
+			productName = PowerAppleTarget;
+		};
+		C20000000000000000000005 /* PowerMLXRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C30000000000000000000001 /* XCLocalSwiftPackageReference "../PowerRunnerKit" */;
+			productName = PowerMLXRuntime;
+		};
+		C20000000000000000000006 /* PowerResultsStore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C30000000000000000000002 /* XCLocalSwiftPackageReference "../PowerAppKit" */;
+			productName = PowerResultsStore;
+		};
+		C20000000000000000000007 /* PowerSubmissionKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C30000000000000000000002 /* XCLocalSwiftPackageReference "../PowerAppKit" */;
+			productName = PowerSubmissionKit;
+		};
+		C20000000000000000000008 /* PowerGitHubSubmission */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C30000000000000000000002 /* XCLocalSwiftPackageReference "../PowerAppKit" */;
+			productName = PowerGitHubSubmission;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A40000000000000000000001 /* Project object */;
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "power-stack-pointer-1.0.0-draft.1",
+  "productID": "power",
+  "stackID": "power-text-iphone-2.0.0-draft.1",
+  "status": "migration-draft",
+  "publicIntakeOpen": false,
+  "measurementStack": {
+    "path": "products/power/stacks/power-text-iphone-2.0.0-draft.1/manifest.json",
+    "sha256": "da80a2aaa6e645efd2d8bb45848360e3fa0d5312e07c87bd6805a2cc1910cf19"
+  },
+  "runnerCandidate": {
+    "path": "apps/PowerRunnerKit/component-manifest.json",
+    "sha256": "a64f46d5ac30bae1c68efd377f8c3e0fd20462d7c9c20036a8193ac1082f88d4"
+  },
+  "appCandidate": {
+    "path": "apps/ios/component-manifest.json",
+    "sha256": "ac5857d79c443ea923333339de44827e96fd25d9cb49245e2c21e77a13be4b53"
+  },
+  "appRelease": null,
+  "activationBlockers": [
+    "complete certification evidence and certify the Power 2.0 runner candidate",
+    "issue an immutable App release for the Power 2.0 App shell",
+    "embed this exact stack in a released App build",
+    "validate new physical-device evidence end to end",
+    "replace this candidate pointer with an immutable released stack",
+    "publish products/power/current.json and open intake together"
+  ]
+}

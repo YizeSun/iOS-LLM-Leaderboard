@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "power-runner-certification-policy-1.0.0-draft.1",
+  "policyID": "power-runner-certification",
+  "policyVersion": "1.0.0-draft.1",
+  "status": "migration-draft",
+  "certificateBinds": [
+    "programManifestSHA256",
+    "targetManifestSHA256",
+    "runnerCoreSHA256",
+    "programModuleSHA256",
+    "targetAdapterSHA256",
+    "runtimeAdapterSHA256",
+    "runtimeIdentity"
+  ],
+  "requiredVerification": [
+    "unit-tests",
+    "schema-and-fixture-integrity",
+    "deterministic-serialization",
+    "failure-preservation",
+    "generic-ios-release-build",
+    "physical-device-smoke-run",
+    "raw-result-review"
+  ],
+  "certificateStates": [
+    "candidate",
+    "active",
+    "expired",
+    "revoked"
+  ],
+  "oldMajorCertificatesImportable": false,
+  "uiOnlyAppReleaseMayReuseCertificate": true,
+  "measurementChangeRequiresNewCertificate": true
+}

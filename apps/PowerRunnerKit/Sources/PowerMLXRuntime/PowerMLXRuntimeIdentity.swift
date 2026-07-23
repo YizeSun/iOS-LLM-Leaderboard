@@ -1,0 +1,96 @@
+import Foundation
+import PowerEvidence
+import PowerRunnerCore
+
+public enum PowerMLXRuntimeIdentity {
+    public static let name = "MLX Swift LM"
+    public static let version = "3.31.4"
+    public static let resolvedRevision =
+        "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57"
+    public static let mlxSwiftVersion = "0.31.6"
+    public static let mlxSwiftRevision =
+        "0bb916c67f4b9e5c682cbe02a42c701c93ab5021"
+    public static let tokenizerVersion = "1.3.0"
+    public static let tokenizerRevision =
+        "b38443e44d93eca770f2eb68e2a4d0fa100f9aa2"
+    public static let backend = "mlx-metal"
+
+    public static var evidence: PowerEvidence.PowerRuntimeIdentity {
+        .init(
+            name: name,
+            version: version,
+            resolvedRevision: resolvedRevision,
+            backend: backend,
+            configuration: [
+                "dependencyLockSHA256": .string(
+                    PowerMLXDependencyLock.sha256
+                ),
+                "includeStopToken": .boolean(false),
+                "mlxSwiftRevision": .string(mlxSwiftRevision),
+                "mlxSwiftVersion": .string(mlxSwiftVersion),
+                "renderabilityPolicy": .string(
+                    "decoded-prefix-non-whitespace-v1"
+                ),
+                "tokenizerRevision": .string(tokenizerRevision),
+                "tokenizerVersion": .string(tokenizerVersion),
+            ]
+        )
+    }
+}
+
+public enum PowerMLXRuntimeError: Error, LocalizedError, Sendable {
+    case unsupportedInferenceConfiguration
+    case missingCompletionInformation
+    case outputTokenCountMismatch(expected: Int, observed: Int)
+    case invalidArtifactIdentity
+
+    public var errorDescription: String? {
+        switch self {
+        case .unsupportedInferenceConfiguration:
+            "The Power workload requested an unsupported MLX inference configuration."
+        case .missingCompletionInformation:
+            "MLX generation ended without completion information."
+        case .outputTokenCountMismatch(let expected, let observed):
+            "MLX reported \(expected) output tokens but emitted \(observed)."
+        case .invalidArtifactIdentity:
+            "The model artifact ID or immutable revision is invalid."
+        }
+    }
+}
+
+extension PowerMLXRuntimeError: PowerRuntimeFailureClassifyingError {
+    public var powerRuntimeFailureKind: PowerRuntimeFailureKind {
+        switch self {
+        case .unsupportedInferenceConfiguration:
+            .failed(code: "mlx_unsupported_inference_configuration")
+        case .missingCompletionInformation:
+            .failed(code: "mlx_missing_completion_information")
+        case .outputTokenCountMismatch:
+            .failed(code: "mlx_output_token_count_mismatch")
+        case .invalidArtifactIdentity:
+            .failed(code: "mlx_invalid_artifact_identity")
+        }
+    }
+}
+
+enum PowerMLXRuntimeContract {
+    static func validate(
+        _ configuration: PowerInferenceConfiguration
+    ) throws {
+        guard
+            !configuration.sampling,
+            configuration.temperature == 0,
+            configuration.topP == 1,
+            configuration.topK == 0,
+            configuration.seed >= 0,
+            configuration.maximumOutputTokens > 0,
+            configuration.maximumOutputTokens <= 512,
+            configuration.reasoningMode == "disabled",
+            configuration.newContextPerAttempt,
+            configuration.newKVCachePerAttempt
+        else {
+            throw PowerMLXRuntimeError
+                .unsupportedInferenceConfiguration
+        }
+    }
+}

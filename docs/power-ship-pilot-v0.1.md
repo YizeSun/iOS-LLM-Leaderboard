@@ -1,12 +1,18 @@
-# Power + Ship Pilot v0.1
+# Phase 1 Evidence Pilot v0.1
 
 ## Status
 
-Power + Ship Pilot v0.1 is a completed, untagged historical evidence milestone
+Phase 1 Evidence Pilot v0.1 is a completed, untagged historical evidence milestone
 for Product Phase 1. It validated the smallest credible end-to-end evidence
 path for on-device AI deployment on Apple platforms. The maintainer decided
 not to publish a Pilot tag or GitHub Release and moved the active target to
 [Power Benchmark 1.0 Foundation](power-benchmark-1.0-foundation.md).
+
+The repository formerly called this work the “Power + Ship Pilot.” That legacy
+name does not mean
+that Power contains Ship or that one benchmark run produced two results. The
+Pilot ran Power workloads, then generated a separate experimental Ship view
+that cited the retained Power evidence and additional deployment metadata.
 
 The Pilot is narrower than Suite B 1.0. It is non-official evidence work and
 does not authorize a default leaderboard, verified ranking, or general claim
@@ -21,8 +27,8 @@ schema, or result is required for this Pilot.
 
 Can the project execute two fixed Suite B workloads on a small set of physical
 iPhone configurations, preserve usable Power evidence, generate a simple
-configuration-level leaderboard, and turn the same evidence into an honest
-Ship view without inventing unsupported deployment claims?
+configuration-level leaderboard, and separately cite that evidence in an
+honest Ship view without inventing unsupported deployment claims?
 
 ## Frozen Scope
 
@@ -81,8 +87,9 @@ values.
 
 ### Ship output
 
-Pilot Ship output is a deployment evidence profile for the same configuration
-used by the two Power workloads. It may report only reviewable facts, including:
+Pilot Ship output is a separately generated deployment evidence profile for
+the same configuration used by the two Power workloads. It is not another
+result from the Benchmark App. It may report only reviewable facts, including:
 
 - exact model artifact, revision, format, and quantization;
 - exact runtime, dependency revisions, backend, device, and OS build;
@@ -235,7 +242,7 @@ useful only when the App reports a preparation or execution error.
 
 ## Publication Checklist
 
-Power + Ship Pilot v0.1 is ready when:
+Phase 1 Evidence Pilot v0.1 is ready when:
 
 - [x] B-UX-001 and B-PIPE-001 both execute through the production App path
       using the configuration recorded in their result files.
@@ -267,7 +274,8 @@ These issues would otherwise make Pilot output misleading or unusable:
 3. Pipeline TTFT must remain distinct from B-UX-001 First-renderable proxy
    TTFT; neither may be mislabeled as screen-visible latency.
 4. The ingestion command must reject malformed/incompatible files, normalize
-   usable evidence, and generate the Power and Ship outputs consistently.
+   usable Power evidence, and use accepted evidence consistently when
+   generating the separate experimental Ship view.
 5. Real physical-iPhone results for the intended small matrix must be collected
    and added before publication. **Satisfied:** 6/6 App 0.6 results accepted.
 

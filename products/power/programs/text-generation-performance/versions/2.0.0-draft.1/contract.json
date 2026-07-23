@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "power-program-contract-1.0.0-draft.1",
+  "productID": "power",
+  "programID": "text-generation-performance",
+  "programVersion": "2.0.0-draft.1",
+  "status": "migration-draft",
+  "title": "Text Generation Performance",
+  "question": "How does one exact text-generation model artifact and runtime configuration perform under a defined workload on a certified physical Apple target?",
+  "resultEnvelopeVersion": "power-evidence-envelope-1.0.0-draft.1",
+  "programPayloadVersion": "power-text-generation-payload-1.0.0-draft.1",
+  "externalArtifactsAllowed": false,
+  "attemptContract": {
+    "warmupAttempts": 1,
+    "measuredAttempts": 5,
+    "minimumSuccessfulMeasuredAttemptsPerMetric": 3,
+    "preserveOutcomes": [
+      "succeeded",
+      "failed",
+      "cancelled",
+      "oom",
+      "not-run"
+    ],
+    "rawAttemptsAreImmutable": true
+  },
+  "renderabilityPolicy": {
+    "id": "decoded-prefix-non-whitespace-v1",
+    "maximumProbeEvents": 32,
+    "stopAfterFirstRenderable": true,
+    "specialTokensRenderable": false,
+    "whitespaceDefinition": "Unicode White_Space"
+  },
+  "metrics": [
+    {
+      "id": "first_renderable_ms",
+      "unit": "ms",
+      "aggregation": "median",
+      "direction": "lower-is-better",
+      "scope": "interactive-workload-only",
+      "definition": "Elapsed time from canonical request acceptance to the first non-whitespace, non-special decoded content available to the App render path."
+    },
+    {
+      "id": "pipeline_ttft_ms",
+      "unit": "ms",
+      "aggregation": "median",
+      "direction": "lower-is-better",
+      "scope": "all-workloads",
+      "definition": "Elapsed time from canonical request acceptance to the first generated output token event. It is not user-visible TTFT."
+    },
+    {
+      "id": "request_completion_ms",
+      "unit": "ms",
+      "aggregation": "median",
+      "direction": "lower-is-better",
+      "scope": "interactive-workload-only",
+      "definition": "Elapsed time from canonical request acceptance to terminal generation completion."
+    },
+    {
+      "id": "prefill_tokens_per_second",
+      "unit": "tokens/s",
+      "aggregation": "median",
+      "direction": "higher-is-better",
+      "scope": "all-workloads",
+      "definition": "Post-template model input tokens divided by measured prompt-evaluation duration."
+    },
+    {
+      "id": "decode_tokens_per_second",
+      "unit": "tokens/s",
+      "aggregation": "median",
+      "direction": "higher-is-better",
+      "scope": "all-workloads",
+      "definition": "Generated token intervals measured from the first output token through the final output token, excluding time before the first token."
+    },
+    {
+      "id": "peak_physical_footprint_mib",
+      "unit": "MiB",
+      "aggregation": "maximum",
+      "direction": "lower-is-better",
+      "scope": "all-workloads",
+      "definition": "Maximum observed process physical footprint during the attempt, converted from bytes using 1 MiB = 1048576 bytes."
+    },
+    {
+      "id": "decode_first_to_last_percent_change",
+      "unit": "%",
+      "aggregation": "derived",
+      "direction": "closer-to-zero-is-better",
+      "scope": "sustained-workload-only",
+      "definition": "Percent change between first and last eligible measured-attempt decode throughput."
+    }
+  ],
+  "globalScoreDefined": false,
+  "workloads": [
+    {
+      "id": "power.text.short-interaction",
+      "version": "1.0.0-draft.1",
+      "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/workloads/short-interaction.json"
+    },
+    {
+      "id": "power.text.sustained-generation",
+      "version": "1.0.0-draft.1",
+      "path": "products/power/programs/text-generation-performance/versions/2.0.0-draft.1/workloads/sustained-generation.json"
+    }
+  ]
+}
