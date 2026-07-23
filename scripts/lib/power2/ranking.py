@@ -9,7 +9,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-from .engine import ValidationContext, load_candidate_context, validate_package
+from .engine import ValidationContext, load_product_context, validate_package
 
 
 def _canonical_sha256(value: Any) -> str:
@@ -152,7 +152,7 @@ def build_dataset(
     generated_at: str,
     validator_source_revision: str,
 ) -> dict[str, Any]:
-    context = context or load_candidate_context()
+    context = context or load_product_context()
     ranking_policy = context.policy_documents["ranking"]
     thresholds = ranking_policy["distinctContributorThresholds"]
     metrics = {

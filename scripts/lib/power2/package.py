@@ -15,7 +15,7 @@ from .engine import (
     ROOT,
     ValidationContext,
     _contract_reasons,
-    load_candidate_context,
+    load_product_context,
 )
 
 
@@ -75,7 +75,7 @@ def create_package(
     ):
         raise ValueError("a disclosed conflict requires an explanation")
 
-    context = context or load_candidate_context()
+    context = context or load_product_context()
     result_path = Path(result_path)
     result_bytes = result_path.read_bytes()
     try:

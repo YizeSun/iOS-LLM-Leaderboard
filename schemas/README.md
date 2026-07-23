@@ -37,6 +37,6 @@ Before editing a schema, check all manifests under
 versioned schema rather than changing the existing file.
 
 Current App 0.18.0 contributors should use the configured App's direct GitHub
-submission. The retained `scripts/power.py` command remains available for the
+submission. The retained `scripts/power.py` command remains available only for the
 runner identities covered by its pinned Power 1.1.1 policy. Contributors
 should not construct schema documents manually.

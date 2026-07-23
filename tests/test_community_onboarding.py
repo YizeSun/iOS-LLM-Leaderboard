@@ -23,17 +23,20 @@ class CommunityOnboardingTests(unittest.TestCase):
         )
         self.assertIn("does not create placeholder devices", expected)
 
-    def test_site_exposes_contribution_and_coverage_entries(self) -> None:
+    def test_site_exposes_current_contribution_and_evidence_entries(self) -> None:
         index = (ROOT / "index.html").read_text()
         app = (ROOT / "site/app.js").read_text()
-        self.assertIn("contributor-kit/power-1.1-quickstart.md", index)
+        self.assertIn("contributor-kit/power.md", index)
         self.assertIn("github.com/YizeSun/iOS-LLM-Leaderboard/blob/main", index)
-        self.assertIn('data-mode="coverage"', index)
-        self.assertIn('data-mode="catalog"', index)
-        self.assertIn("buildCoverageRows", app)
-        self.assertIn("eligibleContributorCount", app)
-        self.assertIn("COVERAGE.md", app)
-        self.assertIn("power-test-catalog.json", app)
+        self.assertIn('data-mode="ux"', index)
+        self.assertIn('data-mode="pipe"', index)
+        self.assertIn('data-mode="ship"', index)
+        self.assertIn(
+            "results/power/text-generation-performance/2.0.0/ranking.json",
+            app,
+        )
+        self.assertIn("products/power/current.json", app)
+        self.assertIn("Public intake remains fail-closed", app)
 
     def test_quickstart_pins_app_identity_and_raw_export(self) -> None:
         guide = (ROOT / "contributor-kit/power-1.0-quickstart.md").read_text()

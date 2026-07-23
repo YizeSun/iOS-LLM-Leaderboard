@@ -3,14 +3,14 @@
 Thank you for helping make on-device AI evaluation more useful and credible.
 Choose the smallest contribution path that fits your change.
 
-## 1. Submit a Power 1.1 result
+## 1. Submit a Power result
 
-Follow the [Power 1.1 quickstart](contributor-kit/power-1.1-quickstart.md). The
+Follow the [current Power quickstart](contributor-kit/power.md). The
 App can create the pull request directly when its GitHub OAuth Client ID is
 configured. The equivalent CLI flow is:
 
 ```bash
-python3 scripts/power.py submit /path/to/result.json \
+python3 scripts/power submit /path/to/result.json \
   --github YOUR_GITHUB_HANDLE \
   --accept-declarations
 ```
@@ -18,14 +18,14 @@ python3 scripts/power.py submit /path/to/result.json \
 This creates exactly:
 
 ```text
-submissions/suite-b/power-1.1.0/draft/<submission-id>/
+submissions/power/text-generation-performance/2.0.0/draft/<submission-id>/
 ├── submission.json
 └── result.json
 ```
 
 Do not edit `result.json`. Review both files, commit only that package, and
 open the pull request from the declared GitHub account. CI checks the package,
-the frozen Power contract, duplicates, and the live-ranking preview, then
+the current Power stack, duplicates, and the ranking preview, then
 classifies it as automatic acceptance, manual review, or rejection.
 
 The declarations confirm that you ran the benchmark on a physical device, may
@@ -33,9 +33,8 @@ submit the evidence, reviewed public metadata, left the raw result untouched,
 removed personal data, accept CC BY 4.0 for the evidence, and understand that
 submission does not guarantee a rank or trust-level change.
 
-If you deliberately cooled or heated the device, or do not know whether the
-run was assisted, disclose it with `--thermal-assistance`. The package remains
-reviewable evidence but does not enter the ordinary live ranking.
+Keep any code or documentation edits in a separate pull request. The trusted
+intake intentionally rejects mixed-scope result PRs.
 
 ## 2. Improve integration or documentation
 
@@ -84,12 +83,12 @@ git diff --check
 Power result contributors can also run:
 
 ```bash
-python3 scripts/power.py validate \
-  submissions/suite-b/power-1.1.0/draft/<submission-id>
-python3 scripts/power.py preview --output /tmp/power-preview
+python3 scripts/power validate \
+  submissions/power/text-generation-performance/2.0.0/draft/<submission-id>
+python3 scripts/power preview --output /tmp/power-preview
 ```
 
-Historical Power 1.0, Pilot, and Framework v1 submission instructions remain
+Historical Power 1.0, Power 1.1, Pilot, and Framework v1 instructions remain
 in their versioned paths for auditability. They are not the current public
 intake route.
 

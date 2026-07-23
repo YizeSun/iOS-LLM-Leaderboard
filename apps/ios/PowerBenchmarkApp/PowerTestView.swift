@@ -6,27 +6,27 @@ struct PowerTestView: View {
 
     var body: some View {
         List {
-            Section("Power 2 candidate") {
+            Section("Power 2") {
                 LabeledContent(
                     "Benchmark cell",
                     value: "Text performance × physical iPhone"
                 )
                 LabeledContent(
                     "Stack",
-                    value: Power2CandidateIdentity.stackID
+                    value: Power2ProductIdentity.stackID
                 )
                 LabeledContent(
                     "Measurement stack",
                     value: abbreviated(
-                        Power2CandidateIdentity
+                        Power2ProductIdentity
                             .measurementStackSHA256
                     )
                 )
                 LabeledContent(
-                    "Runner candidate",
+                    "Runner components",
                     value: abbreviated(
-                        Power2CandidateIdentity
-                            .runnerCandidateManifestSHA256
+                        Power2ProductIdentity
+                            .runnerComponentsManifestSHA256
                     )
                 )
                 LabeledContent(

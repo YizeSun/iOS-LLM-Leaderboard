@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the digest manifest for the candidate Power 2 App modules."""
+"""Generate the lifecycle-neutral digest manifest for Power App modules."""
 
 from __future__ import annotations
 
@@ -76,7 +76,7 @@ def render_manifest() -> str:
         (APP_ROOT / "PowerBenchmarkApp").glob("*.swift")
     )
     shell_sources.append(
-        APP_ROOT / "Power2CandidateIdentity.generated.swift"
+        APP_ROOT / "Power2ProductIdentity.generated.swift"
     )
     shell_sources.append(
         APP_ROOT / "Power2CandidateCatalog.generated.swift"
@@ -98,10 +98,8 @@ def render_manifest() -> str:
         },
     }
     value = {
-        "schemaVersion":
-            "power-app-component-manifest-1.0.0-draft.1",
+        "schemaVersion": "power-app-component-manifest-1.0.0",
         "productID": "power",
-        "status": "migration-draft",
         "xcodeProject": _pin(APP_PROJECT / "project.pbxproj"),
         "infoPlist": _pin(
             APP_ROOT / "PowerBenchmarkApp" / "Info.plist"
@@ -133,12 +131,6 @@ def render_manifest() -> str:
             APP_KIT_ROOT / "Package.resolved"
         ),
         "components": components,
-        "completeForRelease": False,
-        "releaseBlockers": [
-            "complete the exact App closed submission rehearsal",
-            "issue an immutable App release identity",
-            "activate the released stack and public intake atomically",
-        ],
     }
     return json.dumps(value, indent=2, sort_keys=True) + "\n"
 

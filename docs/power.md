@@ -1,95 +1,131 @@
 # Power benchmark
 
-Power measures an exact on-device configuration, not a model name alone:
+Power measures an exact embedded model configuration on an Apple target. It
+does not rank a model name in isolation:
 
 ```text
-model artifact + quantization + runtime + device + OS
-+ inference settings + workload + Benchmark App version
+Power Evidence
+  = Program Version
+  × Target Profile Version
+  × Model Artifact Revision
+  × Runtime Configuration
+  × Runner Certificate
+  × App Release
+  × Raw Attempts
 ```
 
-## Current release
+## Current status
 
-Power 1.1 is the active public release. Release 1.1.0 adopts the frozen Power
-1.1 RC1 execution contract and six immutable physical-iPhone results, then
-applies the final 1.1 ranking policy without rewriting the original result
-bytes or source identities. Patch policies 1.1.1 through 1.1.4 leave that
-protocol, schema, reference App, evidence, and ranking policy unchanged. They
-add and extend an exact compatible-runner allowlist for community intake.
+Power 2 is in its final activation checkpoint. The text-generation-performance
+Program, physical-iPhone Target, four exact model artifacts, Runner
+certificate, App shell, trusted intake, and ranking engine are implemented.
+Automated checks and generic Official/Certification Release builds pass.
+The exact Official build 3 physical-device end-to-end result is still required
+before an immutable App release and `products/power/current.json` can be issued.
 
-The active workloads are:
+Until those two records are issued together:
 
-| Workload | Developer question | Primary ranking metric |
-| --- | --- | --- |
-| `b-ux-001-short-interaction` | How quickly can an app receive a first renderable output unit? | First-renderable proxy TTFT, lower is better |
-| `b-pipe-001-sustained-generation` | How quickly can the configuration sustain generation? | Decode tokens per second, higher is better |
+- public intake remains closed;
+- Developer and Certification builds cannot produce ranking evidence;
+- the Official build is a non-publishable release candidate; and
+- Power 1.1 remains only a read-only historical release, not a compatibility
+  input to Power 2.
 
-First-renderable proxy TTFT is measured at the adapter boundary. It is not
-screen-render latency. Pipeline TTFT, prefill throughput, decode throughput,
-process physical footprint, thermal state, and failures remain visible as
-supporting evidence where the workload supports them.
+The authoritative activation state is
+[`products/power/candidate.json`](../products/power/candidate.json). After
+activation, the only public pointer is `products/power/current.json`.
 
-There is no combined Power score. Different app features value latency,
-throughput, memory, and sustained behavior differently.
+## Benchmark cell
 
-## Evidence and validation
+The first implemented cell is:
 
-The App records warm-up and measured attempts, raw event evidence, exact model
-and runtime identities, device and OS build, generation settings, memory, and
-thermal state. Failed, cancelled, OOM, and not-run attempts are preserved.
+```text
+text-generation-performance@2.0.0
+× apple-iphone-physical@1.0.0
+```
 
-Validation separates:
+The Program owns workload meaning, measurement modes, metrics, fixtures, and
+schemas. The Target owns physical-device admission and environment capture.
+The Runner certificate binds the exact Runner Core, text Program Module,
+iPhone Target Adapter, MLX Runtime Adapter, and evidence serialization used to
+execute that cell.
 
-- structural validity;
-- protocol conformance;
-- per-metric eligibility;
-- behavior verification;
-- measured-performance ranking eligibility; and
-- recommendation eligibility.
+New image, 3D, iPad, or macOS work is added as a new Program or Target slot.
+It does not branch or silently change the text/iPhone cell.
 
-A structurally valid result can therefore remain visible even when one metric
-is ineligible. Submission validation happens before merge; the generated
-ranking independently derives eligibility again from retained evidence.
+## Evidence and decisions
 
-Runner compatibility is an additional closed gate. The original App 0.13.0
-build 16 reference identity remains frozen. Policy 1.1.4 preserves the exact
-App 0.16.0 build 19 and both App 0.17.0 build 20 approvals, then approves App
-0.18.0 build 21 at protected-merge source commit
-`8920a423f4b4abff4e34a2d8a128a3962899258e`. Every identity uses the pinned
-runtime. App 0.14.0, App 0.15.0, a different approved-App build/commit, or a
-later App is not implicitly accepted. A newly approved runner needs a new
-versioned policy; old rejected evidence is never relabeled.
+Every result preserves warm-up and measured attempts, failures, cancellations,
+OOMs, ordered timing evidence, memory samples, thermal state, exact model and
+runtime identity, device and OS build, inference settings, and the identities
+of its Program, Target, Runner, and App.
 
-Power 1.1 source exports retain the schema identity
-`suite-b-power-result-1.1.0-rc.1` because finalization adopted the frozen RC1
-contract instead of relabeling evidence. A separate Power 1.1 submission
-manifest binds those bytes to the contributor and final public release.
+Validation keeps these decisions separate:
 
-## Community ranking
+- structural validity and digest integrity;
+- Program and Target contract conformance;
+- supported Runner certificate and App release;
+- contributor identity and duplicate detection;
+- behavior conformance;
+- recommendation eligibility;
+- per-metric ranking eligibility.
 
-- One case-insensitive GitHub account counts once per exact comparison cell.
-- The same account can contribute to multiple different cells.
-- Two independent contributors display as reproduced.
-- Three or more enable contributor-weighted aggregation.
-- Deliberate cooling, deliberate heating, or unknown thermal assistance is
-  retained as evidence but excluded from the ordinary live ranking.
-- App Attest is not required.
+A valid failed or metric-ineligible attempt can therefore remain accepted
+evidence without appearing in a ranking. Pipeline TTFT is never relabeled as
+user-visible first-renderable time. There is no global Power score.
 
-The default website may group iOS patch releases for readability and prefer
-the newest App baseline. Exact OS builds and older compatible cells remain in
-the evidence dataset.
+## Ranking and reproduction
 
-## Normative assets
+Each view compares only an exact compatible comparison identity. One
+case-insensitive GitHub account counts once per cell:
 
-This page is the short public explanation. Normative details are in:
+- one distinct contributor: accepted evidence;
+- two: independently reproduced;
+- three or more: contributor-weighted aggregation.
 
-- [current compatibility release manifest](../benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.4.json);
-- [source release manifest](../benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.0.json);
-- [compatible-runner policy](../benchmarks/suite-b-on-device-performance/power-1.1-compatible-runners-1.1.4.json);
-- [frozen RC1 protocol](../benchmarks/suite-b-on-device-performance/power-1.1-rc1-protocol.md);
-- [final ranking policy](../benchmarks/suite-b-on-device-performance/power-1.1-ranking-policy.json);
-- [result schema](../schemas/suite-b-power-result-1.1.0-rc.1.schema.json);
-- [validation-report schema](../schemas/suite-b-power-validation-report-1.1.0.schema.json);
-- [release notes](../results/suite-b-power-1.1/RELEASE-NOTES.md); and
-- [checksums](../results/suite-b-power-1.1/SHA256SUMS).
+The UI may group a compatible display family, but exact OS build, model
+revision, runtime, inference configuration, workload, measurement mode, and
+Runner certificate remain in the evidence identity.
 
-To contribute, use the [Power 1.1 quickstart](../contributor-kit/power-1.1-quickstart.md).
+## Contribution flow
+
+The Official App saves every completed result separately. The Results tab lets
+the contributor select the exact saved result to share or submit. Direct
+GitHub submission uses OAuth Device Flow, creates a branch from the current
+upstream head, writes only the two-file package, and opens a pull request
+without modifying the contributor fork's default branch.
+
+Trusted `pull_request_target` CI executes only the base-repository validator.
+It reads candidate evidence as data, classifies it as automatic acceptance,
+manual review, or rejection, and leaves normal code/documentation pull
+requests unaffected. Automatic merge requires both `Power submission intake`
+and `Validate commit identity` on the current PR head.
+
+Use the [Power contributor guide](../contributor-kit/power.md). The equivalent
+public CLI is:
+
+```bash
+python3 scripts/power submit /path/to/result.json \
+  --github YOUR_GITHUB_HANDLE \
+  --accept-declarations
+python3 scripts/power validate PATH
+python3 scripts/power preview --output /tmp/power-preview
+```
+
+## Normative sources
+
+This page explains the method. Machine authority is versioned and pinned by:
+
+- the [Power candidate/current pointer](../products/power/);
+- the [text Program manifest](../products/power/programs/text-generation-performance/versions/2.0.0-draft.2/manifest.json);
+- the [physical-iPhone Target](../products/power/targets/apple-iphone-physical/versions/1.0.0-draft.1/manifest.json);
+- the [Runner certificate](../products/power/runner-certificates/power2-runner-87f62feecc2b.json);
+- the versioned [intake](../products/power/policies/intake/1.0.0-draft.1.json)
+  and [ranking](../products/power/policies/ranking/1.0.0-draft.2.json)
+  policies; and
+- the architecture and migration audit in
+  [repository-architecture.md](repository-architecture.md).
+
+Historical Power 1.0 and 1.1 manifests, raw evidence, and checksums remain at
+their original paths for auditability. No active Power 2 pointer references
+them.

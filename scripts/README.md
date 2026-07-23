@@ -2,31 +2,37 @@
 
 ## Public entry point
 
-The retained public command is:
+The only public Power command is:
 
 ```bash
-python3 scripts/power.py submit RESULT.json --github HANDLE --accept-declarations
-python3 scripts/power.py validate submissions/suite-b/power-1.1.0/draft/ID
-python3 scripts/power.py preview
+python3 scripts/power submit RESULT.json --github HANDLE --accept-declarations
+python3 scripts/power validate \
+  submissions/power/text-generation-performance/2.0.0/draft/ID
+python3 scripts/power preview
 ```
 
-This command is SHA-256-pinned by the Power 1.1.1 release and therefore keeps
-that release's App 0.13.0/App 0.16.0 compatibility boundary. App 0.18.0 direct
-submission is handled by the configured App and the trusted Power 1.1.4 CI
-adapters; do not modify `power.py` or advertise a second contributor CLI to
-work around the frozen boundary.
+It is a thin Power 2 façade over the same package, validation, and ranking
+implementation used by trusted CI. It never dispatches by legacy Power
+version. The extensionless path deliberately avoids rewriting the SHA-256
+pinned historical `scripts/power.py`; Power 1.0 and 1.1 scripts remain
+historical audit assets only.
 
 ## Current implementation tools
 
-- `repoctl.py verify-power-candidate` verifies the inactive clean-break Power
-  2.0 stack, every pinned candidate asset, fixture digest, schema set, Target,
+- `repoctl.py verify-power-candidate` verifies the clean-break Power 2
+  activation candidate, every pinned candidate asset, fixture digest, Target,
   policy, model-cohort boundary, and the absence of active Power 1.1
   dependencies. It is a maintainer migration command and does not open intake.
+- `repoctl.py activate-power` reviews one exact Official physical-device
+  result and renders the immutable App release, retained raw evidence,
+  `current.json`, and active registry as one set. It is a dry run unless
+  `--write` is supplied, and it refuses older App builds or an already active
+  product.
 - `repoctl.py validate-power-package` invokes the new dependency-free trusted
   validation engine with explicit PR author, evaluation timestamp, trusted
-  source revision, and optional accepted-result digests. The candidate now has
-  an active Runner certificate, but no App release or open intake, so public
-  packages still correctly stop at those later gates.
+  source revision, and optional accepted-result digests. Public tools resolve
+  `products/power/current.json` after activation and otherwise fail closed
+  against the candidate.
 - `generate_ios_app_release_identity.py` generates the App version/build
   xcconfig and Swift Power identity constants from
   `ios-app/Config/release-identity.json`; CI uses `--check` to reject drift.
@@ -42,9 +48,10 @@ work around the frozen boundary.
   and release identities. It deterministically materializes the active Runner
   certificate only from the pinned passing Certification review; it never
   issues an App release or opens intake.
-- `generate_power2_candidate_identity.py` generates candidate-only Swift
-  identity from `products/power/candidate.json`. It is not compiled into the
-  current Power 1.1 App and cannot open intake.
+- `generate_power2_product_identity.py` generates lifecycle-neutral Swift
+  identity from the candidate pointer before release and the active pointer
+  after cutover. It deliberately does not compile repository intake state
+  into the App.
 - `generate_power2_app_catalog.py` verifies the inactive candidate hash chain
   and generates the exact model, workload, and fixture catalog used only by
   the physical-iPhone `PowerCertification` smoke-test scheme. It does not
@@ -55,20 +62,19 @@ work around the frozen boundary.
 - `review_power2_app_release_result.py` applies the trusted engine to one exact
   Official App release-candidate result during the closed end-to-end
   rehearsal. Its report is also always non-publishable and non-ranking.
-- `validate_suite_b_power_1_1_submission.py` validates the current two-file
-  contribution package.
+- `validate_suite_b_power_1_1_submission.py` validates historical Power 1.1
+  packages and is not called by a current public command or workflow.
 - `validate_suite_b_power_1_1_compatible_result.py` applies the versioned exact
   runner/runtime allowlist before reusing the frozen Power 1.1 validator.
 - `validate_suite_b_power_1_1_final_result.py` derives final Power 1.1
   eligibility from adopted RC1 evidence and remains pinned and immutable.
-- `generate_power_community_ranking.py` builds the live evidence dataset and
-  Markdown views.
+- `generate_power_community_ranking.py` builds the historical Power 1.1
+  evidence dataset and is not a current workflow entry.
 - `generate_ship_profiles.py` builds Ship evidence profiles.
 
-Power 1.1.2 through 1.1.4 add isolated, version-suffixed adapters for trusted
-validation, triage, and ranking. They load the frozen implementations without
-changing their module globals or pinned bytes. They are release and CI assets,
-not a parallel public contributor flow.
+Power 1.1.2 through 1.1.4 retain version-suffixed validation, triage, and
+ranking adapters. They load frozen implementations without changing pinned
+bytes. They are archive assets, not a parallel contributor flow.
 
 ## Versioned and historical tools
 
@@ -81,12 +87,13 @@ Before changing a release-specific script, check whether a manifest under
 `benchmarks/**/releases/` pins its SHA-256. Create a new versioned asset instead
 of altering a pinned file.
 
-## Power 2.0 migration candidate
+## Power 2 activation candidate
 
 The current review command is:
 
 ```bash
 python3 scripts/repoctl.py verify-power-candidate
+python3 scripts/generate_power2_product_identity.py --check
 python3 scripts/generate_power2_app_catalog.py --check
 python3 scripts/generate_power_release_candidates.py --check
 python3 scripts/repoctl.py validate-power-package PACKAGE \
@@ -95,13 +102,28 @@ python3 scripts/repoctl.py validate-power-package PACKAGE \
   --validator-source-revision GIT_SHA
 ```
 
-A successful result means only that the draft contract stack is internally
+A successful result means that the candidate contract stack is internally
 complete and independent from Power 1.1. It reports four exact rerun-candidate
 models, an active source- and physical-evidence-bound Runner certificate, and
-a closed App-release candidate whose exact build 2 physical rehearsal passes,
-but deliberately no supported App release or open intake.
+a closed App build 3 release candidate. Automated verification passes; the
+exact build 3 physical-device end-to-end checkpoint remains pending.
 The certification catalog check additionally proves that the App's closed
 smoke-test catalog is a deterministic projection of those pinned assets; it
 does not certify a run.
-`scripts/power.py` remains the Power 1.1 public command until the atomic
-cutover; it must not dispatch to both major versions.
+`scripts/power` already targets only Power 2. Public intake remains
+fail-closed until the immutable App release and active pointer are issued
+together.
+
+After the exact build 3 raw result is exported, the complete activation dry
+run is:
+
+```bash
+python3 scripts/repoctl.py activate-power /path/to/raw-result.json \
+  --reviewed-at 2026-07-24T12:00:00Z \
+  --activated-at 2026-07-24T12:01:00Z \
+  --validator-source-revision "$(git rev-parse HEAD)"
+```
+
+Only after reviewing that output should a maintainer repeat it with `--write`.
+The resulting files are reviewed and merged together; there is no partial
+intake-opening command.

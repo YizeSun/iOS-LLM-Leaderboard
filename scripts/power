@@ -1,0 +1,261 @@
+#!/usr/bin/env python3
+"""Single public CLI for creating, validating, and previewing Power evidence."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import subprocess
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+try:
+    from scripts.lib.power2.engine import (
+        load_product_context,
+        validate_package,
+    )
+    from scripts.lib.power2.package import (
+        DEFAULT_SUBMISSION_ROOT,
+        create_package,
+    )
+    from scripts.lib.power2.ranking import write_dataset
+except ModuleNotFoundError:
+    from lib.power2.engine import (
+        load_product_context,
+        validate_package,
+    )
+    from lib.power2.package import DEFAULT_SUBMISSION_ROOT, create_package
+    from lib.power2.ranking import write_dataset
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_RANKING_OUTPUT = (
+    ROOT
+    / "results"
+    / "power"
+    / "text-generation-performance"
+    / "2.0.0"
+)
+PACKAGE_FILES = {"submission.json", "result.json"}
+
+
+def _timestamp() -> str:
+    return (
+        datetime.now(timezone.utc)
+        .isoformat(timespec="seconds")
+        .replace("+00:00", "Z")
+    )
+
+
+def _source_revision() -> str:
+    completed = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    revision = completed.stdout.strip()
+    if (
+        len(revision) != 40
+        or any(character not in "0123456789abcdef" for character in revision)
+    ):
+        raise ValueError("repository HEAD is not a full Git revision")
+    return revision
+
+
+def _package_paths(path: Path) -> list[Path]:
+    path = path.resolve()
+    if path.is_dir() and {
+        child.name for child in path.iterdir() if child.is_file()
+    } == PACKAGE_FILES:
+        return [path]
+    if not path.is_dir():
+        raise ValueError(f"package path does not exist: {path}")
+    directories = sorted(child for child in path.iterdir() if child.is_dir())
+    packages = [
+        child
+        for child in directories
+        if {item.name for item in child.iterdir() if item.is_file()}
+        == PACKAGE_FILES
+    ]
+    if len(packages) != len(directories):
+        raise ValueError(f"incomplete Power package under {path}")
+    return packages
+
+
+def _contributor(package: Path) -> str:
+    manifest = json.loads(
+        (package / "submission.json").read_text(encoding="utf-8")
+    )
+    login = manifest.get("contributor", {}).get("githubLogin")
+    if not isinstance(login, str) or not login:
+        raise ValueError(f"{package}: submission has no GitHub login")
+    return login
+
+
+def _submit(args: argparse.Namespace) -> dict[str, Any]:
+    package = create_package(
+        args.result,
+        args.output_root,
+        github_login=args.github,
+        conflict_of_interest=args.conflict_of_interest,
+        disclosure=args.disclosure,
+        environment_notes=args.environment_notes,
+        declarations_accepted=args.accept_declarations,
+    )
+    return {
+        "status": "created",
+        "package": str(package),
+        "resultBytesPreserved": (
+            hashlib.sha256(args.result.read_bytes()).hexdigest()
+            == json.loads(
+                (package / "submission.json").read_text(encoding="utf-8")
+            )["sourceResult"]["sha256"]
+        ),
+        "next": (
+            "Review both files, commit only this package directory, and "
+            "open a pull request from the declared GitHub account."
+        ),
+    }
+
+
+def _validate(args: argparse.Namespace) -> dict[str, Any]:
+    context = load_product_context()
+    evaluated_at = args.evaluated_at or _timestamp()
+    validator_revision = (
+        args.validator_source_revision or _source_revision()
+    )
+    accepted_digests: set[str] = set()
+    reports: list[dict[str, Any]] = []
+    for package in _package_paths(args.path):
+        report = validate_package(
+            package,
+            context=context,
+            evaluated_at=evaluated_at,
+            validator_source_revision=validator_revision,
+            pr_author=_contributor(package),
+            accepted_result_digests=accepted_digests,
+        )
+        digest = report.get("sourceResultSHA256")
+        if isinstance(digest, str):
+            accepted_digests.add(digest)
+        reports.append(report)
+    return {
+        "status": (
+            "valid"
+            if all(
+                report.get("classification") != "reject"
+                for report in reports
+            )
+            else "invalid"
+        ),
+        "packageCount": len(reports),
+        "reports": reports,
+    }
+
+
+def _preview(args: argparse.Namespace) -> dict[str, Any]:
+    output_path = args.output / "ranking.json"
+    dataset = write_dataset(
+        args.submissions_root,
+        output_path,
+        generated_at=args.generated_at or _timestamp(),
+        validator_source_revision=(
+            args.validator_source_revision or _source_revision()
+        ),
+    )
+    return {
+        "status": "generated",
+        "output": str(output_path),
+        "acceptedContributionCount": dataset[
+            "acceptedContributionCount"
+        ],
+        "excludedContributionCount": dataset[
+            "excludedContributionCount"
+        ],
+        "viewCount": len(dataset["views"]),
+    }
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__)
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    submit = subparsers.add_parser(
+        "submit",
+        help="create one immutable Power 2 two-file PR package",
+    )
+    submit.add_argument("result", type=Path)
+    submit.add_argument("--github", required=True)
+    submit.add_argument(
+        "--output-root",
+        type=Path,
+        default=DEFAULT_SUBMISSION_ROOT,
+    )
+    submit.add_argument(
+        "--conflict-of-interest",
+        choices=("none", "disclosed"),
+        default="none",
+    )
+    submit.add_argument("--disclosure")
+    submit.add_argument("--environment-notes")
+    submit.add_argument("--accept-declarations", action="store_true")
+    submit.set_defaults(handler=_submit)
+
+    validate = subparsers.add_parser(
+        "validate",
+        help="validate one package or the current intake directory",
+    )
+    validate.add_argument("path", type=Path)
+    validate.add_argument("--evaluated-at")
+    validate.add_argument("--validator-source-revision")
+    validate.set_defaults(handler=_validate)
+
+    preview = subparsers.add_parser(
+        "preview",
+        help="regenerate the Power 2 community ranking locally",
+    )
+    preview.add_argument(
+        "--submissions-root",
+        type=Path,
+        default=DEFAULT_SUBMISSION_ROOT,
+    )
+    preview.add_argument(
+        "--output",
+        type=Path,
+        default=DEFAULT_RANKING_OUTPUT,
+    )
+    preview.add_argument("--generated-at")
+    preview.add_argument("--validator-source-revision")
+    preview.set_defaults(handler=_preview)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _build_parser().parse_args(argv)
+    try:
+        summary = args.handler(args)
+    except (
+        OSError,
+        UnicodeDecodeError,
+        json.JSONDecodeError,
+        subprocess.CalledProcessError,
+        ValueError,
+        RuntimeError,
+    ) as error:
+        print(
+            json.dumps(
+                {"status": "invalid", "error": str(error)},
+                indent=2,
+            )
+        )
+        return 1
+    print(json.dumps(summary, indent=2, sort_keys=True))
+    return 0 if summary.get("status") != "invalid" else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

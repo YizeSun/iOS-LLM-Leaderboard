@@ -1,0 +1,14 @@
+{
+  "acceptedContributionCount": 0,
+  "excluded": [],
+  "excludedContributionCount": 0,
+  "generatedAt": "2026-07-24T00:00:00Z",
+  "rankingPolicy": {
+    "id": "power-ranking",
+    "sha256": "9a61f66ff1084cd9aa5a3bc1c2bd3f3290e6392fdc343d98b5c48de781e31277",
+    "version": "1.0.0-draft.2"
+  },
+  "schemaVersion": "power-ranking-dataset-1.0.0-draft.1",
+  "validatorSourceRevision": "4407a3776636e6c1a3a5892f78a3f4a841cecac7",
+  "views": []
+}

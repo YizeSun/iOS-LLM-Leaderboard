@@ -30,7 +30,7 @@ def load_json(path: Path) -> dict:
 
 
 class Power2AppShellTests(unittest.TestCase):
-    def test_candidate_identity_opens_only_closed_official_rehearsal(
+    def test_product_identity_does_not_compile_repository_intake_state(
         self,
     ) -> None:
         app_manifest = subprocess.run(
@@ -51,7 +51,7 @@ class Power2AppShellTests(unittest.TestCase):
         completed = subprocess.run(
             [
                 "python3",
-                "scripts/generate_power2_candidate_identity.py",
+                "scripts/generate_power2_product_identity.py",
                 "--check",
             ],
             cwd=ROOT,
@@ -61,31 +61,22 @@ class Power2AppShellTests(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stderr)
 
         identity = (
-            APP_ROOT / "Power2CandidateIdentity.generated.swift"
+            APP_ROOT / "Power2ProductIdentity.generated.swift"
         ).read_text(encoding="utf-8")
         model = (
             APP_ROOT
             / "PowerBenchmarkApp"
             / "PowerAppModel.swift"
         ).read_text(encoding="utf-8")
-        self.assertIn("static let publicIntakeOpen = false", identity)
         self.assertIn("static let appReleaseAvailable = true", identity)
+        self.assertNotIn("publicIntakeOpen", identity)
+        self.assertNotIn("submissionRehearsalAvailable", identity)
         self.assertIn(
-            "static let submissionRehearsalAvailable = true",
-            identity,
-        )
-        self.assertIn(
-            "Power2CandidateIdentity.appReleaseAvailable",
+            "Power2ProductIdentity.appReleaseAvailable",
             model,
         )
-        self.assertIn(
-            "Power2CandidateIdentity.publicIntakeOpen",
-            model,
-        )
-        self.assertIn(
-            "Power2CandidateIdentity.submissionRehearsalAvailable",
-            model,
-        )
+        self.assertNotIn("publicIntakeOpen", model)
+        self.assertNotIn("submissionRehearsalAvailable", model)
         self.assertIn("selectedResultMatchesCurrentRelease", model)
 
     def test_certification_catalog_is_generated_from_candidate(self) -> None:

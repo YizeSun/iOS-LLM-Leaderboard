@@ -3,11 +3,13 @@
 from .engine import (
     ValidationContext,
     load_candidate_context,
+    load_product_context,
     validate_package,
 )
 
 __all__ = [
     "ValidationContext",
     "load_candidate_context",
+    "load_product_context",
     "validate_package",
 ]

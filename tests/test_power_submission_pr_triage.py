@@ -25,13 +25,13 @@ classify = current_triage.classify
 
 
 class PowerSubmissionPRTriageTests(unittest.TestCase):
-    def test_trusted_workflow_invokes_triage_as_a_module(self) -> None:
+    def test_trusted_workflow_invokes_power_2_triage_from_the_base(self) -> None:
         workflow = (
             ROOT / ".github/workflows/power-submission-triage.yml"
         ).read_text()
-        self.assertIn(
-            "python3 -m scripts.triage_power_submission_pr_1_1_4", workflow
-        )
+        self.assertIn("python3 scripts/triage_power2_submission_pr.py", workflow)
+        self.assertIn("github.event.pull_request.base.sha", workflow)
+        self.assertIn("persist-credentials: false", workflow)
         self.assertNotIn("python3 scripts/triage_power_submission_pr.py", workflow)
 
     def test_fork_checks_and_auto_merge_resolve_trusted_pr_context(self) -> None:
@@ -46,7 +46,8 @@ class PowerSubmissionPRTriageTests(unittest.TestCase):
         ).read_text()
         self.assertIn("HEAD_REPOSITORY", auto_merge)
         self.assertIn('head="$HEAD_OWNER:$HEAD_BRANCH"', auto_merge)
-        self.assertIn("headRefOid", auto_merge)
+        self.assertIn("statusCheckRollup", auto_merge)
+        self.assertIn("PR's current", auto_merge)
         self.assertIn("Unable to resolve an open pull request", auto_merge)
 
     def make_package(

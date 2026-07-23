@@ -1,9 +1,9 @@
 {
   "appComponents": {
     "path": "apps/ios/component-manifest.json",
-    "sha256": "18a7961e3616c5108adde624df0083d1137f53d52d92fbb41f69e098eec9ebcb"
+    "sha256": "e0e704f8bc6e22cb743952e7a02e3dfbd80fdb95f2618b7f495b9d6b1bac0db6"
   },
-  "build": "2",
+  "build": "3",
   "buildConfiguration": "Official",
   "bundleIdentifier": "org.iosllmleaderboard.power2",
   "embeddedMeasurementStack": {
@@ -12,18 +12,19 @@
   },
   "productID": "power",
   "releaseBlockedBy": [
+    "complete a physical-device end-to-end rehearsal",
     "activate the immutable stack and public intake atomically"
   ],
-  "releaseID": "power-app-2.0.0-candidate-18a7961e3616",
+  "releaseID": "power-app-2.0.0-candidate-e0e704f8bc6e",
   "schemaVersion": "power-app-release-candidate-1.0.0-draft.1",
-  "sourceRevision": "18a7961e3616c5108adde624df0083d1137f53d52d92fbb41f69e098eec9ebcb",
+  "sourceRevision": "e0e704f8bc6e22cb743952e7a02e3dfbd80fdb95f2618b7f495b9d6b1bac0db6",
   "state": "candidate",
   "supportedRunnerCertificateIDs": [
     "power2-runner-87f62feecc2b"
   ],
   "verification": {
     "genericIOSReleaseBuild": "pass",
-    "physicalDeviceEndToEndRehearsal": "pass",
+    "physicalDeviceEndToEndRehearsal": "pending",
     "sourceAndDependencyIntegrity": "pass"
   },
   "version": "2.0.0"
