@@ -14,12 +14,16 @@ from typing import Any
 try:
     from scripts.lib.power2.engine import (
         Power2ValidationError,
+        VALIDATOR_NAME,
+        VALIDATOR_VERSION,
         load_candidate_certification_review_context,
         validate_package,
     )
 except ModuleNotFoundError:
     from lib.power2.engine import (
         Power2ValidationError,
+        VALIDATOR_NAME,
+        VALIDATOR_VERSION,
         load_candidate_certification_review_context,
         validate_package,
     )
@@ -90,7 +94,15 @@ def review_result(
     return {
         "schemaVersion":
             "power-runner-certification-review-1.0.0-draft.1",
+        "reviewedAt": evaluated_at,
+        "validator": {
+            "name": VALIDATOR_NAME,
+            "version": VALIDATOR_VERSION,
+            "sourceRevision": validator_source_revision,
+        },
         "status": "pass" if passing else "fail",
+        "physicalDeviceSmokeRun": "pass" if passing else "fail",
+        "rawResultReview": "pass" if passing else "fail",
         "publishable": False,
         "rankingEligible": False,
         "sourceResultSHA256": report.get("sourceResultSHA256"),
@@ -123,7 +135,15 @@ def main(argv: list[str] | None = None) -> int:
         report = {
             "schemaVersion":
                 "power-runner-certification-review-1.0.0-draft.1",
+            "reviewedAt": args.evaluated_at,
+            "validator": {
+                "name": VALIDATOR_NAME,
+                "version": VALIDATOR_VERSION,
+                "sourceRevision": args.validator_source_revision,
+            },
             "status": "fail",
+            "physicalDeviceSmokeRun": "fail",
+            "rawResultReview": "fail",
             "publishable": False,
             "rankingEligible": False,
             "reasonCodes": ["certification-review-failed"],

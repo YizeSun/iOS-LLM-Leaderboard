@@ -564,6 +564,12 @@ class Power2EngineTests(unittest.TestCase):
             )
 
         self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["physicalDeviceSmokeRun"], "pass")
+        self.assertEqual(report["rawResultReview"], "pass")
+        self.assertEqual(
+            report["validator"]["sourceRevision"],
+            VALIDATOR_SOURCE_REVISION,
+        )
         self.assertFalse(report["publishable"])
         self.assertFalse(report["rankingEligible"])
         self.assertEqual(
