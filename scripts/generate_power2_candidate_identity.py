@@ -43,6 +43,11 @@ def load_candidate() -> dict[str, Any]:
         raise ValueError("generated identity accepts migration drafts only")
     if value.get("publicIntakeOpen") is not False:
         raise ValueError("candidate identity cannot open public intake")
+    if value.get("submissionRehearsalAvailable") is not True:
+        raise ValueError(
+            "candidate identity must explicitly allow the closed submission "
+            "rehearsal"
+        )
     if value.get("appRelease") is not None:
         raise ValueError("candidate App release must remain null")
     _string(value.get("stackID"), "stackID")
@@ -68,9 +73,11 @@ enum Power2CandidateIdentity {{
     static let runnerCandidateManifestPath = "{runner['path']}"
     static let runnerCandidateManifestSHA256 = "{runner['sha256']}"
     static let publicIntakeOpen = false
-    // Enables the closed Official end-to-end rehearsal. GitHub submission
-    // remains locked independently by publicIntakeOpen.
+    // Enables the closed Official measurement rehearsal.
     static let appReleaseAvailable = true
+    // Lets this exact candidate create a real result-only pull request while
+    // trusted repository CI remains authoritative and public intake is closed.
+    static let submissionRehearsalAvailable = true
 }}
 """
 

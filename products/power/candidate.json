@@ -4,6 +4,7 @@
   "stackID": "power-text-iphone-2.0.0-rc.1",
   "status": "migration-draft",
   "publicIntakeOpen": false,
+  "submissionRehearsalAvailable": true,
   "certificationCandidateStack": {
     "path": "products/power/stacks/power-text-iphone-2.0.0-draft.2/manifest.json",
     "sha256": "43e5d8899f660c557e3a7dad0c7e54de8e440aab5be6d46096306c6e43b385a0"
@@ -40,12 +41,29 @@
   },
   "appCandidate": {
     "path": "apps/ios/component-manifest.json",
-    "sha256": "821a7c22d68d118ae839ee883d54c7d1a029a5c185d8f06a85b255bf7f2b714f"
+    "sha256": "18a7961e3616c5108adde624df0083d1137f53d52d92fbb41f69e098eec9ebcb"
   },
   "appReleaseCandidate": {
     "path": "products/power/app-releases/candidate.json",
-    "sha256": "fada1ad60c70d5dd6e81cfdb81be3f27a9f937e288e5916cf9089f2687fe77a8"
+    "sha256": "ebd52c343da9776f703435e63e719e0df48eecbf7984cb90f7cf4f501817a469"
   },
+  "appReleaseRehearsalEvidence": [
+    {
+      "sourceCommit": "06f9cef32a2c312bbfc460a937410688519f72d3",
+      "appComponents": {
+        "path": "products/power/app-releases/evidence/3e8d09fd-d301-4937-b915-fda7e9be3e38/app-component-manifest.json",
+        "sha256": "821a7c22d68d118ae839ee883d54c7d1a029a5c185d8f06a85b255bf7f2b714f"
+      },
+      "result": {
+        "path": "products/power/app-releases/evidence/3e8d09fd-d301-4937-b915-fda7e9be3e38/result.json",
+        "sha256": "1e3489a42fd35eabdb311983da953a5cd36dcccb2e998e4af9cc9d85cbac91af"
+      },
+      "review": {
+        "path": "products/power/app-releases/evidence/3e8d09fd-d301-4937-b915-fda7e9be3e38/review.json",
+        "sha256": "61cb15bfe9a4d96266863b736dcc43d7c657a47ef255744eea11570152443794"
+      }
+    }
+  ],
   "appRelease": null,
   "activationBlockers": [
     "issue an immutable App release for the Power 2.0 App shell",

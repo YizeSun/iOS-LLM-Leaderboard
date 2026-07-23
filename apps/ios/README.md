@@ -8,19 +8,34 @@ the real dependency graph.
 
 The project has three explicit build kinds:
 
-- **Developer** — the normal Debug and Release configurations. It can inspect
-  the App and local UI but cannot measure or submit ranking evidence.
+- **Developer** — the normal Debug and Release configurations, displayed on
+  device as **Power Benchmark Dev**. It can inspect the App and local UI but
+  cannot measure or submit ranking evidence.
 - **Certification** — the maintainer-only physical-device smoke-test
   configuration. It can write candidate evidence but cannot submit or rank it.
 - **Official** — the distribution configuration. The exact generated App
-  release candidate may measure during a closed physical rehearsal after its
-  Runner certificate is active. Submission remains locked until an immutable
-  App release, active Power pointer, and open public intake are generated
-  together.
+  release candidate may measure and create a real result-only pull request
+  during a closed rehearsal after its Runner certificate is active. Trusted
+  repository CI keeps that rehearsal non-publishable and non-ranking until an
+  immutable App release, active Power pointer, and open public intake are
+  generated together.
 
 The compiled kind and the `PowerBuildKind` value embedded in `Info.plist` must
 agree. Overriding one build setting cannot turn a Developer build into an
 Official build.
+
+App version, build number, Bundle IDs, and the distinct on-device names have
+one tracked source:
+`apps/ios/Configuration/ReleaseIdentity.json`. Regenerate the Xcode settings
+after changing it:
+
+```bash
+python3 scripts/generate_power_app_release_identity.py
+```
+
+The generated configuration, source identity, App component manifest, result
+envelope, and repository validator are hash-bound. Do not type those values
+again in the Xcode project or release-candidate generator.
 
 Apple signing is deliberately outside the pinned project. Copy the example
 once and edit only the ignored local file:
@@ -102,8 +117,11 @@ xcodebuild \
   build
 ```
 
-This exact candidate can run a benchmark while intake remains closed. Export
-the newly completed raw JSON without editing it and review it with:
+This exact candidate can run a benchmark while intake remains closed. It may
+also create a real result-only pull request for the closed submission
+rehearsal; the UI labels that mode explicitly and trusted CI does not publish
+or rank it. Export the newly completed raw JSON without editing it and review
+it with:
 
 ```bash
 python3 scripts/review_power2_app_release_result.py \
@@ -113,7 +131,10 @@ python3 scripts/review_power2_app_release_result.py \
 ```
 
 The report is always non-publishable and non-ranking. A pass authorizes the
-later immutable App release step; it does not open intake by itself.
+later immutable App release step; it does not open intake by itself. Evidence
+from older App builds remains visible and shareable, but the Submit action
+accepts only a result whose complete App release identity equals the running
+Official build.
 
 The scheme's presence and local signing do not authorize a release: the
 generated release identity and repository intake state remain authoritative.
@@ -127,7 +148,8 @@ submission is fully connected to those stored bytes, uses OAuth Device Flow,
 creates a new UUID branch directly from the current upstream head, writes only
 the two-file Power 2 package, and opens a pull request. It never synchronizes
 or modifies the contributor fork's default branch. The action remains
-fail-closed until the Official App release and public intake are active.
+fail-closed unless the exact Official candidate explicitly enables a closed
+rehearsal or the immutable App release and public intake are active.
 
 The current `ios-app/` remains the Power 1.1 public App until the atomic
 clean-break cutover. No Power 1.1 result is imported, converted, displayed, or

@@ -8,6 +8,7 @@ public struct StoredPowerResult: Sendable, Equatable, Identifiable {
     public let programID: String
     public let workloadID: String
     public let modelArtifactID: String
+    public let appRelease: PowerAppReleaseIdentity
     public let sha256: String
     public let byteCount: Int
     public let fileURL: URL
@@ -178,6 +179,7 @@ public actor PowerResultsStore {
             programID: envelope.program.id,
             workloadID: envelope.payload.workload.id,
             modelArtifactID: envelope.model.artifactID,
+            appRelease: envelope.appRelease,
             sha256: SHA256.hash(data: bytes).map {
                 String(format: "%02x", $0)
             }.joined(),

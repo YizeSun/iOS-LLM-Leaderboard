@@ -1,4 +1,5 @@
 // Shared signing boundary. This file affects the build and is pinned.
 // Personal Team IDs belong only in the optional ignored include.
+#include "ReleaseIdentity.generated.xcconfig"
 DEVELOPMENT_TEAM =
 #include? "LocalSigning.xcconfig"

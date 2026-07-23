@@ -28,6 +28,7 @@ RELEASE_STACK_OUTPUT_PATH = (
     / "manifest.json"
 )
 APP_OUTPUT_PATH = ROOT / "products/power/app-releases/candidate.json"
+APP_IDENTITY_PATH = ROOT / "apps/ios/Configuration/ReleaseIdentity.json"
 
 # This checkpoint records the exact identities that completed the automated
 # candidate suite. Any stack, Runner, or App source change automatically
@@ -39,7 +40,7 @@ AUTOMATED_VERIFICATION_CHECKPOINT = {
     "runnerComponentsSHA256":
         "87f62feecc2b3fca994cc4f40214aed9876f1477c51fdb7c56c6945eb6b03ee2",
     "appComponentsSHA256":
-        "821a7c22d68d118ae839ee883d54c7d1a029a5c185d8f06a85b255bf7f2b714f",
+        "18a7961e3616c5108adde624df0083d1137f53d52d92fbb41f69e098eec9ebcb",
 }
 
 
@@ -143,6 +144,30 @@ def render_candidates() -> tuple[str, str, str, str]:
     certification_stack = _load_json(certification_stack_path)
     runner = _load_json(runner_path)
     app = _load_json(app_path)
+    app_identity = _load_json(APP_IDENTITY_PATH)
+    if (
+        app_identity.get("schemaVersion")
+        != "power-app-build-identity-1.0.0-draft.1"
+    ):
+        raise ValueError("unsupported Power App build identity")
+    app_version = app_identity.get("version")
+    app_build = app_identity.get("build")
+    build_kinds = app_identity.get("buildKinds")
+    official_identity = (
+        build_kinds.get("official")
+        if isinstance(build_kinds, dict)
+        else None
+    )
+    if (
+        not isinstance(app_version, str)
+        or not isinstance(app_build, str)
+        or not isinstance(official_identity, dict)
+        or not isinstance(
+            official_identity.get("bundleIdentifier"),
+            str,
+        )
+    ):
+        raise ValueError("Power App build identity is incomplete")
     program_reference = certification_stack.get("program")
     target_reference = certification_stack.get("target")
     runner_policy_reference = (
@@ -351,17 +376,18 @@ def render_candidates() -> tuple[str, str, str, str]:
     }
 
     app_candidate_id = (
-        "power-app-2.0.0-candidate-" + app_reference["sha256"][:12]
+        f"power-app-{app_version}-candidate-"
+        + app_reference["sha256"][:12]
     )
     app_candidate = {
         "schemaVersion": "power-app-release-candidate-1.0.0-draft.1",
         "productID": "power",
         "releaseID": app_candidate_id,
         "state": "candidate",
-        "version": "2.0.0",
-        "build": "1",
+        "version": app_version,
+        "build": app_build,
         "sourceRevision": app_reference["sha256"],
-        "bundleIdentifier": "org.iosllmleaderboard.power2",
+        "bundleIdentifier": official_identity["bundleIdentifier"],
         "buildConfiguration": "Official",
         "appComponents": app_reference,
         "embeddedMeasurementStack": release_stack_reference,

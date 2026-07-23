@@ -67,9 +67,8 @@ struct PowerResultsView: View {
                         Text(
                             "The Results Store and submission package preserve "
                                 + "the selected file byte-for-byte. GitHub "
-                                + "submission remains disabled for "
-                                + "certification evidence and until Power 2 "
-                                + "public intake opens."
+                                + "submission accepts only evidence produced "
+                                + "by this exact Official App build."
                         )
                     }
 
@@ -139,12 +138,29 @@ struct PowerResultsView: View {
 
             submissionStatus
 
+            if model.submissionIsClosedRehearsal {
+                Label(
+                    "Closed submission rehearsal: this build may create a "
+                        + "real pull request, but public intake remains closed. "
+                        + "Trusted repository CI will not publish or rank it.",
+                    systemImage: "testtube.2"
+                )
+                .foregroundStyle(.orange)
+            }
             if !model.submissionAvailable {
                 Label(
                     "Public submission remains locked until this exact App "
                         + "release, Runner certificate, and Power 2 intake "
                         + "are active.",
                     systemImage: "lock.shield"
+                )
+                .foregroundStyle(.orange)
+            } else if !model.selectedResultMatchesCurrentRelease {
+                Label(
+                    "This saved result came from a different App release. "
+                        + "Run a new test with the current Official build "
+                        + "before submitting.",
+                    systemImage: "arrow.triangle.2.circlepath"
                 )
                 .foregroundStyle(.orange)
             } else if !model.githubSubmissionConfigured {

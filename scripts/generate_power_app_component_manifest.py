@@ -17,6 +17,10 @@ APP_KIT_ROOT = ROOT / "apps" / "PowerAppKit"
 OUTPUT_PATH = APP_ROOT / "component-manifest.json"
 APP_PROJECT = APP_ROOT / "PowerBenchmarkApp.xcodeproj"
 SIGNING_CONFIGURATION = APP_ROOT / "Configuration" / "Signing.xcconfig"
+RELEASE_IDENTITY = APP_ROOT / "Configuration" / "ReleaseIdentity.json"
+RELEASE_CONFIGURATION = (
+    APP_ROOT / "Configuration" / "ReleaseIdentity.generated.xcconfig"
+)
 
 COMPONENT_ROOTS = {
     "resultsStore": APP_KIT_ROOT / "Sources" / "PowerResultsStore",
@@ -81,6 +85,8 @@ def render_manifest() -> str:
         APP_ROOT / "PowerBenchmarkApp" / "Info.plist"
     )
     shell_sources.append(SIGNING_CONFIGURATION)
+    shell_sources.append(RELEASE_IDENTITY)
+    shell_sources.append(RELEASE_CONFIGURATION)
     components = {
         "appShell": _aggregate(shell_sources, APP_ROOT),
         **{
@@ -113,6 +119,8 @@ def render_manifest() -> str:
             / "PowerOfficial.xcscheme"
         ),
         "signingConfiguration": _pin(SIGNING_CONFIGURATION),
+        "releaseIdentity": _pin(RELEASE_IDENTITY),
+        "releaseConfiguration": _pin(RELEASE_CONFIGURATION),
         "resolvedDependencies": _pin(
             APP_PROJECT
             / "project.xcworkspace"
@@ -127,9 +135,8 @@ def render_manifest() -> str:
         "components": components,
         "completeForRelease": False,
         "releaseBlockers": [
-            "issue a runner certificate after physical-device review",
-            "generate an immutable App release identity",
-            "complete a physical-device end-to-end rehearsal",
+            "complete the exact App closed submission rehearsal",
+            "issue an immutable App release identity",
             "activate the released stack and public intake atomically",
         ],
     }

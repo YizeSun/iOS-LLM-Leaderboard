@@ -1,9 +1,9 @@
 {
   "appComponents": {
     "path": "apps/ios/component-manifest.json",
-    "sha256": "821a7c22d68d118ae839ee883d54c7d1a029a5c185d8f06a85b255bf7f2b714f"
+    "sha256": "18a7961e3616c5108adde624df0083d1137f53d52d92fbb41f69e098eec9ebcb"
   },
-  "build": "1",
+  "build": "2",
   "buildConfiguration": "Official",
   "bundleIdentifier": "org.iosllmleaderboard.power2",
   "embeddedMeasurementStack": {
@@ -15,9 +15,9 @@
     "complete a physical-device end-to-end rehearsal",
     "activate the immutable stack and public intake atomically"
   ],
-  "releaseID": "power-app-2.0.0-candidate-821a7c22d68d",
+  "releaseID": "power-app-2.0.0-candidate-18a7961e3616",
   "schemaVersion": "power-app-release-candidate-1.0.0-draft.1",
-  "sourceRevision": "821a7c22d68d118ae839ee883d54c7d1a029a5c185d8f06a85b255bf7f2b714f",
+  "sourceRevision": "18a7961e3616c5108adde624df0083d1137f53d52d92fbb41f69e098eec9ebcb",
   "state": "candidate",
   "supportedRunnerCertificateIDs": [
     "power2-runner-87f62feecc2b"

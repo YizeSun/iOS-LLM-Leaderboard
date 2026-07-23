@@ -1,0 +1,19 @@
+{
+  "build": "2",
+  "buildKinds": {
+    "certification": {
+      "bundleIdentifier": "org.iosllmleaderboard.power2.certification",
+      "displayName": "Power Benchmark Certification"
+    },
+    "developer": {
+      "bundleIdentifier": "org.iosllmleaderboard.power2.developer",
+      "displayName": "Power Benchmark Dev"
+    },
+    "official": {
+      "bundleIdentifier": "org.iosllmleaderboard.power2",
+      "displayName": "Power Benchmark"
+    }
+  },
+  "schemaVersion": "power-app-build-identity-1.0.0-draft.1",
+  "version": "2.0.0"
+}

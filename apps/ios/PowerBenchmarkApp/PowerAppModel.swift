@@ -104,7 +104,26 @@ final class PowerAppModel {
     var submissionAvailable: Bool {
         PowerAppBuildIdentity.officialReleaseAvailable
             && Power2CandidateIdentity.appReleaseAvailable
-            && Power2CandidateIdentity.publicIntakeOpen
+            && (
+                Power2CandidateIdentity.publicIntakeOpen
+                    || Power2CandidateIdentity.submissionRehearsalAvailable
+            )
+    }
+
+    var submissionIsClosedRehearsal: Bool {
+        submissionAvailable
+            && !Power2CandidateIdentity.publicIntakeOpen
+            && Power2CandidateIdentity.submissionRehearsalAvailable
+    }
+
+    var selectedResultMatchesCurrentRelease: Bool {
+        guard
+            let selectedResult,
+            let currentRelease = PowerAppBuildIdentity.appRelease
+        else {
+            return false
+        }
+        return selectedResult.appRelease == currentRelease
     }
 
     var githubSubmissionConfigured: Bool {
@@ -120,6 +139,7 @@ final class PowerAppModel {
         return submissionAvailable
             && githubSubmissionConfigured
             && selectedResult != nil
+            && selectedResultMatchesCurrentRelease
             && acceptsSubmissionDeclarations
             && disclosureComplete
             && !submissionState.isRunning
@@ -293,6 +313,7 @@ final class PowerAppModel {
         do {
             guard
                 submissionAvailable,
+                selectedResultMatchesCurrentRelease,
                 let selectedResult,
                 let clientID = githubOAuthClientID
             else {
@@ -362,7 +383,7 @@ private enum SubmissionError: LocalizedError {
     case unavailable
 
     var errorDescription: String? {
-        "This build or selected result is not eligible for public "
-            + "Power submission."
+        "This build or selected result is not eligible for the current "
+            + "Power submission flow."
     }
 }

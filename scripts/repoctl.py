@@ -518,6 +518,10 @@ def _verify_app_candidate(
             "xcschemes/PowerOfficial.xcscheme",
         "signingConfiguration":
             "apps/ios/Configuration/Signing.xcconfig",
+        "releaseIdentity":
+            "apps/ios/Configuration/ReleaseIdentity.json",
+        "releaseConfiguration":
+            "apps/ios/Configuration/ReleaseIdentity.generated.xcconfig",
         "resolvedDependencies":
             "apps/ios/PowerBenchmarkApp.xcodeproj/"
             "project.xcworkspace/xcshareddata/swiftpm/Package.resolved",
@@ -565,6 +569,20 @@ def _verify_app_candidate(
                 / "ios"
                 / "Configuration"
                 / "Signing.xcconfig"
+            ).resolve(),
+            (
+                ROOT
+                / "apps"
+                / "ios"
+                / "Configuration"
+                / "ReleaseIdentity.json"
+            ).resolve(),
+            (
+                ROOT
+                / "apps"
+                / "ios"
+                / "Configuration"
+                / "ReleaseIdentity.generated.xcconfig"
             ).resolve(),
         },
         "resultsStore": {
@@ -930,6 +948,98 @@ def _verify_release_candidates(
             "Runner certification evidence is not issuance-safe"
         )
 
+    app_rehearsals = candidate.get("appReleaseRehearsalEvidence")
+    if not isinstance(app_rehearsals, list) or not app_rehearsals:
+        raise VerificationError(
+            "Power candidate has no retained App release rehearsal evidence"
+        )
+    for index, evidence in enumerate(app_rehearsals):
+        if not isinstance(evidence, dict):
+            raise VerificationError(
+                f"App release rehearsal evidence {index} is invalid"
+            )
+        source_commit = evidence.get("sourceCommit")
+        if (
+            not isinstance(source_commit, str)
+            or len(source_commit) != 40
+            or any(
+                character not in "0123456789abcdef"
+                for character in source_commit
+            )
+        ):
+            raise VerificationError(
+                f"App release rehearsal evidence {index} has no source commit"
+            )
+        historical_app_reference = evidence.get("appComponents")
+        result_reference = evidence.get("result")
+        review_reference = evidence.get("review")
+        if not all(
+            isinstance(reference, dict)
+            for reference in (
+                historical_app_reference,
+                result_reference,
+                review_reference,
+            )
+        ):
+            raise VerificationError(
+                f"App release rehearsal evidence {index} is incomplete"
+            )
+        historical_app_path = _verify_pinned_asset(
+            historical_app_reference,
+            f"App release rehearsal {index} component manifest",
+        )
+        result_path = _verify_pinned_asset(
+            result_reference,
+            f"App release rehearsal {index} result",
+        )
+        review_path = _verify_pinned_asset(
+            review_reference,
+            f"App release rehearsal {index} review",
+        )
+        historical_app = _load_json(historical_app_path)
+        result = _load_json(result_path)
+        review = _load_json(review_path)
+        review_validator = review.get("validator")
+        documents.extend(
+            (
+                (
+                    str(historical_app_path.relative_to(ROOT)),
+                    historical_app,
+                ),
+                (str(result_path.relative_to(ROOT)), result),
+                (str(review_path.relative_to(ROOT)), review),
+            )
+        )
+        result_app_release = result.get("appRelease")
+        if (
+            historical_app.get("schemaVersion")
+            != "power-app-component-manifest-1.0.0-draft.1"
+            or historical_app.get("status") != "migration-draft"
+            or not isinstance(result_app_release, dict)
+            or result_app_release.get("sourceRevision")
+            != historical_app_reference.get("sha256")
+            or result_app_release.get(
+                "embeddedMeasurementStackSHA256"
+            )
+            != measurement_stack_reference.get("sha256")
+            or result.get("runnerCertificateID") != active_runner_id
+            or review.get("appRelease") != result_app_release
+            or review.get("runnerCertificateID") != active_runner_id
+            or not isinstance(review_validator, dict)
+            or review_validator.get("sourceRevision")
+            != source_commit
+            or review.get("sourceResultSHA256")
+            != result_reference.get("sha256")
+            or review.get("status") != "pass"
+            or review.get("physicalDeviceEndToEndRehearsal") != "pass"
+            or review.get("classification") != "auto-accept"
+            or review.get("publishable") is not False
+            or review.get("rankingEligible") is not False
+        ):
+            raise VerificationError(
+                f"App release rehearsal evidence {index} is not audit-safe"
+            )
+
     if (
         app_candidate.get("schemaVersion")
         != "power-app-release-candidate-1.0.0-draft.1"
@@ -938,10 +1048,39 @@ def _verify_release_candidates(
         raise VerificationError(
             "App release candidate is not a closed candidate"
         )
+    app_manifest = _load_json(
+        _verify_pinned_asset(
+            app_reference,
+            "App component manifest for release candidate",
+        )
+    )
+    app_identity = _load_json(
+        _verify_pinned_asset(
+            app_manifest.get("releaseIdentity"),
+            "Power App build identity",
+        )
+    )
+    build_kinds = app_identity.get("buildKinds")
+    official_identity = (
+        build_kinds.get("official")
+        if isinstance(build_kinds, dict)
+        else None
+    )
+    app_version = app_identity.get("version")
+    app_build = app_identity.get("build")
+    if (
+        app_identity.get("schemaVersion")
+        != "power-app-build-identity-1.0.0-draft.1"
+        or not isinstance(app_version, str)
+        or not isinstance(app_build, str)
+        or not isinstance(official_identity, dict)
+    ):
+        raise VerificationError("Power App build identity is incomplete")
+
     app_digest = app_reference.get("sha256")
     if (
         app_candidate.get("releaseID")
-        != "power-app-2.0.0-candidate-" + str(app_digest)[:12]
+        != f"power-app-{app_version}-candidate-" + str(app_digest)[:12]
         or app_candidate.get("sourceRevision") != app_digest
         or app_candidate.get("appComponents") != app_reference
         or app_candidate.get("embeddedMeasurementStack")
@@ -953,11 +1092,11 @@ def _verify_release_candidates(
             "App release candidate identity is not source-bound"
         )
     if (
-        app_candidate.get("version") != "2.0.0"
-        or app_candidate.get("build") != "1"
+        app_candidate.get("version") != app_version
+        or app_candidate.get("build") != app_build
         or app_candidate.get("buildConfiguration") != "Official"
         or app_candidate.get("bundleIdentifier")
-        != "org.iosllmleaderboard.power2"
+        != official_identity.get("bundleIdentifier")
     ):
         raise VerificationError(
             "App release candidate build identity is inconsistent"

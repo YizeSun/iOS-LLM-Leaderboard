@@ -122,6 +122,10 @@ class Power2RunnerComponentTests(unittest.TestCase):
         self.assertIn(candidate["runnerCandidate"]["sha256"], swift)
         self.assertIn("static let publicIntakeOpen = false", swift)
         self.assertIn("static let appReleaseAvailable = true", swift)
+        self.assertIn(
+            "static let submissionRehearsalAvailable = true",
+            swift,
+        )
 
     def test_release_candidates_are_generated_and_source_bound(self) -> None:
         completed = subprocess.run(
@@ -144,9 +148,24 @@ class Power2RunnerComponentTests(unittest.TestCase):
             ACTIVE_RUNNER_CERTIFICATE_PATH.read_text()
         )
         app = json.loads(APP_RELEASE_CANDIDATE_PATH.read_text())
+        app_identity = json.loads(
+            (
+                ROOT
+                / "apps"
+                / "ios"
+                / "Configuration"
+                / "ReleaseIdentity.json"
+            ).read_text()
+        )
         self.assertEqual(runner["state"], "candidate")
         self.assertEqual(active_runner["state"], "active")
         self.assertEqual(app["state"], "candidate")
+        self.assertEqual(app["version"], app_identity["version"])
+        self.assertEqual(app["build"], app_identity["build"])
+        self.assertEqual(
+            app["bundleIdentifier"],
+            app_identity["buildKinds"]["official"]["bundleIdentifier"],
+        )
         self.assertEqual(
             runner["runnerComponents"],
             candidate["runnerCandidate"],

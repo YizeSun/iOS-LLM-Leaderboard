@@ -9,7 +9,9 @@ enum Power2CandidateIdentity {
     static let runnerCandidateManifestPath = "apps/PowerRunnerKit/component-manifest.json"
     static let runnerCandidateManifestSHA256 = "87f62feecc2b3fca994cc4f40214aed9876f1477c51fdb7c56c6945eb6b03ee2"
     static let publicIntakeOpen = false
-    // Enables the closed Official end-to-end rehearsal. GitHub submission
-    // remains locked independently by publicIntakeOpen.
+    // Enables the closed Official measurement rehearsal.
     static let appReleaseAvailable = true
+    // Lets this exact candidate create a real result-only pull request while
+    // trusted repository CI remains authoritative and public intake is closed.
+    static let submissionRehearsalAvailable = true
 }

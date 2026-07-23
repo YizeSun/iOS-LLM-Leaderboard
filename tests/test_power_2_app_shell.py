@@ -71,6 +71,10 @@ class Power2AppShellTests(unittest.TestCase):
         self.assertIn("static let publicIntakeOpen = false", identity)
         self.assertIn("static let appReleaseAvailable = true", identity)
         self.assertIn(
+            "static let submissionRehearsalAvailable = true",
+            identity,
+        )
+        self.assertIn(
             "Power2CandidateIdentity.appReleaseAvailable",
             model,
         )
@@ -78,6 +82,11 @@ class Power2AppShellTests(unittest.TestCase):
             "Power2CandidateIdentity.publicIntakeOpen",
             model,
         )
+        self.assertIn(
+            "Power2CandidateIdentity.submissionRehearsalAvailable",
+            model,
+        )
+        self.assertIn("selectedResultMatchesCurrentRelease", model)
 
     def test_certification_catalog_is_generated_from_candidate(self) -> None:
         completed = subprocess.run(
@@ -163,7 +172,15 @@ class Power2AppShellTests(unittest.TestCase):
             "scripts/triage_power2_submission_pr.py",
             workflow,
         )
-        self.assertIn("ref: main", workflow)
+        self.assertNotIn("ref: main", workflow)
+        self.assertIn(
+            "--base refs/remotes/origin/main",
+            workflow,
+        )
+        self.assertIn(
+            '--validator-source-revision "$(git rev-parse HEAD)"',
+            workflow,
+        )
 
     def test_signing_is_local_and_build_kinds_are_fail_closed(self) -> None:
         project = (APP_PROJECT / "project.pbxproj").read_text(
@@ -171,6 +188,14 @@ class Power2AppShellTests(unittest.TestCase):
         )
         signing = (
             APP_ROOT / "Configuration" / "Signing.xcconfig"
+        ).read_text(encoding="utf-8")
+        release_identity = load_json(
+            APP_ROOT / "Configuration" / "ReleaseIdentity.json"
+        )
+        release_configuration = (
+            APP_ROOT
+            / "Configuration"
+            / "ReleaseIdentity.generated.xcconfig"
         ).read_text(encoding="utf-8")
         official_scheme = OFFICIAL_SCHEME.read_text(encoding="utf-8")
         identity = (
@@ -186,6 +211,17 @@ class Power2AppShellTests(unittest.TestCase):
 
         self.assertNotIn("DEVELOPMENT_TEAM =", project)
         self.assertIn("LocalSigning.xcconfig", signing)
+        self.assertIn("ReleaseIdentity.generated.xcconfig", signing)
+        self.assertNotIn("CURRENT_PROJECT_VERSION =", project)
+        self.assertNotIn("MARKETING_VERSION =", project)
+        self.assertIn(
+            f"POWER_APP_BUILD_NUMBER = {release_identity['build']}",
+            release_configuration,
+        )
+        self.assertIn(
+            "POWER_APP_DEVELOPER_DISPLAY_NAME = Power Benchmark Dev",
+            release_configuration,
+        )
         self.assertIn("POWER_BUILD_KIND = developer", project)
         self.assertIn("POWER_BUILD_KIND = certification", project)
         self.assertIn("POWER_BUILD_KIND = official", project)
@@ -199,6 +235,18 @@ class Power2AppShellTests(unittest.TestCase):
             "PowerAppBuildIdentity.officialReleaseAvailable",
             model,
         )
+
+        generated = subprocess.run(
+            [
+                "python3",
+                "scripts/generate_power_app_release_identity.py",
+                "--check",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(generated.returncode, 0, generated.stderr)
 
         ignored = subprocess.run(
             [

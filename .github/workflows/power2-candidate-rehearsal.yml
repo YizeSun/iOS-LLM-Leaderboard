@@ -11,6 +11,7 @@ on:
       - "products/power/**"
       - "scripts/generate_power2_*.py"
       - "scripts/generate_power_app_component_manifest.py"
+      - "scripts/generate_power_app_release_identity.py"
       - "scripts/generate_power_mlx_dependency_identity.py"
       - "scripts/generate_power_release_candidates.py"
       - "scripts/generate_power_runner_component_manifest.py"
@@ -44,6 +45,7 @@ jobs:
           python-version: "3.12"
       - name: Verify generated identity chain
         run: |
+          python3 scripts/generate_power_app_release_identity.py --check
           python3 scripts/generate_power_mlx_dependency_identity.py --check
           python3 scripts/generate_power_runner_component_manifest.py --check
           python3 scripts/generate_power2_app_catalog.py --check
@@ -87,10 +89,9 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && inputs.pr_number != ''
     runs-on: ubuntu-latest
     steps:
-      - name: Check out trusted main
+      - name: Check out trusted migration validator
         uses: actions/checkout@v4
         with:
-          ref: main
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
@@ -100,20 +101,21 @@ jobs:
           PR_NUMBER: ${{ inputs.pr_number }}
           GH_TOKEN: ${{ github.token }}
         run: |
+          git fetch --no-tags origin main:refs/remotes/origin/main
           git fetch --no-tags origin \
             "pull/${PR_NUMBER}/head:refs/remotes/origin/power2-rehearsal-${PR_NUMBER}"
           gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" \
             --jq .user.login > /tmp/power2-pr-author.txt
-      - name: Classify with trusted main code
+      - name: Classify against the public main baseline
         env:
           PR_NUMBER: ${{ inputs.pr_number }}
         run: |
           python3 scripts/triage_power2_submission_pr.py \
-            --base main \
+            --base refs/remotes/origin/main \
             --head "refs/remotes/origin/power2-rehearsal-${PR_NUMBER}" \
             --expected-contributor "$(cat /tmp/power2-pr-author.txt)" \
             --evaluated-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            --validator-source-revision "$(git rev-parse main)" \
+            --validator-source-revision "$(git rev-parse HEAD)" \
             --output /tmp/power2-triage.json || true
           cat /tmp/power2-triage.json >> "$GITHUB_STEP_SUMMARY"
       - name: Upload rehearsal report

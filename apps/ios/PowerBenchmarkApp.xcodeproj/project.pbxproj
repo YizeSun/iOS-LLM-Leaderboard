@@ -38,6 +38,8 @@
 		A20000000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000000000000000000011 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 		A20000000000000000000012 /* LocalSigning.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LocalSigning.example.xcconfig; sourceTree = "<group>"; };
+		A20000000000000000000013 /* ReleaseIdentity.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ReleaseIdentity.json; sourceTree = "<group>"; };
+		A20000000000000000000014 /* ReleaseIdentity.generated.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ReleaseIdentity.generated.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,8 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000011 /* Signing.xcconfig */,
+				A20000000000000000000013 /* ReleaseIdentity.json */,
+				A20000000000000000000014 /* ReleaseIdentity.generated.xcconfig */,
 				A20000000000000000000012 /* LocalSigning.example.xcconfig */,
 			);
 			path = Configuration;
@@ -224,16 +228,14 @@
 			baseConfigurationReference = A20000000000000000000011 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				GITHUB_OAUTH_CLIENT_ID = Ov23lidyeZdONyrU4Pvy;
 				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
-				MARKETING_VERSION = 2.0.0;
-				POWER_APP_DISPLAY_NAME = "Power Benchmark";
+				POWER_APP_DISPLAY_NAME = "$(POWER_APP_DEVELOPER_DISPLAY_NAME)";
 				POWER_BUILD_KIND = developer;
 				POWER_SOURCE_REVISION = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.developer;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(POWER_APP_DEVELOPER_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -249,15 +251,13 @@
 			baseConfigurationReference = A20000000000000000000011 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				GITHUB_OAUTH_CLIENT_ID = Ov23lidyeZdONyrU4Pvy;
 				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
-				MARKETING_VERSION = 2.0.0;
-				POWER_APP_DISPLAY_NAME = "Power Benchmark";
+				POWER_APP_DISPLAY_NAME = "$(POWER_APP_DEVELOPER_DISPLAY_NAME)";
 				POWER_BUILD_KIND = developer;
 				POWER_SOURCE_REVISION = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.developer;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(POWER_APP_DEVELOPER_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -295,15 +295,13 @@
 			baseConfigurationReference = A20000000000000000000011 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				GITHUB_OAUTH_CLIENT_ID = Ov23lidyeZdONyrU4Pvy;
 				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
-				MARKETING_VERSION = 2.0.0;
-				POWER_APP_DISPLAY_NAME = "Power Benchmark Certification";
+				POWER_APP_DISPLAY_NAME = "$(POWER_APP_CERTIFICATION_DISPLAY_NAME)";
 				POWER_BUILD_KIND = certification;
 				POWER_SOURCE_REVISION = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.certification;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(POWER_APP_CERTIFICATION_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos";
 				SUPPORTS_MACCATALYST = NO;
@@ -320,15 +318,13 @@
 			baseConfigurationReference = A20000000000000000000011 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				GITHUB_OAUTH_CLIENT_ID = Ov23lidyeZdONyrU4Pvy;
 				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
-				MARKETING_VERSION = 2.0.0;
-				POWER_APP_DISPLAY_NAME = "Power Benchmark";
+				POWER_APP_DISPLAY_NAME = "$(POWER_APP_OFFICIAL_DISPLAY_NAME)";
 				POWER_BUILD_KIND = official;
 				POWER_SOURCE_REVISION = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(POWER_APP_OFFICIAL_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos";
 				SUPPORTS_MACCATALYST = NO;
