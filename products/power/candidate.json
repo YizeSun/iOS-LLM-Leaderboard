@@ -14,7 +14,7 @@
   },
   "appCandidate": {
     "path": "apps/ios/component-manifest.json",
-    "sha256": "ac5857d79c443ea923333339de44827e96fd25d9cb49245e2c21e77a13be4b53"
+    "sha256": "7cb37921607bce1f8fdecdff926bc586e20a528213b9fbc670a71ed46ad6d8b4"
   },
   "appRelease": null,
   "activationBlockers": [

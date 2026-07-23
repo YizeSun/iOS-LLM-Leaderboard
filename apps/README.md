@@ -27,5 +27,7 @@ Current migration contents:
 - `PowerAppKit/` — result persistence, two-file submission packaging, and
   direct GitHub contribution support. These non-measurement modules are kept
   outside the runner-certificate digest;
-- `ios/` — the buildable, fail-closed candidate iOS App Shell and its
-  generated identity. It is not a released or certified App target.
+- `ios/` — the buildable, fail-closed candidate iOS App Shell, generated
+  identity/catalog, and physical-iPhone-only certification smoke-test scheme.
+  Candidate evidence stays local and cannot enter public intake; this is not a
+  released or certified App target.

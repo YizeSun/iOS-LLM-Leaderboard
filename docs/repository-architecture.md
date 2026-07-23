@@ -66,7 +66,7 @@ design capacity, not implemented products.
 | Exact model artifacts | Four revision- and content-pinned rerun candidates; no old rank imported | `models/registry.json` and `models/artifacts/` |
 | New validation engine | Structural, digest, contract, model, trust, contributor, and metric gates implemented behind the inactive candidate | `scripts/lib/power2/` |
 | Runner implementation | Candidate Runner Core, Program Module, iPhone Target Adapter, evidence layer, and fixed-dependency MLX Runtime Adapter implemented; not certified | `apps/PowerRunnerKit/` and its generated component manifest |
-| App implementation | Buildable, fail-closed iOS App Shell plus candidate Results Store, Submission Kit, and GitHub contributor client implemented; App release is not issued | `apps/ios/` and `apps/PowerAppKit/` |
+| App implementation | Buildable, fail-closed iOS App Shell plus candidate Results Store, Submission Kit, GitHub contributor client, and a physical-iPhone-only certification smoke-test path implemented; certification evidence cannot submit or rank, and an App release is not issued | `apps/ios/` and `apps/PowerAppKit/` |
 | App release, runner certificate, CI intake, physical evidence, and ranking | Not implemented or activated | Candidate blockers remain explicit |
 | Public Power flow | Still Power 1.1 until cutover | Current public guides and released manifests |
 

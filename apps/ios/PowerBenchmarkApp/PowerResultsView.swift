@@ -56,16 +56,15 @@ struct PowerResultsView: View {
                             )
                         }
                         Button("Submit to GitHub") {}
-                            .disabled(
-                                !Power2CandidateIdentity.publicIntakeOpen
-                            )
+                            .disabled(!model.submissionAvailable)
                     } header: {
                         Text("Selected result")
                     } footer: {
                         Text(
                             "The Results Store and submission package preserve "
                                 + "the selected file byte-for-byte. GitHub "
-                                + "submission remains disabled until Power 2 "
+                                + "submission remains disabled for "
+                                + "certification evidence and until Power 2 "
                                 + "public intake opens."
                         )
                     }

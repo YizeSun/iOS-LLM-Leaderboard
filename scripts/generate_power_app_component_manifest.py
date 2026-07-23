@@ -66,6 +66,9 @@ def render_manifest() -> str:
     shell_sources.append(
         APP_ROOT / "Power2CandidateIdentity.generated.swift"
     )
+    shell_sources.append(
+        APP_ROOT / "Power2CandidateCatalog.generated.swift"
+    )
     components = {
         "appShell": _aggregate(shell_sources, APP_ROOT),
         **{
@@ -82,6 +85,12 @@ def render_manifest() -> str:
         "productID": "power",
         "status": "migration-draft",
         "xcodeProject": _pin(APP_PROJECT / "project.pbxproj"),
+        "certificationScheme": _pin(
+            APP_PROJECT
+            / "xcshareddata"
+            / "xcschemes"
+            / "PowerCertification.xcscheme"
+        ),
         "resolvedDependencies": _pin(
             APP_PROJECT
             / "project.xcworkspace"

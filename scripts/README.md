@@ -40,6 +40,10 @@ work around the frozen boundary.
 - `generate_power2_candidate_identity.py` generates candidate-only Swift
   identity from `products/power/candidate.json`. It is not compiled into the
   current Power 1.1 App and cannot open intake.
+- `generate_power2_app_catalog.py` verifies the inactive candidate hash chain
+  and generates the exact model, workload, and fixture catalog used only by
+  the physical-iPhone `PowerCertification` smoke-test scheme. It does not
+  issue a runner certificate, App release, or public submission permission.
 - `validate_suite_b_power_1_1_submission.py` validates the current two-file
   contribution package.
 - `validate_suite_b_power_1_1_compatible_result.py` applies the versioned exact
@@ -72,6 +76,7 @@ The current review command is:
 
 ```bash
 python3 scripts/repoctl.py verify-power-candidate
+python3 scripts/generate_power2_app_catalog.py --check
 python3 scripts/repoctl.py validate-power-package PACKAGE \
   --pr-author HANDLE \
   --evaluated-at 2026-07-23T12:00:00Z \
@@ -81,5 +86,8 @@ python3 scripts/repoctl.py validate-power-package PACKAGE \
 A successful result means only that the draft contract stack is internally
 complete and independent from Power 1.1. It reports four exact rerun-candidate
 models but deliberately no runner certificate or App release.
+The certification catalog check additionally proves that the App's closed
+smoke-test catalog is a deterministic projection of those pinned assets; it
+does not certify a run.
 `scripts/power.py` remains the Power 1.1 public command until the atomic
 cutover; it must not dispatch to both major versions.

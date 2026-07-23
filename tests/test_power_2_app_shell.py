@@ -9,6 +9,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 APP_ROOT = ROOT / "apps" / "ios"
 APP_PROJECT = APP_ROOT / "PowerBenchmarkApp.xcodeproj"
+CERTIFICATION_SCHEME = (
+    APP_PROJECT
+    / "xcshareddata"
+    / "xcschemes"
+    / "PowerCertification.xcscheme"
+)
 RUNNER_ROOT = ROOT / "apps" / "PowerRunnerKit"
 APP_KIT_ROOT = ROOT / "apps" / "PowerAppKit"
 
@@ -64,6 +70,58 @@ class Power2AppShellTests(unittest.TestCase):
             "Power2CandidateIdentity.publicIntakeOpen",
             model,
         )
+
+    def test_certification_catalog_is_generated_from_candidate(self) -> None:
+        completed = subprocess.run(
+            [
+                "python3",
+                "scripts/generate_power2_app_catalog.py",
+                "--check",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+
+        catalog = (
+            APP_ROOT / "Power2CandidateCatalog.generated.swift"
+        ).read_text(encoding="utf-8")
+        registry = load_json(ROOT / "models" / "registry.json")
+        for entry in registry["entries"]:
+            model = load_json(ROOT / entry["path"])
+            self.assertIn(
+                f'id: "{model["registryEntryID"]}"',
+                catalog,
+            )
+        self.assertIn("power2-certification-candidate-", catalog)
+
+    def test_certification_build_is_isolated_and_source_bound(self) -> None:
+        project = (APP_PROJECT / "project.pbxproj").read_text(
+            encoding="utf-8"
+        )
+        scheme = CERTIFICATION_SCHEME.read_text(encoding="utf-8")
+        identity = (
+            APP_ROOT
+            / "PowerBenchmarkApp"
+            / "PowerCertificationBuildIdentity.swift"
+        ).read_text(encoding="utf-8")
+        model = (
+            APP_ROOT
+            / "PowerBenchmarkApp"
+            / "PowerAppModel.swift"
+        ).read_text(encoding="utf-8")
+
+        self.assertEqual(project.count("POWER_CERTIFICATION"), 1)
+        self.assertIn('buildConfiguration = "Certification"', scheme)
+        self.assertIn('allowLocationSimulation = "NO"', scheme)
+        self.assertIn('SUPPORTED_PLATFORMS = "iphoneos";', project)
+        self.assertIn("PowerSourceRevision", identity)
+        self.assertIn("isValidSourceRevision", identity)
+        self.assertIn("AppleIPhoneTargetAdapter()", model)
+        self.assertIn("PowerRunner(runtime: runtime, target: target)", model)
+        self.assertIn("PowerEvidenceEnvelope(", model)
+        self.assertIn("store.save(envelope: envelope)", model)
 
     def test_app_uses_separate_test_and_results_tabs(self) -> None:
         root_view = (
