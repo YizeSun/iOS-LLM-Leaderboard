@@ -1,0 +1,1545 @@
+{
+  "attempts" : [
+    {
+      "derivedMetrics" : {
+        "decodeTokensPerSecond" : 108.6009514178489,
+        "firstRenderableProxyTTFTMilliseconds" : 225.596125,
+        "pipelineTTFTMilliseconds" : 213.208333,
+        "prefillTokensPerSecond" : 328.9335077689654,
+        "processPhysicalFootprintMiB" : 501.84510803222656,
+        "requestCompletionMilliseconds" : 477.851667
+      },
+      "generatedText" : "Your note is safe on this iPhone and will sync automatically once you reconnect to the network. Let me know if you need further assistance!",
+      "memorySamples" : [
+        {
+          "elapsedNanoseconds" : 14875,
+          "physicalFootprintBytes" : 431785312
+        },
+        {
+          "elapsedNanoseconds" : 53494416,
+          "physicalFootprintBytes" : 483788176
+        },
+        {
+          "elapsedNanoseconds" : 106414250,
+          "physicalFootprintBytes" : 497206672
+        },
+        {
+          "elapsedNanoseconds" : 159806000,
+          "physicalFootprintBytes" : 525534608
+        },
+        {
+          "elapsedNanoseconds" : 213294083,
+          "physicalFootprintBytes" : 525698448
+        },
+        {
+          "elapsedNanoseconds" : 266695083,
+          "physicalFootprintBytes" : 526222736
+        },
+        {
+          "elapsedNanoseconds" : 320073291,
+          "physicalFootprintBytes" : 526222736
+        },
+        {
+          "elapsedNanoseconds" : 371230500,
+          "physicalFootprintBytes" : 526206352
+        },
+        {
+          "elapsedNanoseconds" : 423126666,
+          "physicalFootprintBytes" : 526206352
+        },
+        {
+          "elapsedNanoseconds" : 476516708,
+          "physicalFootprintBytes" : 526157200
+        },
+        {
+          "elapsedNanoseconds" : 478219666,
+          "physicalFootprintBytes" : 526157200
+        }
+      ],
+      "outcome" : "completed",
+      "outputTokenCount" : 27,
+      "promptTokenCount" : 70,
+      "reasonCodes" : [
+
+      ],
+      "renderabilityTrace" : {
+        "captureLimit" : 32,
+        "clockOrigin" : "adapter-request-accepted",
+        "entries" : [
+          {
+            "decodedAtNanoseconds" : 225596125,
+            "decodedPrefix" : "Your",
+            "isRenderable" : true,
+            "tokenID" : 7771,
+            "tokenIndex" : 0,
+            "tokenReceivedNanoseconds" : 224508583
+          }
+        ],
+        "firstRenderableTokenIndex" : 0,
+        "generationStartNanoseconds" : 11300250,
+        "outcome" : "firstRenderableFound",
+        "policyVersion" : "first-renderable-decoded-prefix-v1",
+        "scope" : "through-first-renderable-inclusive"
+      },
+      "responseConformance" : {
+        "reasonCodes" : [
+
+        ],
+        "status" : "pass"
+      },
+      "role" : "warmup",
+      "runIndex" : 0,
+      "stopReason" : "endOfSequence",
+      "thermal" : {
+        "after" : "nominal",
+        "before" : "nominal",
+        "transitions" : [
+
+        ]
+      },
+      "timingEvidence" : {
+        "generationStartNanoseconds" : 11300250,
+        "promptEvaluationNanoseconds" : 212808967,
+        "requestCompletionNanoseconds" : 477851667
+      },
+      "tokenEvents" : [
+        {
+          "elapsedNanoseconds" : 213208333,
+          "index" : 0,
+          "tokenID" : 7771
+        },
+        {
+          "elapsedNanoseconds" : 224288958,
+          "index" : 1,
+          "tokenID" : 5185
+        },
+        {
+          "elapsedNanoseconds" : 233701458,
+          "index" : 2,
+          "tokenID" : 374
+        },
+        {
+          "elapsedNanoseconds" : 241886792,
+          "index" : 3,
+          "tokenID" : 6092
+        },
+        {
+          "elapsedNanoseconds" : 249954542,
+          "index" : 4,
+          "tokenID" : 389
+        },
+        {
+          "elapsedNanoseconds" : 259173000,
+          "index" : 5,
+          "tokenID" : 419
+        },
+        {
+          "elapsedNanoseconds" : 268490125,
+          "index" : 6,
+          "tokenID" : 12167
+        },
+        {
+          "elapsedNanoseconds" : 277778542,
+          "index" : 7,
+          "tokenID" : 323
+        },
+        {
+          "elapsedNanoseconds" : 287033083,
+          "index" : 8,
+          "tokenID" : 686
+        },
+        {
+          "elapsedNanoseconds" : 296142292,
+          "index" : 9,
+          "tokenID" : 12811
+        },
+        {
+          "elapsedNanoseconds" : 305432750,
+          "index" : 10,
+          "tokenID" : 9463
+        },
+        {
+          "elapsedNanoseconds" : 314583167,
+          "index" : 11,
+          "tokenID" : 3055
+        },
+        {
+          "elapsedNanoseconds" : 323974667,
+          "index" : 12,
+          "tokenID" : 498
+        },
+        {
+          "elapsedNanoseconds" : 333050458,
+          "index" : 13,
+          "tokenID" : 50036
+        },
+        {
+          "elapsedNanoseconds" : 342337833,
+          "index" : 14,
+          "tokenID" : 311
+        },
+        {
+          "elapsedNanoseconds" : 351464875,
+          "index" : 15,
+          "tokenID" : 279
+        },
+        {
+          "elapsedNanoseconds" : 360805083,
+          "index" : 16,
+          "tokenID" : 3922
+        },
+        {
+          "elapsedNanoseconds" : 369957417,
+          "index" : 17,
+          "tokenID" : 13
+        },
+        {
+          "elapsedNanoseconds" : 379161417,
+          "index" : 18,
+          "tokenID" : 6771
+        },
+        {
+          "elapsedNanoseconds" : 388268875,
+          "index" : 19,
+          "tokenID" : 752
+        },
+        {
+          "elapsedNanoseconds" : 397494417,
+          "index" : 20,
+          "tokenID" : 1414
+        },
+        {
+          "elapsedNanoseconds" : 406638417,
+          "index" : 21,
+          "tokenID" : 421
+        },
+        {
+          "elapsedNanoseconds" : 415896500,
+          "index" : 22,
+          "tokenID" : 498
+        },
+        {
+          "elapsedNanoseconds" : 425126417,
+          "index" : 23,
+          "tokenID" : 1184
+        },
+        {
+          "elapsedNanoseconds" : 434269583,
+          "index" : 24,
+          "tokenID" : 4623
+        },
+        {
+          "elapsedNanoseconds" : 443479875,
+          "index" : 25,
+          "tokenID" : 12994
+        },
+        {
+          "elapsedNanoseconds" : 452616917,
+          "index" : 26,
+          "tokenID" : 0
+        }
+      ]
+    },
+    {
+      "derivedMetrics" : {
+        "decodeTokensPerSecond" : 108.1863428032487,
+        "firstRenderableProxyTTFTMilliseconds" : 182.385125,
+        "pipelineTTFTMilliseconds" : 181.260958,
+        "prefillTokensPerSecond" : 386.2663954289323,
+        "processPhysicalFootprintMiB" : 502.00138092041016,
+        "requestCompletionMilliseconds" : 436.794333
+      },
+      "generatedText" : "Your note is safe on this iPhone and will sync automatically once you reconnect to the network. Let me know if you need further assistance!",
+      "memorySamples" : [
+        {
+          "elapsedNanoseconds" : 9000,
+          "physicalFootprintBytes" : 526189968
+        },
+        {
+          "elapsedNanoseconds" : 53599166,
+          "physicalFootprintBytes" : 526206352
+        },
+        {
+          "elapsedNanoseconds" : 107022458,
+          "physicalFootprintBytes" : 526304680
+        },
+        {
+          "elapsedNanoseconds" : 160625833,
+          "physicalFootprintBytes" : 526304680
+        },
+        {
+          "elapsedNanoseconds" : 213999000,
+          "physicalFootprintBytes" : 526304680
+        },
+        {
+          "elapsedNanoseconds" : 267390875,
+          "physicalFootprintBytes" : 526370216
+        },
+        {
+          "elapsedNanoseconds" : 320799166,
+          "physicalFootprintBytes" : 526386600
+        },
+        {
+          "elapsedNanoseconds" : 374211125,
+          "physicalFootprintBytes" : 526386600
+        },
+        {
+          "elapsedNanoseconds" : 427568791,
+          "physicalFootprintBytes" : 526386600
+        },
+        {
+          "elapsedNanoseconds" : 436847875,
+          "physicalFootprintBytes" : 526386600
+        }
+      ],
+      "outcome" : "completed",
+      "outputTokenCount" : 27,
+      "promptTokenCount" : 70,
+      "reasonCodes" : [
+
+      ],
+      "renderabilityTrace" : {
+        "captureLimit" : 32,
+        "clockOrigin" : "adapter-request-accepted",
+        "entries" : [
+          {
+            "decodedAtNanoseconds" : 182385125,
+            "decodedPrefix" : "Your",
+            "isRenderable" : true,
+            "tokenID" : 7771,
+            "tokenIndex" : 0,
+            "tokenReceivedNanoseconds" : 182377250
+          }
+        ],
+        "firstRenderableTokenIndex" : 0,
+        "generationStartNanoseconds" : 1116292,
+        "outcome" : "firstRenderableFound",
+        "policyVersion" : "first-renderable-decoded-prefix-v1",
+        "scope" : "through-first-renderable-inclusive"
+      },
+      "responseConformance" : {
+        "reasonCodes" : [
+
+        ],
+        "status" : "pass"
+      },
+      "role" : "measured",
+      "runIndex" : 1,
+      "stopReason" : "endOfSequence",
+      "thermal" : {
+        "after" : "nominal",
+        "before" : "nominal",
+        "transitions" : [
+
+        ]
+      },
+      "timingEvidence" : {
+        "generationStartNanoseconds" : 1116292,
+        "promptEvaluationNanoseconds" : 181222081,
+        "requestCompletionNanoseconds" : 436794333
+      },
+      "tokenEvents" : [
+        {
+          "elapsedNanoseconds" : 181260958,
+          "index" : 0,
+          "tokenID" : 7771
+        },
+        {
+          "elapsedNanoseconds" : 193842083,
+          "index" : 1,
+          "tokenID" : 5185
+        },
+        {
+          "elapsedNanoseconds" : 204290541,
+          "index" : 2,
+          "tokenID" : 374
+        },
+        {
+          "elapsedNanoseconds" : 213533833,
+          "index" : 3,
+          "tokenID" : 6092
+        },
+        {
+          "elapsedNanoseconds" : 221643708,
+          "index" : 4,
+          "tokenID" : 389
+        },
+        {
+          "elapsedNanoseconds" : 229658291,
+          "index" : 5,
+          "tokenID" : 419
+        },
+        {
+          "elapsedNanoseconds" : 238686166,
+          "index" : 6,
+          "tokenID" : 12167
+        },
+        {
+          "elapsedNanoseconds" : 247828291,
+          "index" : 7,
+          "tokenID" : 323
+        },
+        {
+          "elapsedNanoseconds" : 257008583,
+          "index" : 8,
+          "tokenID" : 686
+        },
+        {
+          "elapsedNanoseconds" : 266155291,
+          "index" : 9,
+          "tokenID" : 12811
+        },
+        {
+          "elapsedNanoseconds" : 275242125,
+          "index" : 10,
+          "tokenID" : 9463
+        },
+        {
+          "elapsedNanoseconds" : 284382250,
+          "index" : 11,
+          "tokenID" : 3055
+        },
+        {
+          "elapsedNanoseconds" : 293440000,
+          "index" : 12,
+          "tokenID" : 498
+        },
+        {
+          "elapsedNanoseconds" : 302574000,
+          "index" : 13,
+          "tokenID" : 50036
+        },
+        {
+          "elapsedNanoseconds" : 311698916,
+          "index" : 14,
+          "tokenID" : 311
+        },
+        {
+          "elapsedNanoseconds" : 320811458,
+          "index" : 15,
+          "tokenID" : 279
+        },
+        {
+          "elapsedNanoseconds" : 329876833,
+          "index" : 16,
+          "tokenID" : 3922
+        },
+        {
+          "elapsedNanoseconds" : 338981375,
+          "index" : 17,
+          "tokenID" : 13
+        },
+        {
+          "elapsedNanoseconds" : 348221458,
+          "index" : 18,
+          "tokenID" : 6771
+        },
+        {
+          "elapsedNanoseconds" : 357310958,
+          "index" : 19,
+          "tokenID" : 752
+        },
+        {
+          "elapsedNanoseconds" : 366447041,
+          "index" : 20,
+          "tokenID" : 1414
+        },
+        {
+          "elapsedNanoseconds" : 375573750,
+          "index" : 21,
+          "tokenID" : 421
+        },
+        {
+          "elapsedNanoseconds" : 384715125,
+          "index" : 22,
+          "tokenID" : 498
+        },
+        {
+          "elapsedNanoseconds" : 393811333,
+          "index" : 23,
+          "tokenID" : 1184
+        },
+        {
+          "elapsedNanoseconds" : 403075958,
+          "index" : 24,
+          "tokenID" : 4623
+        },
+        {
+          "elapsedNanoseconds" : 412338041,
+          "index" : 25,
+          "tokenID" : 12994
+        },
+        {
+          "elapsedNanoseconds" : 421587041,
+          "index" : 26,
+          "tokenID" : 0
+        }
+      ]
+    },
+    {
+      "derivedMetrics" : {
+        "decodeTokensPerSecond" : 107.86047033487348,
+        "firstRenderableProxyTTFTMilliseconds" : 182.386459,
+        "pipelineTTFTMilliseconds" : 181.40625,
+        "prefillTokensPerSecond" : 386.0000388646896,
+        "processPhysicalFootprintMiB" : 502.00138092041016,
+        "requestCompletionMilliseconds" : 437.330584
+      },
+      "generatedText" : "Your note is safe on this iPhone and will sync automatically once you reconnect to the network. Let me know if you need further assistance!",
+      "memorySamples" : [
+        {
+          "elapsedNanoseconds" : 8959,
+          "physicalFootprintBytes" : 526386600
+        },
+        {
+          "elapsedNanoseconds" : 53454959,
+          "physicalFootprintBytes" : 526321064
+        },
+        {
+          "elapsedNanoseconds" : 106860167,
+          "physicalFootprintBytes" : 526353832
+        },
+        {
+          "elapsedNanoseconds" : 160343000,
+          "physicalFootprintBytes" : 526353832
+        },
+        {
+          "elapsedNanoseconds" : 210834709,
+          "physicalFootprintBytes" : 526337448
+        },
+        {
+          "elapsedNanoseconds" : 264336875,
+          "physicalFootprintBytes" : 526386600
+        },
+        {
+          "elapsedNanoseconds" : 315098500,
+          "physicalFootprintBytes" : 526386600
+        },
+        {
+          "elapsedNanoseconds" : 368554709,
+          "physicalFootprintBytes" : 526386600
+        },
+        {
+          "elapsedNanoseconds" : 421951375,
+          "physicalFootprintBytes" : 526386600
+        },
+        {
+          "elapsedNanoseconds" : 437388250,
+          "physicalFootprintBytes" : 526386600
+        }
+      ],
+      "outcome" : "completed",
+      "outputTokenCount" : 27,
+      "promptTokenCount" : 70,
+      "reasonCodes" : [
+
+      ],
+      "renderabilityTrace" : {
+        "captureLimit" : 32,
+        "clockOrigin" : "adapter-request-accepted",
+        "entries" : [
+          {
+            "decodedAtNanoseconds" : 182386459,
+            "decodedPrefix" : "Your",
+            "isRenderable" : true,
+            "tokenID" : 7771,
+            "tokenIndex" : 0,
+            "tokenReceivedNanoseconds" : 182377584
+          }
+        ],
+        "firstRenderableTokenIndex" : 0,
+        "generationStartNanoseconds" : 971334,
+        "outcome" : "firstRenderableFound",
+        "policyVersion" : "first-renderable-decoded-prefix-v1",
+        "scope" : "through-first-renderable-inclusive"
+      },
+      "responseConformance" : {
+        "reasonCodes" : [
+
+        ],
+        "status" : "pass"
+      },
+      "role" : "measured",
+      "runIndex" : 2,
+      "stopReason" : "endOfSequence",
+      "thermal" : {
+        "after" : "nominal",
+        "before" : "nominal",
+        "transitions" : [
+
+        ]
+      },
+      "timingEvidence" : {
+        "generationStartNanoseconds" : 971334,
+        "promptEvaluationNanoseconds" : 181347132,
+        "requestCompletionNanoseconds" : 437330584
+      },
+      "tokenEvents" : [
+        {
+          "elapsedNanoseconds" : 181406250,
+          "index" : 0,
+          "tokenID" : 7771
+        },
+        {
+          "elapsedNanoseconds" : 194189208,
+          "index" : 1,
+          "tokenID" : 5185
+        },
+        {
+          "elapsedNanoseconds" : 204498291,
+          "index" : 2,
+          "tokenID" : 374
+        },
+        {
+          "elapsedNanoseconds" : 213720000,
+          "index" : 3,
+          "tokenID" : 6092
+        },
+        {
+          "elapsedNanoseconds" : 221589583,
+          "index" : 4,
+          "tokenID" : 389
+        },
+        {
+          "elapsedNanoseconds" : 229854791,
+          "index" : 5,
+          "tokenID" : 419
+        },
+        {
+          "elapsedNanoseconds" : 239043250,
+          "index" : 6,
+          "tokenID" : 12167
+        },
+        {
+          "elapsedNanoseconds" : 248152416,
+          "index" : 7,
+          "tokenID" : 323
+        },
+        {
+          "elapsedNanoseconds" : 257637166,
+          "index" : 8,
+          "tokenID" : 686
+        },
+        {
+          "elapsedNanoseconds" : 266770666,
+          "index" : 9,
+          "tokenID" : 12811
+        },
+        {
+          "elapsedNanoseconds" : 275848916,
+          "index" : 10,
+          "tokenID" : 9463
+        },
+        {
+          "elapsedNanoseconds" : 284978208,
+          "index" : 11,
+          "tokenID" : 3055
+        },
+        {
+          "elapsedNanoseconds" : 294067625,
+          "index" : 12,
+          "tokenID" : 498
+        },
+        {
+          "elapsedNanoseconds" : 303322791,
+          "index" : 13,
+          "tokenID" : 50036
+        },
+        {
+          "elapsedNanoseconds" : 312510333,
+          "index" : 14,
+          "tokenID" : 311
+        },
+        {
+          "elapsedNanoseconds" : 321855500,
+          "index" : 15,
+          "tokenID" : 279
+        },
+        {
+          "elapsedNanoseconds" : 330981041,
+          "index" : 16,
+          "tokenID" : 3922
+        },
+        {
+          "elapsedNanoseconds" : 340088833,
+          "index" : 17,
+          "tokenID" : 13
+        },
+        {
+          "elapsedNanoseconds" : 349174791,
+          "index" : 18,
+          "tokenID" : 6771
+        },
+        {
+          "elapsedNanoseconds" : 358385708,
+          "index" : 19,
+          "tokenID" : 752
+        },
+        {
+          "elapsedNanoseconds" : 367579041,
+          "index" : 20,
+          "tokenID" : 1414
+        },
+        {
+          "elapsedNanoseconds" : 376697375,
+          "index" : 21,
+          "tokenID" : 421
+        },
+        {
+          "elapsedNanoseconds" : 385832583,
+          "index" : 22,
+          "tokenID" : 498
+        },
+        {
+          "elapsedNanoseconds" : 394937750,
+          "index" : 23,
+          "tokenID" : 1184
+        },
+        {
+          "elapsedNanoseconds" : 404064041,
+          "index" : 24,
+          "tokenID" : 4623
+        },
+        {
+          "elapsedNanoseconds" : 413210500,
+          "index" : 25,
+          "tokenID" : 12994
+        },
+        {
+          "elapsedNanoseconds" : 422458416,
+          "index" : 26,
+          "tokenID" : 0
+        }
+      ]
+    },
+    {
+      "derivedMetrics" : {
+        "decodeTokensPerSecond" : 107.52413936572594,
+        "firstRenderableProxyTTFTMilliseconds" : 182.674667,
+        "pipelineTTFTMilliseconds" : 181.660667,
+        "prefillTokensPerSecond" : 385.43730637556916,
+        "processPhysicalFootprintMiB" : 502.04825592041016,
+        "requestCompletionMilliseconds" : 438.541959
+      },
+      "generatedText" : "Your note is safe on this iPhone and will sync automatically once you reconnect to the network. Let me know if you need further assistance!",
+      "memorySamples" : [
+        {
+          "elapsedNanoseconds" : 8541,
+          "physicalFootprintBytes" : 526402984
+        },
+        {
+          "elapsedNanoseconds" : 53429250,
+          "physicalFootprintBytes" : 526402984
+        },
+        {
+          "elapsedNanoseconds" : 106830291,
+          "physicalFootprintBytes" : 526402984
+        },
+        {
+          "elapsedNanoseconds" : 160424916,
+          "physicalFootprintBytes" : 526402984
+        },
+        {
+          "elapsedNanoseconds" : 213834916,
+          "physicalFootprintBytes" : 526402984
+        },
+        {
+          "elapsedNanoseconds" : 267222875,
+          "physicalFootprintBytes" : 526435752
+        },
+        {
+          "elapsedNanoseconds" : 320617750,
+          "physicalFootprintBytes" : 526435752
+        },
+        {
+          "elapsedNanoseconds" : 373988333,
+          "physicalFootprintBytes" : 526435752
+        },
+        {
+          "elapsedNanoseconds" : 427375625,
+          "physicalFootprintBytes" : 526435752
+        },
+        {
+          "elapsedNanoseconds" : 438595166,
+          "physicalFootprintBytes" : 526435752
+        }
+      ],
+      "outcome" : "completed",
+      "outputTokenCount" : 27,
+      "promptTokenCount" : 70,
+      "reasonCodes" : [
+
+      ],
+      "renderabilityTrace" : {
+        "captureLimit" : 32,
+        "clockOrigin" : "adapter-request-accepted",
+        "entries" : [
+          {
+            "decodedAtNanoseconds" : 182674667,
+            "decodedPrefix" : "Your",
+            "isRenderable" : true,
+            "tokenID" : 7771,
+            "tokenIndex" : 0,
+            "tokenReceivedNanoseconds" : 182667042
+          }
+        ],
+        "firstRenderableTokenIndex" : 0,
+        "generationStartNanoseconds" : 1006375,
+        "outcome" : "firstRenderableFound",
+        "policyVersion" : "first-renderable-decoded-prefix-v1",
+        "scope" : "through-first-renderable-inclusive"
+      },
+      "responseConformance" : {
+        "reasonCodes" : [
+
+        ],
+        "status" : "pass"
+      },
+      "role" : "measured",
+      "runIndex" : 3,
+      "stopReason" : "endOfSequence",
+      "thermal" : {
+        "after" : "nominal",
+        "before" : "nominal",
+        "transitions" : [
+
+        ]
+      },
+      "timingEvidence" : {
+        "generationStartNanoseconds" : 1006375,
+        "promptEvaluationNanoseconds" : 181611896,
+        "requestCompletionNanoseconds" : 438541959
+      },
+      "tokenEvents" : [
+        {
+          "elapsedNanoseconds" : 181660667,
+          "index" : 0,
+          "tokenID" : 7771
+        },
+        {
+          "elapsedNanoseconds" : 194599292,
+          "index" : 1,
+          "tokenID" : 5185
+        },
+        {
+          "elapsedNanoseconds" : 204766292,
+          "index" : 2,
+          "tokenID" : 374
+        },
+        {
+          "elapsedNanoseconds" : 213775459,
+          "index" : 3,
+          "tokenID" : 6092
+        },
+        {
+          "elapsedNanoseconds" : 221852667,
+          "index" : 4,
+          "tokenID" : 389
+        },
+        {
+          "elapsedNanoseconds" : 231014584,
+          "index" : 5,
+          "tokenID" : 419
+        },
+        {
+          "elapsedNanoseconds" : 240174000,
+          "index" : 6,
+          "tokenID" : 12167
+        },
+        {
+          "elapsedNanoseconds" : 249250334,
+          "index" : 7,
+          "tokenID" : 323
+        },
+        {
+          "elapsedNanoseconds" : 258346000,
+          "index" : 8,
+          "tokenID" : 686
+        },
+        {
+          "elapsedNanoseconds" : 267667125,
+          "index" : 9,
+          "tokenID" : 12811
+        },
+        {
+          "elapsedNanoseconds" : 276812125,
+          "index" : 10,
+          "tokenID" : 9463
+        },
+        {
+          "elapsedNanoseconds" : 285888042,
+          "index" : 11,
+          "tokenID" : 3055
+        },
+        {
+          "elapsedNanoseconds" : 295019959,
+          "index" : 12,
+          "tokenID" : 498
+        },
+        {
+          "elapsedNanoseconds" : 304139792,
+          "index" : 13,
+          "tokenID" : 50036
+        },
+        {
+          "elapsedNanoseconds" : 313336500,
+          "index" : 14,
+          "tokenID" : 311
+        },
+        {
+          "elapsedNanoseconds" : 322408084,
+          "index" : 15,
+          "tokenID" : 279
+        },
+        {
+          "elapsedNanoseconds" : 331565709,
+          "index" : 16,
+          "tokenID" : 3922
+        },
+        {
+          "elapsedNanoseconds" : 340632167,
+          "index" : 17,
+          "tokenID" : 13
+        },
+        {
+          "elapsedNanoseconds" : 349721292,
+          "index" : 18,
+          "tokenID" : 6771
+        },
+        {
+          "elapsedNanoseconds" : 358843834,
+          "index" : 19,
+          "tokenID" : 752
+        },
+        {
+          "elapsedNanoseconds" : 367993459,
+          "index" : 20,
+          "tokenID" : 1414
+        },
+        {
+          "elapsedNanoseconds" : 377319125,
+          "index" : 21,
+          "tokenID" : 421
+        },
+        {
+          "elapsedNanoseconds" : 386598375,
+          "index" : 22,
+          "tokenID" : 498
+        },
+        {
+          "elapsedNanoseconds" : 396137000,
+          "index" : 23,
+          "tokenID" : 1184
+        },
+        {
+          "elapsedNanoseconds" : 405176917,
+          "index" : 24,
+          "tokenID" : 4623
+        },
+        {
+          "elapsedNanoseconds" : 414382542,
+          "index" : 25,
+          "tokenID" : 12994
+        },
+        {
+          "elapsedNanoseconds" : 423466834,
+          "index" : 26,
+          "tokenID" : 0
+        }
+      ]
+    },
+    {
+      "derivedMetrics" : {
+        "decodeTokensPerSecond" : 107.918577508627,
+        "firstRenderableProxyTTFTMilliseconds" : 182.493916,
+        "pipelineTTFTMilliseconds" : 181.520667,
+        "prefillTokensPerSecond" : 385.70668658411915,
+        "processPhysicalFootprintMiB" : 502.17325592041016,
+        "requestCompletionMilliseconds" : 437.449666
+      },
+      "generatedText" : "Your note is safe on this iPhone and will sync automatically once you reconnect to the network. Let me know if you need further assistance!",
+      "memorySamples" : [
+        {
+          "elapsedNanoseconds" : 11667,
+          "physicalFootprintBytes" : 526468520
+        },
+        {
+          "elapsedNanoseconds" : 53495125,
+          "physicalFootprintBytes" : 526468520
+        },
+        {
+          "elapsedNanoseconds" : 106934625,
+          "physicalFootprintBytes" : 526468520
+        },
+        {
+          "elapsedNanoseconds" : 160528792,
+          "physicalFootprintBytes" : 526468520
+        },
+        {
+          "elapsedNanoseconds" : 213913667,
+          "physicalFootprintBytes" : 526468520
+        },
+        {
+          "elapsedNanoseconds" : 267306542,
+          "physicalFootprintBytes" : 526468520
+        },
+        {
+          "elapsedNanoseconds" : 317685042,
+          "physicalFootprintBytes" : 526468520
+        },
+        {
+          "elapsedNanoseconds" : 371073917,
+          "physicalFootprintBytes" : 526566824
+        },
+        {
+          "elapsedNanoseconds" : 424496417,
+          "physicalFootprintBytes" : 526566824
+        },
+        {
+          "elapsedNanoseconds" : 437510042,
+          "physicalFootprintBytes" : 526566824
+        }
+      ],
+      "outcome" : "completed",
+      "outputTokenCount" : 27,
+      "promptTokenCount" : 70,
+      "reasonCodes" : [
+
+      ],
+      "renderabilityTrace" : {
+        "captureLimit" : 32,
+        "clockOrigin" : "adapter-request-accepted",
+        "entries" : [
+          {
+            "decodedAtNanoseconds" : 182493916,
+            "decodedPrefix" : "Your",
+            "isRenderable" : true,
+            "tokenID" : 7771,
+            "tokenIndex" : 0,
+            "tokenReceivedNanoseconds" : 182485625
+          }
+        ],
+        "firstRenderableTokenIndex" : 0,
+        "generationStartNanoseconds" : 964958,
+        "outcome" : "firstRenderableFound",
+        "policyVersion" : "first-renderable-decoded-prefix-v1",
+        "scope" : "through-first-renderable-inclusive"
+      },
+      "responseConformance" : {
+        "reasonCodes" : [
+
+        ],
+        "status" : "pass"
+      },
+      "role" : "measured",
+      "runIndex" : 4,
+      "stopReason" : "endOfSequence",
+      "thermal" : {
+        "after" : "nominal",
+        "before" : "nominal",
+        "transitions" : [
+
+        ]
+      },
+      "timingEvidence" : {
+        "generationStartNanoseconds" : 964958,
+        "promptEvaluationNanoseconds" : 181485057,
+        "requestCompletionNanoseconds" : 437449666
+      },
+      "tokenEvents" : [
+        {
+          "elapsedNanoseconds" : 181520667,
+          "index" : 0,
+          "tokenID" : 7771
+        },
+        {
+          "elapsedNanoseconds" : 194400500,
+          "index" : 1,
+          "tokenID" : 5185
+        },
+        {
+          "elapsedNanoseconds" : 204674583,
+          "index" : 2,
+          "tokenID" : 374
+        },
+        {
+          "elapsedNanoseconds" : 213733292,
+          "index" : 3,
+          "tokenID" : 6092
+        },
+        {
+          "elapsedNanoseconds" : 221597292,
+          "index" : 4,
+          "tokenID" : 389
+        },
+        {
+          "elapsedNanoseconds" : 229975167,
+          "index" : 5,
+          "tokenID" : 419
+        },
+        {
+          "elapsedNanoseconds" : 239069875,
+          "index" : 6,
+          "tokenID" : 12167
+        },
+        {
+          "elapsedNanoseconds" : 248124250,
+          "index" : 7,
+          "tokenID" : 323
+        },
+        {
+          "elapsedNanoseconds" : 257196417,
+          "index" : 8,
+          "tokenID" : 686
+        },
+        {
+          "elapsedNanoseconds" : 266431333,
+          "index" : 9,
+          "tokenID" : 12811
+        },
+        {
+          "elapsedNanoseconds" : 275573458,
+          "index" : 10,
+          "tokenID" : 9463
+        },
+        {
+          "elapsedNanoseconds" : 284713417,
+          "index" : 11,
+          "tokenID" : 3055
+        },
+        {
+          "elapsedNanoseconds" : 293897083,
+          "index" : 12,
+          "tokenID" : 498
+        },
+        {
+          "elapsedNanoseconds" : 303034458,
+          "index" : 13,
+          "tokenID" : 50036
+        },
+        {
+          "elapsedNanoseconds" : 312109875,
+          "index" : 14,
+          "tokenID" : 311
+        },
+        {
+          "elapsedNanoseconds" : 321233500,
+          "index" : 15,
+          "tokenID" : 279
+        },
+        {
+          "elapsedNanoseconds" : 330429500,
+          "index" : 16,
+          "tokenID" : 3922
+        },
+        {
+          "elapsedNanoseconds" : 339658208,
+          "index" : 17,
+          "tokenID" : 13
+        },
+        {
+          "elapsedNanoseconds" : 348884625,
+          "index" : 18,
+          "tokenID" : 6771
+        },
+        {
+          "elapsedNanoseconds" : 358084167,
+          "index" : 19,
+          "tokenID" : 752
+        },
+        {
+          "elapsedNanoseconds" : 367282000,
+          "index" : 20,
+          "tokenID" : 1414
+        },
+        {
+          "elapsedNanoseconds" : 376518292,
+          "index" : 21,
+          "tokenID" : 421
+        },
+        {
+          "elapsedNanoseconds" : 385710792,
+          "index" : 22,
+          "tokenID" : 498
+        },
+        {
+          "elapsedNanoseconds" : 394931708,
+          "index" : 23,
+          "tokenID" : 1184
+        },
+        {
+          "elapsedNanoseconds" : 404137083,
+          "index" : 24,
+          "tokenID" : 4623
+        },
+        {
+          "elapsedNanoseconds" : 413287583,
+          "index" : 25,
+          "tokenID" : 12994
+        },
+        {
+          "elapsedNanoseconds" : 422443042,
+          "index" : 26,
+          "tokenID" : 0
+        }
+      ]
+    },
+    {
+      "derivedMetrics" : {
+        "decodeTokensPerSecond" : 107.22467487210365,
+        "firstRenderableProxyTTFTMilliseconds" : 182.797583,
+        "pipelineTTFTMilliseconds" : 181.841875,
+        "prefillTokensPerSecond" : 385.0405074165017,
+        "processPhysicalFootprintMiB" : 502.18888092041016,
+        "requestCompletionMilliseconds" : 439.151375
+      },
+      "generatedText" : "Your note is safe on this iPhone and will sync automatically once you reconnect to the network. Let me know if you need further assistance!",
+      "memorySamples" : [
+        {
+          "elapsedNanoseconds" : 9625,
+          "physicalFootprintBytes" : 526583208
+        },
+        {
+          "elapsedNanoseconds" : 53444958,
+          "physicalFootprintBytes" : 526583208
+        },
+        {
+          "elapsedNanoseconds" : 106868500,
+          "physicalFootprintBytes" : 526583208
+        },
+        {
+          "elapsedNanoseconds" : 160468375,
+          "physicalFootprintBytes" : 526583208
+        },
+        {
+          "elapsedNanoseconds" : 213914708,
+          "physicalFootprintBytes" : 526583208
+        },
+        {
+          "elapsedNanoseconds" : 267316292,
+          "physicalFootprintBytes" : 526583208
+        },
+        {
+          "elapsedNanoseconds" : 320825833,
+          "physicalFootprintBytes" : 526583208
+        },
+        {
+          "elapsedNanoseconds" : 374281042,
+          "physicalFootprintBytes" : 526583208
+        },
+        {
+          "elapsedNanoseconds" : 427706292,
+          "physicalFootprintBytes" : 526583208
+        },
+        {
+          "elapsedNanoseconds" : 439202208,
+          "physicalFootprintBytes" : 526583208
+        }
+      ],
+      "outcome" : "completed",
+      "outputTokenCount" : 27,
+      "promptTokenCount" : 70,
+      "reasonCodes" : [
+
+      ],
+      "renderabilityTrace" : {
+        "captureLimit" : 32,
+        "clockOrigin" : "adapter-request-accepted",
+        "entries" : [
+          {
+            "decodedAtNanoseconds" : 182797583,
+            "decodedPrefix" : "Your",
+            "isRenderable" : true,
+            "tokenID" : 7771,
+            "tokenIndex" : 0,
+            "tokenReceivedNanoseconds" : 182788875
+          }
+        ],
+        "firstRenderableTokenIndex" : 0,
+        "generationStartNanoseconds" : 947000,
+        "outcome" : "firstRenderableFound",
+        "policyVersion" : "first-renderable-decoded-prefix-v1",
+        "scope" : "through-first-renderable-inclusive"
+      },
+      "responseConformance" : {
+        "reasonCodes" : [
+
+        ],
+        "status" : "pass"
+      },
+      "role" : "measured",
+      "runIndex" : 5,
+      "stopReason" : "endOfSequence",
+      "thermal" : {
+        "after" : "nominal",
+        "before" : "nominal",
+        "transitions" : [
+
+        ]
+      },
+      "timingEvidence" : {
+        "generationStartNanoseconds" : 947000,
+        "promptEvaluationNanoseconds" : 181799054,
+        "requestCompletionNanoseconds" : 439151375
+      },
+      "tokenEvents" : [
+        {
+          "elapsedNanoseconds" : 181841875,
+          "index" : 0,
+          "tokenID" : 7771
+        },
+        {
+          "elapsedNanoseconds" : 194890667,
+          "index" : 1,
+          "tokenID" : 5185
+        },
+        {
+          "elapsedNanoseconds" : 205084500,
+          "index" : 2,
+          "tokenID" : 374
+        },
+        {
+          "elapsedNanoseconds" : 214075583,
+          "index" : 3,
+          "tokenID" : 6092
+        },
+        {
+          "elapsedNanoseconds" : 222257667,
+          "index" : 4,
+          "tokenID" : 389
+        },
+        {
+          "elapsedNanoseconds" : 230197000,
+          "index" : 5,
+          "tokenID" : 419
+        },
+        {
+          "elapsedNanoseconds" : 239487000,
+          "index" : 6,
+          "tokenID" : 12167
+        },
+        {
+          "elapsedNanoseconds" : 248527167,
+          "index" : 7,
+          "tokenID" : 323
+        },
+        {
+          "elapsedNanoseconds" : 257609792,
+          "index" : 8,
+          "tokenID" : 686
+        },
+        {
+          "elapsedNanoseconds" : 266666000,
+          "index" : 9,
+          "tokenID" : 12811
+        },
+        {
+          "elapsedNanoseconds" : 275956542,
+          "index" : 10,
+          "tokenID" : 9463
+        },
+        {
+          "elapsedNanoseconds" : 285113875,
+          "index" : 11,
+          "tokenID" : 3055
+        },
+        {
+          "elapsedNanoseconds" : 294258375,
+          "index" : 12,
+          "tokenID" : 498
+        },
+        {
+          "elapsedNanoseconds" : 303526042,
+          "index" : 13,
+          "tokenID" : 50036
+        },
+        {
+          "elapsedNanoseconds" : 313173458,
+          "index" : 14,
+          "tokenID" : 311
+        },
+        {
+          "elapsedNanoseconds" : 322849125,
+          "index" : 15,
+          "tokenID" : 279
+        },
+        {
+          "elapsedNanoseconds" : 332629000,
+          "index" : 16,
+          "tokenID" : 3922
+        },
+        {
+          "elapsedNanoseconds" : 341747958,
+          "index" : 17,
+          "tokenID" : 13
+        },
+        {
+          "elapsedNanoseconds" : 350893000,
+          "index" : 18,
+          "tokenID" : 6771
+        },
+        {
+          "elapsedNanoseconds" : 360028500,
+          "index" : 19,
+          "tokenID" : 752
+        },
+        {
+          "elapsedNanoseconds" : 369138042,
+          "index" : 20,
+          "tokenID" : 1414
+        },
+        {
+          "elapsedNanoseconds" : 378506792,
+          "index" : 21,
+          "tokenID" : 421
+        },
+        {
+          "elapsedNanoseconds" : 387572417,
+          "index" : 22,
+          "tokenID" : 498
+        },
+        {
+          "elapsedNanoseconds" : 396723708,
+          "index" : 23,
+          "tokenID" : 1184
+        },
+        {
+          "elapsedNanoseconds" : 405982458,
+          "index" : 24,
+          "tokenID" : 4623
+        },
+        {
+          "elapsedNanoseconds" : 415114833,
+          "index" : 25,
+          "tokenID" : 12994
+        },
+        {
+          "elapsedNanoseconds" : 424323375,
+          "index" : 26,
+          "tokenID" : 0
+        }
+      ]
+    }
+  ],
+  "benchmarkRelease" : {
+    "id" : "suite-b-power",
+    "protocolID" : "suite-b-power",
+    "protocolVersion" : "1.1.0-rc.1",
+    "version" : "1.1.0-rc.1"
+  },
+  "configuration" : {
+    "automaticRetries" : 0,
+    "chatTemplateIdentity" : "artifact-tokenizer-config-enable-thinking-false",
+    "clock" : "monotonic-nanoseconds",
+    "contextPolicy" : "fresh-conversation-per-attempt",
+    "includeStopTokenInRawEvents" : false,
+    "kvCachePolicy" : "fresh-kv-cache-per-attempt",
+    "measuredAttempts" : 5,
+    "memoryMetric" : "TASK_VM_INFO.phys_footprint",
+    "memorySamplingIntervalMilliseconds" : 50,
+    "minimumMetricEligibleMeasuredAttempts" : 3,
+    "modelLoadPolicy" : "load-once-before-warmup",
+    "outputTokenLimit" : 128,
+    "repetitionPenalty" : null,
+    "restIntervalSeconds" : 0,
+    "samplingEnabled" : false,
+    "seed" : 0,
+    "temperature" : 0,
+    "thermalSource" : "ProcessInfo.thermalState",
+    "thinkingMode" : "disabled-via-chat-template",
+    "topK" : 0,
+    "topP" : 1,
+    "warmupAttempts" : 1
+  },
+  "createdAt" : "2026-07-23T07:50:55Z",
+  "device" : {
+    "displayName" : "iPhone 14 Pro Max (iPhone15,3)",
+    "machineIdentifier" : "iPhone15,3",
+    "physicalMemoryBytes" : 5909987328,
+    "systemBuild" : "23F84",
+    "systemName" : "iOS",
+    "systemVersion" : "26.5.2"
+  },
+  "environment" : {
+    "batteryLevelPercentAtStart" : 85.00000238418579,
+    "batteryState" : "unplugged",
+    "buildConfiguration" : "Release",
+    "debuggerAttached" : false,
+    "lowPowerModeEnabled" : false,
+    "thermalStateAtSessionEnd" : "nominal",
+    "thermalStateAtSessionStart" : "nominal"
+  },
+  "execution" : {
+    "appBuild" : "21",
+    "appSourceCommit" : "8920a423f4b4abff4e34a2d8a128a3962899258e",
+    "appVersion" : "0.18.0",
+    "fixtureSHA256" : "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
+    "measurementModeID" : "b-mode-warm-resident-ux-v1",
+    "runnerID" : "ios-reference-benchmark-app",
+    "runnerVersion" : "0.18.0",
+    "sessionID" : "76B6BE3E-F713-4041-821F-8BFCE076B209",
+    "workloadCategory" : "user-experience",
+    "workloadID" : "b-ux-001-short-interaction",
+    "workloadVersion" : "1.1.0-rc.1"
+  },
+  "model" : {
+    "artifactContentHash" : null,
+    "artifactID" : "mlx-community/Qwen3-0.6B-4bit",
+    "artifactRepositorySizeBytes" : 682323786,
+    "artifactRevision" : "73e3e38d981303bc594367cd910ea6eb48349da8",
+    "baseModelID" : "Qwen/Qwen3-0.6B",
+    "displayName" : "Qwen3 0.6B",
+    "licenseIdentifier" : "apache-2.0",
+    "licenseSourceURL" : "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+    "modelFormat" : "MLX Safetensors",
+    "quantization" : "4-bit",
+    "sourceURL" : "https://huggingface.co/mlx-community/Qwen3-0.6B-4bit/tree/73e3e38d981303bc594367cd910ea6eb48349da8",
+    "tokenizerIdentity" : "mlx-community/Qwen3-0.6B-4bit@73e3e38d981303bc594367cd910ea6eb48349da8/tokenizer_config.json"
+  },
+  "modelPreparation" : {
+    "artifactID" : "mlx-community/Qwen3-0.6B-4bit",
+    "artifactRevision" : "73e3e38d981303bc594367cd910ea6eb48349da8",
+    "cacheVerificationMethod" : "huggingface_revision_manifest_cached_file_size_v1",
+    "downloadOccurredDuringSession" : false,
+    "eligibleForPerformanceMeasurement" : true,
+    "modelLoadCompleted" : true,
+    "preparationCompleted" : true,
+    "preparedAt" : "2026-07-23T07:50:49Z",
+    "reasonCodes" : [
+
+    ]
+  },
+  "officialResultEligible" : false,
+  "resultID" : "9B29E979-AC64-43C7-ACED-8753863CE13A",
+  "runtime" : {
+    "backend" : "MLX/Metal",
+    "dependencyVersions" : {
+      "mlx-swift" : "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+      "swift-huggingface" : "swift-huggingface 0.9.0",
+      "swift-transformers" : "swift-transformers 1.3.0"
+    },
+    "name" : "MLX Swift LM",
+    "resolvedRevision" : "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+    "version" : "3.31.4"
+  },
+  "schemaVersion" : "suite-b-power-result-1.1.0-rc.1",
+  "summary" : {
+    "metrics" : {
+      "decodeFirstToLastPercentChange" : null,
+      "medianDecodeTokensPerSecond" : 107.86047033487348,
+      "medianFirstRenderableProxyTTFTMilliseconds" : 182.493916,
+      "medianPipelineTTFTMilliseconds" : 181.520667,
+      "medianPrefillTokensPerSecond" : 385.70668658411915,
+      "medianProcessPhysicalFootprintMiB" : 502.04825592041016,
+      "medianRequestCompletionMilliseconds" : 437.449666
+    },
+    "terminalCounts" : {
+      "cancelled" : 0,
+      "completed" : 5,
+      "earlyEOS" : 5,
+      "failed" : 0,
+      "notRun" : 0,
+      "outOfMemory" : 0
+    }
+  }
+}
