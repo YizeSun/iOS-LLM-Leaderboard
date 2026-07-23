@@ -2,9 +2,11 @@ import Foundation
 import Observation
 import PowerAppleTarget
 import PowerEvidence
+import PowerGitHubSubmission
 import PowerMLXRuntime
 import PowerResultsStore
 import PowerRunnerCore
+import PowerSubmissionKit
 import PowerTextProgram
 
 @MainActor
@@ -33,6 +35,23 @@ final class PowerAppModel {
         }
     }
 
+    enum SubmissionState: Equatable {
+        case idle
+        case authorizing(GitHubDeviceAuthorization)
+        case publishing
+        case completed(URL)
+        case failed(String)
+
+        var isRunning: Bool {
+            switch self {
+            case .authorizing, .publishing:
+                true
+            case .idle, .completed, .failed:
+                false
+            }
+        }
+    }
+
     var selectedTab: SelectedTab = .test
     var results: [StoredPowerResult] = []
     var selectedResultID: UUID?
@@ -44,9 +63,16 @@ final class PowerAppModel {
         Power2CandidateCatalog.workloads.first?.id ?? ""
     var thermalAssistance: PowerThermalAssistance = .none
     var runState: RunState = .idle
+    var submissionConflict: PowerSubmissionConflict = .none
+    var submissionDisclosure = ""
+    var submissionEnvironmentNotes = ""
+    var acceptsSubmissionDeclarations = false
+    var submissionState: SubmissionState = .idle
 
     @ObservationIgnored
     private var runTask: Task<Void, Never>?
+    @ObservationIgnored
+    private var submissionTask: Task<Void, Never>?
 
     let store: PowerResultsStore
 
@@ -79,6 +105,28 @@ final class PowerAppModel {
         PowerAppBuildIdentity.officialReleaseAvailable
             && Power2CandidateIdentity.appReleaseAvailable
             && Power2CandidateIdentity.publicIntakeOpen
+    }
+
+    var githubSubmissionConfigured: Bool {
+        guard let clientID = githubOAuthClientID else { return false }
+        return !clientID.isEmpty && !clientID.contains("$(")
+    }
+
+    var canSubmitSelectedResult: Bool {
+        let disclosureComplete = submissionConflict == .none
+            || !submissionDisclosure.trimmingCharacters(
+                in: .whitespacesAndNewlines
+            ).isEmpty
+        return submissionAvailable
+            && githubSubmissionConfigured
+            && selectedResult != nil
+            && acceptsSubmissionDeclarations
+            && disclosureComplete
+            && !submissionState.isRunning
+    }
+
+    var canSelectResult: Bool {
+        !submissionState.isRunning
     }
 
     var selectedModel: Power2CandidateModelDefinition? {
@@ -121,6 +169,22 @@ final class PowerAppModel {
 
     func cancelRun() {
         runTask?.cancel()
+    }
+
+    func selectResult(_ id: UUID) {
+        guard canSelectResult, selectedResultID != id else { return }
+        selectedResultID = id
+        submissionState = .idle
+        acceptsSubmissionDeclarations = false
+    }
+
+    func submitSelectedResult() {
+        guard canSubmitSelectedResult, submissionTask == nil else {
+            return
+        }
+        submissionTask = Task {
+            await performSubmission()
+        }
     }
 
     func reloadResults() async {
@@ -223,6 +287,60 @@ final class PowerAppModel {
             )
         }
     }
+
+    private func performSubmission() async {
+        defer { submissionTask = nil }
+        do {
+            guard
+                submissionAvailable,
+                let selectedResult,
+                let clientID = githubOAuthClientID
+            else {
+                throw SubmissionError.unavailable
+            }
+            let resultData = try await store.encodedEvidence(
+                for: selectedResult.id
+            )
+            let client = try GitHubSubmissionClient(clientID: clientID)
+            let authorization = try await client.startAuthorization()
+            submissionState = .authorizing(authorization)
+            let token = try await client.waitForAccessToken(
+                authorization
+            )
+            submissionState = .publishing
+            let contributor = try await client.authenticatedUser(
+                token: token
+            )
+            let package = try PowerSubmissionPackage(
+                encodedEvidence: resultData,
+                githubLogin: contributor,
+                conflictOfInterest: submissionConflict,
+                disclosure: submissionDisclosure,
+                environmentNotes: submissionEnvironmentNotes
+            )
+            let pullRequestURL = try await client.publish(
+                package: package,
+                contributor: contributor,
+                token: token
+            )
+            submissionState = .completed(pullRequestURL)
+        } catch is CancellationError {
+            submissionState = .failed(
+                "GitHub submission was cancelled."
+            )
+        } catch {
+            submissionState = .failed(error.localizedDescription)
+        }
+    }
+
+    private var githubOAuthClientID: String? {
+        guard let value = Bundle.main.object(
+            forInfoDictionaryKey: "GitHubOAuthClientID"
+        ) as? String else {
+            return nil
+        }
+        return value.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 }
 
 private enum RunError: LocalizedError {
@@ -233,9 +351,18 @@ private enum RunError: LocalizedError {
         switch self {
         case .incompleteBuildIdentity:
             "Power testing requires an eligible Certification or Official "
-                + "build with an exact nonzero Git source revision."
+                + "build with an exact generated App source identity."
         case .physicalDeviceRequired:
             "Power testing can run only on a physical iPhone."
         }
+    }
+}
+
+private enum SubmissionError: LocalizedError {
+    case unavailable
+
+    var errorDescription: String? {
+        "This build or selected result is not eligible for public "
+            + "Power submission."
     }
 }

@@ -15,7 +15,7 @@ PROGRAM_ROOT = (
     / "programs"
     / "text-generation-performance"
     / "versions"
-    / "2.0.0-draft.1"
+    / "2.0.0-draft.2"
 )
 
 
@@ -30,7 +30,7 @@ class Power2CandidateTests(unittest.TestCase):
         self.assertEqual(summary["status"], "valid-migration-draft")
         self.assertEqual(
             summary["program"],
-            "text-generation-performance@2.0.0-draft.1",
+            "text-generation-performance@2.0.0-draft.2",
         )
         self.assertEqual(
             summary["target"],
@@ -177,7 +177,7 @@ class Power2CandidateTests(unittest.TestCase):
             / "power"
             / "policies"
             / "ranking"
-            / "1.0.0-draft.1.json"
+            / "1.0.0-draft.2.json"
         )
         intake = load_json(
             ROOT
@@ -209,6 +209,19 @@ class Power2CandidateTests(unittest.TestCase):
         self.assertIn(
             "auto-accept",
             report_schema["properties"]["classification"]["enum"],
+        )
+        self.assertIn(
+            "runnerCertificateID",
+            ranking["exactComparisonKey"],
+        )
+        self.assertTrue(
+            {
+                "behaviorConformance",
+                "recommendationEligibility",
+                "metricEligibility",
+            }.issubset(
+                report_schema["properties"]["checks"]["properties"]
+            )
         )
 
     def test_model_registry_selects_exact_rerun_candidates_only(self) -> None:

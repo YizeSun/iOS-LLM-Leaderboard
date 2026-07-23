@@ -39,7 +39,7 @@ final class PowerSubmissionKitTests: XCTestCase {
         XCTAssertEqual(package.resultData, resultBytes)
         XCTAssertEqual(
             package.repositoryDirectory,
-            "submissions/power/2.0.0/draft/"
+            "submissions/power/text-generation-performance/2.0.0/draft/"
                 + submissionID.uuidString.lowercased()
         )
         XCTAssertEqual(

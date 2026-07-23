@@ -141,7 +141,7 @@ struct PowerTestView: View {
                 + "PowerBuildKind declaration."
         case .certification:
             return "Certification requires POWER_SOURCE_REVISION to be the "
-                + "exact 40- or 64-character Git revision being tested."
+                + "exact generated App component-manifest SHA-256."
         }
     }
 

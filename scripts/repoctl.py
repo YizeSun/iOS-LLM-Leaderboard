@@ -249,6 +249,84 @@ def _verify_workload_measurement_modes(
             )
 
 
+def _verify_workload_response_contracts(
+    contract: dict[str, Any],
+    documents_by_path: dict[str, dict[str, Any]],
+) -> None:
+    for workload_reference in contract["workloads"]:
+        workload_path = workload_reference["path"]
+        workload = documents_by_path[workload_path]
+        response = workload.get("responseContract")
+        if response is None:
+            continue
+        if not isinstance(response, dict):
+            raise VerificationError(
+                f"workload response contract is invalid: {workload_path}"
+            )
+        if response.get("affectsMetricEligibility") is not False:
+            raise VerificationError(
+                "behavior must remain independent from performance metrics: "
+                f"{workload_path}"
+            )
+        if response.get("affectsRecommendationEligibility") is not True:
+            raise VerificationError(
+                "behavior contract must state its recommendation effect: "
+                f"{workload_path}"
+            )
+        maximum_sentences = response.get("maximumSentences")
+        policy = response.get("verificationPolicy")
+        if (
+            not isinstance(maximum_sentences, int)
+            or maximum_sentences < 1
+            or not isinstance(policy, dict)
+            or not isinstance(
+                policy.get("minimumVerifiedMeasuredAttempts"), int
+            )
+            or policy["minimumVerifiedMeasuredAttempts"] < 1
+        ):
+            raise VerificationError(
+                f"workload response policy is incomplete: {workload_path}"
+            )
+        concepts = policy.get("concepts")
+        contradictions = policy.get("contradictionPhrases")
+        if (
+            not isinstance(concepts, list)
+            or not concepts
+            or not isinstance(contradictions, list)
+            or not all(
+                isinstance(phrase, str) and phrase
+                for phrase in contradictions
+            )
+        ):
+            raise VerificationError(
+                f"workload response policy is invalid: {workload_path}"
+            )
+        for concept in concepts:
+            groups = (
+                concept.get("allOfTermGroups")
+                if isinstance(concept, dict)
+                else None
+            )
+            if (
+                not isinstance(concept, dict)
+                or not isinstance(concept.get("id"), str)
+                or not isinstance(groups, list)
+                or not groups
+                or not all(
+                    isinstance(group, list)
+                    and group
+                    and all(
+                        isinstance(term, str) and term
+                        for term in group
+                    )
+                    for group in groups
+                )
+            ):
+                raise VerificationError(
+                    f"workload response concept is invalid: {workload_path}"
+                )
+
+
 def _verify_schema_set(
     documents_by_path: dict[str, dict[str, Any]],
 ) -> int:
@@ -313,6 +391,28 @@ def _verify_runner_candidate(
         dependency_lock_reference,
         "candidate runner Package.resolved",
     )
+    runtime_identity_reference = manifest.get("runtimeIdentity")
+    if not isinstance(runtime_identity_reference, dict):
+        raise VerificationError(
+            "candidate runner has no canonical runtime identity"
+        )
+    runtime_identity_path = _verify_pinned_asset(
+        runtime_identity_reference,
+        "candidate runner runtime identity",
+    )
+    runtime_identity = _load_json(runtime_identity_path)
+    if (
+        runtime_identity.get("schemaVersion")
+        != "power-runtime-identity-1.0.0-draft.1"
+        or not isinstance(runtime_identity.get("configuration"), dict)
+        or runtime_identity["configuration"].get(
+            "dependencyLockSHA256"
+        )
+        != dependency_lock_reference.get("sha256")
+    ):
+        raise VerificationError(
+            "candidate runner runtime identity is inconsistent"
+        )
 
     components = manifest.get("components")
     if not isinstance(components, dict):
@@ -549,6 +649,211 @@ def _verify_app_candidate(
             "candidate App must remain unreleased before cutover"
         )
     return len(expected_paths)
+
+
+def _verify_release_candidates(
+    candidate: dict[str, Any],
+    *,
+    measurement_stack_reference: dict[str, Any],
+    runner_reference: dict[str, Any],
+    app_reference: dict[str, Any],
+    program_reference: dict[str, Any],
+    target_reference: dict[str, Any],
+    runner_policy_reference: dict[str, Any],
+    documents: list[tuple[str, dict[str, Any]]],
+) -> tuple[str, str]:
+    runner_candidate_reference = candidate.get(
+        "runnerCertificationCandidate"
+    )
+    app_candidate_reference = candidate.get("appReleaseCandidate")
+    if not isinstance(runner_candidate_reference, dict):
+        raise VerificationError(
+            "Power candidate has no Runner certification candidate"
+        )
+    if not isinstance(app_candidate_reference, dict):
+        raise VerificationError(
+            "Power candidate has no App release candidate"
+        )
+
+    runner_candidate_path = _verify_pinned_asset(
+        runner_candidate_reference,
+        "Runner certification candidate",
+    )
+    app_candidate_path = _verify_pinned_asset(
+        app_candidate_reference,
+        "App release candidate",
+    )
+    runner_candidate = _load_json(runner_candidate_path)
+    app_candidate = _load_json(app_candidate_path)
+    documents.extend(
+        (
+            (
+                str(runner_candidate_path.relative_to(ROOT)),
+                runner_candidate,
+            ),
+            (
+                str(app_candidate_path.relative_to(ROOT)),
+                app_candidate,
+            ),
+        )
+    )
+
+    if (
+        runner_candidate.get("schemaVersion")
+        != "power-runner-certificate-candidate-1.0.0-draft.1"
+        or runner_candidate.get("state") != "candidate"
+    ):
+        raise VerificationError(
+            "Runner certification candidate is not a closed candidate"
+        )
+    runner_id = (
+        "power2-certification-candidate-"
+        + str(runner_reference.get("sha256", ""))[:12]
+    )
+    if runner_candidate.get("certificateID") != runner_id:
+        raise VerificationError(
+            "Runner certification candidate ID is not component-bound"
+        )
+    expected_runner_references = {
+        "measurementStack": measurement_stack_reference,
+        "certificationPolicy": {
+            "path": runner_policy_reference.get("path"),
+            "sha256": runner_policy_reference.get("sha256"),
+        },
+        "runnerComponents": runner_reference,
+    }
+    for field, expected in expected_runner_references.items():
+        if runner_candidate.get(field) != expected:
+            raise VerificationError(
+                f"Runner certification candidate {field} mismatch"
+            )
+    if (
+        runner_candidate.get("programManifestSHA256")
+        != program_reference.get("sha256")
+        or runner_candidate.get("targetManifestSHA256")
+        != target_reference.get("sha256")
+    ):
+        raise VerificationError(
+            "Runner certification candidate Program or Target mismatch"
+        )
+
+    runner_manifest = _load_json(
+        _verify_pinned_asset(
+            runner_reference,
+            "Runner component manifest for certification",
+        )
+    )
+    runtime_reference = runner_manifest.get("runtimeIdentity")
+    if (
+        not isinstance(runtime_reference, dict)
+        or runner_candidate.get("runtimeIdentity") != runtime_reference
+    ):
+        raise VerificationError(
+            "Runner certification candidate runtime reference mismatch"
+        )
+    runtime = _load_json(
+        _verify_pinned_asset(
+            runtime_reference,
+            "Runner certification runtime identity",
+        )
+    )
+    expected_runtime = {
+        key: runtime.get(key)
+        for key in (
+            "name",
+            "version",
+            "resolvedRevision",
+            "backend",
+            "configuration",
+        )
+    }
+    if runner_candidate.get("runtime") != expected_runtime:
+        raise VerificationError(
+            "Runner certification candidate runtime value mismatch"
+        )
+    components = runner_manifest.get("components")
+    expected_component_digests = {
+        name: components.get(name, {}).get("sha256")
+        for name in (
+            "runnerCore",
+            "programModule",
+            "targetAdapter",
+            "runtimeAdapter",
+            "evidenceEnvelope",
+        )
+    } if isinstance(components, dict) else {}
+    if runner_candidate.get("componentSHA256") != expected_component_digests:
+        raise VerificationError(
+            "Runner certification candidate component digest mismatch"
+        )
+    runner_verification = runner_candidate.get("verification")
+    required_runner_automated_checks = (
+        "sourceAndDependencyIntegrity",
+        "unitTests",
+        "schemaAndFixtureIntegrity",
+        "deterministicSerialization",
+        "failurePreservation",
+        "genericIOSReleaseBuild",
+    )
+    if (
+        not isinstance(runner_verification, dict)
+        or any(
+            runner_verification.get(check) != "pass"
+            for check in required_runner_automated_checks
+        )
+        or runner_verification.get("physicalDeviceSmokeRun") != "pending"
+        or runner_verification.get("rawResultReview") != "pending"
+    ):
+        raise VerificationError(
+            "Runner certification candidate verification state is unsafe"
+        )
+
+    if (
+        app_candidate.get("schemaVersion")
+        != "power-app-release-candidate-1.0.0-draft.1"
+        or app_candidate.get("state") != "candidate"
+    ):
+        raise VerificationError(
+            "App release candidate is not a closed candidate"
+        )
+    app_digest = app_reference.get("sha256")
+    if (
+        app_candidate.get("releaseID")
+        != "power-app-2.0.0-candidate-" + str(app_digest)[:12]
+        or app_candidate.get("sourceRevision") != app_digest
+        or app_candidate.get("appComponents") != app_reference
+        or app_candidate.get("embeddedMeasurementStack")
+        != measurement_stack_reference
+        or app_candidate.get(
+            "supportedRunnerCertificationCandidateIDs"
+        ) != [runner_id]
+    ):
+        raise VerificationError(
+            "App release candidate identity is not source-bound"
+        )
+    if (
+        app_candidate.get("version") != "2.0.0"
+        or app_candidate.get("build") != "1"
+        or app_candidate.get("buildConfiguration") != "Official"
+        or app_candidate.get("bundleIdentifier")
+        != "org.iosllmleaderboard.power2"
+    ):
+        raise VerificationError(
+            "App release candidate build identity is inconsistent"
+        )
+    app_verification = app_candidate.get("verification")
+    if (
+        not isinstance(app_verification, dict)
+        or app_verification.get("sourceAndDependencyIntegrity") != "pass"
+        or app_verification.get("genericIOSReleaseBuild") != "pass"
+        or app_verification.get("physicalDeviceEndToEndRehearsal")
+        != "pending"
+    ):
+        raise VerificationError(
+            "App release candidate verification state is unsafe"
+        )
+
+    return runner_id, str(app_candidate.get("releaseID"))
 
 
 def _verify_model_registry(
@@ -856,6 +1161,19 @@ def verify_power_candidate() -> dict[str, Any]:
                 f"candidate {policy_name} policy version mismatch"
             )
 
+    runner_certification_candidate_id, app_release_candidate_id = (
+        _verify_release_candidates(
+            candidate,
+            measurement_stack_reference=measurement_stack_reference,
+            runner_reference=runner_candidate_reference,
+            app_reference=app_candidate_reference,
+            program_reference=program_reference,
+            target_reference=target_reference,
+            runner_policy_reference=policies["runner"],
+            documents=documents,
+        )
+    )
+
     registry_reference = models.get("registry")
     cohort_reference = models.get("cohort")
     if not isinstance(registry_reference, dict):
@@ -906,6 +1224,7 @@ def verify_power_candidate() -> dict[str, Any]:
     _verify_workload_fixtures(contract, documents_by_path)
     schema_count = _verify_schema_set(documents_by_path)
     _verify_workload_measurement_modes(contract, documents_by_path)
+    _verify_workload_response_contracts(contract, documents_by_path)
     _reject_legacy_references(documents)
 
     return {
@@ -927,6 +1246,9 @@ def verify_power_candidate() -> dict[str, Any]:
         "runtimeAdapterImplemented": runtime_adapter_implemented,
         "appComponents": app_component_count,
         "appShellImplemented": True,
+        "runnerCertificationCandidate":
+            runner_certification_candidate_id,
+        "appReleaseCandidate": app_release_candidate_id,
         "runnerCertified": False,
         "appReleased": False,
     }
@@ -959,6 +1281,37 @@ def _build_parser() -> argparse.ArgumentParser:
         default=[],
         help="previously accepted result SHA-256; may be repeated",
     )
+    create_parser = subparsers.add_parser(
+        "create-power-package",
+        help="create a Power 2.0 two-file package without rewriting evidence",
+    )
+    create_parser.add_argument("result", type=Path)
+    create_parser.add_argument("--output-root", type=Path)
+    create_parser.add_argument("--github-login", required=True)
+    create_parser.add_argument(
+        "--conflict-of-interest",
+        choices=("none", "disclosed"),
+        default="none",
+    )
+    create_parser.add_argument("--disclosure")
+    create_parser.add_argument("--environment-notes")
+    create_parser.add_argument(
+        "--accept-declarations",
+        action="store_true",
+    )
+    create_parser.add_argument("--submission-id")
+    create_parser.add_argument("--created-at")
+    ranking_parser = subparsers.add_parser(
+        "generate-power-ranking",
+        help="derive Power 2.0 ranking views from trusted packages",
+    )
+    ranking_parser.add_argument("submissions_root", type=Path)
+    ranking_parser.add_argument("output", type=Path)
+    ranking_parser.add_argument("--generated-at", required=True)
+    ranking_parser.add_argument(
+        "--validator-source-revision",
+        required=True,
+    )
     return parser
 
 
@@ -983,6 +1336,48 @@ def main() -> int:
             )
             if summary["classification"] == "reject":
                 exit_code = 1
+        elif args.command == "create-power-package":
+            try:
+                from scripts.lib.power2.package import (
+                    DEFAULT_SUBMISSION_ROOT,
+                    create_package,
+                )
+            except ModuleNotFoundError:
+                from lib.power2.package import (
+                    DEFAULT_SUBMISSION_ROOT,
+                    create_package,
+                )
+
+            package = create_package(
+                args.result,
+                args.output_root or DEFAULT_SUBMISSION_ROOT,
+                github_login=args.github_login,
+                conflict_of_interest=args.conflict_of_interest,
+                disclosure=args.disclosure,
+                environment_notes=args.environment_notes,
+                declarations_accepted=args.accept_declarations,
+                submission_id=args.submission_id,
+                created_at=args.created_at,
+            )
+            summary = {
+                "status": "created",
+                "package": str(package),
+                "resultBytesPreserved": True,
+            }
+        elif args.command == "generate-power-ranking":
+            try:
+                from scripts.lib.power2.ranking import write_dataset
+            except ModuleNotFoundError:
+                from lib.power2.ranking import write_dataset
+
+            summary = write_dataset(
+                args.submissions_root,
+                args.output,
+                generated_at=args.generated_at,
+                validator_source_revision=(
+                    args.validator_source_revision
+                ),
+            )
         else:  # pragma: no cover - argparse prevents this branch.
             raise VerificationError(f"unsupported command: {args.command}")
     except (VerificationError, ValueError) as error:

@@ -94,7 +94,7 @@ public struct PowerTextWorkload: Codable, Sendable, Equatable {
             throw PowerTextProgramError.programIdentityMismatch
         }
         guard Self.allowedWorkloads.contains(workloadID),
-              workloadVersion == "1.0.0-draft.1"
+              workloadVersion == "1.0.0-draft.2"
         else {
             throw PowerTextProgramError.unsupportedWorkload(workloadID)
         }

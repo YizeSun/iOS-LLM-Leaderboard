@@ -3,8 +3,10 @@
 > **Status: approved target architecture; migration in progress.** The
 > `products/power/` Power 2.0 candidate described here now exists on disk, but
 > it is deliberately inactive. Four exact model artifacts are registered only
-> as rerun candidates; there is no `current.json`, runner certificate, App
-> release, public intake, submission workflow, or leaderboard. Power 1.1
+> as rerun candidates; there is no `current.json`, active runner certificate,
+> supported App release, public intake, or leaderboard. Closed,
+> source-bound Runner and App candidates plus a read-only rehearsal workflow
+> now exist. Power 1.1
 > remains the current public behavior until the atomic cutover in this
 > document is completed. This migration does not activate Build or make image,
 > 3D, iPad, or macOS programs available.
@@ -61,13 +63,16 @@ design capacity, not implemented products.
 | Area | State | Authority |
 | --- | --- | --- |
 | Power 2.0 Product, text Program, physical-iPhone Target, and policies | Candidate implemented and hash-pinned | `products/power/candidate.json` |
-| Evidence envelope, text payload, submission, validation, and review shapes | Candidate implemented and pinned by the Program manifest | `products/power/programs/text-generation-performance/versions/2.0.0-draft.1/manifest.json` |
+| Evidence envelope, text payload, submission, validation, and review shapes | Draft.2 candidate implemented and pinned by the Program manifest | `products/power/programs/text-generation-performance/versions/2.0.0-draft.2/manifest.json` |
 | Candidate integrity and clean-break boundary | Enforced | `python3 scripts/repoctl.py verify-power-candidate` |
 | Exact model artifacts | Four revision- and content-pinned rerun candidates; no old rank imported | `models/registry.json` and `models/artifacts/` |
-| New validation engine | Structural, digest, contract, model, trust, contributor, and metric gates implemented behind the inactive candidate | `scripts/lib/power2/` |
-| Runner implementation | Candidate Runner Core, Program Module, iPhone Target Adapter, evidence layer, and fixed-dependency MLX Runtime Adapter implemented; not certified | `apps/PowerRunnerKit/` and its generated component manifest |
-| App implementation | Buildable, fail-closed iOS App Shell plus candidate Results Store, Submission Kit, GitHub contributor client, and a physical-iPhone-only certification smoke-test path implemented; certification evidence cannot submit or rank, and an App release is not issued | `apps/ios/` and `apps/PowerAppKit/` |
-| App release, runner certificate, CI intake, physical evidence, and ranking | Not implemented or activated | Candidate blockers remain explicit |
+| New validation engine | Structural, digest, contract, model, trust, contributor, behavior, recommendation, and per-metric gates implemented behind the inactive candidate | `scripts/lib/power2/` |
+| Runner implementation | Candidate Runner Core, Program Module, iPhone Target Adapter, evidence layer, and fixed-dependency MLX Runtime Adapter implemented; automated checks and generic iOS Certification build pass for the exact candidate digest; physical certification remains pending | `apps/PowerRunnerKit/` and its generated component manifest |
+| App implementation | Buildable, fail-closed iOS App Shell plus candidate Results Store, Submission Kit, direct GitHub contributor client, saved-result selection, and a physical-iPhone-only certification smoke-test path implemented; both generic iOS configurations pass for the exact App digest; certification evidence cannot submit or rank, and an App release is not issued | `apps/ios/` and `apps/PowerAppKit/` |
+| Two-file package, trusted PR routing, and ranking derivation | Implemented and tested; not public while candidate gates remain closed | `scripts/lib/power2/`, `scripts/triage_power2_submission_pr.py` |
+| Runner certificate and App release | Closed generated candidates implemented; active records wait for the final physical smoke result and review | `products/power/runner-certificates/candidate.json`, `products/power/app-releases/candidate.json` |
+| CI intake rehearsal | Read-only candidate verification and optional trusted-main PR classification implemented; production labels/merge remain unchanged | `.github/workflows/power2-candidate-rehearsal.yml` |
+| Physical evidence and public ranking | Not activated | Candidate blockers remain explicit |
 | Public Power flow | Still Power 1.1 until cutover | Current public guides and released manifests |
 
 The candidate is a contract review surface, not an invitation to submit

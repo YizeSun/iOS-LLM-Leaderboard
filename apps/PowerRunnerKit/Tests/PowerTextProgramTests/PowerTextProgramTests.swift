@@ -129,9 +129,9 @@ final class PowerTextProgramTests: XCTestCase {
         [
             "schemaVersion": "power-workload-1.0.0-draft.1",
             "programID": "text-generation-performance",
-            "programVersion": "2.0.0-draft.1",
+            "programVersion": "2.0.0-draft.2",
             "workloadID": "power.text.short-interaction",
-            "workloadVersion": "1.0.0-draft.1",
+            "workloadVersion": "1.0.0-draft.2",
             "status": "migration-draft",
             "title": "Short Interaction",
             "category": "interactive",

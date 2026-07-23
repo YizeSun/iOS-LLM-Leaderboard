@@ -127,6 +127,14 @@ class Power2AppShellTests(unittest.TestCase):
         self.assertIn('SUPPORTED_PLATFORMS = "iphoneos";', project)
         self.assertIn("PowerSourceRevision", identity)
         self.assertIn("isValidSourceRevision", identity)
+        self.assertIn(
+            "exact generated App component-manifest SHA-256",
+            (
+                APP_ROOT
+                / "PowerBenchmarkApp"
+                / "PowerTestView.swift"
+            ).read_text(encoding="utf-8"),
+        )
         self.assertIn("<key>PowerSourceRevision</key>", info_plist)
         self.assertIn(
             "<string>$(POWER_SOURCE_REVISION)</string>",
@@ -136,6 +144,24 @@ class Power2AppShellTests(unittest.TestCase):
         self.assertIn("PowerRunner(runtime: runtime, target: target)", model)
         self.assertIn("PowerEvidenceEnvelope(", model)
         self.assertIn("store.save(envelope: envelope)", model)
+
+    def test_candidate_rehearsal_is_read_only_and_isolated(self) -> None:
+        workflow = (
+            ROOT
+            / ".github"
+            / "workflows"
+            / "power2-candidate-rehearsal.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("permissions:\n  contents: read", workflow)
+        self.assertNotIn("pull-requests: write", workflow)
+        self.assertNotIn("issues: write", workflow)
+        self.assertNotIn("gh pr edit", workflow)
+        self.assertNotIn("gh pr merge", workflow)
+        self.assertIn(
+            "scripts/triage_power2_submission_pr.py",
+            workflow,
+        )
+        self.assertIn("ref: main", workflow)
 
     def test_signing_is_local_and_build_kinds_are_fail_closed(self) -> None:
         project = (APP_PROJECT / "project.pbxproj").read_text(
@@ -194,6 +220,43 @@ class Power2AppShellTests(unittest.TestCase):
         self.assertIn('Label("Results", systemImage:', root_view)
         self.assertIn("PowerTestView", root_view)
         self.assertIn("PowerResultsView", root_view)
+
+    def test_results_view_connects_exact_bytes_to_github_submission(
+        self,
+    ) -> None:
+        model = (
+            APP_ROOT
+            / "PowerBenchmarkApp"
+            / "PowerAppModel.swift"
+        ).read_text(encoding="utf-8")
+        view = (
+            APP_ROOT
+            / "PowerBenchmarkApp"
+            / "PowerResultsView.swift"
+        ).read_text(encoding="utf-8")
+        info_plist = (
+            APP_ROOT
+            / "PowerBenchmarkApp"
+            / "Info.plist"
+        ).read_text(encoding="utf-8")
+        project = (APP_PROJECT / "project.pbxproj").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("store.encodedEvidence", model)
+        self.assertIn("PowerSubmissionPackage(", model)
+        self.assertIn("client.publish(", model)
+        self.assertIn("client.waitForAccessToken", model)
+        self.assertIn("model.submitSelectedResult()", view)
+        self.assertNotIn('Button("Submit to GitHub") {}', view)
+        self.assertIn(".textSelection(.enabled)", view)
+        self.assertIn('"Copy code"', view)
+        self.assertIn('"Authorize on GitHub"', view)
+        self.assertIn("<key>GitHubOAuthClientID</key>", info_plist)
+        self.assertEqual(
+            project.count("GITHUB_OAUTH_CLIENT_ID ="),
+            4,
+        )
 
     def test_app_links_new_local_modules_only(self) -> None:
         project = (APP_PROJECT / "project.pbxproj").read_text(

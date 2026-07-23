@@ -227,6 +227,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
+				GITHUB_OAUTH_CLIENT_ID = Ov23lidyeZdONyrU4Pvy;
 				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
 				MARKETING_VERSION = 2.0.0;
 				POWER_APP_DISPLAY_NAME = "Power Benchmark";
@@ -250,6 +251,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
+				GITHUB_OAUTH_CLIENT_ID = Ov23lidyeZdONyrU4Pvy;
 				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
 				MARKETING_VERSION = 2.0.0;
 				POWER_APP_DISPLAY_NAME = "Power Benchmark";
@@ -295,6 +297,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
+				GITHUB_OAUTH_CLIENT_ID = Ov23lidyeZdONyrU4Pvy;
 				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
 				MARKETING_VERSION = 2.0.0;
 				POWER_APP_DISPLAY_NAME = "Power Benchmark Certification";
@@ -319,6 +322,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
+				GITHUB_OAUTH_CLIENT_ID = Ov23lidyeZdONyrU4Pvy;
 				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
 				MARKETING_VERSION = 2.0.0;
 				POWER_APP_DISPLAY_NAME = "Power Benchmark";

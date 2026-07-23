@@ -1,8 +1,13 @@
+import PowerGitHubSubmission
 import PowerResultsStore
+import PowerSubmissionKit
 import SwiftUI
+import UIKit
 
 struct PowerResultsView: View {
     @Bindable var model: PowerAppModel
+    @FocusState private var notesFocused: Bool
+    @State private var copiedAuthorizationCode = false
 
     var body: some View {
         List {
@@ -27,7 +32,7 @@ struct PowerResultsView: View {
                 Section("Saved results") {
                     ForEach(model.results) { result in
                         Button {
-                            model.selectedResultID = result.id
+                            model.selectResult(result.id)
                         } label: {
                             ResultRow(
                                 result: result,
@@ -36,6 +41,7 @@ struct PowerResultsView: View {
                             )
                         }
                         .buttonStyle(.plain)
+                        .disabled(!model.canSelectResult)
                     }
                 }
 
@@ -55,8 +61,6 @@ struct PowerResultsView: View {
                                 systemImage: "square.and.arrow.up"
                             )
                         }
-                        Button("Submit to GitHub") {}
-                            .disabled(!model.submissionAvailable)
                     } header: {
                         Text("Selected result")
                     } footer: {
@@ -68,12 +72,158 @@ struct PowerResultsView: View {
                                 + "public intake opens."
                         )
                     }
+
+                    githubContributionSection
                 }
             }
         }
         .navigationTitle("Results")
+        .scrollDismissesKeyboard(.interactively)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") {
+                    notesFocused = false
+                }
+            }
+        }
         .refreshable {
             await model.reloadResults()
+        }
+    }
+
+    @ViewBuilder
+    private var githubContributionSection: some View {
+        Section("GitHub contribution") {
+            Picker(
+                "Conflict of interest",
+                selection: $model.submissionConflict
+            ) {
+                ForEach(PowerSubmissionConflict.allCases, id: \.self) {
+                    conflict in
+                    Text(conflictLabel(conflict)).tag(conflict)
+                }
+            }
+            if model.submissionConflict == .disclosed {
+                TextField(
+                    "Disclosure statement",
+                    text: $model.submissionDisclosure,
+                    axis: .vertical
+                )
+                .focused($notesFocused)
+            }
+            TextField(
+                "Optional environment notes",
+                text: $model.submissionEnvironmentNotes,
+                axis: .vertical
+            )
+            .focused($notesFocused)
+            Toggle(
+                "I ran this on a physical device, reviewed the public "
+                    + "metadata, confirm the raw evidence is unmodified "
+                    + "and contains no personal data, accept CC BY 4.0, "
+                    + "and understand that submission does not guarantee "
+                    + "ranking.",
+                isOn: $model.acceptsSubmissionDeclarations
+            )
+            Button {
+                notesFocused = false
+                model.submitSelectedResult()
+            } label: {
+                Label(
+                    "Submit to GitHub",
+                    systemImage: "arrow.up.circle.fill"
+                )
+            }
+            .disabled(!model.canSubmitSelectedResult)
+
+            submissionStatus
+
+            if !model.submissionAvailable {
+                Label(
+                    "Public submission remains locked until this exact App "
+                        + "release, Runner certificate, and Power 2 intake "
+                        + "are active.",
+                    systemImage: "lock.shield"
+                )
+                .foregroundStyle(.orange)
+            } else if !model.githubSubmissionConfigured {
+                Label(
+                    "This build has no GitHub OAuth Client ID.",
+                    systemImage: "exclamationmark.triangle"
+                )
+                .foregroundStyle(.orange)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var submissionStatus: some View {
+        switch model.submissionState {
+        case .idle:
+            EmptyView()
+        case .authorizing(let authorization):
+            VStack(alignment: .leading, spacing: 8) {
+                Text("GitHub code")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(authorization.userCode)
+                    .font(.headline.monospaced())
+                    .textSelection(.enabled)
+            }
+            Button {
+                UIPasteboard.general.string = authorization.userCode
+                copiedAuthorizationCode = true
+                Task {
+                    try? await Task.sleep(for: .seconds(2))
+                    copiedAuthorizationCode = false
+                }
+            } label: {
+                Label(
+                    copiedAuthorizationCode
+                        ? "Code copied"
+                        : "Copy code",
+                    systemImage: copiedAuthorizationCode
+                        ? "checkmark.circle.fill"
+                        : "doc.on.doc"
+                )
+            }
+            Link(destination: authorization.verificationURL) {
+                Label("Authorize on GitHub", systemImage: "safari")
+            }
+            Text(
+                "Return to the App after authorization. If iOS relaunches "
+                    + "the App, the saved result remains available and you "
+                    + "can start authorization again."
+            )
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+        case .publishing:
+            HStack {
+                ProgressView()
+                Text("Creating fork, evidence commit, and pull request…")
+            }
+        case .completed(let pullRequestURL):
+            Label(
+                "Pull request created",
+                systemImage: "checkmark.circle.fill"
+            )
+            .foregroundStyle(.green)
+            Link("Open pull request", destination: pullRequestURL)
+        case .failed(let message):
+            Label(message, systemImage: "xmark.circle.fill")
+                .foregroundStyle(.red)
+        }
+    }
+
+    private func conflictLabel(
+        _ conflict: PowerSubmissionConflict
+    ) -> String {
+        switch conflict {
+        case .none:
+            "None"
+        case .disclosed:
+            "Disclosed"
         }
     }
 

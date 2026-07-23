@@ -1,0 +1,299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ios-llm-leaderboard.org/schemas/power/evidence-envelope/1.0.0-draft.1",
+  "title": "Power Evidence Envelope",
+  "description": "Immutable source evidence produced by one certified Power runner execution.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "resultID",
+    "createdAt",
+    "productID",
+    "program",
+    "target",
+    "runnerCertificateID",
+    "appRelease",
+    "model",
+    "runtime",
+    "device",
+    "environment",
+    "artifacts",
+    "payload"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "power-evidence-envelope-1.0.0-draft.1"
+    },
+    "resultID": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "productID": {
+      "const": "power"
+    },
+    "program": {
+      "$ref": "#/$defs/versionedIdentity"
+    },
+    "target": {
+      "$ref": "#/$defs/versionedIdentity"
+    },
+    "runnerCertificateID": {
+      "type": "string",
+      "minLength": 1
+    },
+    "appRelease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "build",
+        "sourceRevision",
+        "embeddedMeasurementStackSHA256"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "build": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceRevision": {
+          "$ref": "#/$defs/sourceRevision"
+        },
+        "embeddedMeasurementStackSHA256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registryEntryID",
+        "registryEntrySHA256",
+        "artifactID",
+        "artifactRevision",
+        "parameterCount",
+        "quantization",
+        "format"
+      ],
+      "properties": {
+        "registryEntryID": {
+          "type": "string",
+          "minLength": 1
+        },
+        "registryEntrySHA256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "artifactID": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifactRevision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parameterCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "quantization": {
+          "type": "string",
+          "minLength": 1
+        },
+        "format": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "resolvedRevision",
+        "backend",
+        "configuration"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resolvedRevision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "backend": {
+          "type": "string",
+          "minLength": 1
+        },
+        "configuration": {
+          "type": "object"
+        }
+      }
+    },
+    "device": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "machineIdentifier",
+        "osVersion",
+        "osBuild"
+      ],
+      "properties": {
+        "machineIdentifier": {
+          "type": "string",
+          "minLength": 1
+        },
+        "osVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "osBuild": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "batteryLevelAtStart",
+        "batteryStateAtStart",
+        "lowPowerModeAtStart",
+        "thermalStateAtStart",
+        "thermalStateAtEnd",
+        "thermalAssistance"
+      ],
+      "properties": {
+        "batteryLevelAtStart": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "batteryStateAtStart": {
+          "enum": [
+            "unplugged",
+            "charging",
+            "full",
+            "unknown"
+          ]
+        },
+        "lowPowerModeAtStart": {
+          "type": "boolean"
+        },
+        "thermalStateAtStart": {
+          "$ref": "#/$defs/thermalState"
+        },
+        "thermalStateAtEnd": {
+          "$ref": "#/$defs/thermalState"
+        },
+        "thermalAssistance": {
+          "enum": [
+            "none",
+            "deliberate-cooling",
+            "deliberate-heating",
+            "other-assisted",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256",
+          "mediaType",
+          "byteCount"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "$ref": "#/$defs/sha256"
+          },
+          "mediaType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "byteCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "payload": {
+      "$ref": "text-generation-payload.schema.json"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sourceRevision": {
+      "type": "string",
+      "oneOf": [
+        {
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        {
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      ]
+    },
+    "versionedIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "manifestSHA256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "manifestSHA256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "thermalState": {
+      "enum": [
+        "nominal",
+        "fair",
+        "serious",
+        "critical",
+        "unknown"
+      ]
+    }
+  }
+}

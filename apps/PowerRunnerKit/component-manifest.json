@@ -13,28 +13,28 @@
         },
         {
           "path": "apps/PowerRunnerKit/Sources/PowerEvidence/PowerEvidence.swift",
-          "sha256": "5a86d20fa931c3e96e55f0fa14334ace83705220e49dc5b751c069cdb41d5fa3"
+          "sha256": "6ccca384e5c9645b5bdbe314ce8bd0f4b99d151c6fe5e520c656e8d81ef0d18a"
         },
         {
           "path": "apps/PowerRunnerKit/Sources/PowerEvidence/PowerEvidenceEncoder.swift",
           "sha256": "7a4dc164918049c027f7ade2ca84755e113c6425f2faeef9e1f30c32f6115066"
         }
       ],
-      "sha256": "db68f0776696adf3d43d285fcd1ef77812828ccc1ec11c8f0c7d238f9c4a7622",
+      "sha256": "7201d022a0bb2a8f14b2c6d3982d70da5613c96073b1b16dffec55db66996620",
       "sourceRoot": "apps/PowerRunnerKit/Sources/PowerEvidence"
     },
     "programModule": {
       "files": [
         {
           "path": "apps/PowerRunnerKit/Sources/PowerTextProgram/PowerTextProgramModule.swift",
-          "sha256": "b6f6533af0b4e0f53cfa0ccb89a863f59da58f80770da0beb23f40bd6e651a2a"
+          "sha256": "cced5d2667ee37ec15ba3e98c3c8e7589ea099dfac8a7e801a3288091b5da0be"
         },
         {
           "path": "apps/PowerRunnerKit/Sources/PowerTextProgram/PowerTextWorkload.swift",
-          "sha256": "79543d187807c6c8511c98fc97fe3d140c5bd58e640131f16e55c9ea22b39001"
+          "sha256": "0cbef37b9af921eb9fc1d808008d969c9c953377c002153807cf2667ed119178"
         }
       ],
-      "sha256": "c0fe599f3723bc0d3d1c7ac3f03e225e0c4b7d47721cb09b9db0ab65e1a38349",
+      "sha256": "99c388df7730f85d056445e71fe263f6a45b099fb44da79b2456bf9f7476f1d0",
       "sourceRoot": "apps/PowerRunnerKit/Sources/PowerTextProgram"
     },
     "runnerCore": {
@@ -71,14 +71,14 @@
         },
         {
           "path": "apps/PowerRunnerKit/Sources/PowerMLXRuntime/PowerMLXRuntimeIdentity.swift",
-          "sha256": "97f4a5bcbb26794a8256e54e502b159b214f1b5a675bf15cf42dbab937533ea0"
+          "sha256": "1f7c2ff9d23ad4f2959c93e989f50aaa049b249e9ff3d06af5cfcb01304c80b4"
         },
         {
           "path": "apps/PowerRunnerKit/Sources/PowerMLXRuntime/PowerMLXTokenizer.swift",
           "sha256": "ae4b67c8b08642162e7a07774354b0748ea6f9e0441b15308e1342a2dc6e8025"
         }
       ],
-      "sha256": "2651243b0771249553cc65ee1b975456eb00020e8563f02ccf41c1d36e0ad7c2",
+      "sha256": "b6774fdf5a316afb4bfd7f767de123735eb55af8aed9ee5a852b20fded08092c",
       "sourceRoot": "apps/PowerRunnerKit/Sources/PowerMLXRuntime"
     },
     "targetAdapter": {
@@ -104,6 +104,10 @@
   "resolvedDependencies": {
     "path": "apps/PowerRunnerKit/Package.resolved",
     "sha256": "6dc7774e01f6cd7449d42a1d36655fe61802c832689369e76f0e603ee218e1ef"
+  },
+  "runtimeIdentity": {
+    "path": "apps/PowerRunnerKit/runtime-identity.json",
+    "sha256": "243b814df726662f9a3433aae146ae1e8a82b331b3b75b3e172dcb199f6213cf"
   },
   "schemaVersion": "power-runner-component-manifest-1.0.0-draft.1",
   "status": "migration-draft"

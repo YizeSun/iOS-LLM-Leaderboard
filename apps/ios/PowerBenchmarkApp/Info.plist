@@ -25,6 +25,8 @@
 	<string>public.app-category.developer-tools</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>GitHubOAuthClientID</key>
+	<string>$(GITHUB_OAUTH_CLIENT_ID)</string>
 	<key>PowerSourceRevision</key>
 	<string>$(POWER_SOURCE_REVISION)</string>
 	<key>PowerBuildKind</key>

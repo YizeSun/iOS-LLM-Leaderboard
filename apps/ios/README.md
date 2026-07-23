@@ -37,28 +37,64 @@ Target, or measurement identity.
 The separate `PowerCertification` scheme is a maintainer-only physical-iPhone
 smoke-test path. It executes the exact models, workloads, Runner, Program, and
 Target pinned by the inactive candidate and saves a candidate evidence envelope
-locally. It is compiled only for `iphoneos`, requires the exact checked-out Git
-revision at build time, and cannot submit or rank the resulting evidence:
+locally. It is compiled only for `iphoneos`, requires the exact generated App
+component-manifest SHA-256 at build time, and cannot submit or rank the
+resulting evidence:
 
 ```bash
+APP_SOURCE_REVISION="$(
+  shasum -a 256 apps/ios/component-manifest.json | awk '{print $1}'
+)"
 xcodebuild \
   -project apps/ios/PowerBenchmarkApp.xcodeproj \
   -scheme PowerCertification \
   -configuration Certification \
   -destination 'platform=iOS,name=YOUR_IPHONE' \
-  POWER_SOURCE_REVISION="$(git rev-parse HEAD)" \
+  POWER_SOURCE_REVISION="$APP_SOURCE_REVISION" \
   build
 ```
 
 Do not archive, distribute, or describe this build as a released benchmark
 App. Its `2.0.0-certification` identity and candidate certificate ID exist only
-to bind pre-release physical-device review to exact source.
+to bind pre-release physical-device review to exact source. Unlike a Git commit
+alone, the component manifest covers the complete App shell, generated
+candidate files, support modules, Xcode project, build schemes, dependency
+locks, and shared signing boundary; personal signing remains outside it.
+
+To complete the physical-device checkpoint:
+
+1. Build and install the `PowerCertification` scheme on a physical iPhone
+   using the exact `POWER_SOURCE_REVISION` command above.
+2. Open **Test**, select a pinned model and workload, prepare the model, and
+   run the Certification smoke test without thermal assistance.
+3. Open **Results**, select the newly completed result, and use **Share Raw
+   Power JSON**. Do not edit, reformat, or resave the exported bytes.
+4. Give the exported JSON to a maintainer. The maintainer reviews it with:
+
+   ```bash
+   python3 scripts/review_power2_certification_result.py \
+     /path/to/raw-result.json \
+     --evaluated-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+     --validator-source-revision "$(git rev-parse HEAD)"
+   ```
+
+This review is closed candidate evidence. A passing report is still
+non-publishable and non-ranking; it authorizes the later certificate and App
+release steps only after the raw evidence and physical run have been reviewed.
 
 `PowerOfficial` is a separately shared scheme and Bundle ID. Its presence does
 not authorize a release: the generated release identity and repository intake
 state remain authoritative. Community testers should eventually install the
 maintainer-signed TestFlight/App Store build; source-built Apps remain
 Developer builds even when signed by another Apple team.
+
+The Results tab stores every completed Power 2 envelope independently and lets
+the user select the exact saved result to share or submit. Direct GitHub
+submission is fully connected to those stored bytes, uses OAuth Device Flow,
+creates a new UUID branch directly from the current upstream head, writes only
+the two-file Power 2 package, and opens a pull request. It never synchronizes
+or modifies the contributor fork's default branch. The action remains
+fail-closed until the Official App release and public intake are active.
 
 The current `ios-app/` remains the Power 1.1 public App until the atomic
 clean-break cutover. No Power 1.1 result is imported, converted, displayed, or

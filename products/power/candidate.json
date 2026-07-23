@@ -1,20 +1,28 @@
 {
   "schemaVersion": "power-stack-pointer-1.0.0-draft.1",
   "productID": "power",
-  "stackID": "power-text-iphone-2.0.0-draft.1",
+  "stackID": "power-text-iphone-2.0.0-draft.2",
   "status": "migration-draft",
   "publicIntakeOpen": false,
   "measurementStack": {
-    "path": "products/power/stacks/power-text-iphone-2.0.0-draft.1/manifest.json",
-    "sha256": "da80a2aaa6e645efd2d8bb45848360e3fa0d5312e07c87bd6805a2cc1910cf19"
+    "path": "products/power/stacks/power-text-iphone-2.0.0-draft.2/manifest.json",
+    "sha256": "43e5d8899f660c557e3a7dad0c7e54de8e440aab5be6d46096306c6e43b385a0"
   },
   "runnerCandidate": {
     "path": "apps/PowerRunnerKit/component-manifest.json",
-    "sha256": "f3d31cd68985f898691449529676cad7dbb6671da105bb4f752adce2bc15274b"
+    "sha256": "87f62feecc2b3fca994cc4f40214aed9876f1477c51fdb7c56c6945eb6b03ee2"
+  },
+  "runnerCertificationCandidate": {
+    "path": "products/power/runner-certificates/candidate.json",
+    "sha256": "cb43e7218523b7a184b7cdefa6e16770c076462588b9b65c5cb216a8e3da2d2a"
   },
   "appCandidate": {
     "path": "apps/ios/component-manifest.json",
-    "sha256": "f3ee3f2e8d04945875c56193733234c45f0f3f52b035f9588d395fd3d8094d2a"
+    "sha256": "6df4dca4863e3c583f2fb4670886c72c726014835923ebcecb47664353ddc3b4"
+  },
+  "appReleaseCandidate": {
+    "path": "products/power/app-releases/candidate.json",
+    "sha256": "2bc6c2df207aaeff92249c986456532d785c176837c6b049e36965e5b3cc3e27"
   },
   "appRelease": null,
   "activationBlockers": [

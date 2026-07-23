@@ -37,6 +37,10 @@ work around the frozen boundary.
 - `generate_power_runner_component_manifest.py` hashes the separate Power 2
   evidence, Runner Core, text Program Module, iPhone Target Adapter, and MLX
   Runtime Adapter sources.
+- `generate_power_release_candidates.py` binds those exact Runner components
+  and the complete App component manifest into separate closed certification
+  and release candidates. It never issues an active certificate or App
+  release.
 - `generate_power2_candidate_identity.py` generates candidate-only Swift
   identity from `products/power/candidate.json`. It is not compiled into the
   current Power 1.1 App and cannot open intake.
@@ -44,6 +48,9 @@ work around the frozen boundary.
   and generates the exact model, workload, and fixture catalog used only by
   the physical-iPhone `PowerCertification` smoke-test scheme. It does not
   issue a runner certificate, App release, or public submission permission.
+- `review_power2_certification_result.py` applies the trusted Power 2 engine
+  to one physical-iPhone Certification result using only the closed candidate
+  identities. Its report is always non-publishable and non-ranking.
 - `validate_suite_b_power_1_1_submission.py` validates the current two-file
   contribution package.
 - `validate_suite_b_power_1_1_compatible_result.py` applies the versioned exact
@@ -77,6 +84,7 @@ The current review command is:
 ```bash
 python3 scripts/repoctl.py verify-power-candidate
 python3 scripts/generate_power2_app_catalog.py --check
+python3 scripts/generate_power_release_candidates.py --check
 python3 scripts/repoctl.py validate-power-package PACKAGE \
   --pr-author HANDLE \
   --evaluated-at 2026-07-23T12:00:00Z \
@@ -85,7 +93,8 @@ python3 scripts/repoctl.py validate-power-package PACKAGE \
 
 A successful result means only that the draft contract stack is internally
 complete and independent from Power 1.1. It reports four exact rerun-candidate
-models but deliberately no runner certificate or App release.
+models plus source-bound Runner-certification and App-release candidates, but
+deliberately no active runner certificate or supported App release.
 The certification catalog check additionally proves that the App's closed
 smoke-test catalog is a deterministic projection of those pinned assets; it
 does not certify a run.

@@ -2,7 +2,9 @@ import CryptoKit
 import Foundation
 import PowerEvidence
 
-public enum PowerSubmissionConflict: String, Codable, Sendable, CaseIterable {
+public enum PowerSubmissionConflict:
+    String, Codable, Sendable, CaseIterable, Hashable
+{
     case none
     case disclosed
 }
@@ -12,7 +14,7 @@ public struct PowerSubmissionRoute: Sendable, Equatable {
 
     public init(
         repositoryDirectoryPrefix: String =
-            "submissions/power/2.0.0/draft"
+            "submissions/power/text-generation-performance/2.0.0/draft"
     ) {
         self.repositoryDirectoryPrefix = repositoryDirectoryPrefix
     }

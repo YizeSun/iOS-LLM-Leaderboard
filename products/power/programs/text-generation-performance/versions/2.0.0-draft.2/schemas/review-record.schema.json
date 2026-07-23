@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ios-llm-leaderboard.org/schemas/power/review-record/1.0.0-draft.1",
+  "title": "Power Review Record",
+  "description": "Append-only human disposition of one immutable source result and validation report.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "reviewID",
+    "createdAt",
+    "sourceResultSHA256",
+    "validationReportSHA256",
+    "reviewer",
+    "disposition",
+    "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "power-review-record-1.0.0-draft.1"
+    },
+    "reviewID": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sourceResultSHA256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "validationReportSHA256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "reviewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "githubLogin",
+        "role"
+      ],
+      "properties": {
+        "githubLogin": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "enum": [
+            "maintainer",
+            "appointed-reviewer"
+          ]
+        }
+      }
+    },
+    "disposition": {
+      "enum": [
+        "accept",
+        "reject",
+        "needs-more-evidence"
+      ]
+    },
+    "reasonCodes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "supersedesReviewSHA256": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

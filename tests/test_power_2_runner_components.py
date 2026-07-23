@@ -11,6 +11,12 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "apps/PowerRunnerKit/component-manifest.json"
 CANDIDATE_PATH = ROOT / "products/power/candidate.json"
 IDENTITY_PATH = ROOT / "apps/ios/Power2CandidateIdentity.generated.swift"
+RUNNER_CERTIFICATE_CANDIDATE_PATH = (
+    ROOT / "products/power/runner-certificates/candidate.json"
+)
+APP_RELEASE_CANDIDATE_PATH = (
+    ROOT / "products/power/app-releases/candidate.json"
+)
 
 
 class Power2RunnerComponentTests(unittest.TestCase):
@@ -82,6 +88,13 @@ class Power2RunnerComponentTests(unittest.TestCase):
                 (ROOT / dependency_lock["path"]).read_bytes()
             ).hexdigest(),
         )
+        runtime_identity = manifest["runtimeIdentity"]
+        self.assertEqual(
+            runtime_identity["sha256"],
+            hashlib.sha256(
+                (ROOT / runtime_identity["path"]).read_bytes()
+            ).hexdigest(),
+        )
 
     def test_candidate_swift_identity_is_generated_and_inactive(self) -> None:
         completed = subprocess.run(
@@ -104,6 +117,68 @@ class Power2RunnerComponentTests(unittest.TestCase):
         self.assertIn(candidate["runnerCandidate"]["sha256"], swift)
         self.assertIn("static let publicIntakeOpen = false", swift)
         self.assertIn("static let appReleaseAvailable = false", swift)
+
+    def test_release_candidates_are_generated_and_source_bound(self) -> None:
+        completed = subprocess.run(
+            [
+                "python3",
+                "scripts/generate_power_release_candidates.py",
+                "--check",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+
+        candidate = json.loads(CANDIDATE_PATH.read_text())
+        runner = json.loads(
+            RUNNER_CERTIFICATE_CANDIDATE_PATH.read_text()
+        )
+        app = json.loads(APP_RELEASE_CANDIDATE_PATH.read_text())
+        self.assertEqual(runner["state"], "candidate")
+        self.assertEqual(app["state"], "candidate")
+        self.assertEqual(
+            runner["runnerComponents"],
+            candidate["runnerCandidate"],
+        )
+        self.assertEqual(
+            app["appComponents"],
+            candidate["appCandidate"],
+        )
+        self.assertEqual(
+            app["sourceRevision"],
+            candidate["appCandidate"]["sha256"],
+        )
+        self.assertEqual(
+            app["supportedRunnerCertificationCandidateIDs"],
+            [runner["certificateID"]],
+        )
+        self.assertEqual(
+            {
+                value
+                for key, value in runner["verification"].items()
+                if key
+                not in {"physicalDeviceSmokeRun", "rawResultReview"}
+            },
+            {"pass"},
+        )
+        self.assertEqual(
+            runner["verification"]["physicalDeviceSmokeRun"],
+            "pending",
+        )
+        self.assertEqual(
+            runner["verification"]["rawResultReview"],
+            "pending",
+        )
+        self.assertEqual(
+            app["verification"]["genericIOSReleaseBuild"],
+            "pass",
+        )
+        self.assertEqual(
+            app["verification"]["physicalDeviceEndToEndRehearsal"],
+            "pending",
+        )
 
 
 if __name__ == "__main__":

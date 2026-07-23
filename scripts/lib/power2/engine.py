@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
+import unicodedata
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -16,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_CANDIDATE_PATH = ROOT / "products" / "power" / "candidate.json"
 ALLOWED_PACKAGE_FILES = {"submission.json", "result.json"}
 VALIDATOR_NAME = "power-intake-engine"
-VALIDATOR_VERSION = "2.0.0-draft.1"
+VALIDATOR_VERSION = "2.0.0-draft.2"
 
 
 class Power2ValidationError(ValueError):
@@ -234,6 +236,73 @@ def load_candidate_context(
             candidate.get("appRelease"), "App release"
         ),
         schema_paths=schema_paths,
+    )
+
+
+def load_candidate_certification_review_context(
+    candidate_path: Path = DEFAULT_CANDIDATE_PATH,
+) -> ValidationContext:
+    """Open only the candidate gates needed to review smoke-test evidence.
+
+    This context is intentionally separate from public intake. It accepts the
+    closed Certification build identity and candidate Runner certificate so a
+    maintainer can review one physical-device result before either identity is
+    released.
+    """
+
+    context = load_candidate_context(candidate_path)
+    candidate = _load_json(candidate_path)
+    runner_reference = candidate.get("runnerCertificationCandidate")
+    app_reference = candidate.get("appReleaseCandidate")
+    if not isinstance(runner_reference, dict):
+        raise Power2ValidationError(
+            "candidate has no Runner certification candidate"
+        )
+    if not isinstance(app_reference, dict):
+        raise Power2ValidationError(
+            "candidate has no App release candidate"
+        )
+    _, runner_candidate = _load_reference(
+        runner_reference,
+        "Runner certification candidate",
+    )
+    _, app_candidate = _load_reference(
+        app_reference,
+        "App release candidate",
+    )
+    if runner_candidate.get("state") != "candidate":
+        raise Power2ValidationError(
+            "Runner certification record is not a candidate"
+        )
+    if app_candidate.get("state") != "candidate":
+        raise Power2ValidationError(
+            "App release record is not a candidate"
+        )
+    certificate_id = runner_candidate.get("certificateID")
+    if (
+        not isinstance(certificate_id, str)
+        or app_candidate.get(
+            "supportedRunnerCertificationCandidateIDs"
+        ) != [certificate_id]
+    ):
+        raise Power2ValidationError(
+            "App and Runner certification candidates are inconsistent"
+        )
+
+    review_runner = dict(runner_candidate)
+    review_runner["state"] = "active"
+    review_app = {
+        "state": "supported",
+        "version": "2.0.0-certification",
+        "build": app_candidate.get("build"),
+        "sourceRevision": app_candidate.get("sourceRevision"),
+        "supportedRunnerCertificateIDs": [certificate_id],
+    }
+    return replace(
+        context,
+        public_intake_open=True,
+        runner_certificate=review_runner,
+        app_release=review_app,
     )
 
 
@@ -790,6 +859,208 @@ def _metric_checks(
     return checks
 
 
+def _normalize_behavior_text(text: str) -> str:
+    return " ".join(
+        unicodedata.normalize("NFKC", text).casefold().split()
+    )
+
+
+def _behavior_attempt_status(
+    generated_text: Any,
+    response_contract: dict[str, Any],
+) -> str:
+    if not isinstance(generated_text, str):
+        return "not-verified"
+    normalized = _normalize_behavior_text(generated_text)
+    if not normalized:
+        return "not-verified"
+
+    maximum_sentences = response_contract.get("maximumSentences")
+    if not isinstance(maximum_sentences, int) or maximum_sentences < 1:
+        raise Power2ValidationError(
+            "response contract has no valid sentence limit"
+        )
+    sentence_count = len(
+        [
+            part
+            for part in re.split(r"[.!?]+", normalized)
+            if part.strip()
+        ]
+    )
+    if sentence_count > maximum_sentences:
+        return "not-verified"
+
+    policy = response_contract.get("verificationPolicy")
+    if not isinstance(policy, dict):
+        raise Power2ValidationError(
+            "response contract has no verification policy"
+        )
+    contradiction_phrases = policy.get("contradictionPhrases")
+    concepts = policy.get("concepts")
+    if (
+        not isinstance(contradiction_phrases, list)
+        or not all(
+            isinstance(phrase, str) and phrase
+            for phrase in contradiction_phrases
+        )
+        or not isinstance(concepts, list)
+        or not concepts
+    ):
+        raise Power2ValidationError(
+            "response verification policy is invalid"
+        )
+    if any(
+        _normalize_behavior_text(phrase) in normalized
+        for phrase in contradiction_phrases
+    ):
+        return "contradicted"
+
+    tokens = set(re.findall(r"[^\W_]+", normalized, flags=re.UNICODE))
+    for concept in concepts:
+        term_groups = (
+            concept.get("allOfTermGroups")
+            if isinstance(concept, dict)
+            else None
+        )
+        if (
+            not isinstance(term_groups, list)
+            or not term_groups
+            or not all(
+                isinstance(group, list)
+                and group
+                and all(isinstance(term, str) and term for term in group)
+                for group in term_groups
+            )
+        ):
+            raise Power2ValidationError(
+                "response verification concept is invalid"
+            )
+        if any(
+            tokens.isdisjoint(
+                _normalize_behavior_text(term)
+                for term in group
+            )
+            for group in term_groups
+        ):
+            return "not-verified"
+    return "verified"
+
+
+def _behavior_checks(
+    result: dict[str, Any],
+    context: ValidationContext,
+    contract_valid: bool,
+    diagnostics: list[str],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    payload = result.get("payload")
+    workload_id = (
+        payload.get("workload", {}).get("id")
+        if isinstance(payload, dict)
+        and isinstance(payload.get("workload"), dict)
+        else None
+    )
+    registered = context.workloads.get(workload_id)
+    response_contract = (
+        registered[0].get("responseContract")
+        if registered is not None
+        else None
+    )
+    if response_contract is None:
+        return (
+            _check("not-applicable", ["behavior-not-defined-for-workload"]),
+            _check(
+                "not-applicable",
+                ["recommendation-not-defined-for-workload"],
+            ),
+        )
+    if not isinstance(response_contract, dict):
+        raise Power2ValidationError("workload response contract is invalid")
+    if response_contract.get("affectsMetricEligibility") is not False:
+        raise Power2ValidationError(
+            "behavior must not affect Power performance metric eligibility"
+        )
+    if not contract_valid:
+        return (
+            _check(
+                "not-applicable",
+                ["contract-conformance-failed"],
+            ),
+            _check(
+                "not-applicable",
+                ["contract-conformance-failed"],
+            ),
+        )
+
+    policy = response_contract.get("verificationPolicy")
+    minimum = (
+        policy.get("minimumVerifiedMeasuredAttempts")
+        if isinstance(policy, dict)
+        else None
+    )
+    if not isinstance(minimum, int) or minimum < 1:
+        raise Power2ValidationError(
+            "response verification policy has no valid attempt threshold"
+        )
+    attempts = (
+        payload.get("attempts", [])
+        if isinstance(payload, dict)
+        else []
+    )
+    measured_successes = [
+        attempt
+        for attempt in attempts
+        if isinstance(attempt, dict)
+        and attempt.get("phase") == "measured"
+        and attempt.get("outcome") == "succeeded"
+    ]
+    statuses = [
+        _behavior_attempt_status(
+            attempt.get("generatedText"),
+            response_contract,
+        )
+        for attempt in measured_successes
+    ]
+    verified_count = statuses.count("verified")
+    contradicted_count = statuses.count("contradicted")
+    not_verified_count = statuses.count("not-verified")
+    diagnostics.append(
+        "behavior: "
+        f"verified={verified_count}, "
+        f"contradicted={contradicted_count}, "
+        f"not-verified={not_verified_count}, "
+        f"required={minimum}"
+    )
+
+    if contradicted_count:
+        behavior = _check("fail", ["behavior-contradicted"])
+    elif verified_count >= minimum:
+        behavior = _check("pass")
+    else:
+        behavior = _check(
+            "manual-review",
+            ["behavior-not-verified"],
+        )
+
+    if response_contract.get("affectsRecommendationEligibility") is not True:
+        recommendation = _check(
+            "not-applicable",
+            ["recommendation-not-defined-for-workload"],
+        )
+    elif behavior["status"] == "pass":
+        recommendation = _check("pass")
+    elif behavior["status"] == "fail":
+        recommendation = _check(
+            "fail",
+            ["behavior-conformance-failed"],
+        )
+    else:
+        recommendation = _check(
+            "manual-review",
+            ["behavior-not-verified"],
+        )
+    return behavior, recommendation
+
+
 def _runner_check(
     result: dict[str, Any],
     context: ValidationContext,
@@ -982,6 +1253,12 @@ def validate_package(
         ):
             manual_reasons.append("unknown-environment-field")
 
+    behavior, recommendation = _behavior_checks(
+        result,
+        context,
+        contract_valid,
+        diagnostics,
+    )
     checks = {
         "structuralValidity": _check(
             "pass" if not structural_reasons else "fail",
@@ -1002,6 +1279,8 @@ def validate_package(
             [] if context.public_intake_open else ["public-intake-closed"],
         ),
         "contributor": _check(contributor_status, contributor_reasons),
+        "behaviorConformance": behavior,
+        "recommendationEligibility": recommendation,
         "metricEligibility": _metric_checks(
             result, context, contract_valid
         ),
@@ -1063,7 +1342,7 @@ def validate_package(
         )
     )
     report = {
-        "schemaVersion": "power-validation-report-1.0.0-draft.1",
+        "schemaVersion": "power-validation-report-1.0.0-draft.2",
         "reportID": str(uuid.uuid5(uuid.NAMESPACE_URL, report_identity)),
         "createdAt": evaluated_at,
         "validator": {

@@ -7,13 +7,19 @@ import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from unittest import mock
 
+from scripts import triage_power2_submission_pr as triage
+from scripts.review_power2_certification_result import review_result
 from scripts.lib.power2 import json_schema
 from scripts.lib.power2.engine import (
     ROOT,
+    load_candidate_certification_review_context,
     load_candidate_context,
     validate_package,
 )
+from scripts.lib.power2.package import create_package
+from scripts.lib.power2.ranking import build_dataset
 
 
 EVALUATED_AT = "2026-07-23T12:00:00Z"
@@ -198,7 +204,7 @@ class Power2EngineTests(unittest.TestCase):
             "artifacts": [],
             "payload": {
                 "schemaVersion": (
-                    "power-text-generation-payload-1.0.0-draft.1"
+                    "power-text-generation-payload-1.0.0-draft.2"
                 ),
                 "workload": {
                     "id": workload["workloadID"],
@@ -282,6 +288,13 @@ class Power2EngineTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(first["classification"], "auto-accept")
         self.assertEqual(first["reasonCodes"], [])
+        self.assertEqual(
+            first["checks"]["behaviorConformance"]["status"], "pass"
+        )
+        self.assertEqual(
+            first["checks"]["recommendationEligibility"]["status"],
+            "pass",
+        )
         self.assertTrue(
             all(
                 check["status"] == "pass"
@@ -329,6 +342,98 @@ class Power2EngineTests(unittest.TestCase):
                 check["status"] == "not-applicable"
                 for check in report["checks"]["metricEligibility"].values()
             )
+        )
+        self.assertEqual(
+            report["checks"]["behaviorConformance"]["status"],
+            "manual-review",
+        )
+
+    def test_behavior_is_separate_from_performance_eligibility(self) -> None:
+        result = self.make_result()
+        for attempt in result["payload"]["attempts"]:
+            attempt["generatedText"] = (
+                "When the device is offline, the note is automatically "
+                "synced to the cloud. It is available when connectivity "
+                "returns."
+            )
+
+        with tempfile.TemporaryDirectory() as directory:
+            package = self.write_package(Path(directory), result)
+            report = self.validate(package)
+
+        self.assertEqual(report["classification"], "auto-accept")
+        self.assertEqual(
+            report["checks"]["behaviorConformance"],
+            {
+                "status": "manual-review",
+                "reasonCodes": ["behavior-not-verified"],
+            },
+        )
+        self.assertEqual(
+            report["checks"]["recommendationEligibility"],
+            {
+                "status": "manual-review",
+                "reasonCodes": ["behavior-not-verified"],
+            },
+        )
+        self.assertTrue(
+            all(
+                check["status"] == "pass"
+                for check in report["checks"]["metricEligibility"].values()
+                if check["reasonCodes"]
+                != ["metric-not-defined-for-workload"]
+            )
+        )
+
+    def test_direct_behavior_contradiction_blocks_recommendation_only(
+        self,
+    ) -> None:
+        result = self.make_result()
+        for attempt in result["payload"]["attempts"]:
+            attempt["generatedText"] = (
+                "The note is not stored on this device. "
+                "It will not sync when connectivity returns."
+            )
+
+        with tempfile.TemporaryDirectory() as directory:
+            package = self.write_package(Path(directory), result)
+            report = self.validate(package)
+
+        self.assertEqual(report["classification"], "auto-accept")
+        self.assertEqual(
+            report["checks"]["behaviorConformance"]["status"], "fail"
+        )
+        self.assertEqual(
+            report["checks"]["recommendationEligibility"]["status"],
+            "fail",
+        )
+
+    def test_workload_without_behavior_contract_is_not_applicable(
+        self,
+    ) -> None:
+        result = self.make_result()
+        workload, digest = self.trusted_context.workloads[
+            "power.text.sustained-generation"
+        ]
+        result["payload"]["workload"] = {
+            "id": workload["workloadID"],
+            "version": workload["workloadVersion"],
+            "sha256": digest,
+        }
+        result["payload"]["measurementMode"] = workload["measurementMode"]
+        result["payload"]["inferenceConfiguration"] = workload["generation"]
+
+        with tempfile.TemporaryDirectory() as directory:
+            package = self.write_package(Path(directory), result)
+            report = self.validate(package)
+
+        self.assertEqual(
+            report["checks"]["behaviorConformance"]["status"],
+            "not-applicable",
+        )
+        self.assertEqual(
+            report["checks"]["recommendationEligibility"]["status"],
+            "not-applicable",
         )
 
     def test_changed_result_bytes_fail_digest_integrity(self) -> None:
@@ -427,6 +532,47 @@ class Power2EngineTests(unittest.TestCase):
         self.assertIn("app-release-not-supported", report["reasonCodes"])
         self.assertIn("public-intake-closed", report["reasonCodes"])
 
+    def test_certification_review_opens_only_candidate_review_gates(
+        self,
+    ) -> None:
+        review_context = load_candidate_certification_review_context()
+        result = self.make_result()
+        result["runnerCertificateID"] = (
+            review_context.runner_certificate["certificateID"]
+        )
+        result["appRelease"] = {
+            "version": review_context.app_release["version"],
+            "build": review_context.app_release["build"],
+            "sourceRevision":
+                review_context.app_release["sourceRevision"],
+            "embeddedMeasurementStackSHA256":
+                review_context.measurement_stack_sha256,
+        }
+        result["runtime"] = review_context.runner_certificate["runtime"]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "certification-result.json"
+            path.write_text(
+                json.dumps(result, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            report = review_result(
+                path,
+                evaluated_at=EVALUATED_AT,
+                validator_source_revision=VALIDATOR_SOURCE_REVISION,
+            )
+
+        self.assertEqual(report["status"], "pass")
+        self.assertFalse(report["publishable"])
+        self.assertFalse(report["rankingEligible"])
+        self.assertEqual(
+            report["checks"]["runnerCertificate"]["status"],
+            "pass",
+        )
+        self.assertEqual(
+            report["checks"]["appRelease"]["status"],
+            "pass",
+        )
+
     def test_registered_model_snapshot_cannot_be_changed(self) -> None:
         result = self.make_result()
         result["model"]["parameterCount"] += 1
@@ -465,6 +611,208 @@ class Power2EngineTests(unittest.TestCase):
 
         self.assertEqual(report["classification"], "reject")
         self.assertIn("contributor-identity-mismatch", report["reasonCodes"])
+
+    def test_package_generator_preserves_raw_result_bytes(self) -> None:
+        result_bytes = (
+            json.dumps(self.make_result(), indent=2, sort_keys=True) + "\n"
+        ).encode()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.json"
+            source.write_bytes(result_bytes)
+            package = create_package(
+                source,
+                root / "packages",
+                github_login="Power-Fixture-User",
+                declarations_accepted=True,
+                submission_id=SUBMISSION_ID,
+                created_at="2026-07-23T12:00:00Z",
+                context=self.trusted_context,
+            )
+
+            self.assertEqual(
+                (package / "result.json").read_bytes(),
+                result_bytes,
+            )
+            declaration = json.loads(
+                (package / "submission.json").read_text()
+            )
+            self.assertEqual(
+                declaration["sourceResult"]["sha256"],
+                sha256_bytes(result_bytes),
+            )
+
+    def _triage_package(
+        self,
+        package: Path,
+        *,
+        changes: list[tuple[str, str]] | None = None,
+    ) -> dict:
+        prefix = triage.INTAKE.as_posix()
+        changes = changes or [
+            ("A", f"{prefix}/{SUBMISSION_ID}/result.json"),
+            ("A", f"{prefix}/{SUBMISSION_ID}/submission.json"),
+        ]
+
+        def materialize(
+            _head: str,
+            _submission_id: str,
+            root: Path,
+        ) -> Path:
+            target = root / SUBMISSION_ID
+            target.mkdir()
+            for source in package.iterdir():
+                (target / source.name).write_bytes(source.read_bytes())
+            return target
+
+        with mock.patch.object(
+            triage,
+            "_changes",
+            return_value=changes,
+        ), mock.patch.object(
+            triage,
+            "_materialize_package",
+            side_effect=materialize,
+        ), mock.patch.object(
+            triage,
+            "_accepted_result_digests",
+            return_value=set(),
+        ):
+            return triage.classify(
+                "base",
+                "head",
+                "Power-Fixture-User",
+                evaluated_at=EVALUATED_AT,
+                validator_source_revision=VALIDATOR_SOURCE_REVISION,
+                context=self.trusted_context,
+            )
+
+    def test_power2_triage_accepts_only_result_packages(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            package = self.write_package(
+                Path(directory),
+                self.make_result(),
+            )
+            report = self._triage_package(package)
+
+        self.assertEqual(report["classification"], "auto_accept")
+        self.assertEqual(report["packageCount"], 1)
+
+    def test_power2_triage_does_not_block_normal_code_prs(self) -> None:
+        with mock.patch.object(
+            triage,
+            "_changes",
+            return_value=[("M", "README.md")],
+        ):
+            report = triage.classify(
+                "base",
+                "head",
+                "Power-Fixture-User",
+                evaluated_at=EVALUATED_AT,
+                validator_source_revision=VALIDATOR_SOURCE_REVISION,
+                context=self.trusted_context,
+            )
+
+        self.assertEqual(report["classification"], "not_applicable")
+
+    def test_power2_triage_rejects_mixed_scope(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            package = self.write_package(
+                Path(directory),
+                self.make_result(),
+            )
+            prefix = triage.INTAKE.as_posix()
+            report = self._triage_package(
+                package,
+                changes=[
+                    ("A", f"{prefix}/{SUBMISSION_ID}/result.json"),
+                    ("A", f"{prefix}/{SUBMISSION_ID}/submission.json"),
+                    ("M", ".github/workflows/power2-intake.yml"),
+                ],
+            )
+
+        self.assertEqual(report["classification"], "rejected")
+        self.assertIn(
+            "pull-request-scope-invalid",
+            report["reasonCodes"],
+        )
+
+    def _write_rankable_package(
+        self,
+        root: Path,
+        *,
+        submission_id: str,
+        result_id: str,
+        contributor: str,
+    ) -> Path:
+        result = self.make_result()
+        result["resultID"] = result_id
+        source = root / f"{submission_id}.json"
+        source.write_text(
+            json.dumps(result, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        return create_package(
+            source,
+            root / "packages",
+            github_login=contributor,
+            declarations_accepted=True,
+            submission_id=submission_id,
+            created_at=EVALUATED_AT,
+            context=self.trusted_context,
+        )
+
+    def test_power2_ranking_counts_distinct_contributors(self) -> None:
+        identities = [
+            (
+                "10000000-0000-4000-8000-000000000001",
+                "20000000-0000-4000-8000-000000000001",
+                "Contributor-One",
+            ),
+            (
+                "10000000-0000-4000-8000-000000000002",
+                "20000000-0000-4000-8000-000000000002",
+                "Contributor-Two",
+            ),
+            (
+                "10000000-0000-4000-8000-000000000003",
+                "20000000-0000-4000-8000-000000000003",
+                "Contributor-Three",
+            ),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            packages = root / "packages"
+            for index, (
+                submission_id,
+                result_id,
+                contributor,
+            ) in enumerate(identities, start=1):
+                self._write_rankable_package(
+                    root,
+                    submission_id=submission_id,
+                    result_id=result_id,
+                    contributor=contributor,
+                )
+                dataset = build_dataset(
+                    packages,
+                    context=self.trusted_context,
+                    generated_at=EVALUATED_AT,
+                    validator_source_revision=VALIDATOR_SOURCE_REVISION,
+                )
+                self.assertEqual(
+                    dataset["acceptedContributionCount"],
+                    index,
+                )
+                self.assertEqual(len(dataset["views"]), 1)
+                self.assertEqual(
+                    dataset["views"][0]["evidenceState"],
+                    {
+                        1: "accepted",
+                        2: "reproduced",
+                        3: "contributor-weighted",
+                    }[index],
+                )
 
 
 if __name__ == "__main__":

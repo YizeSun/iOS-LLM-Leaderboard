@@ -4,7 +4,7 @@ public enum PowerEvidenceConstants {
     public static let envelopeSchemaVersion =
         "power-evidence-envelope-1.0.0-draft.1"
     public static let textPayloadSchemaVersion =
-        "power-text-generation-payload-1.0.0-draft.1"
+        "power-text-generation-payload-1.0.0-draft.2"
     public static let productID = "power"
     public static let continuousClockID = "continuous-clock"
 }

@@ -4,7 +4,7 @@ import PowerRunnerCore
 
 public enum PowerTextProgramModule {
     public static let programID = "text-generation-performance"
-    public static let programVersion = "2.0.0-draft.1"
+    public static let programVersion = "2.0.0-draft.2"
 
     public static func makeRequests(
         workload: PowerTextWorkload,

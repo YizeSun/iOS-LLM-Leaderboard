@@ -23,6 +23,7 @@ COMPONENTS = {
     "runtimeAdapter": "PowerMLXRuntime",
 }
 DEPENDENCY_LOCK_PATH = PACKAGE_ROOT / "Package.resolved"
+RUNTIME_IDENTITY_PATH = PACKAGE_ROOT / "runtime-identity.json"
 
 
 def _sha256(path: Path) -> str:
@@ -66,6 +67,10 @@ def render_manifest() -> str:
         "resolvedDependencies": {
             "path": _relative(DEPENDENCY_LOCK_PATH),
             "sha256": _sha256(DEPENDENCY_LOCK_PATH),
+        },
+        "runtimeIdentity": {
+            "path": _relative(RUNTIME_IDENTITY_PATH),
+            "sha256": _sha256(RUNTIME_IDENTITY_PATH),
         },
         "components": {
             key: _component(module)
