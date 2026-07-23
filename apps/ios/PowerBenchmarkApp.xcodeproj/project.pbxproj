@@ -14,7 +14,7 @@
 		A10000000000000000000005 /* PowerResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* PowerResultsView.swift */; };
 		A10000000000000000000006 /* Power2CandidateIdentity.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* Power2CandidateIdentity.generated.swift */; };
 		A10000000000000000000007 /* Power2CandidateCatalog.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* Power2CandidateCatalog.generated.swift */; };
-		A10000000000000000000008 /* PowerCertificationBuildIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* PowerCertificationBuildIdentity.swift */; };
+		A10000000000000000000008 /* PowerAppBuildIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* PowerAppBuildIdentity.swift */; };
 		C10000000000000000000001 /* PowerEvidence in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000001 /* PowerEvidence */; };
 		C10000000000000000000002 /* PowerRunnerCore in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000002 /* PowerRunnerCore */; };
 		C10000000000000000000003 /* PowerTextProgram in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000003 /* PowerTextProgram */; };
@@ -34,8 +34,10 @@
 		A20000000000000000000006 /* Power2CandidateIdentity.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Power2CandidateIdentity.generated.swift; sourceTree = "<group>"; };
 		A20000000000000000000007 /* PowerBenchmarkApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = PowerBenchmarkApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000000000000000008 /* Power2CandidateCatalog.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Power2CandidateCatalog.generated.swift; sourceTree = "<group>"; };
-		A20000000000000000000009 /* PowerCertificationBuildIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerCertificationBuildIdentity.swift; sourceTree = "<group>"; };
+		A20000000000000000000009 /* PowerAppBuildIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerAppBuildIdentity.swift; sourceTree = "<group>"; };
 		A20000000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A20000000000000000000011 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		A20000000000000000000012 /* LocalSigning.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LocalSigning.example.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 			isa = PBXGroup;
 			children = (
 				A70000000000000000000002 /* PowerBenchmarkApp */,
+				A70000000000000000000004 /* Configuration */,
 				A20000000000000000000006 /* Power2CandidateIdentity.generated.swift */,
 				A20000000000000000000008 /* Power2CandidateCatalog.generated.swift */,
 				A70000000000000000000003 /* Products */,
@@ -75,10 +78,19 @@
 				A20000000000000000000003 /* PowerRootView.swift */,
 				A20000000000000000000004 /* PowerTestView.swift */,
 				A20000000000000000000005 /* PowerResultsView.swift */,
-				A20000000000000000000009 /* PowerCertificationBuildIdentity.swift */,
+				A20000000000000000000009 /* PowerAppBuildIdentity.swift */,
 				A20000000000000000000010 /* Info.plist */,
 			);
 			path = PowerBenchmarkApp;
+			sourceTree = "<group>";
+		};
+		A70000000000000000000004 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000011 /* Signing.xcconfig */,
+				A20000000000000000000012 /* LocalSigning.example.xcconfig */,
+			);
+			path = Configuration;
 			sourceTree = "<group>";
 		};
 		A70000000000000000000003 /* Products */ = {
@@ -178,7 +190,7 @@
 				A10000000000000000000005 /* PowerResultsView.swift in Sources */,
 				A10000000000000000000006 /* Power2CandidateIdentity.generated.swift in Sources */,
 				A10000000000000000000007 /* Power2CandidateCatalog.generated.swift in Sources */,
-				A10000000000000000000008 /* PowerCertificationBuildIdentity.swift in Sources */,
+				A10000000000000000000008 /* PowerAppBuildIdentity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,19 +219,9 @@
 			};
 			name = Release;
 		};
-		B10000000000000000000005 /* Certification */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_MODULES = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 6.0;
-			};
-			name = Certification;
-		};
 		B10000000000000000000003 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A20000000000000000000011 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -228,8 +230,9 @@
 				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
 				MARKETING_VERSION = 2.0.0;
 				POWER_APP_DISPLAY_NAME = "Power Benchmark";
+				POWER_BUILD_KIND = developer;
 				POWER_SOURCE_REVISION = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.candidate;
+				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.developer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -242,6 +245,7 @@
 		};
 		B10000000000000000000004 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A20000000000000000000011 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -249,8 +253,9 @@
 				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
 				MARKETING_VERSION = 2.0.0;
 				POWER_APP_DISPLAY_NAME = "Power Benchmark";
+				POWER_BUILD_KIND = developer;
 				POWER_SOURCE_REVISION = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.candidate;
+				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.developer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -261,8 +266,31 @@
 			};
 			name = Release;
 		};
+		B10000000000000000000005 /* Certification */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Certification;
+		};
+		B10000000000000000000007 /* Official */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Official;
+		};
 		B10000000000000000000006 /* Certification */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A20000000000000000000011 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -270,6 +298,7 @@
 				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
 				MARKETING_VERSION = 2.0.0;
 				POWER_APP_DISPLAY_NAME = "Power Benchmark Certification";
+				POWER_BUILD_KIND = certification;
 				POWER_SOURCE_REVISION = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2.certification;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -283,6 +312,30 @@
 			};
 			name = Certification;
 		};
+		B10000000000000000000008 /* Official */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A20000000000000000000011 /* Signing.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PowerBenchmarkApp/Info.plist;
+				MARKETING_VERSION = 2.0.0;
+				POWER_APP_DISPLAY_NAME = "Power Benchmark";
+				POWER_BUILD_KIND = official;
+				POWER_SOURCE_REVISION = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.power2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) POWER_OFFICIAL";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Official;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -292,6 +345,7 @@
 				B10000000000000000000003 /* Debug */,
 				B10000000000000000000004 /* Release */,
 				B10000000000000000000006 /* Certification */,
+				B10000000000000000000008 /* Official */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -302,6 +356,7 @@
 				B10000000000000000000001 /* Debug */,
 				B10000000000000000000002 /* Release */,
 				B10000000000000000000005 /* Certification */,
+				B10000000000000000000007 /* Official */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

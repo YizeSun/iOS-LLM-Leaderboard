@@ -8,6 +8,10 @@
     "appShell": {
       "files": [
         {
+          "path": "apps/ios/Configuration/Signing.xcconfig",
+          "sha256": "24900cad391b546bf704bf1b34b336c193dc91ca4c19b40a2c4b2728f5ead503"
+        },
+        {
           "path": "apps/ios/Power2CandidateCatalog.generated.swift",
           "sha256": "794b20588699d4737bf97b16c0444bcb5878db87390a7894f66ba39ac362e864"
         },
@@ -17,19 +21,19 @@
         },
         {
           "path": "apps/ios/PowerBenchmarkApp/Info.plist",
-          "sha256": "053e8ee9b2072f13b4a3c4f3bdd191a7f4da3e52be8f7ccd62a129b479cc12be"
+          "sha256": "d1a2ac2de41cc13475dec1a6ec6cf539a2f8dc48047e33fd43ffb252a2a74d60"
+        },
+        {
+          "path": "apps/ios/PowerBenchmarkApp/PowerAppBuildIdentity.swift",
+          "sha256": "b69d2b6fd48a3e4d9fcd7654c056cb3e4532c13df2df979dce41341615f9e5e2"
         },
         {
           "path": "apps/ios/PowerBenchmarkApp/PowerAppModel.swift",
-          "sha256": "4ef8ac447015fd5fb3fded8556f3954bd59e66c2c0e379219b30d58e465d3e42"
+          "sha256": "d46950b879fb0aada0394d93bbd737a5628e6c571cec69cec51a6860071f91a4"
         },
         {
           "path": "apps/ios/PowerBenchmarkApp/PowerBenchmarkApp.swift",
           "sha256": "61b06a0cfbdb2c031759dec0b74aab9bda0598d032aef623e1be20005a90260e"
-        },
-        {
-          "path": "apps/ios/PowerBenchmarkApp/PowerCertificationBuildIdentity.swift",
-          "sha256": "97c7d510a640792bb3d248e2a84312bfc42f7ae2846bb9164bc0e98f246911fa"
         },
         {
           "path": "apps/ios/PowerBenchmarkApp/PowerResultsView.swift",
@@ -41,10 +45,10 @@
         },
         {
           "path": "apps/ios/PowerBenchmarkApp/PowerTestView.swift",
-          "sha256": "0c2a4321127bb648825abf09232915adf85cd938ed2aa050cfef38f6f4c54ed5"
+          "sha256": "66049e3907af6ed8042e8c0c9cc002048bb9aabc1858c5e2db276e7cb13b020f"
         }
       ],
-      "sha256": "527128cdd0c7d1017614e98d03f82b9ccc8295693c318d80ce9eea847421a616",
+      "sha256": "6fe20765a0599c1d964bf40c7acc84aafb622c21eae06c2b027be3495ddba21e",
       "sourceRoot": "apps/ios"
     },
     "githubSubmission": {
@@ -80,7 +84,11 @@
   },
   "infoPlist": {
     "path": "apps/ios/PowerBenchmarkApp/Info.plist",
-    "sha256": "053e8ee9b2072f13b4a3c4f3bdd191a7f4da3e52be8f7ccd62a129b479cc12be"
+    "sha256": "d1a2ac2de41cc13475dec1a6ec6cf539a2f8dc48047e33fd43ffb252a2a74d60"
+  },
+  "officialScheme": {
+    "path": "apps/ios/PowerBenchmarkApp.xcodeproj/xcshareddata/xcschemes/PowerOfficial.xcscheme",
+    "sha256": "f1a303e1ce1841dec45eeafae87021af23de3ba1f95864b1bd39f2fd34f98f1e"
   },
   "productID": "power",
   "releaseBlockers": [
@@ -94,6 +102,10 @@
     "sha256": "58133edde6c1f37b4e8ad963ec6d9044363f0f523fc1affbf36bfcd72453c37c"
   },
   "schemaVersion": "power-app-component-manifest-1.0.0-draft.1",
+  "signingConfiguration": {
+    "path": "apps/ios/Configuration/Signing.xcconfig",
+    "sha256": "24900cad391b546bf704bf1b34b336c193dc91ca4c19b40a2c4b2728f5ead503"
+  },
   "status": "migration-draft",
   "supportPackage": {
     "path": "apps/PowerAppKit/Package.swift",
@@ -105,6 +117,6 @@
   },
   "xcodeProject": {
     "path": "apps/ios/PowerBenchmarkApp.xcodeproj/project.pbxproj",
-    "sha256": "c7bac658a2c061d0dc1fbdee72ae0fbcc6e86459e6d8b913e08eb003330cfe89"
+    "sha256": "10e8be77e64fce9a6faf45a06c1df54dc8be766096713d05ddf1eeeda81a428c"
   }
 }

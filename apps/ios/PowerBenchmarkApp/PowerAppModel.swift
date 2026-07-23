@@ -15,7 +15,7 @@ final class PowerAppModel {
         case results
     }
 
-    enum CertificationState: Equatable {
+    enum RunState: Equatable {
         case idle
         case preparingModel
         case running
@@ -43,10 +43,10 @@ final class PowerAppModel {
     var selectedWorkloadID =
         Power2CandidateCatalog.workloads.first?.id ?? ""
     var thermalAssistance: PowerThermalAssistance = .none
-    var certificationState: CertificationState = .idle
+    var runState: RunState = .idle
 
     @ObservationIgnored
-    private var certificationTask: Task<Void, Never>?
+    private var runTask: Task<Void, Never>?
 
     let store: PowerResultsStore
 
@@ -72,11 +72,12 @@ final class PowerAppModel {
     }
 
     var measurementAvailable: Bool {
-        PowerCertificationBuildIdentity.isAvailable
+        PowerAppBuildIdentity.measurementAvailable
     }
 
     var submissionAvailable: Bool {
-        Power2CandidateIdentity.appReleaseAvailable
+        PowerAppBuildIdentity.officialReleaseAvailable
+            && Power2CandidateIdentity.appReleaseAvailable
             && Power2CandidateIdentity.publicIntakeOpen
     }
 
@@ -92,8 +93,8 @@ final class PowerAppModel {
         }
     }
 
-    var certificationStatusText: String? {
-        switch certificationState {
+    var runStatusText: String? {
+        switch runState {
         case .idle:
             nil
         case .preparingModel:
@@ -101,25 +102,25 @@ final class PowerAppModel {
         case .running:
             "Running one warmup and five measured attempts…"
         case .saving:
-            "Encoding and saving immutable candidate evidence…"
+            "Encoding and saving immutable evidence…"
         case .completed:
-            "Certification evidence saved locally."
+            "Evidence saved locally."
         case .failed(let message):
             message
         }
     }
 
-    func startCertificationRun() {
-        guard measurementAvailable, !certificationState.isRunning else {
+    func startRun() {
+        guard measurementAvailable, !runState.isRunning else {
             return
         }
-        certificationTask = Task {
-            await performCertificationRun()
+        runTask = Task {
+            await performRun()
         }
     }
 
-    func cancelCertificationRun() {
-        certificationTask?.cancel()
+    func cancelRun() {
+        runTask?.cancel()
     }
 
     func reloadResults() async {
@@ -140,25 +141,24 @@ final class PowerAppModel {
         }
     }
 
-    private func performCertificationRun() async {
-        defer { certificationTask = nil }
+    private func performRun() async {
+        defer { runTask = nil }
         do {
             guard
                 let model = selectedModel,
                 let workloadDefinition = selectedWorkload,
-                let appRelease =
-                    PowerCertificationBuildIdentity.appRelease
+                let appRelease = PowerAppBuildIdentity.appRelease
             else {
-                throw CertificationError.incompleteBuildIdentity
+                throw RunError.incompleteBuildIdentity
             }
 
             let target = AppleIPhoneTargetAdapter()
             let preflight = try await target.captureStart()
             guard preflight.isPhysicalDevice else {
-                throw CertificationError.physicalDeviceRequired
+                throw RunError.physicalDeviceRequired
             }
 
-            certificationState = .preparingModel
+            runState = .preparingModel
             let descriptor = try model.descriptor()
             let runtime = try await PowerMLXModelLoader.load(
                 descriptor: descriptor,
@@ -173,7 +173,7 @@ final class PowerAppModel {
                 fixture: fixture
             )
 
-            certificationState = .running
+            runState = .running
             let runner = PowerRunner(runtime: runtime, target: target)
             let session = try await runner.run(requests: requests)
             let payload = try PowerTextProgramModule.makePayload(
@@ -206,36 +206,36 @@ final class PowerAppModel {
                 payload: payload
             )
 
-            certificationState = .saving
+            runState = .saving
             let stored = try await store.save(envelope: envelope)
             await reloadResults()
             selectedResultID = stored.id
-            certificationState = .completed(stored.id)
+            runState = .completed(stored.id)
             selectedTab = .results
         } catch is CancellationError {
-            certificationState = .failed(
-                "Certification was cancelled before a complete evidence "
+            runState = .failed(
+                "The run was cancelled before a complete evidence "
                     + "envelope could be saved."
             )
         } catch {
-            certificationState = .failed(
+            runState = .failed(
                 error.localizedDescription
             )
         }
     }
 }
 
-private enum CertificationError: LocalizedError {
+private enum RunError: LocalizedError {
     case incompleteBuildIdentity
     case physicalDeviceRequired
 
     var errorDescription: String? {
         switch self {
         case .incompleteBuildIdentity:
-            "Certification requires a build with an exact nonzero Git "
-                + "source revision."
+            "Power testing requires an eligible Certification or Official "
+                + "build with an exact nonzero Git source revision."
         case .physicalDeviceRequired:
-            "Power certification can run only on a physical iPhone."
+            "Power testing can run only on a physical iPhone."
         }
     }
 }

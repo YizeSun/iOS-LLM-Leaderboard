@@ -208,10 +208,15 @@ python3 scripts/generate_ios_app_release_identity.py
 python3 scripts/generate_ios_app_release_identity.py --check
 ```
 
-The generated `Config/AppVersion.xcconfig` supplies both Debug and Release
-configurations. `BenchmarkApp/AppReleaseIdentity.generated.swift` supplies the
-App's Power result and submission constants. Do not edit either generated file
-directly.
+The generated `Config/AppVersion.xcconfig` supplies the version and build
+through the tracked `Config/Signing.xcconfig` used by both Debug and Release.
+Apple signing is deliberately local: copy
+`Config/LocalSigning.example.xcconfig` to the ignored
+`Config/LocalSigning.xcconfig` and set your own `DEVELOPMENT_TEAM`. A
+contributor's Team ID affects only installation and code signing; it is not a
+benchmark, protocol, or result identity. `BenchmarkApp/AppReleaseIdentity.generated.swift`
+supplies the App's Power result and submission constants. Do not edit generated
+files directly.
 
 Every change under `ios-app/` creates a new exact source identity. Bump the App
 version and build in the identity file, merge the App change, then publish a

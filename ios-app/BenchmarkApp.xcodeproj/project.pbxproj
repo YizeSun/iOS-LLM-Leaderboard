@@ -113,6 +113,8 @@
 		A20000000000000000000045 /* AppReleaseIdentity.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReleaseIdentity.generated.swift; sourceTree = "<group>"; };
 		A20000000000000000000046 /* AppVersion.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppVersion.xcconfig; sourceTree = "<group>"; };
 		A20000000000000000000047 /* release-identity.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "release-identity.json"; sourceTree = "<group>"; };
+		A20000000000000000000048 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		A20000000000000000000049 /* LocalSigning.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LocalSigning.example.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -209,6 +211,8 @@
 			children = (
 				A20000000000000000000047 /* release-identity.json */,
 				A20000000000000000000046 /* AppVersion.xcconfig */,
+				A20000000000000000000048 /* Signing.xcconfig */,
+				A20000000000000000000049 /* LocalSigning.example.xcconfig */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -436,10 +440,9 @@
 		};
 		B10000000000000000000003 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A20000000000000000000046 /* AppVersion.xcconfig */;
+			baseConfigurationReference = A20000000000000000000048 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = ZMN7LG4SD9;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -458,10 +461,9 @@
 		};
 		B10000000000000000000004 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A20000000000000000000046 /* AppVersion.xcconfig */;
+			baseConfigurationReference = A20000000000000000000048 /* Signing.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = ZMN7LG4SD9;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				GITHUB_OAUTH_CLIENT_ID = Ov23lidyeZdONyrU4Pvy;

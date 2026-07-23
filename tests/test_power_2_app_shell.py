@@ -15,6 +15,12 @@ CERTIFICATION_SCHEME = (
     / "xcschemes"
     / "PowerCertification.xcscheme"
 )
+OFFICIAL_SCHEME = (
+    APP_PROJECT
+    / "xcshareddata"
+    / "xcschemes"
+    / "PowerOfficial.xcscheme"
+)
 RUNNER_ROOT = ROOT / "apps" / "PowerRunnerKit"
 APP_KIT_ROOT = ROOT / "apps" / "PowerAppKit"
 
@@ -104,7 +110,7 @@ class Power2AppShellTests(unittest.TestCase):
         identity = (
             APP_ROOT
             / "PowerBenchmarkApp"
-            / "PowerCertificationBuildIdentity.swift"
+            / "PowerAppBuildIdentity.swift"
         ).read_text(encoding="utf-8")
         info_plist = (
             APP_ROOT / "PowerBenchmarkApp" / "Info.plist"
@@ -130,6 +136,53 @@ class Power2AppShellTests(unittest.TestCase):
         self.assertIn("PowerRunner(runtime: runtime, target: target)", model)
         self.assertIn("PowerEvidenceEnvelope(", model)
         self.assertIn("store.save(envelope: envelope)", model)
+
+    def test_signing_is_local_and_build_kinds_are_fail_closed(self) -> None:
+        project = (APP_PROJECT / "project.pbxproj").read_text(
+            encoding="utf-8"
+        )
+        signing = (
+            APP_ROOT / "Configuration" / "Signing.xcconfig"
+        ).read_text(encoding="utf-8")
+        official_scheme = OFFICIAL_SCHEME.read_text(encoding="utf-8")
+        identity = (
+            APP_ROOT
+            / "PowerBenchmarkApp"
+            / "PowerAppBuildIdentity.swift"
+        ).read_text(encoding="utf-8")
+        model = (
+            APP_ROOT
+            / "PowerBenchmarkApp"
+            / "PowerAppModel.swift"
+        ).read_text(encoding="utf-8")
+
+        self.assertNotIn("DEVELOPMENT_TEAM =", project)
+        self.assertIn("LocalSigning.xcconfig", signing)
+        self.assertIn("POWER_BUILD_KIND = developer", project)
+        self.assertIn("POWER_BUILD_KIND = certification", project)
+        self.assertIn("POWER_BUILD_KIND = official", project)
+        self.assertEqual(project.count("POWER_OFFICIAL"), 1)
+        self.assertIn('buildConfiguration = "Official"', official_scheme)
+        self.assertIn("case developer", identity)
+        self.assertIn("case certification", identity)
+        self.assertIn("case official", identity)
+        self.assertIn("declaredKind == compiledKind", identity)
+        self.assertIn(
+            "PowerAppBuildIdentity.officialReleaseAvailable",
+            model,
+        )
+
+        ignored = subprocess.run(
+            [
+                "git",
+                "check-ignore",
+                "apps/ios/Configuration/LocalSigning.xcconfig",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(ignored.returncode, 0, ignored.stderr)
 
     def test_app_uses_separate_test_and_results_tabs(self) -> None:
         root_view = (

@@ -16,6 +16,7 @@ APP_ROOT = ROOT / "apps" / "ios"
 APP_KIT_ROOT = ROOT / "apps" / "PowerAppKit"
 OUTPUT_PATH = APP_ROOT / "component-manifest.json"
 APP_PROJECT = APP_ROOT / "PowerBenchmarkApp.xcodeproj"
+SIGNING_CONFIGURATION = APP_ROOT / "Configuration" / "Signing.xcconfig"
 
 COMPONENT_ROOTS = {
     "resultsStore": APP_KIT_ROOT / "Sources" / "PowerResultsStore",
@@ -60,6 +61,13 @@ def _pin(path: Path) -> dict[str, str]:
 
 
 def render_manifest() -> str:
+    project_text = (APP_PROJECT / "project.pbxproj").read_text(
+        encoding="utf-8"
+    )
+    if "DEVELOPMENT_TEAM =" in project_text:
+        raise ValueError(
+            "personal DEVELOPMENT_TEAM must not be stored in project.pbxproj"
+        )
     shell_sources = list(
         (APP_ROOT / "PowerBenchmarkApp").glob("*.swift")
     )
@@ -72,6 +80,7 @@ def render_manifest() -> str:
     shell_sources.append(
         APP_ROOT / "PowerBenchmarkApp" / "Info.plist"
     )
+    shell_sources.append(SIGNING_CONFIGURATION)
     components = {
         "appShell": _aggregate(shell_sources, APP_ROOT),
         **{
@@ -97,6 +106,13 @@ def render_manifest() -> str:
             / "xcschemes"
             / "PowerCertification.xcscheme"
         ),
+        "officialScheme": _pin(
+            APP_PROJECT
+            / "xcshareddata"
+            / "xcschemes"
+            / "PowerOfficial.xcscheme"
+        ),
+        "signingConfiguration": _pin(SIGNING_CONFIGURATION),
         "resolvedDependencies": _pin(
             APP_PROJECT
             / "project.xcworkspace"

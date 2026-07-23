@@ -297,7 +297,7 @@ App identity and runner identity are related but not equal:
 
 ```text
 App Release Identity
-  = marketing version + build + source revision
+  = official build kind + marketing version + build + source revision
   + embedded measurement-stack manifest SHA
 
 Measurement Identity
@@ -308,6 +308,23 @@ A UI-only App update changes the first identity but may retain the same
 certificate. A timing, workload, adapter, or serialization change changes the
 measurement identity and requires a new certificate, and sometimes a new
 Program contract.
+
+Apple signing is an installation input, not a measurement identity. Personal
+Team IDs live in an ignored local xcconfig and never change a Program, Target,
+Runner, App component, or measurement-stack digest. The App has three
+fail-closed build kinds:
+
+- Developer builds may use any contributor's Team ID but cannot create or
+  submit ranking evidence;
+- Certification builds may create pre-release physical-device evidence but
+  cannot submit or rank it; and
+- Official builds are usable only when their generated immutable App release
+  and the active repository support record agree.
+
+Ordinary testers install the maintainer-signed TestFlight/App Store build.
+Changing a source build's Team ID does not promote it to an Official build.
+The compiled build kind and embedded declaration must agree, while repository
+validation remains authoritative for App release support.
 
 The App should check a signed or repository-pinned Power 2.0 support record. It
 blocks testing or uploading when the active App release is below the minimum
@@ -514,7 +531,7 @@ entries.
 
 | Change | Required update | Explicitly not required |
 | --- | --- | --- |
-| App copy, layout, OAuth, or result-library UI | App version/build and generated App release identity | New Program contract or runner policy |
+| App copy, layout, OAuth, result-library UI, or signing team | App version/build and generated App release identity when code changes; local ignored signing config only when the Team ID changes | New Program contract, runner policy, or measurement identity |
 | Runner timing, attempt state, or raw serialization | Runner component digest, tests, and new certificate; new Program contract if semantics changed | Rewriting prior certificates or evidence |
 | Workload, measurement boundary, metric, or payload schema | New Program contract version, manifest, generated App identity, validator tests, certificate, and migration policy | Editing the released Program version |
 | Target admission or device measurement rule | New Target profile version, Target Adapter tests, and certificate | New Program version when the benchmark question is unchanged |

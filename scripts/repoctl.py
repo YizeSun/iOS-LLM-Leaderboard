@@ -413,6 +413,11 @@ def _verify_app_candidate(
         "certificationScheme":
             "apps/ios/PowerBenchmarkApp.xcodeproj/xcshareddata/"
             "xcschemes/PowerCertification.xcscheme",
+        "officialScheme":
+            "apps/ios/PowerBenchmarkApp.xcodeproj/xcshareddata/"
+            "xcschemes/PowerOfficial.xcscheme",
+        "signingConfiguration":
+            "apps/ios/Configuration/Signing.xcconfig",
         "resolvedDependencies":
             "apps/ios/PowerBenchmarkApp.xcodeproj/"
             "project.xcworkspace/xcshareddata/swiftpm/Package.resolved",
@@ -453,6 +458,13 @@ def _verify_app_candidate(
                 / "ios"
                 / "PowerBenchmarkApp"
                 / "Info.plist"
+            ).resolve(),
+            (
+                ROOT
+                / "apps"
+                / "ios"
+                / "Configuration"
+                / "Signing.xcconfig"
             ).resolve(),
         },
         "resultsStore": {

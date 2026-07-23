@@ -96,7 +96,7 @@ class PowerModelCatalogTests(unittest.TestCase):
         project = (ROOT / "ios-app" / "BenchmarkApp.xcodeproj" / "project.pbxproj").read_text()
         self.assertNotIn("MARKETING_VERSION =", project)
         self.assertNotIn("CURRENT_PROJECT_VERSION =", project)
-        self.assertEqual(project.count("AppVersion.xcconfig */;"), 2)
+        self.assertEqual(project.count("Signing.xcconfig */;"), 2)
         self.assertIn(
             'git -C \\"$SRCROOT/..\\" log -1 --format=%H -- ios-app',
             project,

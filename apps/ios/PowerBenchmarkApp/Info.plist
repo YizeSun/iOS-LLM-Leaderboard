@@ -27,6 +27,8 @@
 	<true/>
 	<key>PowerSourceRevision</key>
 	<string>$(POWER_SOURCE_REVISION)</string>
+	<key>PowerBuildKind</key>
+	<string>$(POWER_BUILD_KIND)</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>

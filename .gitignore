@@ -30,6 +30,11 @@ xcuserdata/
 *.xcuserstate
 *.moved-aside
 
+# Local Apple signing identity. Copy the tracked example and keep the Team ID
+# outside pinned App source and component manifests.
+apps/ios/Configuration/LocalSigning.xcconfig
+ios-app/Config/LocalSigning.xcconfig
+
 # ==========================================================
 # Swift Package Manager
 # ==========================================================

@@ -29,9 +29,17 @@ struct PowerTestView: View {
                             .runnerCandidateManifestSHA256
                     )
                 )
+                LabeledContent(
+                    "Build kind",
+                    value: PowerAppBuildIdentity.kind.displayName
+                )
+                LabeledContent(
+                    "Bundle",
+                    value: PowerAppBuildIdentity.bundleIdentifier
+                )
             }
 
-            Section("Certification selection") {
+            Section("Test selection") {
                 Picker("Model", selection: $model.selectedModelID) {
                     ForEach(Power2CandidateCatalog.models) { model in
                         Text(model.displayName).tag(model.id)
@@ -55,15 +63,24 @@ struct PowerTestView: View {
                     }
                 }
             }
-            .disabled(model.certificationState.isRunning)
+            .disabled(model.runState.isRunning)
 
             Section {
                 if model.measurementAvailable {
-                    Label(
-                        "Certification mode produces candidate evidence only.",
-                        systemImage: "wrench.and.screwdriver"
-                    )
-                    .foregroundStyle(.orange)
+                    if PowerAppBuildIdentity.isCertificationBuild {
+                        Label(
+                            "Certification mode produces candidate "
+                                + "evidence only.",
+                            systemImage: "wrench.and.screwdriver"
+                        )
+                        .foregroundStyle(.orange)
+                    } else {
+                        Label(
+                            "Official release identity verified.",
+                            systemImage: "checkmark.shield"
+                        )
+                        .foregroundStyle(.green)
+                    }
                 } else {
                     Label(
                         lockedReason,
@@ -72,8 +89,8 @@ struct PowerTestView: View {
                     .foregroundStyle(.orange)
                 }
 
-                if let status = model.certificationStatusText {
-                    if model.certificationState.isRunning {
+                if let status = model.runStatusText {
+                    if model.runState.isRunning {
                         ProgressView(status)
                     } else {
                         Text(status)
@@ -81,16 +98,16 @@ struct PowerTestView: View {
                     }
                 }
 
-                if model.certificationState.isRunning {
+                if model.runState.isRunning {
                     Button(
-                        "Cancel Certification Run",
+                        "Cancel Run",
                         role: .destructive
                     ) {
-                        model.cancelCertificationRun()
+                        model.cancelRun()
                     }
                 } else {
-                    Button("Run Certification Smoke Test") {
-                        model.startCertificationRun()
+                    Button(runButtonTitle) {
+                        model.startRun()
                     }
                     .disabled(!model.measurementAvailable)
                 }
@@ -98,7 +115,9 @@ struct PowerTestView: View {
                 Text(
                     "Certification evidence uses a candidate certificate ID "
                         + "and cannot pass public intake or enter ranking. "
-                        + "Release and Debug builds remain measurement-locked."
+                        + "Developer builds remain measurement-locked; "
+                        + "Official builds unlock only through the generated "
+                        + "repository release identity."
                 )
             }
         }
@@ -110,15 +129,31 @@ struct PowerTestView: View {
     }
 
     private var lockedReason: String {
-        if !PowerCertificationBuildIdentity.isCertificationBuild {
-            return "This build is not the Certification configuration."
+        switch PowerAppBuildIdentity.kind {
+        case .developer:
+            return "Developer builds can inspect the App but cannot produce "
+                + "or submit ranking evidence."
+        case .official:
+            return "This Official build remains locked until an immutable "
+                + "App Release and public Power intake are activated."
+        case .invalid:
+            return "The compiled build kind does not match the embedded "
+                + "PowerBuildKind declaration."
+        case .certification:
+            return "Certification requires POWER_SOURCE_REVISION to be the "
+                + "exact 40- or 64-character Git revision being tested."
         }
-        return "Certification requires POWER_SOURCE_REVISION to be the exact "
-            + "40- or 64-character Git revision being tested."
+    }
+
+    private var runButtonTitle: String {
+        if PowerAppBuildIdentity.isCertificationBuild {
+            return "Run Certification Smoke Test"
+        }
+        return "Run Benchmark"
     }
 
     private var statusColor: Color {
-        if case .failed = model.certificationState {
+        if case .failed = model.runState {
             return .red
         }
         return .green

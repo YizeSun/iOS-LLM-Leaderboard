@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 IDENTITY_PATH = ROOT / "ios-app/Config/release-identity.json"
 PROJECT_PATH = ROOT / "ios-app/BenchmarkApp.xcodeproj/project.pbxproj"
 XCCONFIG_PATH = ROOT / "ios-app/Config/AppVersion.xcconfig"
+SIGNING_CONFIG_PATH = ROOT / "ios-app/Config/Signing.xcconfig"
 SWIFT_PATH = (
     ROOT / "ios-app/BenchmarkApp/AppReleaseIdentity.generated.swift"
 )
@@ -48,10 +49,14 @@ class IOSAppReleaseIdentityTests(unittest.TestCase):
         self.assertEqual(
             project.count(
                 "baseConfigurationReference = "
-                "A20000000000000000000046 /* AppVersion.xcconfig */;"
+                "A20000000000000000000048 /* Signing.xcconfig */;"
             ),
             2,
         )
+        signing = SIGNING_CONFIG_PATH.read_text()
+        self.assertIn('#include "AppVersion.xcconfig"', signing)
+        self.assertIn('#include? "LocalSigning.xcconfig"', signing)
+        self.assertNotIn("DEVELOPMENT_TEAM =", project)
         self.assertIn(
             f"MARKETING_VERSION = {self.app['version']}\n",
             xcconfig,
@@ -75,6 +80,18 @@ class IOSAppReleaseIdentityTests(unittest.TestCase):
             f'static let appBuild = "{self.app["build"]}"',
             swift,
         )
+
+        ignored = subprocess.run(
+            [
+                "git",
+                "check-ignore",
+                "ios-app/Config/LocalSigning.xcconfig",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(ignored.returncode, 0, ignored.stderr)
 
     def test_current_power_plans_and_schemas_match_release_identity(self) -> None:
         protocol = self.power["sourceProtocolVersion"]
